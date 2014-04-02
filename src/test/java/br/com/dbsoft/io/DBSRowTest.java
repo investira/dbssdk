@@ -19,7 +19,7 @@ public class DBSRowTest {
 		xRow.setRowValues("01/01/2010ABCD12345678901234567");
 		assertEquals("12345678901234567", xRow.getValue("COLUNA3"));
 		xRow.setRowValues("01/01/2010AB");
-		assertEquals("                    ", xRow.getValue("COLUNA3"));
+		assertEquals(" ", xRow.getValue("COLUNA3"));
 		//System.out.println(xRow.getValue("COLUNA3"));
 	}
 	

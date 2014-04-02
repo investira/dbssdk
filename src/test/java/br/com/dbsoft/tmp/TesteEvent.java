@@ -3,8 +3,6 @@ package br.com.dbsoft.tmp;
 import java.io.Serializable;
 
 
-import org.junit.Test;
-
 import br.com.dbsoft.util.DBSNumber;
 
 
@@ -17,13 +15,7 @@ public class TesteEvent implements Serializable, IDBSEventListener {
 	public void TestaEvento(){
 		DBSMeuEvento xE = new DBSMeuEvento(this);
 		beforeQuery(xE);
-		System.out.println(xE.isOk() + ":" +  xE.isCancela());
 
-	}
-	
-	@Test
-	public void TesteA(){
-		System.out.println(getStringWithHtmlLineFeed("Ricardo nonon.asdc nonno dedsd; nononono[ wewdcccdc| nonono deild noeias nonedend asdcasc ascd asdc asdc  asdc asdc asdc asdc asdcasdc ascd asdcsadc asd casdcas asdc asdcas"));
 	}
 
 	public final static String getStringWithHtmlLineFeed(String pMessageText){

@@ -19,7 +19,7 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
 
 public class DBSDateTest extends TestCase {
 
-	String url="jdbc:oracle:thin:@192.168.0.21:1521:XE";
+	String url="jdbc:oracle:thin:@192.168.0.20:1521:XE";
 	String user="dbsoft";
 	String password="dbs0ft";
 	Connection wConexao;
@@ -182,20 +182,16 @@ public class DBSDateTest extends TestCase {
 	public void test_getDias() throws ParseException{
 		//DIAS CORRIDOS NO MES DE NOVEMBRO DE 2013
 		int xDias = DBSDate.getDias(wConexao, DBSDate.toDate("14/01/2013"), DBSDate.toDate("07/03/2014"), false, -1);
-		System.out.println(xDias);
 		assertEquals(417, xDias);
 		
 		//DIAS ÚTEIS NO MES DE NOVEMBRO DE 2013
 		xDias = DBSDate.getDias(wConexao, DBSDate.toDate("14/01/2013"), DBSDate.toDate("07/03/2014"), true, -1);
-		System.out.println(xDias);
 		assertEquals(289, xDias);
 		
 		xDias = DBSDate.getDias(wConexao, DBSDate.toDate("01/07/2000"), DBSDate.toDate("07/03/2014"), true, -1);
-		System.out.println(xDias);
 		assertEquals(3436, xDias);
 		
 		xDias = DBSDate.getDias(wConexao, DBSDate.toDate("15/12/2012"), DBSDate.toDate("15/01/2013"), true, -1, "RF");
-		System.out.println(xDias);
 		assertEquals(20, xDias);
 		
 //		assertEquals(400, DBSDate.getDias(wConexao, DBSDate.toDate("14/01/2013"), DBSDate.getProximaData(wConexao, DBSDate.toDate("15/08/2014"), 0, true, -1), true, -1));
@@ -294,15 +290,12 @@ public class DBSDateTest extends TestCase {
 	@Test
 	public void test_getFeriados() {
 		int xFeriados = DBSDate.getFeriados(wConexao, DBSDate.toDate("01/01/2011"), DBSDate.toDate("01/01/2012"), -1);
-		System.out.println(xFeriados);
 		assertEquals(9, xFeriados);//12
 		
 		xFeriados = DBSDate.getFeriados(wConexao, DBSDate.toDate("01/01/2011"), DBSDate.toDate("01/01/2013"), -1);
-		System.out.println(xFeriados);
 		assertEquals(22, xFeriados);//26
 		
 		xFeriados = DBSDate.getFeriados(wConexao, DBSDate.toDate("01/01/1999"), DBSDate.toDate("01/01/2013"), -1);
-		System.out.println(xFeriados);
 		assertEquals(139, xFeriados);//145
 		
 	}
@@ -545,12 +538,10 @@ public class DBSDateTest extends TestCase {
 	public void teste_getDiasDoMes() {
 		//DIAS UTEIS DO MES DE DEZEMBRO DE 2012 - RF
 		int xDias = DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("01/12/2012"), true, -1, "RF");
-		System.out.println(xDias);
 		assertEquals(20, xDias);
 		
 		//DIAS UTEIS DO MES DE DEZEMBRO DE 2012
 		xDias = DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("01/12/2012"), true, -1);
-		System.out.println(xDias);
 		assertEquals(18, xDias);
 	}
 }
