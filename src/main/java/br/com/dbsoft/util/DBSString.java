@@ -35,8 +35,10 @@ public class DBSString {
 	 * @return Retorna posição da string ou 0 caso seja não encontrada.
 	 */
 	public static int getInStr(String pTextoBase, String pTextoPesquisa, int pInicialPosition){
-		if (DBSObject.isEmpty(pTextoBase) ||
-			DBSObject.isEmpty(pTextoPesquisa)){
+		if (DBSObject.isNull(pTextoBase) 
+		 || DBSObject.isNull(pTextoPesquisa)
+		 || pTextoBase.equals("")
+		 || pTextoPesquisa.equals("")){
 			return 0;
 		}
 		return pTextoBase.indexOf(pTextoPesquisa, pInicialPosition  - 1) + 1;
@@ -50,8 +52,10 @@ public class DBSString {
 	 * @return Retorna posição da string ou 0 caso seja não encontrada.
 	 */
 	public static int getInStr(String pTextoBase, String pTextoPesquisa, int pInicialPosition, boolean pCaseMatch){
-		if (DBSObject.isEmpty(pTextoBase) ||
-			DBSObject.isEmpty(pTextoPesquisa)){
+		if (DBSObject.isNull(pTextoBase)
+		 || DBSObject.isNull(pTextoPesquisa)
+		 || pTextoBase.equals("")
+		 || pTextoPesquisa.equals("")){
 			return 0;
 		}
 		if(pCaseMatch){
@@ -415,7 +419,7 @@ public class DBSString {
 		ArrayList <String> xA = new ArrayList<String>();
 		if (DBSObject.isEmpty(pTextoBase)){
 			return xA;
-		}else if (DBSObject.isEmpty(pDelimitador)){
+		}else if (DBSObject.isNull(pDelimitador)){
 			xA.add(pTextoBase);
 		}else if (pDelimitador.equals("")){
 			xA.add(pTextoBase);
