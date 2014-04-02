@@ -73,7 +73,7 @@ public class DBSNumber {
 	 */
 	public static Double multiply(Double pX, Double pY){
 		if (DBSObject.isEmpty(pX) ||
-				DBSObject.isEmpty(pY)){
+			DBSObject.isEmpty(pY)){
 			return null;
 		}
 		BigDecimal x = new BigDecimal(pX.toString());
@@ -99,10 +99,10 @@ public class DBSNumber {
 	}	
 
 	/**
-	 * Multiplicação (pX * pY)
+	 * Multiplicação (pX * pY).b<br/>
 	 * @param pX 
 	 * @param pY 
-	 * @return Resultado
+	 * @return Resultado. Retorna nulo caso um dos valores seja nulo.
 	 */
 	public static BigDecimal multiply(Object pX, Object pY){
 		if (DBSObject.isEmpty(pX) ||
@@ -122,7 +122,11 @@ public class DBSNumber {
 	 */
 	public static Double divide(Double pDividendo, Double pDivisor){
 		BigDecimal x = divide(pDividendo, pDivisor, 30);
-		return x.doubleValue();
+		if (x != null){
+			return x.doubleValue();
+		}else{
+			return null;
+		}
 	}	
 
 	/**
