@@ -1201,20 +1201,26 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna número do mês a partir do nome
-	 * @param pMes Nome do mês
+	 * Retorna número do mês a partir do nome.<br/>
+	 * @param pMes Número do mês e número <b>0</b>(zero) caso não encontre.
 	 * @return Número do mês
 	 */
 	public static int getNumeroDoMes(String pMes){
-		String[] xMeses =  DBSDate.getNomeDosMeses();
+		String[] xMeses = DBSDate.getNomeDosMeses();
 		int xI = 0;
+		//Uniformiza texto
+		pMes = pMes.trim().toUpperCase();
 		for (String xMes : xMeses){
+			//Uniformiza texto
+			xMes = xMes.trim().toUpperCase();
 			xI++;
-			if (xMes.toUpperCase().equals(pMes.toUpperCase())){
+			//Se encontrou o mes, retorna o número
+			if (!xMes.equals("") 
+			  && xMes.equals(pMes)){
 				return xI; 
 			}
 		}
-		return xI;
+		return 0;
 //
 //		if (pMes.toUpperCase().equals("JANEIRO")) {
 //			xRetorno = 1;
