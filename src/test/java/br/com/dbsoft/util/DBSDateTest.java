@@ -17,6 +17,10 @@ import org.junit.Test;
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
 
+/**
+ * @author ricardo.villar
+ *
+ */
 public class DBSDateTest extends TestCase {
 
 	String url="jdbc:oracle:thin:@192.168.0.20:1521:XE";
