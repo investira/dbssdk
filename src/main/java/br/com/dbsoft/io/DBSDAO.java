@@ -506,12 +506,12 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @param pValueClass Classe para a qual será convertido o valor recebido
 	 * @return
 	 */	@SuppressWarnings("unchecked")
-	public <A> A getValue(String pColumnName, Class<?> pValueClass){
+	public final <A> A getValue(String pColumnName, Class<?> pValueClass){
 		return (A) DBSObject.toClass(getValue(pColumnName), pValueClass);
 	}
 	
 	/**
-	 * Retorna valor da coluna diretamente do Resultset.<br/>
+	 * Retorna valor da coluna diretamente do ResultDataModel.<br/>
 	 * Isto é utilizado, durante a atualização de um dataTable, 
 	 * os dados do registro atual somente poderam ser recuperado por este método.
 	 * @param pColumnName
@@ -527,14 +527,26 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Retorna valor da coluna diretamente do Resultset convertida para a classe do tipo informado.
+	 * Retorna valor da coluna informada diretamente do ResultDataModel convertida para a classe do tipo informado.
 	 * @param pColumnName Nome da coluna
 	 * @param pValueClass Classe para a qual será convertido o valor recebido
 	 * @return
 	 */	
 	@SuppressWarnings("unchecked")
-	public <A> A getListValue(String pColumnName, Class<?> pValueClass){
+	public final <A> A getListValue(String pColumnName, Class<?> pValueClass){
 		return (A) DBSObject.toClass(getListValue(pColumnName), pValueClass);
+	}
+	
+	/**
+	 * Seta o valor da coluna informada diretamenteo no ResultDataModel.
+	 * @param pColumnName Nome da coluna
+	 * @param pValue Valor da coluna
+	 * @return
+	 */	
+	public final void setListValue(String pColumnName, Object pValue){
+		if (wResultDataModel != null){
+			wResultDataModel.getRowData().put(pColumnName, pValue);
+		}
 	}
 	
 	/**
