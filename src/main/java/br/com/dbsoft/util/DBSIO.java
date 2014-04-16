@@ -36,6 +36,7 @@ import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
+import br.com.dbsoft.io.DBSResultDataModel;
 
 /**
  * @author ricardo.villar
@@ -382,6 +383,30 @@ public class DBSIO{
 		xResultSet = DBSIO.openResultSet(pConnection, pQuerySQL);
 		xResult = ResultSupport.toResult(xResultSet);
 		xResultDataModel = new ResultDataModel(xResult);
+		xResult = null;
+		DBSIO.closeResultSet(xResultSet);
+		return xResultDataModel;
+	}
+	
+	/**
+	 * Retorna os registros conforme a QuerySQL informada.<br/>
+	 * As colunas poderão ser acessadas como atributos de uma classe diretamente. 
+	 * Os nomes dos atributos são os próprios nomes definidos as colunas da QuerySQL.
+	 * Exemplo de código xhtlm <b>#{table.campo}</b><br/>
+	 * Não existe close para o ResultDataModel.
+	 * @param pConnection
+	 * @param pQuerySQL
+	 * @return
+	 * @throws DBSIOException
+	 */
+	@SuppressWarnings("unchecked")
+	public static DBSResultDataModel openResultDataModel2(Connection pConnection, String pQuerySQL) throws DBSIOException{
+		ResultSet 		xResultSet;
+		Result			xResult;
+		DBSResultDataModel xResultDataModel;
+		xResultSet = DBSIO.openResultSet(pConnection, pQuerySQL);
+		xResult = ResultSupport.toResult(xResultSet);
+		xResultDataModel = new DBSResultDataModel(xResult.getRows());
 		xResult = null;
 		DBSIO.closeResultSet(xResultSet);
 		return xResultDataModel;
@@ -1084,7 +1109,7 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */	
 	public static void moveBeforeFirst(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel){
-		pvDAODataModelMove(pDataModel, MOVE_DIRECTION.BEFORE_FIRST);
+		pvMoveResultDataModel(pDataModel, MOVE_DIRECTION.BEFORE_FIRST);
 	}
 
 	/**
@@ -1114,7 +1139,7 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */	
 	public static boolean moveFirst(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel) {
-		return pvDAODataModelMove(pDataModel, MOVE_DIRECTION.FIRST);
+		return pvMoveResultDataModel(pDataModel, MOVE_DIRECTION.FIRST);
 	}
 
 
@@ -1145,7 +1170,7 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */	
 	public static boolean movePrevious(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel) {
-		return pvDAODataModelMove(pDataModel, MOVE_DIRECTION.PREVIOUS);
+		return pvMoveResultDataModel(pDataModel, MOVE_DIRECTION.PREVIOUS);
 	}
 
 	/**
@@ -1175,7 +1200,7 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */
 	public static boolean moveNext(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel) throws DBSIOException{
-		return pvDAODataModelMove(pDataModel, MOVE_DIRECTION.NEXT);
+		return pvMoveResultDataModel(pDataModel, MOVE_DIRECTION.NEXT);
 	}
 
 	/**
@@ -1206,7 +1231,7 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */
 	public static boolean moveLast(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel) throws DBSIOException{
-		return pvDAODataModelMove(pDataModel, MOVE_DIRECTION.LAST);
+		return pvMoveResultDataModel(pDataModel, MOVE_DIRECTION.LAST);
 	}
 
 
@@ -1860,6 +1885,8 @@ public class DBSIO{
 					if (xRowIndex < 0){xRowIndex = 0;}
 					break;
 			case NEXT: xRowIndex = pCurrentIndex + 1; //Próximo
+					//Não permite avançar a um registro posterior ao último
+					if (xRowIndex >= pMaxIndex){xRowIndex = pMaxIndex -1;}
 					break;
 			case LAST: xRowIndex = pMaxIndex - 1; // Último
 					break;
@@ -1868,6 +1895,32 @@ public class DBSIO{
 	}
 	
 
+	/**
+	 * Retorna se novo posicionamento foi válido.
+	 * @param pCurrentIndex
+	 * @param pNewIndex
+	 * @param pMaxIndex
+	 * @param pDirection
+	 * @return
+	 */
+	public static boolean getIndexAfterMoveIsOk(Integer pCurrentIndex, Integer pNewIndex, Integer pMaxIndex, MOVE_DIRECTION pDirection){
+		//Se por para posicionar em um registro válido(diferente do anterior ao primeiro)
+		if (pDirection != MOVE_DIRECTION.BEFORE_FIRST){
+			//Retorna false, se não houve mudança de posição, quando de uma movimentação para o registro anterior ou próximo, desque exsitam registros.
+			if (pMaxIndex > 0){
+				if (pDirection == MOVE_DIRECTION.PREVIOUS
+				 || pDirection == MOVE_DIRECTION.NEXT){
+					//Retorna false, se não houve mudança de posição
+					if (pCurrentIndex == pNewIndex){
+						return false;
+					}
+				}
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
 	 * @param pConnection conexão com o banco de dados
@@ -2818,31 +2871,17 @@ public class DBSIO{
 	 * @param pDirection
 	 * @return true = encontrou registro; false = NÃO encontrou.
 	 */
-	private static boolean pvDAODataModelMove(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel, MOVE_DIRECTION pDirection){
+	private static boolean pvMoveResultDataModel(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel, MOVE_DIRECTION pDirection){
 		if (pDataModel !=null){
-			if (pDataModel.isRowAvailable()){
-				int xRowIndex = getIndexAfterMove(pDataModel.getRowIndex(), pDataModel.getRowCount(), pDirection);
-				//Se por para posicionar em um registro válido(diferente do anterior ao primeiro)
-				if (pDirection != MOVE_DIRECTION.BEFORE_FIRST){
-					//Retorna false, se não houve mudança de posição, quando de uma movimentação para o registro anterior ou próximo, desque exsitam registros.
-					if (pDataModel.getRowCount() > 0){
-						if (pDirection == MOVE_DIRECTION.PREVIOUS
-						 || pDirection == MOVE_DIRECTION.NEXT){
-							//Retorna false, se não houve mudança de posição
-							if (pDataModel.getRowIndex() == xRowIndex){
-								return false;
-							}
-						}
-					}else{
-						return false;
-					}
-				}
+			int xRowIndex = getIndexAfterMove(pDataModel.getRowIndex(), pDataModel.getRowCount(), pDirection);
+			if (getIndexAfterMoveIsOk(pDataModel.getRowIndex(), pDataModel.getRowCount(), xRowIndex, pDirection)){
 				pDataModel.setRowIndex(xRowIndex);
 				return true;
 			}
 		}
 		return false;
 	}
+
 
 	
 }

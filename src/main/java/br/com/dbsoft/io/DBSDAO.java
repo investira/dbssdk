@@ -590,22 +590,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Retorna se está no primeiro registro
-	 * @return
-	 */
-	public boolean getIsFist(){
-		return DBSIO.isFirstRow(wResultDataModel);
-	}
-
-	/**
-	 * Retorna se está no último registro
-	 * @return
-	 */
-	public boolean getIsLast(){
-		return DBSIO.isLastRow(wResultDataModel);
-	}
-	
-	/**
 	 * Executa a query informada em setQuerySQL() ou a executada anteriormente, caso exista.<br/> 
 	 * Caso deseje somente atualizar os dados da query, utilize o método <b>refresh()<b>.<br/>
 	 * O cursor é posicionado no primeiro registro, sendo necessário executar moveBeforeFirst quando se deseja utilizar while(dao.movenext) 
@@ -803,6 +787,28 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	
+	/**
+	 * Retorna se está no primeiro registro
+	 * @return
+	 */
+	public boolean getIsFist(){
+		if (wResultDataModel != null){
+			return wCurrentRowIndex==0;
+		}else{
+			return false;
+		}
+	}
+	/**
+	 * Retorna se está no último registro
+	 * @return
+	 */
+	public boolean getIsLast(){
+		if (wResultDataModel != null){
+			return wCurrentRowIndex == (wResultDataModel.getRowCount() - 1); 
+		}else{
+			return false;
+		}
+	}
 	//######################################################################################################### 
 	//## Public Methods                                                                                       #
 	//#########################################################################################################
@@ -1202,7 +1208,11 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 					pvRestoreColumnsValuesDefault();
 				}
 				xRowIndex = DBSIO.getIndexAfterMove(getCurrentRowIndex(), getRowsCount(), pDirection);
-				xB = setCurrentRowIndex(xRowIndex);
+				if (DBSIO.getIndexAfterMoveIsOk(getCurrentRowIndex(), xRowIndex, getRowsCount(), pDirection)){
+					xB = setCurrentRowIndex(xRowIndex);
+				}else{
+					xB = false;
+				}
 				pvFireEventAfterMove(xB);
 			}
 		}
