@@ -13,14 +13,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 import javax.faces.model.DataModelEvent;
 import javax.faces.model.DataModelListener;
-import javax.faces.model.ResultDataModel;
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 
-import br.com.dbsoft.annotation.DataModel;
+import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSIO;
+import br.com.dbsoft.util.DBSIO.MOVE_DIRECTION;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
 
@@ -57,7 +57,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	private DBSRow 				wCommandColumns = new DBSRow();		//Colunas que sofreráo modificação de dados
 	private String 				wCommandTableName = "";				//Nome da tabela que sofrerá modificação de dados
 	private boolean				wAutoIncrementPK = true;			//Efetua o insert e recuperar o valores do campos com autoincrement;
-	private ResultDataModel		wResultDataModel;
+	private DBSResultDataModel		wResultDataModel;
 	private int					wCurrentRowIndex = -1;
 
 	private DataModelListener 	wDataModelListener = new DataModelListener(){
@@ -121,7 +121,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
     	super(pDataModelClass);
     	this.setConnection(pConnection);
     	//Recupera nome da tabela, através da anotação @DataModel, caso exista na classe informada
-    	DataModel xAnnotation = DBSIO.getAnnotationDataModel(wDataModel);
+    	DBSTableModel xAnnotation = DBSIO.getAnnotationDataModel(wDataModel);
     	if (xAnnotation!=null){
     		this.setCommandTableName(xAnnotation.tablename());
     	}
@@ -520,7 +520,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	@SuppressWarnings("unchecked")
 	public final <A> A getListValue(String pColumnName){
 		if (wResultDataModel != null){
-			return (A) wResultDataModel.getRowData().get(pColumnName);
+//			return (A) wResultDataModel.getRowData();
+			return (A) wResultDataModel.getRowData().get(pColumnName); 
 		}else{
 			return null;
 		}
@@ -545,7 +546,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */	
 	public final void setListValue(String pColumnName, Object pValue){
 		if (wResultDataModel != null){
-			wResultDataModel.getRowData().put(pColumnName, pValue);
+			wResultDataModel.getRowData().put(pColumnName, pValue); //TODO
 		}
 	}
 	
@@ -569,7 +570,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * exemplo de código xhtlm "#{table.campo}"
 	 * @return
 	 */
-	public final ResultDataModel getResultDataModel(){
+	public final DBSResultDataModel getResultDataModel(){
 		return wResultDataModel;
 	}
 	/**
@@ -593,23 +594,17 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @return
 	 */
 	public boolean getIsFist(){
-		if (wResultDataModel != null){
-			return wCurrentRowIndex==0;
-		}else{
-			return false;
-		}
+		return DBSIO.isFirstRow(wResultDataModel);
 	}
+
 	/**
 	 * Retorna se está no último registro
 	 * @return
 	 */
 	public boolean getIsLast(){
-		if (wResultDataModel != null){
-			return wCurrentRowIndex == (wResultDataModel.getRowCount() - 1); 
-		}else{
-			return false;
-		}
+		return DBSIO.isLastRow(wResultDataModel);
 	}
+	
 	/**
 	 * Executa a query informada em setQuerySQL() ou a executada anteriormente, caso exista.<br/> 
 	 * Caso deseje somente atualizar os dados da query, utilize o método <b>refresh()<b>.<br/>
@@ -754,6 +749,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @return true = Sem erro; false = Com erro
 	 * @throws SQLException 
 	 */
+	@SuppressWarnings("unchecked")
 	public final synchronized boolean refresh() throws DBSIOException{
 		//Executa a Select para recuperar os registros
 		if (pvFireEventBeforeOpen()){
@@ -766,7 +762,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			xSelectResultSet = DBSIO.openResultSet(this.getConnection(),wQuerySQLUK);
 			//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
 			Result xResult = ResultSupport.toResult(xSelectResultSet);
-			wResultDataModel = new ResultDataModel(xResult);	
+			wResultDataModel = new DBSResultDataModel(xResult.getRows());
 			xResult = null;
 			//Configura listener local para acomponhar seleção de registro
 			wResultDataModel.addDataModelListener(wDataModelListener);
@@ -812,44 +808,28 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	//#########################################################################################################
 	@Override
 	public synchronized void moveBeforeFirstRow() throws DBSIOException{
-		pvMove(0);
+		pvMove(MOVE_DIRECTION.BEFORE_FIRST);
 	}
 	
-	/**
-	 * Move para o primeiro registro
-	 * @throws DBSIOException
-	 */	
 	@Override
 	public synchronized boolean moveFirstRow() throws DBSIOException{
-		return pvMove(1);
+		return pvMove(MOVE_DIRECTION.FIRST);
 	}
 	
-	/**
-	 * Move para o próximo registro
-	 * ATENÇÃO: Em caso de loop, certifique-se de chamar moveBeforeFirstRow antes de utilizar este método para não ignorar o primeiro registro.
-	 * @throws DBSIOException
-	 */
-	@Override
-	public synchronized boolean moveNextRow() throws DBSIOException{
-		return pvMove(2);
-	}
-	
-	/**
-	 * Move para o registro anterior
-	 * @throws DBSIOException
-	 */	
 	@Override
 	public synchronized boolean movePreviousRow() throws DBSIOException{
-		return pvMove(3);
+		return pvMove(MOVE_DIRECTION.PREVIOUS);
+	}	
+	
+	@Override
+	public synchronized boolean moveNextRow() throws DBSIOException{
+		return pvMove(MOVE_DIRECTION.NEXT);
 	}
 	
-	/**
-	 * Move para o último registro
-	 * @throws DBSIOException
-	 */
+
 	@Override
 	public synchronized boolean moveLastRow() throws DBSIOException{
-		return pvMove(4);
+		return pvMove(MOVE_DIRECTION.LAST);
 	}
 
 	/**
@@ -1207,10 +1187,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	@SuppressWarnings("unchecked")
 	private <A> A pvGetResultDataModelValueConvertedToDataType(String pColumnName, DATATYPE pDataType) throws DBSIOException{
-		return (A) DBSIO.getDataTypeConvertedValue(pDataType, wResultDataModel.getRowData().get(pColumnName));
+		return (A) DBSIO.getDataTypeConvertedValue(pDataType, wResultDataModel.getRowData().get(pColumnName)); //TODO
 	}
 
-	private boolean pvMove(int pP) throws DBSIOException {
+	private boolean pvMove(MOVE_DIRECTION pDirection) throws DBSIOException {
 		boolean xB = false;
 		if (wConnection!=null){
 			//Força para que o rowindex do resultaset seja o mesmo que foi utilizado para armazenar os dados 
@@ -1218,21 +1198,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			xB = pvFireEventBeforeMove();
 			int xRowIndex = 0;
 			if (xB){
-				switch(pP){
-					case 0: xRowIndex = -1; //Anterior ao primeiro 
-							pvRestoreColumnsValuesDefault();
-							break;
-					case 1: xRowIndex = 0; //Primeiro
-							break;
-					case 2: xRowIndex = getCurrentRowIndex() + 1; //Próximo
-							break;
-					case 3: xRowIndex = getCurrentRowIndex() - 1; //Anterior
-							//Não permite retornr para o registro Anterior ao primeiro
-							if (xRowIndex < 0){xRowIndex = 0;}
-							break;
-					case 4: xRowIndex = getRowsCount() - 1; // Último
-						break;
+				if (pDirection == MOVE_DIRECTION.BEFORE_FIRST){
+					pvRestoreColumnsValuesDefault();
 				}
+				xRowIndex = DBSIO.getIndexAfterMove(getCurrentRowIndex(), getRowsCount(), pDirection);
 				xB = setCurrentRowIndex(xRowIndex);
 				pvFireEventAfterMove(xB);
 			}

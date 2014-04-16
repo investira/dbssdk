@@ -317,31 +317,34 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	}
 	
 	/**
-	 * Move para o registro anterior ao primeiro registro
+	 * Move para o registro anterior ao primeiro registro.
 	 * @throws DBSIOException
 	 */
 	public abstract void moveBeforeFirstRow() throws DBSIOException;
 
 	/**
-	 * Move para o primeiro registro
+	 * Move para o primeiro registro.
 	 * @throws DBSIOException
 	 */
 	public abstract boolean moveFirstRow() throws DBSIOException;
 	
 	/**
-	 * Move para o próximo registro
+	 * Move para o próximo registro.<br/>
+	 * Não permite avançar caso esteja no último registro.
+	 * ATENÇÃO: Em caso de loop, certifique-se de chamar <b>moveBeforeFirstRow</b> antes de utilizar este método para não ignorar o primeiro registro.
 	 * @throws DBSIOException
 	 */
 	public abstract boolean moveNextRow() throws DBSIOException;
 	
 	/**
-	 * Move para o registro anterior
+	 * Move para o registro anterior.<br/>
+	 * Não permite retroceder caso esteja no priméiro registro.
 	 * @throws DBSIOException
 	 */
 	public abstract boolean movePreviousRow() throws DBSIOException;
 	
 	/**
-	 * Move para o último registro
+	 * Move para o último registro.
 	 * @throws DBSIOException
 	 */
 	public abstract boolean moveLastRow() throws DBSIOException;
