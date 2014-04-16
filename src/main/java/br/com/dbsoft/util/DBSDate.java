@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -282,6 +284,14 @@ public class DBSDate{
 		} else {
 			return (Date) pData;
 		}
+	}
+	
+	public static Date toDate(XMLGregorianCalendar pData) {
+		if (DBSObject.isEmpty(pData)) {
+			return null;
+		}
+		DateTime xDataTime = new DateTime(pData.getYear(), pData.getMonth(), pData.getDay(), pData.getHour(), pData.getMinute());
+		return DBSDate.toDate(xDataTime);
 	}
 
 	/**
@@ -1485,6 +1495,11 @@ public class DBSDate{
     	return xDate;
     }
 
+    /**
+     * Parse de string para data.
+     * @param pValue String no formato YYYYMMDD.
+     * @return Date
+     */
 	public static Date toDateYYYYMMDD(String pValue) {
 		Date xData = null;
 		String xAno = DBSString.getSubString(pValue, 1, 4);
