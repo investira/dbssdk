@@ -7,10 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * @author ricardo.villar
- * Anotação que indica que classe é um DataModel de uma tabela real no banco de dados
+ * Anotação que indica que classe é um Model de uma tabela real no banco de dados
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface DataModel {
+public @interface DBSTableModel {
 	 public String tablename();
 }
