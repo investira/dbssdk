@@ -446,6 +446,9 @@ public class DBSString {
 	 * @return String formatada
 	 */	
 	public static String toProper(String pString){
+		if (DBSObject.isNull(pString)) {
+			return null;
+		}
 		String xS = pvToProper(pString);
 		String xS2 = "";
 		//Loop en todas os caracteres da string
@@ -649,17 +652,18 @@ public class DBSString {
 	 * @return
 	 */	
 	public static String CorretorOrtografico(String pTexto){
+		String xTexto =  pTexto;
 		if(wDicionarioSilaba.isEmpty()){
 			pvDicionarioInit();
 		}
 		//System.out.println(pTexto);
-		pTexto = pvCorretorOrtograticoSilaba(pTexto);
+		xTexto = pvCorretorOrtograticoSilaba(xTexto);
 		//System.out.println(pTexto);
-		pTexto = pvCorretorOrtograficoPalavra(pTexto);
+		xTexto = pvCorretorOrtograficoPalavra(xTexto);
 		//System.out.println(pTexto);
-		pTexto = pvCorretorOrtograficoFrase(pTexto);
+		xTexto = pvCorretorOrtograficoFrase(xTexto);
 		//System.out.println(pTexto);
-		return pTexto;
+		return xTexto;
 	}
 	
 	/**
