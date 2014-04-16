@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.faces.model.ResultDataModel;
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 import javax.sql.DataSource;
@@ -376,13 +375,15 @@ public class DBSIO{
 	 * @return
 	 * @throws DBSIOException
 	 */
-	public static ResultDataModel openResultDataModel(Connection pConnection, String pQuerySQL) throws DBSIOException{
-		ResultSet 		xResultSet;
-		Result			xResult;
-		ResultDataModel	xResultDataModel;
+	@SuppressWarnings("unchecked")
+	public static DBSResultDataModel openResultDataModel(Connection pConnection, String pQuerySQL) throws DBSIOException{
+		ResultSet 			xResultSet;
+		Result				xResult;
+		DBSResultDataModel	xResultDataModel;
 		xResultSet = DBSIO.openResultSet(pConnection, pQuerySQL);
 		xResult = ResultSupport.toResult(xResultSet);
-		xResultDataModel = new ResultDataModel(xResult);
+		//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
+		xResultDataModel = new DBSResultDataModel(xResult.getRows());
 		xResult = null;
 		DBSIO.closeResultSet(xResultSet);
 		return xResultDataModel;
@@ -2874,7 +2875,7 @@ public class DBSIO{
 	private static boolean pvMoveResultDataModel(@SuppressWarnings("rawtypes") javax.faces.model.DataModel pDataModel, MOVE_DIRECTION pDirection){
 		if (pDataModel !=null){
 			int xRowIndex = getIndexAfterMove(pDataModel.getRowIndex(), pDataModel.getRowCount(), pDirection);
-			if (getIndexAfterMoveIsOk(pDataModel.getRowIndex(), pDataModel.getRowCount(), xRowIndex, pDirection)){
+			if (getIndexAfterMoveIsOk(pDataModel.getRowIndex(), xRowIndex, pDataModel.getRowCount(), pDirection)){
 				pDataModel.setRowIndex(xRowIndex);
 				return true;
 			}
