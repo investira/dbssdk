@@ -31,29 +31,34 @@ public class DBSStringTest {
 //		pValue = DBSString.changeStr((String)pValue, "ß", "á");
 		assertEquals("╔", DBSString.toASCII("É"));
 	}
-	
 	@Test
-	public void test_Corretor(){
-		assertEquals("participação", DBSString.CorretorOrtografico("participacao"));
-		assertEquals("participaçõe", DBSString.CorretorOrtografico("participacoe"));
-//		System.out.println(DBSString.CorretorOrtografico("Brc Securitizadora Sa"));
-		assertEquals("Acordo", DBSString.CorretorOrtografico("Acordo"));
-		assertEquals("Alcool", DBSString.CorretorOrtografico("Alcol"));
-		assertEquals("Aço", DBSString.CorretorOrtografico("Aco"));
-		assertEquals("Teste S.A.", DBSString.CorretorOrtografico("Teste sa"));
-		assertEquals("Teste   S.A.", DBSString.CorretorOrtografico("Teste   s/a"));
-		assertEquals("Teste  S.A.", DBSString.CorretorOrtografico("Teste  s.a"));
-		assertEquals("Teste  S.A. metal", DBSString.CorretorOrtografico("Teste  s.a metal"));
-		assertEquals("Teste  S.A. metal", DBSString.CorretorOrtografico("Teste  sa metal"));
-		assertEquals("FI de FI", DBSString.CorretorOrtografico("Fundo de Investimento de Fundo de Investimento"));
-		assertEquals("FIC de FI", DBSString.CorretorOrtografico("Fundo de Investimento em Cotas de Fundo de Investimento"));
-		assertEquals("Brasil Corporativo FIC de FI Multimercado Crédito Privado", DBSString.CorretorOrtografico(DBSString.toProper("Brasil Corporativo FIC de Fundo de Invest. Multimercado Crédito Privado")));
-		assertEquals("Ejas Multimercado Crédito Privado Investimento No Exterior - FIC de FI",DBSString.CorretorOrtografico(DBSString.toProper("EJAS MULTIMERCADO CRÉDITO PRIVADO INVESTIMENTO NO EXTERIOR - FDO DE INVEST.EM COTAS DE FDOS DE INVES")));
-		assertEquals("FIC de FI Multimercado Crédito Privado",DBSString.CorretorOrtografico(DBSString.toProper("FDO DE INVEST.EM COTAS DE FDOS DE INVEST.MULTIMERCADO CRÉDITO PRIVADO")));
-		assertEquals("FIC de FI Previdenciário Caixa Multimercado Renda Variável 0/15 150", DBSString.CorretorOrtografico(DBSString.toProper("FDO DE INV EM COTAS DE FDOS DE INV PREVIDENCIÁRIO CAIXA MULTIMERCADO RENDA VARIÁVEL 0/15 150")));
-		assertEquals("Crédito Privado - FIC de FI Multimercado",DBSString.CorretorOrtografico(DBSString.toProper("CRÉDITO PRIVADO-FDO.DE INVEST.EM COTAS DE FUNDOS DE INVESTIMENTO MULTIMERCADO")));
-		assertEquals("FIC de FI Multimercado Crédito Privado",DBSString.CorretorOrtografico(DBSString.toProper("FUNDO DE INVESTIMENTO DE COTAS DE FUNDOS DE INVESTIMENTO MULTIMERCADO CRÉDITO PRIVADO")));
+	public void test_toArray() {
+
+		ArrayList <String> xA = new ArrayList<String>();
+		ArrayList <String> xB=  new ArrayList<String>();
+		ArrayList <String> xC=  new ArrayList<String>();
+		xA.add("d");
+		xA.add("d");
+		xA.add("d");
+		xA.add("d");
+
+		xB.add("dxdxdxd");
+		
+		xC.add("");
+		xC.add("");
+		xC.add("");
+		xC.add("");
+		
+		assertEquals(xA, DBSString.toArray("d d d d", " "));
+		assertEquals(xA, DBSString.toArray("dXdXdXd", "X"));
+		assertEquals(xA, DBSString.toArray("dxdxdxd", "X",false));
+		assertEquals(xB, DBSString.toArray("dxdxdxd", "X"));
+//		String xS =  new String("abcd");
+//		xS.indexOf("a", 1);
+
+		assertEquals(xC, DBSString.toArray(";;;", ";"));
 	}
+
 	
 	@Test
 	public void test_getInStr() {
@@ -175,32 +180,7 @@ public class DBSStringTest {
 		assertEquals("aBaB", DBSString.repeat("aB", 2));
 	}
 
-	@Test
-	public void test_toArray() {
 
-		ArrayList <String> xA = new ArrayList<String>();
-		ArrayList <String> xB=  new ArrayList<String>();
-		ArrayList <String> xC=  new ArrayList<String>();
-		xA.add("d");
-		xA.add("d");
-		xA.add("d");
-		xA.add("d");
-
-		xB.add("dxdxdxd");
-		
-		xC.add("");
-		xC.add("");
-		xC.add("");
-		xC.add("");
-		
-		assertEquals(xA, DBSString.toArray("dXdXdXd", "X"));
-		assertEquals(xA, DBSString.toArray("dxdxdxd", "X",false));
-		assertEquals(xB, DBSString.toArray("dxdxdxd", "X"));
-//		String xS =  new String("abcd");
-//		xS.indexOf("a", 1);
-
-		assertEquals(xC, DBSString.toArray(";;;", ";"));
-	}
 
 	@Test
 	public void test_getTable() {
@@ -269,6 +249,29 @@ public class DBSStringTest {
 		xxNumero = 29340.277;
 		assertEquals("29.340,28", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2,true,-1)) );
 		
+	}
+	
+	@Test
+	public void test_Corretor(){
+		assertEquals("participação", DBSString.CorretorOrtografico("participacao"));
+		assertEquals("participações", DBSString.CorretorOrtografico("participacoes"));
+//		System.out.println(DBSString.CorretorOrtografico("Brc Securitizadora Sa"));
+		assertEquals("Acordo", DBSString.CorretorOrtografico("Acordo"));
+		assertEquals("Alcool", DBSString.CorretorOrtografico("Alcol"));
+		assertEquals("Aço", DBSString.CorretorOrtografico("Aco"));
+		assertEquals("Teste S.A.", DBSString.CorretorOrtografico("Teste sa"));
+		assertEquals("Teste   S.A.", DBSString.CorretorOrtografico("Teste   s/a"));
+		assertEquals("Teste  S.A.", DBSString.CorretorOrtografico("Teste  s.a"));
+		assertEquals("Teste  S.A. metal", DBSString.CorretorOrtografico("Teste  s.a metal"));
+		assertEquals("Teste  S.A. metal", DBSString.CorretorOrtografico("Teste  sa metal"));
+		assertEquals("FI de FI", DBSString.CorretorOrtografico("Fundo de Investimento de Fundo de Investimento"));
+		assertEquals("FIC de FI", DBSString.CorretorOrtografico("Fundo de Investimento em Cotas de Fundo de Investimento"));
+		assertEquals("Brasil Corporativo FIC de FI Multimercado Crédito Privado", DBSString.CorretorOrtografico(DBSString.toProper("Brasil Corporativo FIC de Fundo de Invest. Multimercado Crédito Privado")));
+		assertEquals("Ejas Multimercado Crédito Privado Investimento No Exterior - FIC de FI",DBSString.CorretorOrtografico(DBSString.toProper("EJAS MULTIMERCADO CRÉDITO PRIVADO INVESTIMENTO NO EXTERIOR - FDO DE INVEST.EM COTAS DE FDOS DE INVES")));
+		assertEquals("FIC de FI Multimercado Crédito Privado",DBSString.CorretorOrtografico(DBSString.toProper("FDO DE INVEST.EM COTAS DE FDOS DE INVEST.MULTIMERCADO CRÉDITO PRIVADO")));
+		assertEquals("FIC de FI Previdenciário Caixa Multimercado Renda Variável 0/15 150", DBSString.CorretorOrtografico(DBSString.toProper("FDO DE INV EM COTAS DE FDOS DE INV PREVIDENCIÁRIO CAIXA MULTIMERCADO RENDA VARIÁVEL 0/15 150")));
+		assertEquals("Crédito Privado - FIC de FI Multimercado",DBSString.CorretorOrtografico(DBSString.toProper("CRÉDITO PRIVADO-FDO.DE INVEST.EM COTAS DE FUNDOS DE INVESTIMENTO MULTIMERCADO")));
+		assertEquals("FIC de FI Multimercado Crédito Privado",DBSString.CorretorOrtografico(DBSString.toProper("FUNDO DE INVESTIMENTO DE COTAS DE FUNDOS DE INVESTIMENTO MULTIMERCADO CRÉDITO PRIVADO")));
 	}
 
 }
