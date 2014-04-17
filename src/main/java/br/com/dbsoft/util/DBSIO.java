@@ -1912,7 +1912,7 @@ public class DBSIO{
 				if (pDirection == MOVE_DIRECTION.PREVIOUS
 				 || pDirection == MOVE_DIRECTION.NEXT){
 					//Retorna false, se não houve mudança de posição
-					if (pCurrentIndex == pNewIndex){
+					if (pCurrentIndex.equals(pNewIndex)){
 						return false;
 					}
 				}
