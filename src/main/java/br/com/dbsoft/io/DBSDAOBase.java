@@ -30,6 +30,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	protected Class<DataModelClass>			wDataModelClass = null;
 	protected DataModelClass                wDataModel;
 	private boolean							wCallMoveEvent = true;
+	private int								wRowsCountWithoutEmptyRow = 0;
 
 	
 	//wDataModelPropertiesNames=Armazena o nome das propriedades da classe generica informada em <T>, 
@@ -277,6 +278,28 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 
 	
 	/**
+	 * Retorna o total de linhas da Query no caso de ter efetuado uma pesquisa via <b>open</b>.<br/>
+	 * Retorna o total de linhas da tabela no caso de <b>não</b> ter efetuado uma pesquisa via <b>open</b>, mas ter definido a <b>CommandTableName</b>.<br/>
+	 * Não considera as linhas posivelmente inseridas manualmente e não comitadas. 
+	 * @return Quantidade.
+	 * @throws DBSIOException 
+	 */
+	public final int getRowsCountWithoutEmptyRow() throws DBSIOException{
+		return wRowsCountWithoutEmptyRow;
+	}
+
+	/**
+	 * Seta o total de linhas da Query no caso de ter efetuado uma pesquisa via <b>open</b>.<br/>
+	 * Seta o total de linhas da tabela no caso de <b>não</b> ter efetuado uma pesquisa via <b>open</b>, mas ter definido a <b>CommandTableName</b>.<br/>
+	 * Não considera as linhas posivelmente inseridas manualmente e não comitadas. 
+	 * @param pRowsCount
+	 * @throws DBSIOException
+	 */
+	public final void setRowsCountWithoutEmptyRow(int pRowsCount) throws DBSIOException{
+		wRowsCountWithoutEmptyRow = pRowsCount;
+	}
+	
+	/**
 	 * retorna as colunas 
 	 * @return
 	 * @throws DBSIOException 
@@ -461,19 +484,21 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	public abstract DBSColumn getColumn(int pColumnIndex);
 
 	/**
-	 * Retorna uma string contendo os nomes das colunas que formam o UK que será responsável por identificar um linha única 
+	 * Retorna uma string contendo os nomes das colunas que formam o UK que será responsável por identificar um linha única.<br/>
+	 * No caso de haver mais de uma coluna como UK, os nomes das colunas serão separados por vírgula.
+	 * 
 	 * @return
 	 */
 	public abstract String getUK();
-	//public abstract void setUK(String pUK);
+
 
 	/**
+	 * Retorna o valor da UK corrente.<br/>
+	 * A UK deverá ser formada por uma só coluna, caso contrário o valor não será retornado.
 	 * @return
 	 */
 	public abstract Object getUKValue();
 	
-	
-
 	
 	//=== EVENTOS =====================================================================================
 	/**
