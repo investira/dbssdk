@@ -251,6 +251,16 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 //		}
 	}
 	
+
+	
+	/**
+	 * Inserir linha em branco ao resultaDataModel do DAO<br/>.
+	 * Linha é crida somente na memória. Usuário deverá implementar a inclusão na tabela.
+	 */
+	public final void insertEmptyRow(){
+		DBSIO.insertEmptyRow(this);
+	}
+	
 	/**
 	 * Retorna a indice do registro corrente.
 	 * Caso não haja registro, retorna -1.
@@ -520,8 +530,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	@SuppressWarnings("unchecked")
 	public final <A> A getListValue(String pColumnName){
 		if (wResultDataModel != null){
-//			return (A) wResultDataModel.getRowData();
-			return (A) wResultDataModel.getRowData().get(pColumnName); 
+			String xColumnName = pvGetColumnName(pColumnName);
+			return (A) wResultDataModel.getRowData().get(xColumnName); 
 		}else{
 			return null;
 		}
@@ -545,8 +555,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @return
 	 */	
 	public final void setListValue(String pColumnName, Object pValue){
+		
 		if (wResultDataModel != null){
-			wResultDataModel.getRowData().put(pColumnName, pValue); //TODO
+			String xColumnName = pvGetColumnName(pColumnName);
+			wResultDataModel.getRowData().put(xColumnName, pValue); //TODO 
 		}
 	}
 	
@@ -673,7 +685,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 
 		//Atualiza a pesquisa
-		this.refresh();
+		refresh();
 
 		return true;
 	}
@@ -742,6 +754,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			wCurrentRowIndex = -1;
 			wResultDataModel = null;
 			wQueryResultSetMetaData = null;
+			setRowsCountWithoutEmptyRow(0);
 			//-----------------
 			xSelectResultSet = DBSIO.openResultSet(this.getConnection(),wQuerySQLUK);
 			//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
@@ -759,6 +772,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 				if (!moveFirstRow()) {
 					moveBeforeFirstRow();
 				}
+				setRowsCountWithoutEmptyRow(getRowsCount());
 				return true;
 			}catch(SQLException e){
 				wLogger.error(e);
