@@ -23,6 +23,14 @@
 		<servlet-api.version>3.1.0</servlet-api.version>
 		<internal.repo.path>${user.home}/Fnt/mvn-repo</internal.repo.path>
 		<github.global.server>github</github.global.server>
+		<commons-collections.version>3.2.1</commons-collections.version>
+		<javax.json.version>1.0</javax.json.version>
+		<jstl.version>1.2</jstl.version>
+		<oracle.version>11.2.0.3</oracle.version>
+		<mysql.version>5.1.20</mysql.version>
+		<joda-time.version>2.1</joda-time.version>
+		<caelum-stella.version>2.1.0</caelum-stella.version>
+		
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -92,25 +100,25 @@
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.2</version>
+			<version>${jstl.version}</version>
 		</dependency>
 		<!-- DRIVER ORACLE -->
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0.3</version>
+			<version>${oracle.version}</version>
 		</dependency>		
 		<!-- MYSQL -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.20</version>
+			<version>${mysql.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.1</version>
+			<version>${joda-time.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jcraft</groupId>
@@ -120,7 +128,7 @@
 		<dependency>
 			<groupId>br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-core</artifactId>
-			<version>2.1.0</version>
+			<version>${caelum-stella.version}</version>
 		</dependency>
 <!-- 		Retinado por causa erro Asynchronous requests are not supported with this servlet -->
 <!-- 		verificar: https://issues.jboss.org/browse/JBAS-8294 -->
@@ -138,9 +146,13 @@
 		<dependency>
 			<groupId>javax.json</groupId>
 			<artifactId>javax.json-api</artifactId>
-			<version>1.0</version>
+			<version>${javax.json.version}</version>
 		</dependency>	
-
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections.version}</version>
+		</dependency>	
 		<!-- JUNIT -->
 
 		<dependency>
@@ -164,6 +176,7 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
+	
 	</dependencies>
 
 
