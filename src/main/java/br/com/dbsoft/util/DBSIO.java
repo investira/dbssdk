@@ -19,11 +19,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.annotation.DBSTableModel;
@@ -37,10 +41,6 @@ import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
 
-/**
- * @author ricardo.villar
- *
- */
 /**
  * @author ricardo.villar
  *
@@ -1852,6 +1852,38 @@ public class DBSIO{
 		}
 		return null;
 	}
+	
+	/**
+	 * Inserir linha em branco ao resultaDataModel do DAO<br/>.
+	 * Linha é crida somente na memória. Usuário deverá implementar a inclusão na tabela.
+	 */
+	public static void insertEmptyRow(DBSDAO<?> pDAO){
+		boolean xAdd = true;
+
+		DBSResultDataModel xR = pDAO.getResultDataModel();
+		@SuppressWarnings("unchecked")
+		ArrayList<SortedMap<String, Object>> xListNew = (ArrayList<SortedMap<String, Object>>) IteratorUtils.toList(xR.iterator());
+		//Verifica a última linha já é um registro linha em branco, para evitar a incluisão desnecessária de uma nova linha.
+		if (xListNew.size()>0){
+			for (Entry<String, Object> xColumn:xListNew.get(xListNew.size()-1).entrySet()){
+				//Verifica se coluna existe e se é PK para testar se o respectivo valor é null.
+				DBSColumn xC = pDAO.getCommandColumn(xColumn.getKey());
+				if (xC !=null){
+					if (xC.getPK()){
+						if (xColumn.getValue() == null){
+							xAdd = false;
+						}
+					}
+				}
+				System.out.println(xColumn.getKey()); 
+			}
+		}
+		if (xAdd){
+			xListNew.add(new TreeMap<String, Object>());
+			pDAO.getResultDataModel().setWrappedData(xListNew.toArray());
+		}
+	}
+
 
 	/**
 	 * Retorna os valores dos atributos do dataModel informado a partir das colunas encontradas no primeiro regostro do select informado.
