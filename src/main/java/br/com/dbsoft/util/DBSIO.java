@@ -1929,7 +1929,7 @@ public class DBSIO{
 	
 
 	/**
-	 * Retorna se novo posicionamento foi válido.
+	 * Retorna se novo posicionamento é válido.
 	 * @param pCurrentIndex
 	 * @param pNewIndex
 	 * @param pMaxIndex
@@ -1944,7 +1944,7 @@ public class DBSIO{
 				if (pDirection == MOVE_DIRECTION.PREVIOUS
 				 || pDirection == MOVE_DIRECTION.NEXT){
 					//Retorna false, se não houve mudança de posição
-					if (pCurrentIndex == pNewIndex){
+					if (pCurrentIndex.equals(pNewIndex)){
 						return false;
 					}
 				}
