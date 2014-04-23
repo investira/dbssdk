@@ -2051,7 +2051,7 @@ public class DBSIO{
 			xT = pvGetTablesFromQuery(xQuerySQL);
 			//Substitui os 'Select * ' por 'Select tabela.* ' 
 			for (int x=0; x <= xT.size()-1; x++){
-				if (xS == ""){
+				if (xS.equals("")){
 					xS = " " + xT.get(x) + ".*";
 				}else {
 					xS = xS + ", " + xT.get(x) + ".*";
