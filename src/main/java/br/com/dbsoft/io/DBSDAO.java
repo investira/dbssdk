@@ -308,15 +308,17 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	
 	/**
 	 * Retorna se o registro atual é um novo registro.<br/>
-	 * O dados deste registro existem somente em memória, sendo necessário implementar a rotina para salva-los.
+	 * Os dados deste registro existem somente em memória, sendo necessário implementar a rotina para salva-los.
 	 * @return
 	 */
 	public final boolean getIsNewRow(){
-		if (getCurrentRowIndex() > (getRowsCountAfterRefresh() - 1)){
-			return true;
-		}else{
+		if (wResultDataModel == null){
 			return false;
 		}
+		if (wResultDataModel.getRowIndex() > (getRowsCountAfterRefresh() - 1)){
+			return true;
+		}
+		return false;
 	}
 	
 	/**
