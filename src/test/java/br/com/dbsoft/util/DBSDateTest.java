@@ -23,9 +23,9 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
  */
 public class DBSDateTest extends TestCase {
 
-	String url="jdbc:oracle:thin:@192.168.0.20:1521:XE";
-	String user="dbsoft";
-	String password="dbs0ft";
+	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
+	String wUser="dbsoft";
+	String wPassword="dbs0ft";
 	Connection wConexao;
 	
 	@Override
@@ -37,7 +37,7 @@ public class DBSDateTest extends TestCase {
 		try {
 			Class.forName(DBSSDK.JDBC_DRIVER.ORACLE);
 			if (wConexao == null || wConexao.isClosed()){
-				wConexao = DriverManager.getConnection(url, user, password);
+				wConexao = DriverManager.getConnection(wUrl, wUser, wPassword);
 				wConexao.setAutoCommit(true);	
 			}
 		} catch (ClassNotFoundException | SQLException e) {
