@@ -30,8 +30,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	protected Class<DataModelClass>			wDataModelClass = null;
 	protected DataModelClass                wDataModel;
 	private boolean							wCallMoveEvent = true;
-	private int								wRowsCountWithoutEmptyRow = 0;
-
+	private int								wRowsCountAfterRefresh = 0;
 	
 	//wDataModelPropertiesNames=Armazena o nome das propriedades da classe generica informada em <T>, 
 	//para ser utilizado para pesquisa, evitando teste por exception
@@ -284,8 +283,8 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	 * @return Quantidade.
 	 * @throws DBSIOException 
 	 */
-	public final int getRowsCountWithoutEmptyRow() throws DBSIOException{
-		return wRowsCountWithoutEmptyRow;
+	public final int getRowsCountAfterRefresh(){
+		return wRowsCountAfterRefresh;
 	}
 
 	/**
@@ -295,9 +294,11 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	 * @param pRowsCount
 	 * @throws DBSIOException
 	 */
-	public final void setRowsCountWithoutEmptyRow(int pRowsCount) throws DBSIOException{
-		wRowsCountWithoutEmptyRow = pRowsCount;
+	protected final void setRowsCountAfterRefresh(int pRowsCount){
+		wRowsCountAfterRefresh = pRowsCount;
 	}
+	
+
 	
 	/**
 	 * retorna as colunas 
@@ -501,21 +502,23 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	
 	
 	//=== EVENTOS =====================================================================================
-	/**
-	 * Chamada quando é iniciada a execução
-	 */
-	//OPEN
 	protected boolean pvFireEventBeforeOpen(){
 		DBSDAOEvent xE = new DBSDAOEvent(this);
+
+		//reseta a quantidade de linhas antes do open
+		setRowsCountAfterRefresh(0);
+
 		//Chame o método((evento) local para quando esta classe for extendida
 		beforeOpen(xE);
 		//Chama a método((evento) dentro das classe que foram adicionadas na lista que possuem a implementação da respectiva interface
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).beforeOpen(xE);
         }
+		
 		return xE.isOk();
 	}
-	protected void pvFireEventAfterOpen(boolean pOk){
+	
+	protected void pvFireEventAfterOpen(boolean pOk) throws DBSIOException{
 		DBSDAOEvent xE = new DBSDAOEvent(this);
 		xE.setOk(pOk);
 		//Chame o método((evento) local para quando esta classe for extendida
@@ -524,9 +527,10 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).afterOpen(xE);
         }
+		setRowsCountAfterRefresh(getRowsCount());
+
 	}
 	
-	//CLOSE
 	protected boolean pvFireEventBeforeClose(){
 		DBSDAOEvent xE = new DBSDAOEvent(this);
 		//Chame o método((evento) local para quando esta classe for extendida

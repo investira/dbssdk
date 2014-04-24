@@ -305,6 +305,20 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return xOk;
 	}
 	
+	
+	/**
+	 * Retorna se o registro atual é um novo registro.<br/>
+	 * O dados deste registro existem somente em memória, sendo necessário implementar a rotina para salva-los.
+	 * @return
+	 */
+	public final boolean getIsNewRow(){
+		if (getCurrentRowIndex() > (getRowsCountAfterRefresh() - 1)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	/**
 	 * Nome da coluna na tabela ou alias(as) atribuido no select.
 	 * @param pColumnIndex númeroda coluna que se deseja saber o nome
@@ -754,7 +768,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			wCurrentRowIndex = -1;
 			wResultDataModel = null;
 			wQueryResultSetMetaData = null;
-			setRowsCountWithoutEmptyRow(0);
 			//-----------------
 			xSelectResultSet = DBSIO.openResultSet(this.getConnection(),wQuerySQLUK);
 			//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
@@ -765,14 +778,14 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			wResultDataModel.addDataModelListener(wDataModelListener);
 			try{
 				wQueryResultSetMetaData = xSelectResultSet.getMetaData();
-				pvCreateSelectColumns(xSelectResultSet.getMetaData());
+				pvCreateSelectColumns(wQueryResultSetMetaData);
 				//Chame evento
 				pvFireEventAfterOpen(true);
 				//Caso não exista o primeiro registro, move para posição inicial onde não há registro válido...
 				if (!moveFirstRow()) {
 					moveBeforeFirstRow();
 				}
-				setRowsCountWithoutEmptyRow(getRowsCount());
+				setRowsCountAfterRefresh(getRowsCount());
 				return true;
 			}catch(SQLException e){
 				wLogger.error(e);
@@ -1109,8 +1122,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Cria em memória as colunas a partir das colunas informadas no consulta(wQuerySQL).
-	 * Para posteriormente serem utilizadas para pesquisar sua existencia  
+	 * Cria, em memória, as colunas a partir das colunas informadas no consulta(wQuerySQL),
+	 * para posteriormente serem utilizadas para verificar sua existência.
 	 * @throws SQLException 
 	 */
 	private void pvCreateSelectColumns(ResultSetMetaData pResultSetMetaData) throws DBSIOException{
@@ -1232,32 +1245,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 		return xB;
 	}	
-//	private boolean pvMove(int pP) throws DBSIOException {
-//		boolean xB = false;
-//		if (wConnection!=null){
-//			//Força para que o rowindex do resultaset seja o mesmo que foi utilizado para armazenar os dados 
-//			//Se for para chmara o evento
-//			xB = pvFireEventBeforeMove();
-//			int xRowIndex;
-//			if (xB){
-//				switch(pP){
-//					case 0: xB = setCurrentRowIndex(-1);
-//							break;
-//					case 1: xB = setCurrentRowIndex(0);
-//							break;
-//					case 2: xB = setCurrentRowIndex(getCurrentRowIndex() + 1);
-//							break;
-//					case 3: xB = setCurrentRowIndex(getCurrentRowIndex() - 1);
-//							break;
-//					case 4: xB = setCurrentRowIndex(getRowsCount() - 1);
-//						break;
-//				}
-//				xB = setCurrentRowIndex(xRowIndex);
-//				pvFireEventAfterMove(xB);
-//			}
-//		}
-//		return xB;
-//	}
 	
 	/**
 	 * @return Retorna as colunas utilizadas como UK, já concatenadas.
@@ -1382,71 +1369,65 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			wDataModelClass == null){
 			return null;
 		}
-		try{
-			List<DBSRow>			xListRow = new ArrayList<DBSRow>();
-			List<DataModelClass>	xListDataModel = new ArrayList<DataModelClass>();
-			
-			//Cria nova linha
-			DBSRow 		xColumns = null;
-			DATATYPE 	xDataType;
-			//objeto com base no DataModel
-			DataModelClass xDataModel = null;
-			//Popula o list com todos os registros do resultset
+
+		List<DBSRow>			xListRow = new ArrayList<DBSRow>();
+		List<DataModelClass>	xListDataModel = new ArrayList<DataModelClass>();
+		
+		//Cria nova linha
+		DBSRow 		xColumns = null;
+
+		//objeto com base no DataModel
+		DataModelClass xDataModel = null;
+		//Popula o list com todos os registros do resultset
+		if (pReturnListDataModel){
+			xListDataModel.clear();
+		}else{
+			xListRow.clear();
+		}
+		//Loop de todos os registros do resulset
+		moveBeforeFirstRow();
+		while (moveNextRow()){
 			if (pReturnListDataModel){
-				xListDataModel.clear();
+				//Cria novo objeto com base no DataModel
+				xDataModel = this.createDataModel();
 			}else{
-				xListRow.clear();
+				//Cria nova linha
+				xColumns = new DBSRow();
 			}
-			//Loop de todos os registros do resulset
-			moveBeforeFirstRow();
-			while (moveNextRow()){
-				if (pReturnListDataModel){
-					//Cria novo objeto com base no DataModel
-					xDataModel = this.createDataModel();
-				}else{
-					//Cria nova linha
-					xColumns = new DBSRow();
+			
+//			//Recuper o conteúdo de todas as colunas do registro corrente
+			for (int x=1; x< getColumns().size(); x++){
+				if (!pReturnListDataModel){
+					xColumns.MergeColumn(getColumn(x).getColumnName(),
+										 getColumn(x).getDataType(),
+										 getColumn(x).getDisplaySize(), 
+										 null);
+					//Copia o valor para a coluna da linha
+					xColumns.setValue(getColumn(x).getColumnName(), pvGetResultDataModelValueConvertedToDataType(getColumn(x).getColumnName(), getColumn(x).getDataType()));
 				}
-				//Recuper o conteúdo de todas as colunas do registro corrente
-				for (int x=1; x<=wQueryResultSetMetaData.getColumnCount();x++){
-					xDataType = DBSIO.toDataType(this.getConnection(), wQueryResultSetMetaData.getColumnType(x), wQueryResultSetMetaData.getPrecision(x));
-					if (!pReturnListDataModel){
-						xColumns.MergeColumn(wQueryResultSetMetaData.getColumnLabel(x),
-											 xDataType,
-											 wQueryResultSetMetaData.getColumnDisplaySize(x), 
-											 null);
-						//Copia o valor para a coluna da linha
-						xColumns.setValue(wQueryResultSetMetaData.getColumnLabel(x), pvGetResultDataModelValueConvertedToDataType(wQueryResultSetMetaData.getColumnLabel(x), xDataType));
-					}
-					//Adiciona a coluna a linha
-					//System.out.println(wSelectResultSetMetaData.getColumnLabel(x) + ":" + wSelectResultSetMetaData.getTableName(x));
-					if (xDataModel!=null){ 
-						//Copia o valor para o respectivo atributo no DataModel(Se houver)
-						pvSetDataModelValue(xDataModel, wQueryResultSetMetaData.getColumnLabel(x), pvGetResultDataModelValueConvertedToDataType(wQueryResultSetMetaData.getColumnLabel(x), xDataType));
-					}
-				}
-				//Adiciona linha como DataModel
-				if (pReturnListDataModel){
-					xListDataModel.add(xDataModel);
-				}else{
-					//Adiciona linha como DBSRow
-					xListRow.add(xColumns);
-				}
+				//Adiciona a coluna a linha
+				if (xDataModel!=null){ 
+					//Copia o valor para o respectivo atributo no DataModel(Se houver)
+					pvSetDataModelValue(xDataModel, getColumn(x).getColumnName(), pvGetResultDataModelValueConvertedToDataType(getColumn(x).getColumnName(), getColumn(x).getDataType()));
+				}					
 			}
-			if (!moveFirstRow()) {
-				moveBeforeFirstRow();
-			}
+
+			//Adiciona linha como DataModel
 			if (pReturnListDataModel){
-				return (List<A>) xListDataModel;
+				xListDataModel.add(xDataModel);
 			}else{
 				//Adiciona linha como DBSRow
-				return (List<A>) xListRow;
+				xListRow.add(xColumns);
 			}
-			//Se não conseguir mover para a primeira linha, move para a linha anterior a primeira.
-		}catch(SQLException e){
-			wLogger.error(wQuerySQLUK, e);
-			DBSIO.throwIOException(this.getQuerySQL().toString(), e, wConnection);
-			return null;
+		}
+		if (!moveFirstRow()) {
+			moveBeforeFirstRow();
+		}
+		if (pReturnListDataModel){
+			return (List<A>) xListDataModel;
+		}else{
+			//Adiciona linha como DBSRow
+			return (List<A>) xListRow;
 		}
 	}
 
