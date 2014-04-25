@@ -485,9 +485,9 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	public abstract DBSColumn getColumn(int pColumnIndex);
 
 	/**
-	 * Retorna uma string contendo os nomes das colunas que formam o UK que será responsável por identificar um linha única.<br/>
+	 * Retorna uma string contendo os nomes das colunas que formam o UK que será responsável 
+	 * por identificar um linha única, podente haver colunas de tabelas diferentes.<br/>
 	 * No caso de haver mais de uma coluna como UK, os nomes das colunas serão separados por vírgula.
-	 * 
 	 * @return
 	 */
 	public abstract String getUK();
