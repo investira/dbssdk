@@ -107,12 +107,15 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	//## Public Properties                                                                                    #
 	//#########################################################################################################
     /**
+     * Cria novo DAO.
      * @param pConnection Conexão com o banco de dados
      */
     public DBSDAO(Connection pConnection) {
     	this.setConnection(pConnection); 
     }
+    
     /**
+     * Cria novo DAO.
      * @param pDataModel Classe Model da tabela do banco de dados ou classe com atributos homônimos as colunas com as quais se deseje trabalhar no DAO.<br/>
      * @param pConnection
      * @throws DBSIOException 
@@ -129,6 +132,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
     }
     
     /**
+     * Cria novo DAO.
      * @param pConnection Conexão com o banco de dados
      * @param pCommandTableName Nome da tabela que sofrerá Insert/Update/Delete.<br/> 
      *        Certifique-se que não há problema de letra maiúscula ou minúscula para encontrar a tabela no banco.
@@ -140,6 +144,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
     } 
 
     /**
+     * Cria novo DAO.
      * @param pDataModelClass Classe Model da tabela do banco de dados ou classe com atributos homônimos as colunas com as quais se deseje trabalhar no DAO.
      * @param pConnection Conexão com o banco de dados.
      * @param pCommandTableName Nome da tabela que sofrerá Insert/Update/Delete.<br/> 
@@ -153,6 +158,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
     } 
 
     /**
+     * Cria novo DAO.
      * @param pConnection Conexão com o banco de dados.
      * @param pCommandTableName Nome da tabela que sofrerá Insert/Update/Delete.<br/> 
      *        Certifique-se que não há problema de letra maiúscula ou minúscula para encontrar a tabela no banco.
@@ -166,6 +172,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
     } 
 
     /**
+     * Cria novo DAO.
      * @param pDataModelClass Classe Model da tabela do banco de dados ou classe com atributos homônimos as colunas com as quais se deseje trabalhar no DAO.
      * @param pConnection Conexão com o banco de dados.
      * @param pCommandTableName Nome da tabela que sofrerá Insert/Update/Delete.<br/>
@@ -182,7 +189,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 
 	/**
-	 * Retorna a Conexão
+	 * Retorna a Conexão.
 	 * @param pConnection Conexão com o banco de dados
 	 */
 	public final void setConnection(Connection pConnection) {
@@ -192,7 +199,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Configura a Conexão
+	 * Configura a Conexão.
 	 * @return Conexão com o banco  
 	 */
 	public final Connection getConnection() {
@@ -200,19 +207,24 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Retorna comando SQL utilizado para efetuar a pesquisa
+	 * Retorna comando SQL utilizado para efetuar a pesquisa.
 	 * @return Comando Sql utilizado
 	 */
 	public final String getQuerySQL() {
 		return wQuerySQL;
 	}
+	
+	/**
+	 * Configura o comando SQL utilizado para pesquisa.<br/>
+	 * @param pQuerySQL
+	 */
 	public final void setQuerySQL(String pQuerySQL) {
 		wQuerySQL = pQuerySQL;
 	}
 	
 
 	/**
-	 * @return Quantidade de colunas da pesquisa
+	 * @return Quantidade de colunas da pesquisa.
 	 * @throws SQLException 
 	 */
 	public final int getQueryColumnsCount() throws SQLException{
@@ -332,11 +344,22 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}	
 	
 
+	/**
+	 * Retorna todas as colunas da query.
+	 * @return
+	 */
 	@Override
 	public final Collection<DBSColumn> getColumns() {
 		return wQueryColumns.getColumns();
 	}
 
+	/**
+	 * Retorna coluna a partir do nome informado.<br/>
+	 * Caso a coluna não exista na query, 
+	 * será pesquisado também na tabela principal que sofrerá a edição(se houver).
+	 * @param pColumnName
+	 * @return
+	 */
 	@Override
 	public final DBSColumn getColumn(String pColumnName) {
 		if (pColumnName==null){return null;}
@@ -351,6 +374,11 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	
+	
+	/**
+	 * retorna a coluna a partir no número informado
+	 * @return
+	 */
 	@Override
 	public final DBSColumn getColumn(int pColumnIndex) {
 		return wQueryColumns.getColumn(pColumnIndex);
@@ -415,22 +443,39 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 	}
 
+	/**
+	 * Retorna nome das colunas que identificam a chave primária dos resgistros 
+	 * da tabela pricipal que sofrerá a edição, conforme definição da <b>commandTableName</b>.<br/>
+	 * No caso de haver mais de uma coluna como PK, os nomes das colunas serão separados por vírgula.
+	 * @return
+	 */
 	public final String getPK(){
 		return wPK;
 	}
 
+	/**
+	 * Retorna uma string contendo os nomes das colunas que formam o UK que será responsável 
+	 * por identificar um linha única, podente haver colunas de mais de uma tabela ou <b>alias</b>.<br/>
+	 * No caso de haver mais de uma coluna como UK, os nomes das colunas serão separados por vírgula.
+	 * @return
+	 */
 	@Override
 	public final String getUK(){
 		return wUK;
 	}
 	
+	/**
+	 * Retorna valor da UK assumunindo que há somente uma coluna.<br/>
+	 * Coluna pode ser um <b>alias</b> de mais de uma coluna.
+	 * @return
+	 */
 	@Override
 	public final Object getUKValue(){
 		return this.getValue(UKName);
 	}
 
 	/**
-	 * Indica se a coluna que é pk é de auto-incremento. O padrão é TRUE.
+	 * Indica se a coluna que é PK é de auto-incremento. O padrão é TRUE.
 	 * Se a tabela possuir mais de uma coluna como PK, o padrão passa a ser FALSE.
 	 * @return
 	 */
@@ -438,6 +483,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return wAutoIncrementPK;
 	}
 
+	/**
+	 * Indica se a coluna que é PK é de auto-incremento.
+	 * @param pAutoIncrementPK
+	 */
 	public final void setAutoIncrementPK(boolean pAutoIncrementPK) {
 		this.wAutoIncrementPK = pAutoIncrementPK;
 	}	
@@ -1062,13 +1111,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 				while (DBSIO.moveNext(xMetaData)){
 					xEmpty = false;
 					xColumnName = xMetaData.getString("COLUMN_NAME").toUpperCase().trim();
-//					System.out.println("NAME            :" + xColumnName);
-//					System.out.println("DATA TYPE       :" + xMetaData.getInt("DATA_TYPE"));
-//					System.out.println("NUM_PREC_RADIX  :" + xMetaData.getInt("NUM_PREC_RADIX"));
-//					System.out.println("DECIMAL_DIGITS  :" + xMetaData.getInt("DECIMAL_DIGITS"));
-//					System.out.println("COLUMN_SIZE     :" + xMetaData.getInt("COLUMN_SIZE"));
-//					System.out.println("COLUMN_DEF      :" + xMetaData.getInt("COLUMN_DEF"));
-//					System.out.println("ORDINAL_POSITION:" + xMetaData.getInt("ORDINAL_POSITION"));
 					if (!DBSIO.isColumnsIgnored(xColumnName)){
 						wCommandColumns.MergeColumn(xColumnName,
 												    DBSIO.toDataType(this.getConnection(), xMetaData.getInt("DATA_TYPE"), xMetaData.getInt("COLUMN_SIZE")),
@@ -1188,7 +1230,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			if (!wResultDataModel.isRowAvailable()){
 				pvRestoreColumnsValuesDefault(); 
 			}else{
-//				System.out.println("COPY VALUES");
 				for (DBSColumn xColumn: wQueryColumns.getColumns()){
 					this.setValue(xColumn.getColumnName(), pvGetResultDataModelValueConvertedToDataType(xColumn.getColumnName(), xColumn.getDataType()), true);
 				}
@@ -1256,18 +1297,28 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return DBSString.changeStr(xS, ",", " || ");
 	}
 	
+	/**
+	 * Configura a chave que identificará a PK da tabela que sofrerá a edição.<br/>
+	 * Caso a chave seja composta por mais de uma coluna, as colunas deverão estar separadas por vírgula.
+	 * @param pUK
+	 */
 	private void pvSetPK(String pPK){
 		this.wPK = pvCreatePKString(pPK, this.wCommandTableName); //Incluido nome da tabela na formação da chave /23/07/2013
 		this.wPKs = pvCreatePKArray(pPK);
 	}
 	
+	/**
+	 * Configura a chave que identificará a UK dos registros, podendo ser composta por colunas de mais de uma tabela ou <b>alias</b>.<br/>
+	 * Caso a chave seja composta por mais de uma coluna, as colunas deverão estar separadas por vírgula.
+	 * @param pUK
+	 */
 	private void pvSetUK(String pUK){
 		this.wUK = pvCreatePKString(pUK, null);
 		this.wUKs = pvCreatePKArray(pUK);
 	}
 
 	/**
-	 * Cria String da PK a partir da PK informada, padronizando o conteúdo
+	 * Cria String da PK a partir da PK informada, padronizando o conteúdo.
 	 * @param pPK
 	 * @return
 	 */
@@ -1325,7 +1376,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Retorna se coluna informada é uma UK
+	 * Retorna se coluna informada é uma UK.
 	 * @param pColumnName
 	 * @return
 	 */
@@ -1335,7 +1386,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Retorna se coluna informada é uma PK
+	 * Retorna se coluna informada é uma PK.
 	 * @param pColumnName
 	 * @return
 	 */
