@@ -2106,8 +2106,8 @@ public class DBSIO{
 	}
 
 	/**
-	 * Retorna se coluna está na lista de colunas que dever ser ignoradas
-	 * Normalmente são colunas vinculadas a trilhas de auditoria
+	 * Retorna se coluna está na lista de colunas que devem ser ignoradas.
+	 * Normalmente são colunas vinculadas a trilhas de auditoria.
 	 * @param pColumnName
 	 * @return
 	 */
