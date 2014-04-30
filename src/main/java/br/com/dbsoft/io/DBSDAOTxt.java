@@ -265,7 +265,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 * Indica se exclui os espaços no ínicio é no final do dos valores lidos do arquivo
 	 * @return
 	 */
-	public boolean setTrimValues() {
+	public boolean getTrimValues() {
 		return wTrimValues;
 	}
 
@@ -347,8 +347,6 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	public void setHeaderDefinesColumnsNames(boolean pHeaderDefinesColumnsNames) {
 		this.wHeaderDefinesColumnsNames = pHeaderDefinesColumnsNames;
 	}
-
-	
 
 	@Override
 	public final Collection<DBSColumn> getColumns() {
@@ -465,6 +463,16 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 			if (pvCountLines()){ //Pega a quantidade de linha todal do arquivo
 				if (pvOpen()){
 					if (wHeaderDefinesColumnsNames){
+						//Ignora as primeiras linhas, se assim for definido para fazer.
+						for (int xI = 0; xI < getNumberOfRowsToIgnoreHeader(); xI++) {
+							try {
+								wReader.readLine();
+							} catch (IOException e) {
+								this.close();
+								wLogger.error(e);
+								return false;
+							}
+						}
 						//Cria nome colunas a partir da primeira linha do arquivo
 						pvCreateColumns();
 					}else{//Se não houver demilitador, cria uma coluna que conterá todos os dados
@@ -737,7 +745,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 				this.close();
 				wLogger.error(e);
 				return null;
-		}
+			}
 		}else{
 			return null;
 		}
@@ -769,23 +777,24 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	//TODO
 	private void pvGetRow(String pLineData){
-		DBSRow xRow;
+		DBSRow 	xRow;
 		boolean xOk = true;
+		String 	xLineData = pLineData;
 		//Converte para ASCII
 		if (wConvertToASCII){ 
-			pLineData = DBSString.toASCII(pLineData);
+			xLineData = DBSString.toASCII(pLineData);
 		}
 		
 		//Move conteúdo integral da linha lida 
-		wLineData = pLineData;
+		wLineData = xLineData;
 		
 		xOk = pvFireEventBeforeRead();
 		
 		if (xOk){
 			if (wType==TYPE.FIXED_COLUMNS){
-				xRow = pvGetRowFixedColumn(pLineData);
+				xRow = pvGetRowFixedColumn(xLineData);
 			}else{
-				xRow = pvGetRowVariableColumn(pLineData);
+				xRow = pvGetRowVariableColumn(xLineData);
 			}
 			//Apaga a linha amarmazenada para evitar que o arquivo seja integramente lido para a memória. 
 			if(!wKeepData){
@@ -1028,5 +1037,4 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		
 	}
 
-	
 }

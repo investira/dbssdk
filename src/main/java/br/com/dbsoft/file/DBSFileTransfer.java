@@ -427,6 +427,7 @@ public class DBSFileTransfer{
 	         destinationChannel = new FileOutputStream(xDestino).getChannel();   
 	         sourceChannel.transferTo(0, sourceChannel.size(),   
 	                 destinationChannel);
+//	         destinationChannel.transferFrom(sourceChannel, 0, Long.MAX_VALUE);
 	         pvEventTransferring(); //EVENTO
 	     } finally {   
 	         if (sourceChannel != null && sourceChannel.isOpen())   
