@@ -57,6 +57,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	private List<DataModelClass>					wListDataModel = new ArrayList<DataModelClass>();
 	private String					wLineData;
 	private Boolean					wInterromper = false;
+	private List<Integer>			wListLinhasErro = new ArrayList<Integer>();
 
 	public DBSDAOTxt(){
 	}
@@ -215,6 +216,10 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	
 	public Boolean getInterromper() {return wInterromper;}
 	public void setInterromper(Boolean pInterromper) {wInterromper = pInterromper;}
+	
+	public List<Integer> getListLinhasErro() {
+		return wListLinhasErro;
+	}
 	
 	public <A> void setValue(int pColumnIndex, A pValue){
 		 this.setValue(this.getColumnName(pColumnIndex), pValue);
@@ -833,6 +838,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		//Se quantidade de colunas encontrada na leitura da linha for superior a quantidade de colunas definidar no cabeçalho....
 		if (wHeaderDefinesColumnsNames  &&
 			xColumns.size() > wColumnsHeader.size()){
+			getListLinhasErro().add(wCurrentRowFile+1);
 			wLogger.warn("Quantidade de colunas lidas é superior a quantidade de colunas definidas no cabeçalho.[Linha:" + (wCurrentRowFile+1) + "]\r" + pLine + "\r");
 		}else{
 			//Loop em todos os itens do array
@@ -1036,5 +1042,4 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
 		
 	}
-
 }

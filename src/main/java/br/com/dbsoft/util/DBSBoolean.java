@@ -28,7 +28,7 @@ public  class DBSBoolean {
 				return false;
 			}else if (xValue.equals("N")){
 				return false;
-			}else if (xValue.equals("S")){
+			}else if (xValue.equals("S") || xValue.equals("SIM") || xValue.equals("Aberto")){
 				return true;
 			} else {
 				return true;
