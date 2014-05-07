@@ -390,30 +390,6 @@ public class DBSIO{
 	}
 	
 	/**
-	 * Retorna os registros conforme a QuerySQL informada.<br/>
-	 * As colunas poderão ser acessadas como atributos de uma classe diretamente. 
-	 * Os nomes dos atributos são os próprios nomes definidos as colunas da QuerySQL.
-	 * Exemplo de código xhtlm <b>#{table.campo}</b><br/>
-	 * Não existe close para o ResultDataModel.
-	 * @param pConnection
-	 * @param pQuerySQL
-	 * @return
-	 * @throws DBSIOException
-	 */
-	@SuppressWarnings("unchecked")
-	public static DBSResultDataModel openResultDataModel2(Connection pConnection, String pQuerySQL) throws DBSIOException{
-		ResultSet 		xResultSet;
-		Result			xResult;
-		DBSResultDataModel xResultDataModel;
-		xResultSet = DBSIO.openResultSet(pConnection, pQuerySQL);
-		xResult = ResultSupport.toResult(xResultSet);
-		xResultDataModel = new DBSResultDataModel(xResult.getRows());
-		xResult = null;
-		DBSIO.closeResultSet(xResultSet);
-		return xResultDataModel;
-	}
-	
-	/**
 	 * Retorna Resulset com o MetaData da Tabela
 	 * Nomes válidos das colunas 
 	 * TABLE_SCHEM
