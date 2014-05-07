@@ -4,6 +4,7 @@ import java.util.SortedMap;
 
 import javax.faces.model.ArrayDataModel;
 
+
 /**
  * @author ricardo.villar
  * Dados recuperados do banco e organizados como array.<br/>
@@ -20,3 +21,14 @@ public class DBSResultDataModel extends ArrayDataModel<SortedMap<String,Object>>
 		super(pRows);
 	}
 }
+
+//public class DBSResultDataModel extends ResultDataModel {
+//
+//	public DBSResultDataModel() {
+//		super();
+//	}
+//	
+//	public DBSResultDataModel(Result pRows) {
+//		super(pRows);
+//	}
+//}
