@@ -1419,6 +1419,10 @@ public class DBSIO{
 			wLogger.error("executeSQL:SQL nulo.");
 			return 0;
 		}
+		if (pSQL.contains("(+)")){
+			wLogger.error("executeSQL:Join precisa ser padrão ANSI:" + pSQL);
+			return 0;
+		}
 		int xCount=0;
 		Statement xST = null;
 		try {
