@@ -4,7 +4,7 @@
 * Manipulação de String
 * Controle de tarefa assíncrona
 * Manipulação de dados em arquivos
-* Manipulação de dados em banco de dados
+* Manipulação de dados em banco de dados(SQL Ansi)
 * Criptografia de senhas
 * Formatação de números, datas, CNPJ e CPF entre outros
 * Transferência de arquivos
