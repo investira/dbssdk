@@ -185,7 +185,7 @@ public class DBSIO{
 	 * @return true = Sem erro ; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static Connection getConnection(DataSource pDS, int pTimeout, String pUserName, String pUserPassword) throws DBSIOException{
+	public static Connection getConnection(DataSource pDS, int pTimeout, String ppUserName, String pUserPassword) throws DBSIOException{
 //		System.out.println("CREATE CONNECTION *********************** INICIO");
 		boolean xOk = false;
 		int xI = 0;
@@ -194,7 +194,7 @@ public class DBSIO{
 			xI ++;
 			try {
 				pDS.setLoginTimeout(1);
-				xCn = pDS.getConnection(pUserName, pUserPassword);  
+				xCn = pDS.getConnection(ppUserName, pUserPassword);  
 				xCn.setAutoCommit(false);
 				return xCn;
 			} catch (SQLException e) {
