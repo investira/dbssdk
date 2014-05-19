@@ -31,19 +31,9 @@ public abstract class DBSPushBean  {
 	
 
 	@PreDestroy
-	@Override
-	protected void finalize() throws Throwable {
-//		Iterator<AsyncContext> xIterator = wOnGoingRequests.iterator(); 
-//
-//		while (xIterator.hasNext()) {
-//			AsyncContext xAc = xIterator.next();
-//			try{
-//				xAc.complete(); 
-//			}catch(Exception ignore){}
-//		}
+	protected void finalizeClass() {
 		System.out.println("DBSPUSHBEAN FINALIZE");
 		wOnGoingRequests.clear();
-		super.finalize();
 	}
 	
 	public Queue<AsyncContext> getOnGoingRequests() {
