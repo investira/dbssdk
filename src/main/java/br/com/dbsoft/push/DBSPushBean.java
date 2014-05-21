@@ -31,9 +31,20 @@ public abstract class DBSPushBean  {
 	
 
 	@PreDestroy
-	protected void finalizeClass() {
-		System.out.println("DBSPUSHBEAN FINALIZE");
-		wOnGoingRequests.clear();
+	public void finalizeClass() {
+		try{
+			//Finaliza todas os response armazenados
+			Iterator<AsyncContext> xIt= wOnGoingRequests.iterator();
+			while (xIt.hasNext()){
+				AsyncContext xA = xIt.next();
+				((HttpServletResponse) xA.getResponse()).setStatus(500);
+				xA.complete();
+				xA.dispatch();
+			}
+			wOnGoingRequests.clear();
+		}catch(Exception ignore){
+			//Ignora o exception 
+		}
 	}
 	
 	public Queue<AsyncContext> getOnGoingRequests() {
