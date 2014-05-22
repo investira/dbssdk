@@ -7,7 +7,6 @@ import java.sql.Date;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
@@ -35,6 +34,67 @@ public class DBSDAOTxtTest {
 //		assertTrue("TESTE ESPERAVA TRUE", xDAO.loadFile());
 //		//System.out.println(xDAO.getValue(1));
 //	}
+	
+//	@Test
+	public void test_append() {
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAOWrite = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/new.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+	    if (xDAO.loadFile()){
+	    	System.out.println("ABRIU");
+	    	while (xDAO.moveNextRow()){
+	    		System.out.println(xDAO.getRowValues());
+	    		xDAOWrite.append(xDAO.getRowValues().toString());
+	    	}
+	    }else{
+	    	System.out.println("NÃO ABRIU");
+	    }
+//	    
+//		if (xDAOTxt.loadFile()) {
+//	    	xDAOTxtWriter.open();
+//    		xDAOTxt.moveBeforeFirstRow();
+//    		while (xDAOTxt.moveNextRow()) {
+//    			xRowIndex++;
+//    			xLinha = DBSString.toString(xDAOTxt.getRowValues());
+//    			if (xRowIndex == 3) {
+//    				//Acrescenta um Delimitador ao final da linha do Header
+//    				xLinha = xLinha + DELIMITADOR;
+//    			}
+//    			xDAOTxtWriter.append(xLinha + "\n");
+//    		}
+//    		xDAOTxtWriter.close();
+//    		xDAOTxt.close();
+//	    } else {
+//	    	xOk = false;
+//	    	
+//	    }
+	}
+
+//	@Test
+	public void test_loop1() {
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+	    if (xDAO.loadFile()){
+	    	System.out.println("ABRIU");
+	    	while (xDAO.moveNextRow()){
+	    		System.out.println(xDAO.getRowValues());
+	    	}
+	    }else{
+	    	System.out.println("NÃO ABRIU");
+	    }
+	}
+
+//	@Test
+	public void test_loop2() {
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+	    if (xDAO.open()){
+	    	System.out.println("ABRIU");
+	    	while (xDAO.readLine()){
+	    		System.out.println(xDAO.getRowValues());
+	    	}
+		    xDAO.close();
+	    }else{
+	    	System.out.println("NÃO ABRIU");
+	    }
+	}
 	
 	//@Test
 	public void test_readAll() throws UnsupportedEncodingException {
@@ -128,7 +188,7 @@ public class DBSDAOTxtTest {
 		assertTrue("TESTE ESPERAVA TRUE", xDAORead.loadFile());
 	}
 	
-	@Test
+//	@Test
 	public void test_ANDIMA() throws UnsupportedEncodingException {
 		DBSDAOTxt<Object> xDAOTxt = new DBSDAOTxt<Object>("/Users/jose.avila/Downloads/ifeed/ANDIMA/Ms131101.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1,TYPE.DELIMITED_COLUMNS,"@",false);
 		xDAOTxt.setConvertToASCII(true);

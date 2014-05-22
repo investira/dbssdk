@@ -47,7 +47,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	private boolean 				wIsOpened = false;
 	private long					wFileSize=0;
 	private boolean					wConvertToASCII=false;
-	private int						wCurrentRow; //Posição dentro do wList
+	private int						wCurrentRow = -1; //Posição dentro do wList
 	private int						wCurrentRowFile; //Posição dentro do Arquivo
 	private int						wRowsCountFile = -1;
 	private int						wNumberOfRowsToIgnoreHeader=0;
@@ -385,7 +385,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Retorna o conteúdo integral da linha atual
+	 * Retorna o conteúdo integral da linha atual.
 	 * @param pColumnIndex
 	 * @return
 	 */
@@ -394,7 +394,15 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	/**
-	 * Recupela o nome da coluna a partir do index
+	 * Retorna conteúdo integral da linha lida.
+	 * @return
+	 */
+	public String getLineData(){
+		return wLineData;
+	}
+
+	/**
+	 * Recupela o nome da coluna a partir do index.
 	 * @param pColumnIndex
 	 * @return
 	 */
@@ -412,8 +420,9 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	/**
-	 * Cria arquivo(se não existir) e adiciona ao final os dados informados
-	 * @param pString Dados para serem adicionados ao final do arquivo
+	 * Cria arquivo(se não existir) e adiciona, ao final, os dados informados.<br/>
+	 * Não utilizar os métodos <b>open() ou close()</b>.
+	 * @param pString Dados para serem adicionados ao final do arquivo.
 	 * @return true = sem erro; false = com erro
 	 */
 	public boolean append(String pString){
@@ -425,6 +434,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		try {
 			OutputStream xOut = Files.newOutputStream(xFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 		    xOut.write(xData, 0, xData.length);
+		    xOut.close(); // 22/05/2014 Incluido por Ricardo
 		    return true;
 		} catch (IOException e) {
 			wLogger.error(e);
@@ -458,7 +468,10 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
     }
 
 	/**
-	 * Abre arquivo para leitura
+	 * Abre arquivo para leitura.<br/>
+	 * Utilize este método para ler o arquivo sequencialmente via o método <b>readLine()</b>.<br/>
+	 * É necessário fechar o arquivo após a leitura utilizando o método <b>close</b>.
+	 * Caso queira navegar pelos registros com moveFirst, movePrivious, etc, utilize o método loadFile ao invés do open.
 	 * @return true=sem erro
 	 */
     @Override
@@ -506,7 +519,10 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 
 
 	/**
-	 * Abre, le arquivo até o fim e fecha
+	 * Carrega todo conteúdo do arquivo em memória.<br/>
+	 * Utilizar o método <b>getRowValues()</b> ou <b>getLineData()</b> para recuperar o conteúdo da linha atual.
+	 * Este método, permite a nagevação entre os registro com moveNext, moveFirst, etc.
+	 * Não utilizar os métodos <b>open(), close(), readLine()</b>.
 	 * @return True = Sem erro; False = Com erro
 	 * @throws DBSIOException 
 	 */
@@ -532,8 +548,12 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Le linha 
-	 * @return True = Sem erro; False = Com erro
+	 * Le próxima linha.<br/>
+	 * Este método deve ser utilizado quando arquivo for aberto via o método <b>open()</b> e se deseja ler o seu conteúdo sequencialmente.<br/>
+	 * Utilize o retorno deste método para saber se foi lido novo registro com sucesso. 
+	 * É importante fechar o arquivo via o método <b>close()</b> após finalizado a utilização deste arquivo.<br/>
+	 * Para navegar pelos registros utilizando moveNext, moveFirst, etc, utilize <b>loadFile</b>.
+	 * @return True = Novo registro ligo; False = Não há novo registro.
 	 * @throws DBSIOException 
 	 */
 	public boolean readLine(){
@@ -570,75 +590,89 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	/**
-	 * Move par a linha antes do inicio
+	 * Move par a linha antes do inicio.
+	 * É necessário que arquivo tenha lido via <b>loadFile</b> para utilizar este método. Não utilizar o open/close/readLine.
 	 */	
 	@Override
 	public void moveBeforeFirstRow(){
-		wCurrentRow = -1;
-		pvSetRowPositionChanged(true);
+		if (pvIsLoaded()){
+			wCurrentRow = -1;
+			pvSetRowPositionChanged(true);
+		}
 	}
 	
 	/**
-	 * Move para a primeira linha
+	 * Move para a primeira linha.
+	 * É necessário que arquivo tenha lido via <b>loadFile</b> para utilizar este método. Não utilizar o open/close/readLine.
 	 * @return True = moveu; False=Não moveu
 	 */
 	@Override
 	public boolean moveFirstRow(){
 		boolean xB = false;
-		if (wListRow.size()>0){
-			wCurrentRow = 0;
-			xB = true;
+		if (pvIsLoaded()){
+			if (wListRow.size()>0){
+				wCurrentRow = 0;
+				xB = true;
+				pvSetRowPositionChanged(xB);
+			}
 		}
-		pvSetRowPositionChanged(xB);
 		return xB;
 	}
 	
 
 	/**
-	 * Move para a última linha
+	 * Move para a última linha.
+	 * É necessário que arquivo tenha lido via <b>loadFile</b> para utilizar este método. Não utilizar o open/close/readLine.
 	 * @return True = moveu; False=Não moveu
 	 */
 	@Override
 	public boolean moveLastRow(){
 		boolean xB = false;
-		if (wListRow.size()>0){
-			wCurrentRow = wListRow.size()-1;
-			xB = true;
+		if (pvIsLoaded()){
+			if (wListRow.size()>0){
+				wCurrentRow = wListRow.size()-1;
+				xB = true;
+				pvSetRowPositionChanged(xB);
+			}
 		}
-		pvSetRowPositionChanged(xB);
 		return xB;
 	}	
 
 	/**
-	 * Move para a linha anterior
+	 * Move para a linha anterior.
+	 * É necessário que arquivo tenha lido via <b>loadFile</b> para utilizar este método. Não utilizar o open/close/readLine.
 	 * @return True = moveu; False=Não moveu
 	 */
 	@Override
 	public boolean movePreviousRow(){
 		boolean xB = false;
-		if (wCurrentRow > wListRow.size()-1){
-			wCurrentRow--;
-			xB = true;
+		if (pvIsLoaded()){
+			if (wCurrentRow > wListRow.size()-1){
+				wCurrentRow--;
+				xB = true;
+				pvSetRowPositionChanged(xB);
+			}
 		}
-		pvSetRowPositionChanged(xB);
 		return xB;
 	}	
 	
 	/**
-	 * Move para a linha posterior
+	 * Move para a linha posterior.<br/>
+	 * É necessário que arquivo tenha lido via <b>loadFile</b> para utilizar este método. Não utilizar o open/close/readLine.
 	 * @return True = moveu; False=Não moveu
 	 */
 	@Override
 	public boolean moveNextRow(){
 		boolean xB = false;
-		if (wCurrentRow < wListRow.size()-1){
-			wCurrentRow++;
-			xB = true;
+		if (pvIsLoaded()){
+			if (wCurrentRow < wListRow.size()-1){
+				wCurrentRow++;
+				xB = true;
+				pvSetRowPositionChanged(xB);
+			}
 		}
-		pvSetRowPositionChanged(xB);
 		return xB;
 	}	
-
 
 	@Override
 	public String getUK() {
@@ -697,7 +731,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	private boolean pvOpen(){
 		try{
-			wCurrentRow = 0;
+//			wCurrentRow = 0;
 			wCurrentRowFile = -1;
 			wListRow.clear();
 			wListDataModel.clear();
@@ -715,6 +749,20 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		}
 	}
 	
+
+	/**
+	 * Fecha arquivo
+	 */
+	private void pvClose(){
+		wCurrentRow = -1;
+		try {
+			wReader.close();
+			wIsOpened = false;
+		} catch (Exception e) {
+			wLogger.error(e);
+		}
+		
+	}
 
 	/**
 	 * Lê nova linha do arquivo ignorando a quantidade de linha do cabeçalho e do rodapé, conforme definição do usuário
@@ -767,14 +815,6 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		wColumnsHeader = DBSString.toArray(pvReadLine(), wColumnsDelimiter, false);
 	}
 
-	/**
-	 * Retorna conteúdo integral da linha lida.
-	 * @return
-	 */
-	public String getLineData(){
-		return wLineData;
-	}
-	
 	/**
 	 * A partir dos dados lidos, cria linha(DBSRow) e adiciona a lista(se keepData estive habilitado)
 	 * @param pLineData
@@ -863,7 +903,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	/**
-	 * Cria linha a partir dos dados lidos, separando os valores conforme o tamanho(size) definido para cada coluna
+	 * Cria linha a partir dos dados lidos, separando os valores conforme o tamanho(size) definido para cada coluna.
 	 * @param pLine
 	 */
 	private DBSRow pvGetRowFixedColumn(String pLine){
@@ -910,20 +950,6 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Fecha arquivo
-	 */
-	private void pvClose(){
-		wCurrentRow = -1;
-		try {
-			wReader.close();
-			wIsOpened = false;
-		} catch (Exception e) {
-			wLogger.error(e);
-		}
-		
-	}
-	
-	/**
 	 * Informa que posição atual do registro corrente foi alterada ou não
 	 * @param pChanged : true = foi alterada ; false = não foi altera
 	 * @throws DBSIOException 
@@ -948,6 +974,18 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 //				this.setValue(xColumn.getColumnName(), wListRow.get(wCurrentRow).getValue(xColumn.getColumnName()), true);
 //			}		
 		}
+	}
+
+	/**
+	 * Retorna se arquivo foi garradado via loadFile e contém registros.
+	 * @return
+	 */
+	private boolean pvIsLoaded(){
+		if (wListRow.size() == 0){
+			System.out.println(wFileName + "vázio ou não carregado via loadFile");
+			return false;
+		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
