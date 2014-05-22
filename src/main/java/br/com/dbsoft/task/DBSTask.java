@@ -1064,7 +1064,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			step(xE);
 			xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
-			wLogger.info("Step:" + getCurrentStep() + ":" + getCurrentStepName() + ":" + getRunStatus().getName());
+//			wLogger.info("Step:" + getCurrentStep() + ":" + getCurrentStepName() + ":" + getRunStatus().getName());
 			if (xOk){
 				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 				for (int xX=0; xX<wEventListeners.size(); xX++){
