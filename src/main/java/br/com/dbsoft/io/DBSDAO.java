@@ -944,6 +944,42 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
+		 * Exclui e retorna a quantidade de registros excluidos
+		 * @return Quantidade de linhas afetadas
+		 * @throws SQLException
+		 */
+		@Override
+		public synchronized final int executeDelete() throws DBSIOException{
+			if (wCommandColumns.size() == 0){
+				//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
+				wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
+	//			wLogger.error("DBSDAO:executeDelete: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
+				return 0;
+			}
+			int xCount = 0;
+			if (this.wConnection!=null){
+				if(pvFireEventBeforeDelete()){
+					pvCopyDataModelFieldsValueToCommandValue(wDataModel);
+					xCount = DBSIO.executeDAOCommand(this, DBSDAO.COMMAND.DELETE);
+					pvFireEventAfterDelete(true);
+					return xCount; 
+				}
+			}
+			pvFireEventAfterDelete(false);
+			return xCount;
+		}
+
+	/**
+	 * Atualiza registro 
+	 * @return Quantidade de linhas afetadas
+	 * @throws SQLException 
+	 */
+	@Override
+	public synchronized int executeUpdate() throws DBSIOException{
+		return executeUpdate("");
+	}
+
+	/**
 	 * Atualiza registros  
 	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' que já será gerada automaticamente. <br/>
 	 * @return Quantidade de linhas afetadas
@@ -972,52 +1008,20 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return 0;
 	}
 	
-	/**
-	 * Atualiza registro 
-	 * @return Quantidade de linhas afetadas
-	 * @throws SQLException 
-	 */
 	@Override
-	public synchronized int executeUpdate() throws DBSIOException{
-		return executeUpdate("");
-	}
-	
-	
-	 /**
-	 * Exclui e retorna a quantidade de registros excluidos
-	 * @return Quantidade de linhas afetadas
-	 * @throws SQLException
-	 */
-	@Override
-	public synchronized final int executeDelete() throws DBSIOException{
-		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeDelete: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
-			return 0;
-		}
-		int xCount = 0;
-		if (this.wConnection!=null){
-			if(pvFireEventBeforeDelete()){
-				pvCopyDataModelFieldsValueToCommandValue(wDataModel);
-				xCount = DBSIO.executeDAOCommand(this, DBSDAO.COMMAND.DELETE);
-				pvFireEventAfterDelete(true);
-				return xCount; 
-			}
-		}
-		pvFireEventAfterDelete(false);
-		return xCount;
+	public synchronized final int executeMerge() throws DBSIOException{
+		return executeMerge("");
 	}
 	
 	/**
 	 * Efetua o <b>UPDATE</b> considerando a PK, e caso não tenha sido encontrado registro algum, efetua o <b>INSERT</b>.<br/>
 	 * Isto otimiza a utilização do espaço do banco de dados em comparação um <b>DELETE</b> seguido de <b>INSERT</b>.<br/>
 	 * Porém aumenta o tempo de processamento, já que será efetuada a tentativa de <b>UPDATE</b> antes do <b>INSERT</b>.<br/>
+	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' que já será gerada automaticamente no caso do <b>UPDATE</b>.<br/>
 	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException 
 	 */
-	@Override
-	public synchronized final int executeMerge() throws DBSIOException{
+	public synchronized final int executeMerge(String pAdditionalSQLWhereCondition) throws DBSIOException{
 		if (wCommandColumns.size() == 0){
 			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
 			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
@@ -1029,7 +1033,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			pvCopyDataModelFieldsValueToCommandValue(wDataModel);
 			if (pvFireEventBeforeMerge()){
 				//Savepoint xS  = DBSIO.beginTrans(this.getConnection(), "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
-				xN = executeUpdate();//Atualiza registro, se existir
+				xN = executeUpdate(pAdditionalSQLWhereCondition);//Atualiza registro, se existir
 				if (xN==0){ //Se não foi atualiza registro algum...
 					xN = executeInsert(); //Insere novo registro
 				}
