@@ -2,6 +2,7 @@ package br.com.dbsoft.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -268,8 +269,10 @@ public class DBSFileTransfer{
 			} else {
 				xFile = pvDownloadFile(wURL, wDestino);
 			}
+		} catch (FileNotFoundException e) {
+			wLogger.error("Arquivo não encontrado:" + wURL);
 		} catch (IOException e) {
-			wLogger.error("Erro ao tentar efetuar o Download do arquivo.",e);
+			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
 		}
 		
 		//---- chama evento -----------------------
