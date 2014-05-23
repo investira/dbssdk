@@ -531,7 +531,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 
 	}
 	
-	protected boolean pvFireEventBeforeClose(){
+	protected boolean pvFireEventBeforeClose() {
 		DBSDAOEvent xE = new DBSDAOEvent(this);
 		//Chame o método((evento) local para quando esta classe for extendida
 		beforeClose(xE);
@@ -553,7 +553,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	}
 	
 	//INSERT
-	protected boolean pvFireEventBeforeInsert(){
+	protected boolean pvFireEventBeforeInsert() {
 		DBSDAOEvent xE = new DBSDAOEvent(this);
 		//Chame o método((evento) local para quando esta classe for extendida
 		beforeInsert(xE);
