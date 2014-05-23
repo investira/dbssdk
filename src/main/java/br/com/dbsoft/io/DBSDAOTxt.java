@@ -529,22 +529,29 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	public boolean loadFile(){
 		Boolean xOk = true;
 		//Indica que o processo será iniciado e verifica se deve continuar
-		if (this.open()){
-			String xLineData = null;
-			//Le linha, move para xLine. Se conteúdo não for nulo, incluir linha
-			while ((xLineData = pvReadLineIgnoringHeaderAndFooter()) != null ){
-				pvGetRow(xLineData);
-				if (getInterromper()) {
-					xOk = false;
-					break;
+		if (open()){
+			try {
+				String xLineData = null;
+				//Le linha, move para xLine. Se conteúdo não for nulo, incluir linha
+				while ((xLineData = pvReadLineIgnoringHeaderAndFooter()) != null ){
+					pvGetRow(xLineData);
+					if (getInterromper()) {
+						xOk = false;
+						break;
+					}
 				}
+				this.moveBeforeFirstRow();
+				return xOk;
+			}catch(Exception e){
+				wLogger.error(e);
+				return false;
+			}finally{
+				close();
 			}
-			this.close();
-			this.moveBeforeFirstRow();
-			return xOk;
 		}else{
 			return false;
 		}
+		
 	}
 
 	/**
@@ -927,24 +934,27 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Le arquivo até o fim, fecha para resetar a posição e abre novamente
+	 * Atualiza a variável local com a quantidade de linhas do arquivo.
+	 * Para isso lê arquivo até o fim, fecha para resetar a posição e abre novamente.
 	 * @return True = Sem erro; False = Com erro
 	 */
 	private boolean pvCountLines(){
 		wRowsCountFile = 0;
-		try{
-			if (pvOpen()){
+		
+		if (pvOpen()){
+			try{
 				//Le linha, move para xLine. Se conteúdo não for nulo, incluir linha
 				while (pvReadLine() != null ){
 					wRowsCountFile ++;
 				}
-				pvClose();
 				return true;
-			}else{
+			}catch(Exception e){
+				wLogger.error(e);
 				return false;
+			}finally{
+				pvClose();
 			}
-		}catch(Exception e){
-			wLogger.error(e);
+		}else{
 			return false;
 		}
 	}
