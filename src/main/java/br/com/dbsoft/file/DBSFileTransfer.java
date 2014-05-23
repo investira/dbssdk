@@ -196,7 +196,7 @@ public class DBSFileTransfer{
 	private final void setTransferState(TransferState pTransferState) {
 		if (wTransferState != pTransferState){
 			wTransferState = pTransferState;
-			pvEventTransferStateChanged();
+			pvFireEventTransferStateChanged();
 		}
 	}
 
@@ -250,7 +250,7 @@ public class DBSFileTransfer{
 	 */
 	public final synchronized File transfer() {
 		//---- chama evento -----------------------
-		pvEventStarted(); //Chama evento
+		pvFireEventStarted(); //Chama evento
 		//-----------------------------------------
 
 		URL xURL = null;
@@ -277,7 +277,7 @@ public class DBSFileTransfer{
 		
 		//---- chama evento -----------------------
 		
-		pvEventEnded();
+		pvFireEventEnded();
 		//-----------------------------------------
 		return xFile;
 	}
@@ -288,7 +288,7 @@ public class DBSFileTransfer{
 	 */
 	public final void interrupt() {
 		this.wInterrupted = true;
-		pvEventInterrupted();
+		pvFireEventInterrupted();
 	}
 	
 
@@ -374,7 +374,7 @@ public class DBSFileTransfer{
 					xDownloadedFile.write(xBuffer, 0, xBytesReaded);
 					xBuffer = new byte[153600];
 					//xBytesReadedTotal += xBytesReaded;
-					pvEventTransferring();//EVENTO
+					pvFireEventTransferring();//EVENTO
 				}
 			} catch (IOException e) {
 				wLogger.warn(e);
@@ -428,10 +428,11 @@ public class DBSFileTransfer{
 	     try {   
 	         sourceChannel = new FileInputStream(xSource).getChannel();   
 	         destinationChannel = new FileOutputStream(xDestino).getChannel();   
+
 	         sourceChannel.transferTo(0, sourceChannel.size(),   
 	                 destinationChannel);
 //	         destinationChannel.transferFrom(sourceChannel, 0, Long.MAX_VALUE);
-	         pvEventTransferring(); //EVENTO
+	         pvFireEventTransferring(); //EVENTO
 	     } finally {   
 	         if (sourceChannel != null && sourceChannel.isOpen())   
 	             sourceChannel.close();   
@@ -458,7 +459,7 @@ public class DBSFileTransfer{
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
-	private void pvEventStarted(){
+	private void pvFireEventStarted(){
 		setTimeStarted();
 		setTransferState(TransferState.STARTED);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
@@ -469,7 +470,7 @@ public class DBSFileTransfer{
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
-	private void pvEventEnded(){
+	private void pvFireEventEnded(){
 		setTimeEnded();
 		setTransferState(TransferState.ENDED);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
@@ -480,7 +481,7 @@ public class DBSFileTransfer{
 	/**
 	 * Chamada durante a execução
 	 */
-	private void pvEventTransferring(){
+	private void pvFireEventTransferring(){
 		getTimeEnded();
 		setTransferState(TransferState.TRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
@@ -491,7 +492,7 @@ public class DBSFileTransfer{
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
-	private void pvEventInterrupted(){
+	private void pvFireEventInterrupted(){
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).interrupted(this);
         }		
@@ -501,7 +502,7 @@ public class DBSFileTransfer{
 	 * Chamada quando a execução mudou de situação(Executando, Parado ou Agendada)
 	 * Local onde deverá ser implementado a atualização deste dado no banco de dados, se for o caso
 	 */
-	private void pvEventTransferStateChanged(){
+	private void pvFireEventTransferStateChanged(){
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).transferStateChanged(this);
         }		
