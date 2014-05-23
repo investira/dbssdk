@@ -1265,8 +1265,11 @@ public class DBSIO{
 			}
 		}
 		DBSDAO<Object> xDAO = new DBSDAO<Object>(pCn);
-		String xSQL = "Select " + pColumnName + 
-				       " From " + pTableName + " ";
+		String xSQL = "Select " + pColumnName;
+		
+		if (!pTableName.equals("")){
+			xSQL = xSQL + " From " + pTableName;
+		}
 		
 		if (!pCriterio.equals("")){
 			xSQL = xSQL + " Where " + pCriterio;
@@ -2129,6 +2132,12 @@ public class DBSIO{
 		if (getDataBaseProduct(pConnection) == DB_SERVER.ORACLE) {
 	        try {
 				xData = DBSDate.toDate(getDado(pConnection, "dual", "", "SYSDATE"));
+			} catch (DBSIOException e) {
+				wLogger.error("getServerDate", e);
+			}
+		} else if (getDataBaseProduct(pConnection) == DB_SERVER.MYSQL){
+			try {
+				xData = DBSDate.toDate(getDado(pConnection, "", "", "SYSDATE()"));
 			} catch (DBSIOException e) {
 				wLogger.error("getServerDate", e);
 			}
