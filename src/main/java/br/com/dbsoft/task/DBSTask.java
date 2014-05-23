@@ -18,6 +18,7 @@ import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.util.DBSBoolean;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
 import br.com.dbsoft.util.DBSIO;
@@ -140,9 +141,10 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private Double					wPercentageCompleted = 0D;
 	private String 					wUserName;
 	private String 					wUserPassword;
-	private Boolean					wReRun = true;
+	private boolean					wReRun = true;
 	private Long					wTimeStarted = 0L;
 	private int						wRetryOnErrorCount = 0;
+	private	boolean					wTransactionEnabled = true;
 
 
 	public DBSTask(){
@@ -257,23 +259,27 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public final void setId(int wId) {
 		this.wId = wId;
 	}
-//	/**
-//	 * Indica se configuração dos atributos foram efetuadas.
-//	 * Quando for verdadeiro, habilita as chamadas dos eventos quando houve troca de valor
-//	 * @return
-//	 */
-//	public final boolean isAllSet() {
-//		return wAllSet;
-//	}
 
-//	/**
-//	 * Indica se configuração dos atributos foram efetuadas
-//	 * @return
-//	 */
-//	public final void setAllSet(boolean pAllSet) {
-//		wAllSet = pAllSet;
-//	}
+	/**
+	 * Indica se será efetuado o controle de transação.<br/>.
+	 * Como padrão, cada etapa é executada dentro de uma transação(begin,commit(com sucesso) e rollback(com erro).<br/>
+	 * Será considerado erro no caso de <b>exception</b> e quando for for utilizado o <b>setOk(False)</b> no evento.
+	 * @param pTransactionEnabled
+	 */
+	public final void setTransationEnabled(Boolean pTransactionEnabled){
+		wTransactionEnabled = DBSBoolean.toBoolean(pTransactionEnabled);
+	}
 
+	/**
+	 * Indica se será efetuado o controle de transação.<br/>.
+	 * Como padrão, cada etapa é executada dentro de uma transação(begin,commit(com sucesso) e rollback(com erro).<br/>
+	 * Será considerado erro no caso de <b>exception</b> e quando for for utilizado o <b>setOk(False)</b> no evento.
+	 * @param pTransactionEnabled
+	 */
+	public final Boolean getTransationEnabled(){
+		return wTransactionEnabled;
+	}
+	
 	/**
 	 * Retorna nome da tarefa conforme definição do usuário
 	 * @return
@@ -1060,7 +1066,9 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		Boolean xOk = true;
 		try{
 			openConnection();
-			DBSIO.beginTrans(wConnection);
+			if (getTransationEnabled()){
+				DBSIO.beginTrans(wConnection);
+			}
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			step(xE);
 			xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
@@ -1075,7 +1083,9 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					Thread.yield();
 		        }
 			}
-			DBSIO.endTrans(wConnection, xOk);
+			if (getTransationEnabled()){
+				DBSIO.endTrans(wConnection, xOk);
+			}
 			return xE.isOk();
 		}catch(Exception e){
 			wLogger.error("Step:" + getCurrentStep() + ":" + getCurrentStepName(), e);
