@@ -19,16 +19,16 @@ public interface IDBSTaskEventsListener {
 	/**
 	 * Evento disparado antes de iniciar execução.<br/>
 	 * Podendo-se inibir a execução informando setOk(false) no evento.<br/>
-	 * Conexão com o banco encontra-se aberta.<br/>
+	 * Conexão com o banco encontra-se aberta.
 	 */
 	public void beforeRun(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
 	 * Evento disparado após finalizada a execução.<br/>
 	 * Evento <b>não</b> é disparado em caso de interrupção do usuário. 
-	 * Utilize o evento <b>interrupted</b> neste caso.
-	 * Conexão com o banco encontra-se aberta.<br/>
-	 * Para identificar qual o status da execução deve-se perquisar getRunStatus().
+	 * Utilize o evento <b>interrupted</b> neste caso.<br/>
+	 * Para identificar qual o status da execução deve-se perquisar getRunStatus().<br/>
+	 * Conexão com o banco encontra-se aberta.
 	 */
 	public void afterRun(DBSTaskEvent pEvent) throws DBSIOException;
 
@@ -48,7 +48,7 @@ public interface IDBSTaskEventsListener {
 	 * Deve-se chamar o método <b>setStepName</b> para definir o nome da etapa para posterior controle.<br/>
 	 * A etapa é efetuada dentro de uma transação com commit e rollback automático, 
 	 * a depender do status isOk() do evento.<br/>
-	 * Para desativar o controle automático de transação, configure o atributo <b>setTransactionEnabled(false)</b>.  
+	 * Para desativar o controle automático de transação, configure o atributo <b>setTransactionEnabled(false)</b>.<br/> 
 	 * Conexão com o banco encontra-se aberta.<br/>
 	 */
 	public void step(DBSTaskEvent pEvent) throws DBSIOException;
