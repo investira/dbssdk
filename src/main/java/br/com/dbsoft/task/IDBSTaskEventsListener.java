@@ -41,12 +41,14 @@ public interface IDBSTaskEventsListener {
 	/**
 	 * Evento disparado a cada etapa.<br/>
 	 * Neste evento, deve-se informar a quantidadede de subetapas contém 
-	 * a etapa em execução informada por <b>getCurrentStep()</b>, utilizando <b>setSubSteps</b> e chamar <b>endSubStep()</b> ao final de cada subetapa.<br/>
+	 * a etapa em execução informada por <b>getCurrentStep()</b>, utilizando <b>setSubSteps</b> 
+	 * e chamar <b>endSubStep()</b> ao final de cada subetapa.<br/>
 	 * As subestapas deverão ser implementadas/chamadas dentro deste evento(step).<br/>
 	 * Caso não existam subetapas, será considerado uma única subetapa.<br/>
-	 * Deve-se chamar o método <b>setStepName<b/> para definir o nome da etapa para posterior controle.<br/>
+	 * Deve-se chamar o método <b>setStepName</b> para definir o nome da etapa para posterior controle.<br/>
 	 * A etapa é efetuada dentro de uma transação com commit e rollback automático, 
 	 * a depender do status isOk() do evento.<br/>
+	 * Para desativar o controle automático de transação, configure o atributo <b>setTransactionEnabled(false)</b>.  
 	 * Conexão com o banco encontra-se aberta.<br/>
 	 */
 	public void step(DBSTaskEvent pEvent) throws DBSIOException;
