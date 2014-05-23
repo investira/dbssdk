@@ -233,7 +233,7 @@ public class DBSFile {
 		
 		@SuppressWarnings("rawtypes")
 		Enumeration xFileZipedElements;
-		ZipFile xFileZiped;
+		ZipFile xFileZiped = null;
 		ZipEntry xFileZipedObject = null;
 		try {
 			xFileZiped = new ZipFile(pFileZiped);
@@ -250,10 +250,17 @@ public class DBSFile {
 						new BufferedOutputStream(new FileOutputStream(pDiretorio + xFileZipedObject.getName())));
 
 			}
-			xFileZiped.close();
 		} catch (IOException e) {
 			wLogger.error("Erro ao descompactar", e);
 			return null;
+		}finally{
+			try {
+				if (xFileZiped!=null){
+					xFileZiped.close();
+				}
+			} catch (IOException e) {
+				wLogger.error("Erro ao descompactar:close", e);
+			}
 		}
 		return new File(pDiretorio + xFileZipedObject.getName());
 	}
