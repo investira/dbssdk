@@ -186,14 +186,13 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */
 	public static Connection getConnection(DataSource pDS, int pTimeout, String pUserName, String pUserPassword) throws DBSIOException{
-//		System.out.println("CREATE CONNECTION *********************** INICIO");
 		boolean xOk = false;
 		int xI = 0;
 		Connection xCn = null;
 		while (!xOk){
 			xI ++;
 			try {
-				pDS.setLoginTimeout(1);
+				pDS.setLoginTimeout(0);// 0 = Usa timeout do servidor
 				xCn = pDS.getConnection(pUserName, pUserPassword);  
 				xCn.setAutoCommit(false);
 				return xCn;
