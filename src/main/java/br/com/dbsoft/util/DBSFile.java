@@ -592,8 +592,14 @@ public class DBSFile {
 	 */
 	public static boolean mkDir(File pFile){
 		try{
-			File xDir = new File(pFile.getParent());
-			return xDir.mkdirs();
+			if (pFile != null 
+			 && pFile.getParent() != null){
+				File xDir = new File(pFile.getParent());
+				return xDir.mkdirs();
+			}else{
+				wLogger.error("Diretório a ser criado não foi informado.");
+				return false;
+			}
 		}catch(Exception e){
 			wLogger.error(e);
 			return false;
