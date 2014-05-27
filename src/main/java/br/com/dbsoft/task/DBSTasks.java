@@ -147,7 +147,9 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 	}
 
 	/**
-	 * Finaliza a tarefa indicada pelo pId
+	 * Interrompe e finaliza a tarefa.
+	 * Destativa o agendamento(se houver) e exclui os listeners.
+	 * Para ativar novamente esta tarefa, será necessário criar uma nova instancia.
 	 * @param pId Chave que indentifica a tarefa
 	 */
 	public synchronized final void killTask(String pId){
@@ -207,7 +209,9 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 	}
 
 	/**
-	 * Parar todas as tarefas.
+	 * Interrompe e finaliza todas tarefas.
+	 * Destativa o agendamento(se houver) e exclui os listeners.
+	 * Para ativar novamente esta tarefa, será necessário criar uma nova instancia.
 	 */
 	public synchronized final void killTasks(){
 		for (TaskClass xTarefa : wTasks.values()) {

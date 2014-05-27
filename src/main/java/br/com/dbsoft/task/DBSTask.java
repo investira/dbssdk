@@ -587,6 +587,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 
 	/**
 	 * Interrompe e finaliza a tarefa.
+	 * Destativa o agendamento(se houver) e exclui os listeners.
+	 * Para ativar novamente esta tarefa, será necessário criar uma nova instancia.
 	 */
 	public synchronized final void kill() {
 		try{
