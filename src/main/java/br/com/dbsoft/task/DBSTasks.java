@@ -178,21 +178,21 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 		}
 	}
 	
-	/**
-	 * Finaliza a tarefa indicada pelo pId
-	 * @param pId Chave que indentifica a tarefa
-	 */
-	public synchronized final void destroyTask(String pId){
-		try{
-			if (wTasks.containsKey(pId)){
-				wTasks.get(pId).destroy();
-			}else{
-				wLogger.error("Tarefa #" + pId + " inexistente");
-			}
-		}catch(Exception e){
-			wLogger.error(e);
-		}
-	}
+//	/**
+//	 * Finaliza a tarefa indicada pelo pId
+//	 * @param pId Chave que indentifica a tarefa
+//	 */
+//	public synchronized final void destroydTask(String pId){
+//		try{
+//			if (wTasks.containsKey(pId)){
+//				wTasks.get(pId).destroy();
+//			}else{
+//				wLogger.error("Tarefa #" + pId + " inexistente");
+//			}
+//		}catch(Exception e){
+//			wLogger.error(e);
+//		}
+//	}
 	
 	/**
 	 * Executar todas as tarefas
@@ -207,7 +207,7 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 	}
 
 	/**
-	 * Parar todas as tarefas
+	 * Parar todas as tarefas.
 	 */
 	public synchronized final void killTasks(){
 		for (TaskClass xTarefa : wTasks.values()) {
@@ -216,7 +216,11 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 	}
 	
 	/**
-	 * Interrompter todas as tarefas
+	 * Interrompter todas as tarefas, não executando a próxima etapa(se houve).
+	 * A interrupção não acaba com o thread da tarefa, 
+	 * somente seta a variável local indicando que a tarefa foi interrompida.
+	 * Cabe ao usuário testar se a tarefa foi interrompida dentro da etapa 
+	 * que estiver em execução.
 	 * @throws DBSIOException 
 	 */
 	public synchronized final void interruptTasks() throws DBSIOException{
@@ -225,14 +229,14 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 		}
 	}
 	
-	/**
-	 * Destroi todas as tarefas
-	 */
-	public synchronized final void destroyTasks(){
-		for (TaskClass xTarefa : wTasks.values()) {
-			xTarefa.destroy();
-		}
-	}
+//	/**
+//	 * Destroi todas as tarefas
+//	 */
+//	public synchronized final void destroyTasks(){
+//		for (TaskClass xTarefa : wTasks.values()) {
+//			xTarefa.destroy();
+//		}
+//	}
 
 	/**
 	 * Indica se existe alguma tarefa em execução

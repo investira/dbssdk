@@ -167,10 +167,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		pvFireEventInitializeTask();
 	}
 	
-	public final void destroy(){
-		pvFinalize();
-	}
-	
 	/**
 	 * Classe que receberá as chamadas dos eventos quando ocorrerem.<br/>
 	 * Para isso, classe deverá implementar a interface DBSTarefa.TarefaEventos<br/>
@@ -590,23 +586,28 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	/**
-	 * Finaliza a tarefa e fecha a conexão se estiver aberta
+	 * Interrompe e finaliza a tarefa.
 	 */
 	public synchronized final void kill() {
 		try{
 			if (wRunThread != null){
 				wRunThread.kill();
 			}
+			interrupt();
 			pvDesativaAgendamento();
 			pvSetTaskState(pvGetNotRunnigTaskState());
+			removeAllEventListeners();
 		}catch(Exception e){
 			wLogger.error(getName(), e);
-		}finally{
 		}
 	}
 	
 	/**
-	 * Se a tarefa estiver em execução, interrompe com status de interrompido e fecha a conexão se estiver aberta
+	 * Interrompter a tarefa, não executando a próxima etapa(se houve).
+	 * A interrupção não acaba com o thread da tarefa, 
+	 * somente seta a variável local indicando que a tarefa foi interrompida.
+	 * Cabe ao usuário testar se a tarefa foi interrompida dentro da etapa 
+	 * que estiver em execução.
 	 * @throws DBSIOException 
 	 */	
 	public synchronized final void interrupt() throws DBSIOException{
@@ -921,7 +922,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	@PreDestroy
 	private void pvFinalize() {
 		pvFireEventFinalizeTask();
-		removeAllEventListeners();
+		kill();
 		try {
 			super.finalize();
 		} catch (Throwable ignore) {}
