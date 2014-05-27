@@ -213,7 +213,6 @@ public class DBSTasks<TaskClass extends DBSTask<?>> {
 		for (TaskClass xTarefa : wTasks.values()) {
 			xTarefa.kill();
 		}
-		loadTasks();
 	}
 	
 	/**

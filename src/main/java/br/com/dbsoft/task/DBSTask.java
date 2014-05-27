@@ -764,7 +764,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				wTimer.schedule(new RunByTimer(), wScheduleDate);
 				//COnfigura como agendado.
 				pvSetTaskState(TaskState.SCHEDULED);
-				wLogger.info(getName() + ":Agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
+				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
 			}else{
 				wLogger.error("Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
 						" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
@@ -1006,7 +1006,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 //		System.out.println("Tarefa " + getName() + ":BEFORE RUN:" + wRunThread.getId());
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		try{
-			wLogger.info("BeforeRun----------------------");
+//			wLogger.info("BeforeRun----------------------");
 			openConnection();
 			
 			//Chame o metodo(evento) local para quando esta classe for extendida
@@ -1039,7 +1039,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 //		System.out.println("Tarefa " + getName() + ":AFTER RUN:" + wRunThread.getId());
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		try{
-			wLogger.info("AfterRun---------------------" + ":" + getLastRunStatus().getName());
+//			wLogger.info("AfterRun---------------------" + ":" + getLastRunStatus().getName());
 			openConnection();
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterRun(xE);
