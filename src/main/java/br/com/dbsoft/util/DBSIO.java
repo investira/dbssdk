@@ -164,11 +164,11 @@ public class DBSIO{
 		while (!xOk){
 			xI ++;
 			try {
-				pDS.setLoginTimeout(1);
+				pDS.setLoginTimeout(0); // 0 = Usa timeout do servidor
 				xCn = pDS.getConnection();
 				xCn.setAutoCommit(false);
 				return xCn;
-			} catch (SQLException e) {
+			} catch (Throwable e) {
 				wLogger.error("Error getConnection1:" + e.getLocalizedMessage());
 				pvGetConnectionTimeout(xCn, e, pTimeout, xI);
 			}
@@ -196,7 +196,7 @@ public class DBSIO{
 				xCn = pDS.getConnection(pUserName, pUserPassword);  
 				xCn.setAutoCommit(false);
 				return xCn;
-			} catch (SQLException e) {
+			} catch (Throwable e) {
 				wLogger.error("Error getConnection:" + e.getLocalizedMessage()); 
 				pvGetConnectionTimeout(xCn, e, pTimeout, xI); 
 			}
@@ -274,6 +274,17 @@ public class DBSIO{
 	 * @throws DBSIOException
 	 */
 	public static void throwIOException(SQLException pException, Connection pConnection) throws DBSIOException{
+		SQLException xE = DBSError.getFirstSQLException(pException, pException);
+		throw new DBSIOException(xE, pConnection);
+	}
+	
+	/**
+	 * Dispara novo DBSIOException, criado a partir da Exception informada
+	 * @param pException
+	 * @param pConnection
+	 * @throws DBSIOException
+	 */
+	public static void throwIOException(Throwable pException, Connection pConnection) throws DBSIOException{
 		SQLException xE = DBSError.getFirstSQLException(pException, pException);
 		throw new DBSIOException(xE, pConnection);
 	}
@@ -2587,7 +2598,7 @@ public class DBSIO{
 	//######################################################################################################### 
 	//## Private Methods                                                                                      #
 	//#########################################################################################################
-	private static void pvGetConnectionTimeout(Connection pConnection, SQLException e, int pTimeout, int pTimes) throws DBSIOException{
+	private static void pvGetConnectionTimeout(Connection pConnection, Throwable e, int pTimeout, int pTimes) throws DBSIOException{
 		if (pTimeout == 0) {
 			throwIOException(e, pConnection);
 		}else{
