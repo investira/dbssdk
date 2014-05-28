@@ -2,28 +2,19 @@ package br.com.dbsoft.io;
 
 public class DBSDAOTxtTesteModel {
 
-	private String CODIGO;
-	private String DENOMINACAO_SOCIAL;
-	private String DENOMINACAO_COMERCIAL;
-
-	public String getCODIGO() {
-		return CODIGO;
+	private char[] TIPO = new char[10]; 
+	private char[] FILLER = new char[20];
+	
+	public char[] getTIPO() {
+		return TIPO;
 	}
-	public void setCODIGO(String pCODIGO) {
-		this.CODIGO = pCODIGO;
+	public void setTIPO(char[] pTIPO) {
+		TIPO = pTIPO;
 	}
-	public String getDENOMINACAO_SOCIAL() {
-		return DENOMINACAO_SOCIAL;
+	public char[] getFILLER() {
+		return FILLER;
 	}
-	public void setDENOMINACAO_SOCIAL(String pDENOMINACAO_SOCIAL) {
-		this.DENOMINACAO_SOCIAL = pDENOMINACAO_SOCIAL;
+	public void setFILLER(char[] pFILLER) {
+		FILLER = pFILLER;
 	}
-
-	public String getDENOMINACAO_COMERCIAL() {
-		return DENOMINACAO_COMERCIAL;
-	}
-	public void setDENOMINACAO_COMERCIAL(String pDENOMINACAO_COMERCIAL) {
-		DENOMINACAO_COMERCIAL = pDENOMINACAO_COMERCIAL;
-	}
-
 }

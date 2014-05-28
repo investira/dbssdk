@@ -1,7 +1,10 @@
 package br.com.dbsoft.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -64,6 +67,19 @@ public class DBSFileTest {
 	public void testaSeExiste() {
 		assertTrue(DBSFile.exists("/home/jose_addario/teste"));
 		System.out.println(DBSFile.exists("/home/jose_addario/teste"));
+	}
+	
+	@Test
+	public void testaPath(){
+		assertEquals(DBSFile.getPath("http://www.abcd.com/cs"), "cs/");
+		assertEquals(DBSFile.getPath("/abcd/cs"), "abcd/cs/");
+		assertEquals(DBSFile.getPath("/abcd/cs/"), "abcd/cs/");
+		assertEquals(DBSFile.getPath("abcd/cs/"), "abcd/cs/");
+		assertEquals(DBSFile.getPath("http://www.abcd.com"), "/");
+		assertEquals(DBSFile.getPath(""), "/");
+		assertEquals(DBSFile.getPath("abcd//cs//"), "abcd/cs/");
+		assertEquals(DBSFile.getPath("//e"), "/");
+		assertEquals(DBSFile.getPath("e//"), "e/");
 	}
 
 }
