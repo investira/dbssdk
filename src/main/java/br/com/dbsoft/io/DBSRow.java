@@ -271,7 +271,7 @@ public class DBSRow implements Serializable {
 	}
 	
 	/**
-	 * Retorna o conteúdo integral da linha atual.
+	 * Retorna o conteúdo integral da linha atual, concatenando o delimitador no valor das colunas
 	 * @param pColumnDelimiter Delimitador que será utilizado para separar as colunas
 	 * @return
 	 */

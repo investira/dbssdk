@@ -402,7 +402,53 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	/**
-	 * Retorna conteúdo integral da linha lida.
+	 * Efetua um set nos valores da linha corrente.
+	 * Estes valores não são gravados, apenas é feita a modificação em wListRow.
+	 * @param pLineData
+	 */
+	public void setRowValues(String pLineData){
+		wListRow.get(wCurrentRow).setRowValues(pLineData, wColumnsDelimiter);
+	}
+	
+	/**
+	 * Retorna a linha corrente como DBSRow
+	 * @return
+	 */
+	public DBSRow getRow() {
+		return wListRow.get(wCurrentRow);
+	}
+	
+	/**
+	 * Adiciona um DBSRow à lista wListRow.
+	 * @param pRow
+	 * @return false se não conseguiu adicioanar
+	 */
+	public boolean addRow(DBSRow pRow) {
+		boolean xOk = false;
+		if (!DBSObject.isEmpty(pRow)) {
+			wListRow.add(pRow);
+			wCurrentRow = wListRow.size()-1;
+			xOk = true;
+		}
+		return xOk;
+	}
+	
+	/**
+	 * Quebra a linha em colunas do DBSRow e adiciona no wListRow.
+	 * @param pLineData Linha crua.
+	 * @return DBSRow
+	 */
+	public DBSRow addRow(String pLineData) {
+		DBSRow xRow = null;
+		if (!DBSObject.isEmpty(pLineData)) {
+			xRow = pvGetRowVariableColumn(pLineData);
+			addRow(xRow);
+		}
+		return xRow;
+	}
+	
+	/**
+	 * Retorna conteúdo integral da linha crua lida.
 	 * @return
 	 */
 	public String getLineData(){
@@ -856,22 +902,24 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 			}else{
 				xRow = pvGetRowVariableColumn(xLineData);
 			}
-			//Apaga a linha amarmazenada para evitar que o arquivo seja integramente lido para a memória. 
-			if(!wKeepData){
-				wListRow.clear();
-				wListDataModel.clear();
-			}
-			DataModelClass xDataModel = this.createDataModel();
-			if (xDataModel!=null){
-				for (int xX=0; xX< xRow.getColumns().size(); xX++){
-					//Copia o valor para o respectivo atributo no DataModel
-					DBSIO.setDataModelFieldsValue(xDataModel, xX, xRow.getColumn(xX).getValue());
+			if (!DBSObject.isEmpty(xRow)) {
+				//Apaga a linha amarmazenada para evitar que o arquivo seja integramente lido para a memória. 
+				if(!wKeepData){
+					wListRow.clear();
+					wListDataModel.clear();
 				}
-				//Adiciona linha como DataModel
-				wListDataModel.add(xDataModel);
+				DataModelClass xDataModel = this.createDataModel();
+				if (xDataModel!=null){
+					for (int xX=0; xX< xRow.getColumns().size(); xX++){
+						//Copia o valor para o respectivo atributo no DataModel
+						DBSIO.setDataModelFieldsValue(xDataModel, xX, xRow.getColumn(xX).getValue());
+					}
+					//Adiciona linha como DataModel
+					wListDataModel.add(xDataModel);
+				}
+				//Adiociona linha já processada se não for vazia 
+				addRow(xRow); //Alterado em 28/05/2014 wListRow.add(xRow);
 			}
-			//Adiociona linha já processada se não for vazia 
-			wListRow.add(xRow);
 		}
 		//Inclui nova linha
 		wCurrentRow = wListRow.size()-1;
@@ -887,14 +935,15 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	private DBSRow pvGetRowVariableColumn(String pLine) {
 		//Move os dados da linha para a um array, onde cada item do array é uma das colunas, utilizando o delimitador informado
-		ArrayList<String> xColumns = DBSString.toArray(pLine, wColumnsDelimiter, false, wTrimValues);
-		//Cria nova linha vázia;
-		DBSRow xRow = new DBSRow(); 
+		ArrayList<String> 	xColumns = DBSString.toArray(pLine, wColumnsDelimiter, false, wTrimValues);
+		DBSRow 				xRow = null;
 		//Se quantidade de colunas encontrada na leitura da linha for superior a quantidade de colunas definidar no cabeçalho....
 		if (wHeaderDefinesColumnsNames && xColumns.size() > wColumnsHeader.size()){
 			getListLinhasErro().add(pLine);
 			wLogger.warn("Quantidade de colunas lidas é superior a quantidade de colunas definidas no cabeçalho.[Linha:" + (wCurrentRowFile+1) + "]\r" + pLine + "\r");
 		}else{
+			//Cria nova linha vázia;
+			xRow = new DBSRow(); 
 			//Loop em todos os itens do array
 			for (int xX=0; xX<=xColumns.size()-1;xX++){
 				//Se o conteúdo da coluna recupedado do array não for vazio
