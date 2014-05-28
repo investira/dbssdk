@@ -4,9 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
@@ -71,7 +73,7 @@ public class DBSDAOTxtTest {
 
 //	@Test
 	public void test_loop1() {
-		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/users/jose.avila/downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CIA_ABERTA.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1);
 	    if (xDAO.loadFile()){
 	    	System.out.println("ABRIU");
 	    	while (xDAO.moveNextRow()){
@@ -94,6 +96,41 @@ public class DBSDAOTxtTest {
 	    }else{
 	    	System.out.println("NÃO ABRIU");
 	    }
+	}
+	
+	@Test
+	public void test_loop3() {
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>();
+		xDAO.setHeaderDefinesColumnsNames(true);
+		xDAO.setColumnsDelimiter(";");
+		xDAO.setKeepData(true);
+		xDAO.setFileName("/users/jose.avila/downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CIA_ABERTA.TXT");
+	    if (xDAO.loadFile()){
+	    	System.out.println("ABRIU");
+	    	while (xDAO.moveNextRow()){
+	    		DBSRow xRowData = pvGetRowFixedColumn(xDAO.getColumnsHeader(), DBSString.toString(xDAO.getRowValues()));
+	    		System.out.println(xRowData.getValue("DENOMINACAO SOCIAL"));
+	    	}
+	    }else{
+	    	System.out.println("NÃO ABRIU");
+	    }
+	}
+	
+	/**
+	 * Cria linha a partir dos dados lidos, separando os valores conforme o tamanho(size) definido para cada coluna.
+	 * @param pLine
+	 */
+	private DBSRow pvGetRowFixedColumn(List<String> pColumnsHeader, String pLine){
+		DBSRow xRow = new DBSRow();
+		//Cria as colunas
+		for (String xColumnName : pColumnsHeader) {
+			xRow.MergeColumn(xColumnName);
+		}
+		//Move a linha lida para a linha criada. O setRowValue faz o distribuição automaticamente pelas colunas
+		xRow.setRowValues(pLine, ";");
+		
+		return xRow;
+
 	}
 	
 	//@Test
