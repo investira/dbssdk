@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -573,15 +574,19 @@ public class DBSFile {
 	}
 
 	/**
-	 * Método para saber se arquivo existe
-	 * 
-	 * @param pFile
-	 *            : path completo do arquivo ].
+	 * Retorna se arquivo existe.
+	 * @param pFile path completo do arquivo.
 	 * @return
 	 */
 	public static boolean exists(String pFile) {
-		File xFile = new File(pFile);
-		boolean xExists = xFile.exists();
+		boolean xExists = false;
+		try{
+			File xFile = new File(pFile);
+			xExists = xFile.exists();
+		}catch(Exception e){
+			xExists = false;
+			wLogger.error(e);
+		}
 		return xExists;
 	}
 
@@ -604,6 +609,57 @@ public class DBSFile {
 			wLogger.error(e);
 			return false;
 		}
+	}
+	
+//	/**
+//	 * Retorna o caminho ja normalizado, corrigindo erros
+//	 * @param pPath
+//	 * @return
+//	 */
+//
+//	public static String getPath(String pPath){
+//		if (pPath != null){
+//			try {
+//				System.out.println(new URI(pPath).normalize().getRawPath());
+//				System.out.println(new URI(pPath).normalize().getHost());
+//				System.out.println(new URI(pPath).normalize().getPath());
+//				System.out.println(new URI(pPath).normalize().getRawQuery());
+//				System.out.println(new URI(pPath).normalize().getRawSchemeSpecificPart());
+//				System.out.println(new URI(pPath).normalize().getScheme());
+//				System.out.println(new URI(pPath).normalize().getSchemeSpecificPart());
+//				
+//				return new URI(pPath).normalize().getRawPath();
+//			} catch (URISyntaxException e) {
+//				return "";
+//			}
+//		}
+//		return "";
+//	}
+	
+	/**
+	 * Retorna o caminho ja normalizado, corrigindo erros, excluido "/" do inicio(se houver) e incluido "/" ao final.<br/>
+	 * Se for uma URL conténdo o caminho completo, como por exemplo <b>http://www.acme.com/abc</b>,
+	 * a parte que representa o servidor(http://www.acme.com/) será excluida e o valor retornado será <b>abc/</b>  
+	 * @param pPath
+	 * @return
+	 */
+
+	public static String getPath(String pPath){
+		if (pPath != null){
+			try {
+				String xPath = new URI(pPath).normalize().getPath();
+				if (xPath.startsWith("/")){
+					xPath = xPath.substring(1, xPath.length());
+				}
+				if (!xPath.endsWith("/")){
+					xPath += "/";
+				}
+				return xPath;
+			} catch (URISyntaxException e) {
+				return "";
+			}
+		}
+		return "";
 	}
 	
 	/**
