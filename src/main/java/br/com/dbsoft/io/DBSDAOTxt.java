@@ -57,7 +57,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	private List<DataModelClass>					wListDataModel = new ArrayList<DataModelClass>();
 	private String					wLineData;
 	private Boolean					wInterromper = false;
-	private List<String>			wListLinhasErro = new ArrayList<String>();
+	private List<String>			wListLinesWithError = new ArrayList<String>();
 
 	public DBSDAOTxt(){
 	}
@@ -222,11 +222,11 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		this.wConvertToASCII = wConvertToASCII;
 	}
 	
-	public Boolean getInterromper() {return wInterromper;}
-	public void setInterromper(Boolean pInterromper) {wInterromper = pInterromper;}
+	public Boolean getInterrupt() {return wInterromper;}
+	public void setInterrupt(Boolean pInterromper) {wInterromper = pInterromper;}
 	
-	public List<String> getListLinhasErro() {
-		return wListLinhasErro;
+	public List<String> getLinesWithError() {
+		return wListLinesWithError;
 	}
 	
 	public <A> void setValue(int pColumnIndex, A pValue){
@@ -589,7 +589,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 				//Le linha, move para xLine. Se conteúdo não for nulo, incluir linha
 				while ((xLineData = pvReadLineIgnoringHeaderAndFooter()) != null ){
 					pvGetRow(xLineData);
-					if (getInterromper()) {
+					if (getInterrupt()) {
 						xOk = false;
 						break;
 					}
@@ -939,7 +939,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		DBSRow 				xRow = null;
 		//Se quantidade de colunas encontrada na leitura da linha for superior a quantidade de colunas definidar no cabeçalho....
 		if (wHeaderDefinesColumnsNames && xColumns.size() > wColumnsHeader.size()){
-			getListLinhasErro().add(pLine);
+			getLinesWithError().add(pLine);
 			wLogger.warn("Quantidade de colunas lidas é superior a quantidade de colunas definidas no cabeçalho.[Linha:" + (wCurrentRowFile+1) + "]\r" + pLine + "\r");
 		}else{
 			//Cria nova linha vázia;
