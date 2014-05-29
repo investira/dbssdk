@@ -781,6 +781,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private void pvDesativaAgendamento(){
 		//Cancela último timer se houver;
 		if (wTimer != null) {
+			wScheduleDate = null;
 			wTimer.cancel();
 			wTimer.purge();
 		}
