@@ -832,34 +832,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		}
 	}
 
-	
-	
-//	/**
-//	 * Agenda a tarefa no timer caso a tarefa e busca pelo próximo agendamento estajam habilitados
-//	 */
-//	private void pvAtivarTimer(){
-//		if (wIsRetry || //Se for nova tentativa de ativar o timer em função de problema anterior ou
-//			(isScheduleEnabled() && //Tem data agendada e agendamanto está habilitado
-//			 isNextSchedulesEnabled())){
-//			if (wScheduleDate != null){
-//				if (wTimer != null) {
-//					wTimer.cancel();
-//					wTimer.purge();
-//				}
-//				wTimer = new Timer("Timer - " + getName());
-//				wTimer.schedule(new RunByTimer(), wScheduleDate);
-//				wScheduled = true;
-//				
-//				SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//				wLogger.info(getName() + ":Agendada para: " + xFormat.format(wScheduleDate));
-//			}
-//		}
-//		//Se não estiver em execução, configura o estado de execução para Parado ou Aguardando dependendo se a tarefa tem Agendamento Ativo
-//		if (wRunningState != RunningState.RUNNING){
-//			wRunningState = pvGetNotRunningState();
-//		}
-//	}
-
 	/**
 	 * Seta o número da etapa atual
 	 * @param pCurrentStep
@@ -967,17 +939,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			return TaskState.STOPPED;
 		}
 	}
-	
-//	/**
-//	 * Para o agendamento se existir
-//	 */
-//	private void pvStopTimer(){
-//		if (wTimer != null){
-//			wTimer.cancel();
-//			wTimer.purge();
-//		}
-//	}
-
 	
 	//=== EVENTOS =====================================================================================
 	/**
@@ -1112,21 +1073,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			wEventListeners.get(xX).taskStateChanged(xE);
         }		
 	}
-
-//	/**
-//	 * Dispara evento informando que o atributo 'Agendada' foi alterado
-//	 * Local onde deverá se implementada a conversão do valor deste atributo para 
-//	 * o valor correspondente no datamodel, se for o caso.(Exemplo enum)
-//	 */
-//	private void pvFireEventScheduleEnabledChanged(){
-//		DBSTaskEvent xE = new DBSTaskEvent(this);
-//		//Chame o metodo(evento) local para quando esta classe for extendida
-//		scheduleEnabledChanged(xE);
-//		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-//		for (int xX=0; xX<wEventListeners.size(); xX++){
-//			wEventListeners.get(xX).scheduleEnabledChanged(xE);
-//        }		
-//	}
 
 	/**
 	 * Dispara evento informando que o atributo 'status' foi alterado.
