@@ -9,7 +9,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.sql.DataSource;
 
-public class ConnectionDBSoftFactory {
+public class TstConnectionDBSoftFactory {
 
 	@Resource(mappedName="dbsoft")
 	private DataSource wDS;

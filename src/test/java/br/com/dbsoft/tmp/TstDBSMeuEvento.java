@@ -3,9 +3,9 @@ package br.com.dbsoft.tmp;
 import br.com.dbsoft.event.DBSEvent;
 
 
-public class DBSMeuEvento extends DBSEvent<Object> {
+public class TstDBSMeuEvento extends DBSEvent<Object> {
 
-	public DBSMeuEvento(Object pObject) {
+	public TstDBSMeuEvento(Object pObject) {
 		super(pObject);
 		// TODO Auto-generated constructor stub
 	}

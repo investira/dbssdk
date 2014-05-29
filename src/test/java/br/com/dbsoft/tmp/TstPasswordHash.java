@@ -6,7 +6,7 @@ import org.junit.Test;
 import br.com.dbsoft.util.DBSPassword;
 
 
-public class TestPasswordHash {
+public class TstPasswordHash {
 
 
 	@Test

@@ -21,7 +21,7 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
  * @author ricardo.villar
  *
  */
-public class DBSDateTest extends TestCase {
+public class TstDBSDate extends TestCase {
 
 	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
 	String wUser="dbsoft";

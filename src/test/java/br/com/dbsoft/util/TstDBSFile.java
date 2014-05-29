@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class DBSFileTest {
+public class TstDBSFile {
 
 	//@Test
 	public void testaZiparArquivo() throws IOException {

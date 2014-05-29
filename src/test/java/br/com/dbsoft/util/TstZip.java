@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class TesteZip {
+public class TstZip {
 	public static void main(String[] args) {
 
 		String[] nomesDosArquivos = new String[] { "/home/jose_addario/TesteZip" };

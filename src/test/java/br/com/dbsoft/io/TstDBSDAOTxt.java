@@ -20,7 +20,7 @@ import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
 
-public class DBSDAOTxtTest {
+public class TstDBSDAOTxt {
 
 	@Before
 	public void setUp() throws Exception {

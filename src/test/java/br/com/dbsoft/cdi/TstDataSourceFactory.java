@@ -5,7 +5,7 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 
 @Named
-public class DataSourceFactory {
+public class TstDataSourceFactory {
 	@Resource(mappedName="dbsoft")
 	private DataSource wDS;
 

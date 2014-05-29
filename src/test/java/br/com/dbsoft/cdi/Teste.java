@@ -24,8 +24,8 @@ public class Teste {
             .addClass(DBObjeto2.class)  
             .addClass(DBObjetoFactory.class)
             .addClass(DBObjetoFactory2.class)
-            .addClass(ConnectionDBSoftFactory.class)
-            .addClass(DataSourceFactory.class)
+            .addClass(TstConnectionDBSoftFactory.class)
+            .addClass(TstDataSourceFactory.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 		return jar;
     }

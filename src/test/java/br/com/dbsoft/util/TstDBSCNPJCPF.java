@@ -9,7 +9,7 @@ import org.junit.Test;
  * @author Avila
  *
  */
-public class DBSCNPJCPFTeste {
+public class TstDBSCNPJCPF {
 
 	String[] wLista = {"2964142000102",
 						"7142852000162",

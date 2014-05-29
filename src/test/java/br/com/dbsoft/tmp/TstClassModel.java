@@ -1,6 +1,6 @@
 package br.com.dbsoft.tmp;
 
-public class ClassModel {
+public class TstClassModel {
 
 	String Nome;
 	String Endereco;

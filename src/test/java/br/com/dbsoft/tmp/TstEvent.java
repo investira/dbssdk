@@ -7,13 +7,13 @@ import br.com.dbsoft.util.DBSNumber;
 
 
 
-public class TesteEvent implements Serializable, IDBSEventListener {
+public class TstEvent implements Serializable, TstIDBSEventListener {
 
 	private static final long serialVersionUID = 1L;
 
 	//@Test
 	public void TestaEvento(){
-		DBSMeuEvento xE = new DBSMeuEvento(this);
+		TstDBSMeuEvento xE = new TstDBSMeuEvento(this);
 		beforeQuery(xE);
 
 	}
@@ -44,7 +44,7 @@ public class TesteEvent implements Serializable, IDBSEventListener {
 //	}
 
 	@Override
-	public void beforeQuery(DBSMeuEvento pDBSEvent) {
+	public void beforeQuery(TstDBSMeuEvento pDBSEvent) {
 		pDBSEvent.setOk(true);
 		pDBSEvent.setCancela(true);
 	}

@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import br.com.dbsoft.file.DBSFileTransfer;
 
-public class DBSFileTransferTeste {
+public class TstDBSFileTransfer {
 
 	
 	//@Test
@@ -112,7 +112,7 @@ public class DBSFileTransferTeste {
 		
 		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Timestamp xVersao = new Timestamp(xFormat.parse("2012-09-18 07:01:19.0").getTime());
-		xFileTransfer.setVersao(xVersao);
+		xFileTransfer.setVersion(xVersao);
 		
 		File xFile = xFileTransfer.transfer();
 		System.out.println("Data da ultima Modificação: " + new Timestamp(xFile.lastModified()));
