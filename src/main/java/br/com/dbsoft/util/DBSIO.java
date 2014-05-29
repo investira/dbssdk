@@ -439,7 +439,7 @@ public class DBSIO{
 	 */
 	public static String getTableFromQuery(String pSQLQuery){
 		List<String> xT;
-		xT = pvGetTablesFromQuery(pSQLQuery);
+		xT = getTablesFromQuery(pSQLQuery);
 		if (xT.size()==1){
 			return xT.get(0).toString();
 		}else{
@@ -2041,7 +2041,7 @@ public class DBSIO{
 		if (DBSString.getInStr(xQuerySQL," * ") > 0){
 			List<String> xT;
 			String xS = "";
-			xT = pvGetTablesFromQuery(xQuerySQL);
+			xT = getTablesFromQuery(xQuerySQL);
 			//Substitui os 'Select * ' por 'Select tabela.* ' 
 			for (int x=0; x <= xT.size()-1; x++){
 				if (xS.equals("")){
@@ -2678,23 +2678,24 @@ public class DBSIO{
 
 
 	/**
-	 * Recupera o nome das tabelas que fazem parte da Query SQL
+	 * Recupera o nome das tabelas ou o Alias que fazem parte da Query SQL.
 	 * @param pSQLQuery Query SQL a ser resquisada
 	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0
 	 */
-	private static List<String> pvGetTablesFromQuery(String pSQLQuery){
+	public static List<String> getTablesFromQuery(String pSQLQuery){
 		int xI;
 		int xF;
 		String xS = pSQLQuery.trim(); 
-		List<String> xT;
-		List<String> xT0;
+		List<String> xTmps;
+		List<String> xBlocks;
+		List<String> xTables =  new ArrayList<String>();
 		xI = DBSString.getInStr(xS, " FROM ",false);
 		if (xI == 0){
 			return null;
 		}else {
 			xI+=6; //Adiciona 6 para desconsiderar a própria string " FROM "
 		}
-		//Tedermina onde termina a clausula from
+		//Determina onde termina a clausula FROM
 		xF = DBSString.getInStr(xS," WHERE ", false);
 		if (xF==0){
 			xF = DBSString.getInStr(xS," LIKE ", false);
@@ -2712,7 +2713,7 @@ public class DBSIO{
 			}
 		}
 		
-		//Recupera somente o texto referente a clausula "FROM" do texto original mantendo para manter a caixa do texto
+		//Recupera somente o texto referente a clausula "FROM" do texto original mantendo a caixa do texto
 		xS = DBSString.getSubString(pSQLQuery, xI, xF - xI + 1);
 
 		//Exclui textos de comandos
@@ -2721,28 +2722,28 @@ public class DBSIO{
 		xS = DBSString.changeStr(xS, " LEFT ", " ", false);
 		xS = DBSString.changeStr(xS, " RIGHT ", " ", false);
 		xS = DBSString.changeStr(xS, " NATURAL ", " ", false);
-
-		//Separa as tabelas delimitadas por virgulas ou do comando "JOIN"
-		xT0 = DBSString.toArray(xS,",");
-		xT = xT0;
-		xT0 = DBSString.toArray(xS," JOIN ", false);
-		//'Se existir tabela delimitadas por "JOIN"
-		if (xT0.size() > 1) {
-			//Merge dos arrays
-			xT0.addAll(xT);
-		}
-		//Recupera o alias da tabela caso tenha sido utilizado o "AS" no "FROM"
-		for (int x=0; x < xT.size(); x++){
-			if (DBSString.getInStr(xT.get(x)," AS ", false) > 0){
-				xT0 = DBSString.toArray(xT.get(x), " AS ", false);
-				if (xT0.size()>1){
-					xT.set(x, xT0.get(1));
+		
+		//Recupera os nomes das tabelas ou o Alias 
+		xBlocks = DBSString.toArray(xS,",");
+		for (String xBlock:xBlocks){
+			xTmps = DBSString.toArray(xBlock," JOIN ");
+			for (String xTmp:xTmps){
+				int x = 0;
+				x = DBSString.getInStr(xTmp," ON ", false);
+				if (x > 0){
+					//Considera o texto anterior ao " ON " como sendo o nome da tabela
+					xTmp = DBSString.getSubString(xTmp, 1, x);
 				}
+				x = DBSString.getInStr(xTmp," AS ", false);
+				if (x > 0){
+					//Considera o texto posterior ao " AS " como sendo o nome da tabela
+					xTmp = DBSString.getSubString(xTmp, x + 4, xTmp.length());
+				}
+				xTables.add(xTmp.trim());
 			}
 		}
-		return xT;
+		return xTables;
 	}
-	
 
 	/**
 	 * Move o valor informado para a coluna do tributo da classe informada
