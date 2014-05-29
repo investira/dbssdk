@@ -279,6 +279,9 @@ public class DBSRow implements Serializable {
 		StringBuffer xSB = new StringBuffer("");
 		Iterator<DBSColumn> xColumns = wColumns.values().iterator();
 		String xDelimitador = ""; //Definie delimitador padão
+		if (pColumnDelimiter==null){
+			pColumnDelimiter = "";
+		}
 		while (xColumns.hasNext()){
 			xSB.append(xDelimitador); //Adiciona delimitador. Na primeira passagem o delimitador é vázio.
 			xSB.append(xColumns.next().getValue()); //Move valor para a linha
