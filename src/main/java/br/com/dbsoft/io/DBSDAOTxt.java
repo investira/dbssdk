@@ -954,12 +954,10 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 				}else{
 					//Se o conteúdo da coluna recupado do array for vázio..
 					//Se existir um delimitador definido
-					if (!DBSObject.isEmpty(wColumnsDelimiter)){
+					if (!DBSObject.isNull(wColumnsDelimiter)){
 						//Inclui uma coluna vázio
 						//pvMergeColumn(xRow, getColumnName(xX), "");
 						xRow.MergeColumn(this.getColumnName(xX), "");
-					} else {
-						xRow.MergeColumn(this.getColumnName(xX), null); //TODO Alterado por ALBERTO em 29/05/2014 - Deve incluir a coluna com ou sem Delimitador definido (vide Import de Debentures).
 					}
 				}
 			}
