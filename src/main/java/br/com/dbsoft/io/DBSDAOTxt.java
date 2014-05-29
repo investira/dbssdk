@@ -940,7 +940,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		//Se quantidade de colunas encontrada na leitura da linha for superior a quantidade de colunas definidar no cabeçalho....
 		if (wHeaderDefinesColumnsNames && xColumns.size() > wColumnsHeader.size()){
 			getLinesWithError().add(pLine);
-			wLogger.warn("Quantidade de colunas lidas é superior a quantidade de colunas definidas no cabeçalho.[Linha:" + (wCurrentRowFile+1) + "]\r" + pLine + "\r");
+//			wLogger.warn("Quantidade de colunas lidas é superior a quantidade de colunas definidas no cabeçalho.[Linha:" + (wCurrentRowFile+1) + "]\r" + pLine + "\r");
 		}else{
 			//Cria nova linha vázia;
 			xRow = new DBSRow(); 
@@ -958,6 +958,8 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 						//Inclui uma coluna vázio
 						//pvMergeColumn(xRow, getColumnName(xX), "");
 						xRow.MergeColumn(this.getColumnName(xX), "");
+					} else {
+						xRow.MergeColumn(this.getColumnName(xX), null); //TODO Alterado por ALBERTO em 29/05/2014 - Deve incluir a coluna com ou sem Delimitador definido (vide Import de Debentures).
 					}
 				}
 			}
@@ -1048,7 +1050,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	private boolean pvIsLoaded(){
 		if (wListRow.size() == 0){
-			System.out.println(wFileName + "vázio ou não carregado via loadFile");
+//			System.out.println(wFileName + "vázio ou não carregado via loadFile");
 			return false;
 		}
 		return true;
