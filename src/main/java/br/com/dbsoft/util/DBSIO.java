@@ -432,14 +432,36 @@ public class DBSIO{
 	}
 
 	/**
-	 * Recupera o nome da tabela que faz parte da SQL caso exista somente uma.<br/>
+	 * Retorna o nome da tabela que faz parte da SQL caso exista somente uma.<br/>
 	 * Caso exista mais de uma retorna nulo.
-	 * @param pSQLQuery
+	 * @param pSQLQuery Query SQL
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
 	 * @return
 	 */
-	public static String getTableFromQuery(String pSQLQuery){
+	public static String getTableFromQuery(String pSQLQuery, boolean pReturnAlias){
 		List<String> xT;
-		xT = getTablesFromQuery(pSQLQuery);
+		xT = getTablesFromQuery(pSQLQuery, pReturnAlias);
+		if (xT.size()==1){
+			return xT.get(0).toString();
+		}else{
+			return null;
+		}
+	}
+
+	/**
+	 * Retorna o nome da tabela que representa o <i>Alias</i> informado, 
+	 * ou retorna o nome do <i>Alias</i> que representa a tabela informada.<br/>
+	 * Caso não exista <i>Alias</i> será retornardo o mesmo noma da tabela.
+	 * @param pSQLQuery Query SQL
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
+	 * @param pNameToFind Se <b>pReturnAlias=true</b> retorna o nome do <i>Alias</i> que representa a tabela informada em <b>pTableNameToFind</b>. Se tabela não tiver <i>Alias</i>, retorna o próprio nome da tabela.<br/>
+	 *   					   Se <b>pReturnAlias=false</b> retorna o nome da tabela que representa o <i>Alias</i> informado em <b>pTableNameToFind</b>.<br/>
+	 *   					   Se for nulo, retorna todas as tabelas ou <i>Alias</i> da query.
+	 * @return
+	 */
+	public static String getTableFromQuery(String pSQLQuery, boolean pReturnAlias, String pNameToFind){
+		List<String> xT;
+		xT = getTablesFromQuery(pSQLQuery, pReturnAlias, pNameToFind);
 		if (xT.size()==1){
 			return xT.get(0).toString();
 		}else{
@@ -2041,7 +2063,7 @@ public class DBSIO{
 		if (DBSString.getInStr(xQuerySQL," * ") > 0){
 			List<String> xT;
 			String xS = "";
-			xT = getTablesFromQuery(xQuerySQL);
+			xT = getTablesFromQuery(xQuerySQL, true, null);
 			//Substitui os 'Select * ' por 'Select tabela.* ' 
 			for (int x=0; x <= xT.size()-1; x++){
 				if (xS.equals("")){
@@ -2676,16 +2698,32 @@ public class DBSIO{
 		return pvRollbackTrans(pConnection, null);
 	}
 
+	/**
+	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
+	 * @param pSQLQuery Query SQL a ser resquisada
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
+	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
+	 */
+	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias){
+		return getTablesFromQuery(pSQLQuery, pReturnAlias, null);
+	}
 
 	/**
-	 * Recupera o nome das tabelas ou o Alias que fazem parte da Query SQL.
+	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
+	 * Caso não exista <i>Alias</i> será retornardo o mesmo noma da tabela.
 	 * @param pSQLQuery Query SQL a ser resquisada
-	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
+	 * @param pNameToFind Se <b>pReturnAlias=true</b> retorna o nome do <i>Alias</i> que representa a tabela informada em <b>pTableNameToFind</b>.Se tabela não tiver <i>Alias</i>, retorna o próprio nome da tabela.<br/>
+	 *   					   Se <b>pReturnAlias=false</b> retorna o nome da tabela que representa o <i>Alias</i> informado em <b>pTableNameToFind</b>.<br/>
+	 *   					   Se for nulo, retorna todas as tabelas ou <i>Alias</i> da query.
+	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
 	 */
-	public static List<String> getTablesFromQuery(String pSQLQuery){
+	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias, String pNameToFind){
 		int xI;
 		int xF;
+		boolean xFindName = !DBSObject.isEmpty(pNameToFind);
 		String xS = pSQLQuery.trim(); 
+		String xAliasName;
 		List<String> xTmps;
 		List<String> xBlocks;
 		List<String> xTables =  new ArrayList<String>();
@@ -2727,23 +2765,53 @@ public class DBSIO{
 		xBlocks = DBSString.toArray(xS,",");
 		for (String xBlock:xBlocks){
 			xTmps = DBSString.toArray(xBlock," JOIN ");
-			for (String xTmp:xTmps){
+			for (String xTable:xTmps){
 				int x = 0;
-				x = DBSString.getInStr(xTmp," ON ", false);
+				x = DBSString.getInStr(xTable," ON ", false);
 				if (x > 0){
 					//Considera o texto anterior ao " ON " como sendo o nome da tabela
-					xTmp = DBSString.getSubString(xTmp, 1, x);
+					xTable = DBSString.getSubString(xTable, 1, x);
 				}
-				x = DBSString.getInStr(xTmp," AS ", false);
+				x = DBSString.getInStr(xTable," AS ", false);
 				if (x > 0){
-					//Considera o texto posterior ao " AS " como sendo o nome da tabela
-					xTmp = DBSString.getSubString(xTmp, x + 4, xTmp.length());
+					//Salva o Alias
+					xAliasName = DBSString.getSubString(xTable, x + 4, xTable.length());
+					//Salva o Nome da tabela
+					xTable = DBSString.getSubString(xTable, 1, x - 1);
+				}else{
+					//Alias será igual ao nome.
+					xAliasName = xTable;
 				}
-				xTables.add(xTmp.trim());
+
+				//Se for para retornar somente o alias que representa a tabela informada ou vice-versa.
+				if (xFindName){
+					if (pReturnAlias){
+						//Retorna o Alias se o nome da tabela informado for iqual a tabela lida
+						if (pNameToFind.equalsIgnoreCase(xTable)){
+							xTables.add(xAliasName.trim());
+							break;
+						}
+					}else{
+						//Retorna a tabela se o nome do alias informado for iqual ao alias lido
+						if (pNameToFind.equalsIgnoreCase(xAliasName)){
+							xTables.add(xTable.trim());
+							break;
+						}
+					}
+				}else{
+					if (pReturnAlias){
+						xTables.add(xAliasName.trim());
+					}else{
+						xTables.add(xTable.trim());
+					}
+				}
 			}
 		}
 		return xTables;
 	}
+	
+	
+
 
 	/**
 	 * Move o valor informado para a coluna do tributo da classe informada
@@ -2804,9 +2872,9 @@ public class DBSIO{
 						xSQLWhere = xSQLWhere + " AND ";
 					}
 					if (xValue==null){
-						xSQLWhere = xSQLWhere + toSQLNull(pDAO.getConnection(), xColumn.getColumnName());
+						xSQLWhere = xSQLWhere + toSQLNull(pDAO.getConnection(), pDAO.getCommandTableName() + "." + xColumn.getColumnName());
 					}else{
-						xSQLWhere = xSQLWhere + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xValue);
+						xSQLWhere = xSQLWhere + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xValue);
 					}
 				}
 			}
@@ -2840,7 +2908,7 @@ public class DBSIO{
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					 || xColumn.getChanged()){ 
-						xSQLColumns += xVirgula + xColumn.getColumnName();
+						xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName();
 						xVirgula = ",";
 					}
 				}
@@ -2869,10 +2937,10 @@ public class DBSIO{
 						//Verifica se houve alteração de valor indepententemente do valor ter sido informado pelo usuário.
 						if (!pDAO.getExecuteOnlyChangedValues() 
 						 || !DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))){
-							xSQLColumns += xVirgula + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
+							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
 							xVirgula = ",";
 						}else{
-							xSQLColumnNecessaria = xColumn.getColumnName() + "=" + xColumn.getColumnName();
+							xSQLColumnNecessaria = pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + xColumn.getColumnName();
 						}
 					}
 				}
@@ -2889,7 +2957,7 @@ public class DBSIO{
 //					//Se valor foi informado pelo usuário ou não
 //					if (!pDAO.getExecuteOnlyChangedValues() 
 //					  || xColumn.getChanged()){ 
-						xSQLColumns += xVirgula + xColumn.getColumnName();
+						xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName();
 						xVirgula = ",";
 //					}
 				}

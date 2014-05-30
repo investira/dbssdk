@@ -57,7 +57,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	private DBSRow 				wCommandColumns = new DBSRow();		//Colunas que sofreráo modificação de dados
 	private String 				wCommandTableName = "";				//Nome da tabela que sofrerá modificação de dados
 	private boolean				wAutoIncrementPK = true;			//Efetua o insert e recuperar o valores do campos com autoincrement;
-	private DBSResultDataModel		wResultDataModel;
+	private DBSResultDataModel	wResultDataModel;
 	private int					wCurrentRowIndex = -1;
 
 	private DataModelListener 	wDataModelListener = new DataModelListener(){
@@ -135,7 +135,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
      * Cria novo DAO.
      * @param pConnection Conexão com o banco de dados
      * @param pCommandTableName Nome da tabela que sofrerá Insert/Update/Delete.<br/> 
-     *        Certifique-se que não há problema de letra maiúscula ou minúscula para encontrar a tabela no banco.
+     *        O nome deverá ser o nome exato que está no banco de dados.<br/> 
+     *        Certifique-se que não há problema de letra maiúscula ou minúscula para encontrar a tabela no banco.<br/>
+     *        Caso também esteja sendo executada uma <i>query</i> via <b>open</b>, está tabela <b>não</b> poderá ter um <i>alias</i>. 
      * @throws SQLException 
      */
     public DBSDAO(Connection pConnection, String pCommandTableName) throws DBSIOException{
@@ -410,6 +412,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return wCommandTableName;
 	}
 
+
 	/**
 	 * Configura o nome da tabela que sofrerá as modificações(<b>INSERT, UPDATE, DELETE</b>).<br/>
 	 * Não é necessário efetuar uma <i>query</i> via <i>Open</i> para efetuar as modificações. 
@@ -623,7 +626,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		
 		if (wResultDataModel != null){
 			String xColumnName = pvGetColumnName(pColumnName);
-			wResultDataModel.getRowData().put(xColumnName, pValue); //TODO 
+			wResultDataModel.getRowData().put(xColumnName, pValue); 
 		}
 	}
 	
@@ -1326,7 +1329,12 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @param pPK
 	 * @return
 	 */
-	private static String pvCreatePKString(String pPK, String pTableName){
+	private String pvCreatePKString(String pPK, String pTableName){
+		String xTableAlias = pTableName;
+		if (!DBSObject.isEmpty(wQuerySQL)){
+			//Retorna o nome da tabela ou alias se existir.
+			xTableAlias = DBSIO.getTableFromQuery(wQuerySQL, true, xTableAlias);
+		}
 		if (pPK == null ||
 			pPK.equals("")){
 			return "";
@@ -1336,7 +1344,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (pTableName == null){
 			pTableName = "";
 		}else{
-			pTableName = pTableName.trim().toUpperCase() + ".";
+			pTableName = xTableAlias.trim().toUpperCase() + ".";
 		}
 		xPK = DBSString.changeStr(xPK, ",", " ");
 		//Exclui o nome da tabela da chave, caso tenha sido incluida pelo usuário, já que será obrigatóriamente adicionada no código abaixo
