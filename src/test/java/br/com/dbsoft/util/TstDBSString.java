@@ -183,15 +183,6 @@ public class TstDBSString {
 
 
 	@Test
-	public void test_getTable() {
-		assertEquals("CA_casa", DBSIO.getTableFromQuery("Select * from CA_casa"));
-		assertEquals("teste", DBSIO.getTableFromQuery("Select * from CA_casa as teste where a=b group by a"));
-		assertEquals("teste", DBSIO.getTableFromQuery("Select c1 as a1, c2  from CA_casa as teste where a=b group by a"));
-		assertEquals("CA_casa", DBSIO.getTableFromQuery("Select c1 as a1, c2  from CA_casa where a=b group by a"));
-		assertEquals("teste", DBSIO.getTableFromQuery("Select * from CA_casa as teste"));
-	}
-
-	@Test
 	public void test_getFormattedDate() {
 		
 		Date xxDate = DBSDate.toDate("12/11/2011 23:59");
