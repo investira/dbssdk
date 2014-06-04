@@ -1,12 +1,15 @@
 package br.com.dbsoft.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+//import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import br.com.dbsoft.util.DBSFile.SORT_BY;
+import br.com.dbsoft.util.DBSFile.SORT_ORDER;
 
 public class TstDBSFile {
 
@@ -68,18 +71,69 @@ public class TstDBSFile {
 		assertTrue(DBSFile.exists("/home/jose_addario/teste"));
 		System.out.println(DBSFile.exists("/home/jose_addario/teste"));
 	}
+
+	@Test
+	public void testaPathFromFileName(){
+		assertEquals(DBSFile.getPathFromFileName("http://www.abcd.com/cs"), "http://www.abcd.com/");
+		assertEquals(DBSFile.getPathFromFileName("http://www.abcd.com/cs/abcd"), "http://www.abcd.com/cs/");
+		assertEquals(DBSFile.getPathFromFileName("/abcd/cs"), "/abcd/");
+		assertEquals(DBSFile.getPathFromFileName("abcd"), "/");
+		assertEquals(DBSFile.getPathFromFileName("abcd/"), "/abcd/");
+		assertEquals(DBSFile.getPathFromFileName("/abcd/cs/"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFileName("abcd/cs/"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFileName("http://www.abcd.com"), "http://www.abcd.com/");
+		assertEquals(DBSFile.getPathFromFileName(""), "/");
+		assertEquals(DBSFile.getPathFromFileName("abcd//cs//"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFileName("//e"), "//e/");
+		assertEquals(DBSFile.getPathFromFileName("e//"), "/e/");
+	}
+
+	@Test
+	public void testaPathFromFolderName(){
+		assertEquals(DBSFile.getPathFromFolderName("http://www.abcd.com/cs"), "http://www.abcd.com/cs/");
+		assertEquals(DBSFile.getPathFromFolderName("http://www.abcd.com/cs/abcd"), "http://www.abcd.com/cs/abcd/");
+		assertEquals(DBSFile.getPathFromFolderName("/abcd/cs"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFolderName("/abcd/cs/"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFolderName("abcd/cs/"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFolderName("http://www.abcd.com"), "http://www.abcd.com/");
+		assertEquals(DBSFile.getPathFromFolderName(""), "/");
+		assertEquals(DBSFile.getPathFromFolderName("abcd//cs//"), "/abcd/cs/");
+		assertEquals(DBSFile.getPathFromFolderName("//e"), "//e/");
+		assertEquals(DBSFile.getPathFromFolderName("e//"), "/e/");
+	}
 	
 	@Test
-	public void testaPath(){
-		assertEquals(DBSFile.getPath("http://www.abcd.com/cs"), "cs/");
-		assertEquals(DBSFile.getPath("/abcd/cs"), "abcd/cs/");
-		assertEquals(DBSFile.getPath("/abcd/cs/"), "abcd/cs/");
-		assertEquals(DBSFile.getPath("abcd/cs/"), "abcd/cs/");
-		assertEquals(DBSFile.getPath("http://www.abcd.com"), "/");
-		assertEquals(DBSFile.getPath(""), "/");
-		assertEquals(DBSFile.getPath("abcd//cs//"), "abcd/cs/");
-		assertEquals(DBSFile.getPath("//e"), "/");
-		assertEquals(DBSFile.getPath("e//"), "e/");
+	public void testaFileNameFromPath(){
+		assertEquals(DBSFile.getFileNameFromPath("http://www.abcd.com/cs"), "cs");
+		assertEquals(DBSFile.getFileNameFromPath("http://www.abcd.com/cs/abcd"), "abcd");
+		assertEquals(DBSFile.getFileNameFromPath("http://www.abcd.com/cs/abcd.txt"), "abcd.txt");
+		assertEquals(DBSFile.getFileNameFromPath("/abcd/cs"), "cs");
+		assertEquals(DBSFile.getFileNameFromPath("/abcd/cs/"), "");
+		assertEquals(DBSFile.getFileNameFromPath("abcd/cs/"), "");
+		assertEquals(DBSFile.getFileNameFromPath("abcd/cs"), "cs");
+		assertEquals(DBSFile.getFileNameFromPath("abcd/add/cs.txt"), "cs.txt");
+		assertEquals(DBSFile.getFileNameFromPath("abcd"), "abcd");
+		assertEquals(DBSFile.getFileNameFromPath("http://www.abcd.com"), "www.abcd.com");
+		assertEquals(DBSFile.getFileNameFromPath("http://www.abcd.com/"), "");
+		assertEquals(DBSFile.getFileNameFromPath(""), "");
+		assertEquals(DBSFile.getFileNameFromPath("abcd//cs//"), "");
+		assertEquals(DBSFile.getFileNameFromPath("//e"), "e");
+		assertEquals(DBSFile.getFileNameFromPath("e//"), "");
+	}
+	
+//	@Test
+	public void testaFilesFromPath(){
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.MODIFIED_DATA, SORT_ORDER.ASCENDING);
+		System.out.println("-----");
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.MODIFIED_DATA, SORT_ORDER.DESCENDING);
+		System.out.println("========================================");
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.SIZE, SORT_ORDER.ASCENDING);
+		System.out.println("-----");
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.SIZE, SORT_ORDER.DESCENDING);
+		System.out.println("========================================");
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.NAME, SORT_ORDER.ASCENDING);
+		System.out.println("-----");
+		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.NAME, SORT_ORDER.DESCENDING);
 	}
 
 }

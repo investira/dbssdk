@@ -25,7 +25,9 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Date;
+import java.sql.Date;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
+
+
+
 
 import br.com.dbsoft.core.DBSSDK.APP_SERVER_PROPERTY;
 
@@ -50,6 +55,8 @@ public class DBSFile {
 		public static final String ZIP = ".zip";
 		public static final String DOC = ".doc";
 		public static final String RAR = ".rar";
+		public static final String TXT = ".txt";
+		public static final String CSV = ".csv";
 	}
 	
 	public static class CONTENT_TYPE{
@@ -58,7 +65,16 @@ public class DBSFile {
 		public static final String XLS = "application/excel";
 	}
 	
+	public static enum SORT_BY{
+		NAME,
+		SIZE,
+		MODIFIED_DATA
+	}
 	
+	public static enum SORT_ORDER{
+		ASCENDING,
+		DESCENDING
+	}
 	
 	/**
 	 * Retorna o nome simples do arquivo com a extensão do jasper
@@ -591,16 +607,39 @@ public class DBSFile {
 	}
 
 	/**
-	 * Cria diretório
+	 * Cria diretório a partir do caminho informado.<br/>
+	 * @param pPath Caminho do diretório a ser criado. Caminho não deverá incluir nome de arquivo.
+	 * @return true = Já existia ou foi criado com sucesso<br/>false = não existe e não foi criado.
+	 */
+	public static boolean mkDir(String pPath){
+		if (pPath == null){
+			return false;
+		}
+		try{
+			if (!exists(pPath)){
+				File xFile = new File(pPath);
+				return xFile.mkdirs();
+			}else{
+				return true;
+			}
+		}catch(Exception e){
+			wLogger.error(e);
+			return false;
+		}
+	}
+	
+	/**
+	 * Cria diretório a partir do cominho completo contendo o nome do arquivo.
 	 * @param pFile
 	 * @return true=Ok, false=erro
 	 */
 	public static boolean mkDir(File pFile){
+		if (pFile == null){
+			return false;
+		}
 		try{
-			if (pFile != null 
-			 && pFile.getParent() != null){
-				File xDir = new File(pFile.getParent());
-				return xDir.mkdirs();
+			if (pFile.getParent() != null){
+				return mkDir(pFile.getParent());
 			}else{
 				wLogger.error("Diretório a ser criado não foi informado.");
 				return false;
@@ -611,57 +650,91 @@ public class DBSFile {
 		}
 	}
 	
-//	/**
-//	 * Retorna o caminho ja normalizado, corrigindo erros
-//	 * @param pPath
-//	 * @return
-//	 */
-//
-//	public static String getPath(String pPath){
-//		if (pPath != null){
-//			try {
-//				System.out.println(new URI(pPath).normalize().getRawPath());
-//				System.out.println(new URI(pPath).normalize().getHost());
-//				System.out.println(new URI(pPath).normalize().getPath());
-//				System.out.println(new URI(pPath).normalize().getRawQuery());
-//				System.out.println(new URI(pPath).normalize().getRawSchemeSpecificPart());
-//				System.out.println(new URI(pPath).normalize().getScheme());
-//				System.out.println(new URI(pPath).normalize().getSchemeSpecificPart());
-//				
-//				return new URI(pPath).normalize().getRawPath();
-//			} catch (URISyntaxException e) {
-//				return "";
-//			}
-//		}
-//		return "";
-//	}
-	
 	/**
-	 * Retorna o caminho ja normalizado, corrigindo erros, excluido "/" do inicio(se houver) e incluido "/" ao final.<br/>
-	 * Se for uma URL conténdo o caminho completo, como por exemplo <b>http://www.acme.com/abc</b>,
-	 * a parte que representa o servidor(http://www.acme.com/) será excluida e o valor retornado será <b>abc/</b>  
+	 * Retorna a data da última modificação do arquivo informado.
+	 * @param pFile Arquivo a ser pesquisado
+	 * @return Data da última modificação se arquivo existir.<br/>
+	 * <i>null</i> Em caso de arquivo não encontrado ou erro.
+	 */
+	public static Date getFileDateModified(String pFile){
+		if (pFile == null){
+			return null;
+		}
+		try{
+			File xFile = new File(pFile);
+			return DBSDate.toDate(xFile.lastModified());
+		}catch(Exception e){
+			wLogger.error(e);
+			return null;
+		}	
+	}
+
+	/**
+	 * Retorna somente o nome do arquivo a partir da caminho informado.<p>
+	 * Exemplos:<br/>
+	 * <b>http://www.acme.com/abc</b> retornará <b>abc/</b>.<br/>
+	 * <b>http://www.acme.com/abc/</b> retornará <b>vázio</b>.<br/>
+	 * <b>acme/</b> retornará <b>vázio</b>.<br/>
+	 * <b>acme</b> retornará <b>acme</b>.<br/>
+	 * <b>/acme/</b> retornará <b>vázio</b>.<br/>
+	 * <b>/acme/abc</b> retornará <b>abc</b>.<br/>
+	 * <b>/acme/abc.txt</b> retornará <b>abc.txt</b>.<br/>
 	 * @param pPath
 	 * @return
 	 */
-
-	public static String getPath(String pPath){
-		if (pPath != null){
-			try {
-				String xPath = new URI(pPath).normalize().getPath();
-				if (xPath.startsWith("/")){
-					xPath = xPath.substring(1, xPath.length());
-				}
-				if (!xPath.endsWith("/")){
-					xPath += "/";
-				}
-				return xPath;
-			} catch (URISyntaxException e) {
-				return "";
-			}
+	public static String getFileNameFromPath(String pPath){
+		if (pPath == null){return "";}
+		int xI = pPath.lastIndexOf("/");
+		if (xI == -1){
+			return pPath;
+		}else{
+			return DBSString.getSubString(pPath, xI + 2, pPath.length());
 		}
-		return "";
 	}
 	
+	/**
+	 * Retorna o caminho do arquivo, incluindo "/" ao final(se não houver) e ao inicio quando não tiver sido informado o <b>procotolo</b>.<br/>
+	 * Exclui a parte do caminho após o último "/".<br/>
+	 * Considera que <b>pFileName</b> pode conter além do caminho, o nome de arquivo.
+	 * <b>pFileName</b> terminado em "/" será considerado integralmente um diretório.<p>
+	 * <b>pFileName</b> não terminado em "/", terá o conteúdo após a última "/" desconsiderado.<p> 
+	 * Exemplos:<br/>
+	 * <b>http://www.acme.com/abc/</b> retornará <b>http://www.acme.com/abc/</b>.<br/>
+	 * <b>http://www.acme.com/abc</b> retornará <b>http://www.acme.com/</b>.<br/>
+	 * <b>http://www.acme.com/</b> retornará <b>http://www.acme.com/</b>.<br/>
+	 * <b>acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>acme</b> retornará <b>/</b>.<br/>
+	 * <b>/acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc.txt</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc/xyz</b> retornará <b>/acme/abc/</b>.<br/>
+	 * @param pFileName
+	 * @return
+	 */
+	public static String getPathFromFileName(String pFileName){
+		return pvGetPath(pFileName, true);
+
+	}
+	
+	/**
+	 * Retorna o caminho do arquivo, incluindo "/" ao final(se não houver) e ao inicio quando não tiver sido informado o <b>procotolo</b>.<br/>
+	 * Considera que <b>pFolderName</b> é efetivamente um caminho(diretório) e não contém nome de arquivo.
+	 * Exemplos:<br/>
+	 * <b>http://www.acme.com/abc/</b> retornará <b>http://www.acme.com/abc/</b>.<br/>
+	 * <b>http://www.acme.com/abc</b> retornará <b>http://www.acme.com/abc/</b>.<br/>
+	 * <b>http://www.acme.com/</b> retornará <b>http://www.acme.com/</b>.<br/>
+	 * <b>acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc</b> retornará <b>/acme/abc/</b>.<br/>
+	 * <b>/acme/abc.txt</b> retornará <b>/acme/abc.txt/</b>.<br/>
+	 * <b>/acme/abc/xyz</b> retornará <b>/acme/abc/xyz/</b>.<br/>
+	 * @param pFolderName
+	 * @return
+	 */
+	public static String getPathFromFolderName(String pFolderName){
+		return pvGetPath(pFolderName, false);
+	}
+
 	/**
 	 * Retorna caminho local que está o servidor
 	 * @return
@@ -670,10 +743,162 @@ public class DBSFile {
 		return System.getProperty(APP_SERVER_PROPERTY.PATH.JBOSS);
 	}
 
+	/**
+	 * Retorna lista de arquivos/diretórios existentes no caminho informado em <b>ppath</b> por ordem crescente de nome.<br>
+	 * @return
+	 */
+	public static File[] getFilesFromPath(String pPath){
+		return getFilesFromPath(pPath, SORT_BY.NAME, SORT_ORDER.ASCENDING);
+	}
+
+	/**
+	 * Retorna lista de arquivos/distórios existentes no caminho informado em <b>ppath</b>.<br>
+	 * @param pPath Caminho a se pesquisado
+	 * @param pSortBy Campo a ser considerado para efeito do ordenamento da lista
+	 * @param pSortOrder Ordem da lista
+	 * @return
+	 */
+	public static File[] getFilesFromPath(String pPath, SORT_BY pSortBy, SORT_ORDER pSortOrder){
+		if (pPath == null){return null;}
+		try{
+			pPath = getPathFromFolderName(pPath);
+			File 	xFile = new File(pPath);
+			File[] 	xFiles = null;
+			if (!xFile.exists()){
+				System.out.println("Caminho " + pPath + " inexistente.");
+				wLogger.error("Caminho " + pPath + " inexistente.");
+				return null;
+			}
+			if (!xFile.isDirectory()){
+				System.out.println("Caminho " + pPath + " não é um pasta.");
+				wLogger.error("Caminho " + pPath + " não é um pasta.");
+				return null;
+			}
+			xFiles = xFile.listFiles();
+			
+	    	if (pSortBy == SORT_BY.MODIFIED_DATA){
+	    		if (pSortOrder == SORT_ORDER.ASCENDING){
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+				    		return Long.valueOf(pFile1.lastModified()).compareTo(pFile2.lastModified());
+					    } 
+					});
+	    		}else{
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+				    		return -Long.valueOf(pFile1.lastModified()).compareTo(pFile2.lastModified());
+					    } 
+					});
+	    		}
+	    	}else if (pSortBy == SORT_BY.NAME){
+	    		if (pSortOrder == SORT_ORDER.ASCENDING){
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+					        return String.CASE_INSENSITIVE_ORDER.compare(pFile1.getName(), pFile2.getName());
+	
+					    } 
+					});
+	    		}else{
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+					        return -String.CASE_INSENSITIVE_ORDER.compare(pFile1.getName(), pFile2.getName());
+	
+					    } 
+					});
+	    		}
+	    	}else if (pSortBy == SORT_BY.SIZE){
+	    		if (pSortOrder == SORT_ORDER.ASCENDING){
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+					        return Long.valueOf(pFile1.length()).compareTo(pFile2.length());
+	
+					    } 
+					});
+	    		}else{
+					Arrays.sort(xFiles, new Comparator<File>(){
+					    @Override
+						public int compare(File pFile1, File pFile2){
+					        return -Long.valueOf(pFile1.length()).compareTo(pFile2.length());
+	
+					    } 
+					});
+	    		}
+	    	}
+
+			return xFiles;
+		}catch(Exception e){
+			wLogger.error(e);
+			return null;
+		}
+	}
+	
+	public static void displayFiles(File[] files) {
+		for (File file : files) {
+			System.out.printf("File: %-20s Last Modified:" + new Date(file.lastModified()) + " size:" + file.length() + "\n", file.getName());
+		}
+	}
+	/*
+	 * 
+	 */
+
+	
 	// ===============================================================================================
 	// Private
 	// ===============================================================================================
-
+	
+	/**
+	 * Retorna o caminho do diretório.
+	 * @param pName
+	 * @param pHasFile true: Indica se <b>pNome</b> pode ser conter um nome de arquivo.<p>
+	 * false: Indica se <b>pNome</b> contém somente diretório, independentemente se termina ou não com "/"
+	 * @return
+	 */
+	private static String pvGetPath(String pName, boolean pHasFile){
+		if (pName != null){
+			try {
+				URI xURI = new URI(pName).normalize();
+				String xHost = "";
+				String xPath = xURI.getPath();
+				//Procotolo
+				if (xURI.getScheme()!=null){
+					xHost = xURI.getScheme() + ":";
+				}
+				//Servidor
+				if (xURI.getHost()!=null){
+					xHost += "//" + xURI.getHost();
+				}
+				//Inclui barra inicial
+				if (xURI.getHost()==null
+				&& !xPath.startsWith("/")){
+					xPath = "/" + xPath; 
+				}
+				//Encontra diretório pai, se houver.
+				if (pHasFile){
+					if (!xPath.endsWith("/")){
+						File xFile = new File(xPath);
+						xPath = DBSObject.getNotNull(xFile.getParent(),""); 
+					}
+				}
+				//Inclui barra final
+				if (!xPath.endsWith("/")){
+					xPath += "/";
+				}
+				return xHost + xPath;
+			} catch (URISyntaxException e) {
+				wLogger.error(e);
+				return "";
+			}
+		}
+		return "";
+	}
+	
+	
+	
 	private static FileSystem pvCreateZipFileSystem(String pZipFilename,
 			boolean create) throws IOException {
 		final Path xPath = Paths.get(pZipFilename);
