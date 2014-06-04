@@ -93,43 +93,5 @@ public interface IDBSDAOEventsListener {
 	 */
 	public abstract void afterMove(DBSDAOEvent pEvent);
 	
-
-	//public abstract voidbeforeCancel(DBSDAOBase<?> pDAO);
-	/**
-	 * Chamado depois de exeutar o comando de cancelamento
-	 * @param pEvent Informações do evento
-	 * @param pOk Se operação foi bem sucedida
-	 */
-	//public abstract void afterCancel(DBSDAOBase<?> pDAO, boolean pOk);
-	
-	/**
-	 * Chamado antes de exeutar o comando de refresh 
-	 * @param pEvent Informações do evento
-	 * @return Se deseja continuar
-	 */
-	//public abstract voidbeforeRefresh(DBSDAOBase<?> pDAO);
-	/**
-	 * Chamado depois de exeutar o comando de refresh
-	 * @param pEvent Informações do evento
-	 * @param pOk Se operação foi bem sucedida
-	 */
-	//public abstract void afterRefresh(DBSDAOBase<?> pDAO, boolean pOk);
-	
-	
-//	public abstract voidbeforeLoad(DBSDAOBase<?> pDAO);
-//	public abstract void afterLoad(DBSDAOBase<?> pDAO);
-//	
-//	public abstract voidbeforeUnload(DBSDAOBase<?> pDAO);
-//	public abstract void afterUnload(DBSDAOBase<?> pDAO);
-//	
-//	public abstract voidbeforePrint(DBSDAOBase<?> pDAO);
-//	public abstract void afterPrint(DBSDAOBase<?> pDAO);
-//	
-//
-//	public abstract voidbeforeReprove(DBSDAOBase<?> pDAO);
-//	public abstract void afterReprove(DBSDAOBase<?> pDAO);
-//	
-//	public abstract voidbeforeAprove(DBSDAOBase<?> pDAO);
-//	public abstract void afterAprove(DBSDAOBase<?> pDAO);
 }
 
