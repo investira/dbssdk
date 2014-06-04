@@ -577,7 +577,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public synchronized final void run() throws DBSIOException{
 		try {
 			pvRetryReset();
-			wLogger.info("Inicio:Manual");
+			wLogger.warn("Manual run");
 			pvRunTask();
 		} catch (Exception e) {
 			wLogger.error(e);
@@ -757,7 +757,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	private void pvAtivaAgendamento() throws DBSIOException{
 		//Cancela último timer se houver;
-		pvDesativaAgendamento();
+		pvKillTimer();
 		//Cria novo agendamento
 		if (wScheduleDate != null){
 			Timestamp xNow = DBSDate.getNowTimestamp();
@@ -776,12 +776,20 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 	
 	/**
-	 * Agenda a tarefa no timer caso a tarefa e busca pelo próximo agendamento estajam habilitados
+	 * Desativa o agendamento e cancela o timer se estiver ativo
 	 */
 	private void pvDesativaAgendamento(){
 		//Cancela último timer se houver;
+		wScheduleDate = null;
+		pvKillTimer();
+	}
+	
+	/**
+	 * Cancela o timer se estiver ativo
+	 */
+	private void pvKillTimer(){
+		//Cancela último timer se houver;
 		if (wTimer != null) {
-			wScheduleDate = null;
 			wTimer.cancel();
 			wTimer.purge();
 		}
