@@ -129,7 +129,7 @@ public class DBSDate{
     }
 
 	/**
-	 * Retorna a data e hora atual 
+	 * Retorna a data e hora atual. 
 	 * @return Data e hora atual
 	 */
 	public static Timestamp getNowTimestamp() {
