@@ -3,10 +3,12 @@ package br.com.dbsoft.util;
 //import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
 
 import br.com.dbsoft.util.DBSFile.SORT_BY;
 import br.com.dbsoft.util.DBSFile.SORT_ORDER;
@@ -134,6 +136,18 @@ public class TstDBSFile {
 		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.NAME, SORT_ORDER.ASCENDING);
 		System.out.println("-----");
 		DBSFile.getFilesFromPath("/Users/ricardo.villar", SORT_BY.NAME, SORT_ORDER.DESCENDING);
+	}
+	
+//	@Test
+	public void testea(){
+				//Busca na pasta local principal os subdiretórios onde foram efetuados cada download
+		File[] xFiles = DBSFile.getFilesFromPath("/Users/ricardo.villar/ifeed/BCB");
+		for (File xFile:xFiles){
+			if (xFile.isDirectory() &&
+				!xFile.isHidden()){
+				System.out.println(xFile.getAbsolutePath());
+			}
+		}
 	}
 
 }

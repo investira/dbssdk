@@ -744,7 +744,9 @@ public class DBSFile {
 	}
 
 	/**
-	 * Retorna lista de arquivos/diretórios existentes no caminho informado em <b>ppath</b> por ordem crescente de nome.<br>
+	 * Retorna lista de arquivos/diretórios existentes no caminho informado em <b>pPath</b> 
+	 * por ordem crescente de nome.<br>
+	 * @param pPath Caminho a ser pesquisado
 	 * @return
 	 */
 	public static File[] getFilesFromPath(String pPath){
@@ -753,7 +755,7 @@ public class DBSFile {
 
 	/**
 	 * Retorna lista de arquivos/distórios existentes no caminho informado em <b>ppath</b>.<br>
-	 * @param pPath Caminho a se pesquisado
+	 * @param pPath Caminho a ser pesquisado
 	 * @param pSortBy Campo a ser considerado para efeito do ordenamento da lista
 	 * @param pSortOrder Ordem da lista
 	 * @return
