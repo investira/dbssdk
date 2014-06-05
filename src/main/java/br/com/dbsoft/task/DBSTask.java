@@ -506,8 +506,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Normalmente as etapas de uma tarefa são executadas uma única vez.<br/>
 	 * Este indicador possiblita executar as etapas mais uma vez, desde o ínicio, logo após a finalização da última etapa.<br/>
-	 * Este valor só deve ser alterado durante o processamento da tarefa.<br/>
-	 * O evento <b>afterRun</b> será disparado sempre após a finalização da última etapa e antes de executar mais uma vez as estapas.<br/>
+	 * Este valor só deve ser alterado após a tarefa inicia durante a chamada de qualquer um dos eventos.<br/>
+	 * Os eventos <b>beforeRun</b> e <b>afterRun</b> serão disparados sempre respectivamentes antes e depois de execução das etapas.<br/>
 	 * @param pReRun
 	 */
 	public void setReRun(Boolean pReRun){
@@ -633,7 +633,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	private void pvRunTask() throws DBSIOException{
 		if (!isRunning()){
-			
 			try{
 				if (wMultiTask){
 					//Cria multitarefa e inicia. A Thread chamará o pvRunMain
