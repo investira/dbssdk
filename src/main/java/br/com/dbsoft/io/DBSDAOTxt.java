@@ -587,7 +587,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 			try {
 				String xLineData = null;
 				//Le linha, move para xLine. Se conteúdo não for nulo, incluir linha
-				while ((xLineData = pvReadLineIgnoringHeaderAndFooter()) != null ){
+				while ((xLineData = pvReadLine()) != null ){
 					pvGetRow(xLineData);
 					if (getInterrupt()) {
 						xOk = false;
