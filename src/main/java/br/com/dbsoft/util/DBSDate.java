@@ -16,6 +16,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -241,25 +242,23 @@ public class DBSDate{
     }		
     
     /**
-     * Retorna o quantidade de milisegundos no tipo Date
-     * @param pMilliSeconds numero em milisegundos milliseconds desde January 1, 1970, 00:00:00 GMT
+     * Retorna a data a partir da quantidade de milisegundos.<br/>
+     * @param pMilliSeconds número em milisegundos a partir de January 1, 1970, 00:00:00.
      * @return Data no tipo Date
      */
     public static Date toDate(Long pMilliSeconds) {
-    	Date xDate = Date.valueOf("0001-01-01");
-    	xDate.setTime(pMilliSeconds);
-    	return xDate;  
+    	Date xData = new Date(pMilliSeconds);
+    	return xData;  
     }		
 
+    
     /**
 	 * Retorna uma Data do tipo Date, a partir de uma data do tipo Calendar.
 	 * @param pData
 	 * @return Data no tipo Date
 	 */
 	public static Date toDate(Calendar pData) {
-		Date xData = new Date(pData.getTime().getTime());
-		xData = toDate(xData.getTime());
-		return xData;
+		return toDate(pData.getTimeInMillis());
 	}
 	
     /**
@@ -268,30 +267,82 @@ public class DBSDate{
 	 * @return Data no tipo Date
 	 */
 	public static Date toDate(Timestamp pData) {
-		DateTime xDT = new DateTime(pData);
-		Date xDate =  new Date(xDT.getMillis());
-		return xDate;
+		return toDate(pData.getTime());
 	}
 	
+    /**
+	 * Retorna uma Data do tipo Date, a partir de uma data do tipo Timestamp.
+	 * @param pData
+	 * @return Data no tipo Date
+	 */
 	public static Date toDate(Object pData) {
 		if (DBSObject.isEmpty(pData)) {
 			return null;
 		}
-		if (pData.getClass() == Timestamp.class) {
+		if (pData instanceof Timestamp) {
 			return toDate((Timestamp) pData);
-		} else if (pData.getClass() == String.class) {
+		} else if (pData instanceof String) {
 			return toDate((String) pData);
+		} else if (pData instanceof Time) {
+			return new Date(((Time) pData).getTime());
 		} else {
 			return (Date) pData;
 		}
 	}
 	
+	/**
+	 * Retorna uma Data do tipo Date, a partir de uma data do tipo LocalDate.
+	 * @param pData
+	 * @return Data no tipo Date
+	 */
+	public static Date toDate(LocalDate pData) {
+		java.util.Date xData0 = pData.toDate();
+		java.sql.Date xData = new java.sql.Date(xData0.getTime());
+		return xData;
+	}
+
+	/**
+	 * Retorna uma Data do tipo Date, a partir de uma data do tipo DateTime
+	 * @param pData
+	 * @return Data no tipo Date
+	 */
+	public static Date toDate(DateTime pData) {
+		java.util.Date xData0 = pData.toDate();
+		java.sql.Date xData = new java.sql.Date(xData0.getTime());
+		return xData;
+	}
+
 	public static Date toDate(XMLGregorianCalendar pData) {
 		if (DBSObject.isEmpty(pData)) {
 			return null;
 		}
 		DateTime xDataTime = new DateTime(pData.getYear(), pData.getMonth(), pData.getDay(), pData.getHour(), pData.getMinute());
 		return DBSDate.toDate(xDataTime);
+	}
+
+	/**
+	 * Retorna a data e hora no tipo Date, a partir de uma string com data e hora.
+	 * @param pData no formado dd/mm/aaaa hh:mm:ss  
+	 * @return Retorna a data formatada
+	 */
+	public static Date toDateDMYHMS(String pData) {
+		if (pData.contains("-")) {
+			// Data no formato ISO
+	    	return pvToDateLong(pData, "dd-MM-yyyy HH:mm:ss");
+		}else{
+			// Data no formato ABNT
+	    	return pvToDateLong(pData, "dd/MM/yyyy HH:mm:ss");
+		}
+	}
+
+	public static Date toDateYMDHMS(String pData) {
+		if (pData.contains("-")) {
+			// Data no formato ISO
+	    	return pvToDateLong(pData, "yyyy-MM-dd HH:mm:ss");
+		}else{
+			// Data no formato ABNT
+	    	return pvToDateLong(pData, "yyyy/MM/dd HH:mm:ss");
+		}
 	}
 
 	/**
@@ -308,12 +359,22 @@ public class DBSDate{
 	}
 
 	/**
-	 * Retorna uma Data do tipo Timestamp, a partir de uma data do tipo Long.
+	 * Retorna uma Data do tipo <b>Timestamp</b> a partir da quantidade de milisegundos.
+	 * @param pMilliSeconds
+	 * @return
+	 */
+	public static Timestamp toTimestamp(Long pMilliSeconds){
+		Timestamp xT = new Timestamp(toDateTime(pMilliSeconds).getMillis());
+		return xT;
+	}
+
+	/**
+	 * Retorna uma Data do tipo <b>Timestamp</b> a partir da quantidade de milisegundos.
 	 * @param pData
 	 * @return
 	 */
-	public static Timestamp toTimestamp(Long pData){
-		Timestamp xT = new Timestamp(pData);
+	public static Timestamp toTimestamp(Integer pMilliSeconds){
+		Timestamp xT = new Timestamp(toDateTime(pMilliSeconds.longValue()).getMillis());
 		return xT;
 	}
 	
@@ -329,10 +390,12 @@ public class DBSDate{
 		}
 		if (pData.equals("")){
 			return null;
-		}else if (pData.getClass() == Date.class){
+		}else if (pData instanceof Date){
 			return new Timestamp(((Date) pData).getTime());
-		} else if (pData.getClass() == Timestamp.class) {
+		} else if (pData instanceof Timestamp) {
 			return (Timestamp) pData;
+		} else if (pData instanceof Integer) {
+			return new Timestamp((Integer) pData);
 		} else {
 			return (Timestamp) pData;
 		}
@@ -360,53 +423,6 @@ public class DBSDate{
 		return DBSDate.toTimestamp(xData);
 	}
 	
-    /**
-	 * Retorna uma Data do tipo Date, a partir de uma data do tipo LocalDate.
-	 * @param pData
-	 * @return Data no tipo Date
-	 */
-	public static Date toDate(LocalDate pData) {
-		java.util.Date xData0 = pData.toDate();
-		java.sql.Date xData = new java.sql.Date(xData0.getTime());
-		return xData;
-	}
-
-    /**
-	 * Retorna uma Data do tipo Date, a partir de uma data do tipo DateTime
-	 * @param pData
-	 * @return Data no tipo Date
-	 */
-	public static Date toDate(DateTime pData) {
-		java.util.Date xData0 = pData.toDate();
-		java.sql.Date xData = new java.sql.Date(xData0.getTime());
-		return xData;
-	}	
-	
-    /**
-     * Retorna a data e hora no tipo Date, a partir de uma string com data e hora.
-     * @param pData no formado dd/mm/aaaa hh:mm:ss  
-     * @return Retorna a data formatada
-     */
-    public static Date toDateDMYHMS(String pData) {
-    	if (pData.contains("-")) {
-    		// Data no formato ISO
-        	return pvToDateLong(pData, "dd-MM-yyyy HH:mm:ss");
-    	}else{
-    		// Data no formato ABNT
-        	return pvToDateLong(pData, "dd/MM/yyyy HH:mm:ss");
-    	}
-    }
-    
-    public static Date toDateYMDHMS(String pData) {
-    	if (pData.contains("-")) {
-    		// Data no formato ISO
-        	return pvToDateLong(pData, "yyyy-MM-dd HH:mm:ss");
-    	}else{
-    		// Data no formato ABNT
-        	return pvToDateLong(pData, "yyyy/MM/dd HH:mm:ss");
-    	}
-    }
-    
     /**
 	 * Retorna a hora a partir da string no formato HH:MM:SS
 	 * @param pHora no formato HH:MM:SS (24hrs)
@@ -458,15 +474,14 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna a hora a partir da quantidade de milisegundos
+	 * Retorna a hora a partir da quantidade de milisegundos.
 	 * @param pMilliseconds
 	 * @return hora
 	 */
 	public static Time toTime(Long pMilliseconds){
-//		Time xTime = Time.valueOf("0:0:0"); 
-//		xTime.setTime(pMilliseconds); 
-//		return xTime;
-		return toTime(TimeUnit.MILLISECONDS.toHours(pMilliseconds), TimeUnit.MILLISECONDS.toMinutes(pMilliseconds), TimeUnit.MILLISECONDS.toSeconds(pMilliseconds)); 
+		return toTime(TimeUnit.MILLISECONDS.toHours(pMilliseconds), 
+					  TimeUnit.MILLISECONDS.toMinutes(pMilliseconds), 
+					  TimeUnit.MILLISECONDS.toSeconds(pMilliseconds)); 
 	}
 	
 	public static Time toTime(Object pMilliseconds){
@@ -504,6 +519,8 @@ public class DBSDate{
 		xData.setTime(pTime);
 		return xData;
 	}
+	
+	
 
 	/**
 	 * Retornar data no tipo Calendar, a partir do dia, mes e ano informado
@@ -513,11 +530,36 @@ public class DBSDate{
 	 * @return Data no formato Calendar
 	 */
 	public static Calendar toCalendar(int pDia, int pMes, int pAno) {
-		return toCalendar(toDate(pDia, pMes, pAno));
+		Calendar xC = Calendar.getInstance();
+		xC.set(pAno, pMes, pDia);
+		return xC;
 	}
 	
 	/**
-	 * Retorna o dia a partir de uma date(date)
+	 * Retornar data no tipo Calendar, a partir da quantidade de milisegundos.
+	 * @param pDia 
+	 * @param pMes
+	 * @param pAno
+	 * @return Data no formato Calendar
+	 */
+	public static Calendar toCalendar(Long pMilliseconds) {
+		Calendar xC = Calendar.getInstance();
+		xC.setTimeInMillis(pMilliseconds);
+		return xC;
+	}
+	
+    /**
+     * Retorna a data e hora a partir da quantidade de milisegundos.<br/>
+     * @param pMilliSeconds número em milisegundos a partir de January 1, 1970, 00:00:00.
+     * @return Data no tipo Date
+     */
+    public static DateTime toDateTime(Long pMilliSeconds) {
+    	return new DateTime(pMilliSeconds, DateTimeZone.UTC);  
+    }	
+	
+	
+	/**
+	 * Retorna o dia a partir de uma data.
 	 * @param pData
 	 * @return dia
 	 */
@@ -1338,7 +1380,7 @@ public class DBSDate{
 	}
 
 	/**
-	 * Retorna data do próximo aniversário considerando diferentes tipos de vigências/periodicidade
+	 * Retorna data do próximo aniversário considerando diferentes tipos de vigências/periodicidade.
 	 * @param pConexao Conexão do banco de dados
 	 * @param pData  Data a partir do qual será efetuado o cálculo do próximo aniversário
 	 * @param pPrazo  Prazo em periodos que serão somados a data base
@@ -1359,12 +1401,12 @@ public class DBSDate{
 			xData.add(Calendar.MONTH, pPrazo);
 		} else if (pPeriodicidade == PERIODICIDADE.ANUAL) {
 			xData.add(Calendar.YEAR, pPrazo);
-		} 
+		}
 		return getProximaData(pConexao, toDate(xData), 0, pUtil, pCidade, pApplicationColumnName);		
 	}
 	
 	/**
-	 * Chama o metodo getProximoAniversario(), considerando pApplicationColumnName = null
+	 * Retorna data do próximo aniversário considerando diferentes tipos de vigências/periodicidade.
 	 * @param pConexao Conexão do banco de dados
 	 * @param pData  Data a partir do qual será efetuado o cálculo do próximo aniversário
 	 * @param pPrazo  Prazo em periodos que serão somados a data base
@@ -1377,7 +1419,7 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Chama o metodo getProximoAniversario(), considerando pCidade = -1
+	 * Retorna data do próximo aniversário considerando diferentes tipos de vigências/periodicidade e somente feriádos nacionais(BR).
 	 * @param pConexao Conexão do banco de dados
 	 * @param pData  Data a partir do qual será efetuado o cálculo do próximo aniversário
 	 * @param pPrazo  Prazo em periodos que serão somados a data base
@@ -1460,6 +1502,20 @@ public class DBSDate{
 	}
 	
 
+	/**
+     * Parse de string para data.
+     * @param pValue String no formato YYYYMMDD.
+     * @return Date
+     */
+	public static Date toDateYYYYMMDD(String pValue) {
+		Date xData = null;
+		String xAno = DBSString.getSubString(pValue, 1, 4);
+		String xMes = DBSString.getSubString(pValue, 5, 2);
+		String xDia = DBSString.getSubString(pValue, 7, 2);
+		xData = toDate(xDia, xMes, xAno);
+		return xData;
+	}
+
 	//========================================================================================
 	// privates
 	//========================================================================================
@@ -1475,38 +1531,24 @@ public class DBSDate{
 		}
 		return xDataFim;
 	}
-	
-    private static Date pvToDateLong(String pData, String pDateFormat) {
-    	if (pData == null){
-    		return null;
-    	}
 
-    	DateFormat xFormat = DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt", "BR"));
-    	// Testa se existe '-' na data passada
+	private static Date pvToDateLong(String pData, String pDateFormat) {
+		if (pData == null){
+			return null;
+		}
+	
+		DateFormat xFormat = DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt", "BR"));
+		// Testa se existe '-' na data passada
 		xFormat = new SimpleDateFormat(pDateFormat);
-        Date xDate = new Date(0);
-    	xFormat.setLenient(false);
-    	try {
-    		xDate.setTime(xFormat.parse(pData).getTime());
+	    Date xDate = new Date(0);
+		xFormat.setLenient(false);
+		try {
+			xDate.setTime(xFormat.parse(pData).getTime());
 		} catch (ParseException e) {
 			wLogger.error(e);
 			return null;
 		}   
-    	return xDate;
-    }
-
-    /**
-     * Parse de string para data.
-     * @param pValue String no formato YYYYMMDD.
-     * @return Date
-     */
-	public static Date toDateYYYYMMDD(String pValue) {
-		Date xData = null;
-		String xAno = DBSString.getSubString(pValue, 1, 4);
-		String xMes = DBSString.getSubString(pValue, 5, 2);
-		String xDia = DBSString.getSubString(pValue, 7, 2);
-		xData = toDate(xDia, xMes, xAno);
-		return xData;
+		return xDate;
 	}
 
 
