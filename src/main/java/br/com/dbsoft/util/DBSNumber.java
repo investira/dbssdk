@@ -749,7 +749,7 @@ public class DBSNumber {
 
 	/**
 	 * Converte para BigDecimal
-	 * @return Retorna o valor convertido para BigDecimal ou o 0 caso o valor a ser convertido seja nulo
+	 * @return Retorna o valor convertido para BigDecimal ou 0(zero) caso o valor a ser convertido seja nulo
 	 * @return
 	 */
 	public static BigDecimal toBigDecimal(Object pValor) {
@@ -782,8 +782,51 @@ public class DBSNumber {
 
 	/**
 	 * Converte para Integer
+	 * @param pValor
+	 * @return Retorna o valor convertido ou o 0(zero), caso o valor informado seja nulo.
+	 */
+	public static Long toLong(Object pValor) {
+		return toLong(pValor, 0L);
+	}
+
+	/**
+	 * Converte para Integer
+	 * @param pValor
+	 * @param pDefaultValue
+	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
+	 */
+	public static Long toLong(Object pValor, Long pDefaultValue) {
+		if (DBSObject.isEmpty(pValor)) { 
+			return pDefaultValue;
+		}
+
+		if (pValor instanceof Integer) {
+			return new Long((Integer) pValor);
+		} else if (pValor instanceof BigDecimal) {
+			return ((BigDecimal) pValor).longValue();
+		} else if (pValor instanceof Double) {
+			return ((Double) pValor).longValue();
+		} else if (pValor instanceof Float) {
+			return ((Float) pValor).longValue();
+		} else if (pValor instanceof Long) {
+			return (Long) pValor;
+		} else if (pValor instanceof Boolean) {
+			if (!(Boolean) pValor) {
+				return 0L;
+			} else {
+				return -1L;
+			}
+		} else if (pValor instanceof String) {	
+			return pvStringToDouble((String) pValor).longValue();
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Converte para Integer
 	 * @param pValor 
-	 * @return Retorna o valor convertido ou o valor 0, caso o valor informado seja nulo
+	 * @return Retorna o valor convertido ou o 0(zero), caso o valor informado seja nulo.
 	 */
 	public static Integer toInteger(Object pValor) {
 		return toInteger(pValor, 0);
