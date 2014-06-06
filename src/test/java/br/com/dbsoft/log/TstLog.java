@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author Avila
  * 
  */
-public class TstDBSLog {
+public class TstLog {
 
 	@Test
 	public void test_listarLog() {

@@ -27,7 +27,7 @@ import br.com.dbsoft.util.DBSString;
 
 //O SERVIDOR(JBOSS) PRECISA ESTÁ RODANDO 
 @RunWith(Arquillian.class)
-public class TstDBSDAO {
+public class TstDAO {
 	
 	//É necessário adicionar as classes que serão utilizadas com "addClass" conforme exemplo abaixo 
 	@Deployment
@@ -104,7 +104,7 @@ public class TstDBSDAO {
 	public void getBigQuery(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn);
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn);
 			String xSQL = "Select 'Empresa Aberta' as Tipo, Pessoa as Descricao, Pessoa_ID ID From Cor_Pessoa where pessoa like '%a%'  and tipo = 1   " +
 					"UNION Select 'Fundo de Investimento IN.CVM 409' as Tipo, Pessoa as Descricao, Pessoa_ID ID From Cor_Pessoa where pessoa like '%a%'  and tipo = 2 " + 
 					"UNION Select 'Índicador Econômico' as Tipo, indicador as Descricao, Indicador_ID ID From atv_indicador where indicador like '%a%'  and tipo = 1  " +
@@ -113,7 +113,7 @@ public class TstDBSDAO {
 					"UNION Select Ativo_Tipo as Tipo, Ativo as Descricao, Ativo_ID ID From atv_ativo a, atv_ativo_base ab, atv_ativo_tipo at where (a.ativo like '%a%'  or ab.ativo_base like '%a%'  or at.ativo_tipo like '%a%') and a.ativo_base_id = ab.ativo_base_id and ab.ativo_tipo_id = at.ativo_tipo_id  " +
 					" order by tipo, descricao ";
 			xDAO.open(xSQL);
-			List<TstDBSDAOModel> xL = new ArrayList<TstDBSDAOModel>();
+			List<TstDAOModel> xL = new ArrayList<TstDAOModel>();
 			xL = xDAO.getListDataModel();
 //			Assert.assertEquals("TESTE 2", xL.get(1).getCRUD());
 //			Assert.assertEquals("TESTE 5", xL.get(4).getCRUD());
@@ -174,7 +174,7 @@ public class TstDBSDAO {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
 			DBSIO.executeSQL(wCn, "Delete from crud");
 			
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn, "CRUD");
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn, "CRUD");
 			Assert.assertEquals(0, xDAO.getRowsCount());
 			for (int xX=1; xX < 6; xX++){
 				xDAO.getDataModel().setCRUD_ID(xX);
@@ -214,7 +214,7 @@ public class TstDBSDAO {
 	public void readDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn);
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn);
 			xDAO.open("Select * from crud where crud_id = 1");
 			Assert.assertEquals("TESTE 1", xDAO.getDataModel().getCRUD());
 			xDAO.close();
@@ -228,7 +228,7 @@ public class TstDBSDAO {
 	public void updateDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn);
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn);
 			xDAO.open("Select * from crud where crud_id = 1");
 			xDAO.getDataModel().setCRUD("TESTE 10");
 			xDAO.executeUpdate();
@@ -248,7 +248,7 @@ public class TstDBSDAO {
 	public void mergeDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn, "CRUD");
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn, "CRUD");
 			//Altera o nome
 			xDAO.getDataModel().setCRUD_ID(2);
 			xDAO.getDataModel().setCRUD("TESTE 200");
@@ -284,8 +284,8 @@ public class TstDBSDAO {
 	public void getDadoDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			TstDBSDAOModel xDT = new TstDBSDAOModel();
-			xDT = DBSIO.getDadoDataModel(TstDBSDAOModel.class, wCn, "Select * From CRUD where Crud_ID=2");
+			TstDAOModel xDT = new TstDAOModel();
+			xDT = DBSIO.getDadoDataModel(TstDAOModel.class, wCn, "Select * From CRUD where Crud_ID=2");
 			Assert.assertEquals("TESTE 2", xDT.getCRUD());
 			System.out.println("Fim:   " + getMethodName() + " ==================================");
 		} catch (Exception e) {
@@ -297,9 +297,9 @@ public class TstDBSDAO {
 	public void getDadoDataModelList(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn);
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn);
 			xDAO.open("Select * from CRUD");
-			List<TstDBSDAOModel> xL = new ArrayList<TstDBSDAOModel>();
+			List<TstDAOModel> xL = new ArrayList<TstDAOModel>();
 			xL = xDAO.getListDataModel();
 			Assert.assertEquals("TESTE 2", xL.get(1).getCRUD());
 			Assert.assertEquals("TESTE 5", xL.get(4).getCRUD());
@@ -317,7 +317,7 @@ public class TstDBSDAO {
 	public void getCopy(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
-			DBSDAO<TstDBSDAOModel> xDAO = new DBSDAO<TstDBSDAOModel>(TstDBSDAOModel.class, wCn);
+			DBSDAO<TstDAOModel> xDAO = new DBSDAO<TstDAOModel>(TstDAOModel.class, wCn);
 			xDAO.open("Select * from CRUD where CRUD_ID = 1");
 			xDAO.getDataModel().setCRUD_ID(null);
 			//xDAO.executeInsert();

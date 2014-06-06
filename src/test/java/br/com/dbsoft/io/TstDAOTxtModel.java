@@ -1,6 +1,6 @@
 package br.com.dbsoft.io;
 
-public class TstDBSDAOTxtModel {
+public class TstDAOTxtModel {
 
 	private char[] TIPO = new char[10]; 
 	private char[] FILLER = new char[20];

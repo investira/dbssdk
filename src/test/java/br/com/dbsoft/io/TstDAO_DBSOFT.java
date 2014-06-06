@@ -24,7 +24,7 @@ import br.com.dbsoft.util.DBSIO;
 
 //O SERVIDOR(JBOSS) PRECISA ESTÁ RODANDO 
 @RunWith(Arquillian.class)
-public class TstDBSDAO_DBSOFT {
+public class TstDAO_DBSOFT {
 	
 	//É necessário adicionar as classes que serão utilizadas com "addClass" conforme exemplo abaixo 
 	@Deployment

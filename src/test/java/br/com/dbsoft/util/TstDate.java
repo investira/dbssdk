@@ -21,7 +21,7 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
  * @author ricardo.villar
  *
  */
-public class TstDBSDate extends TestCase {
+public class TstDate extends TestCase {
 
 	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
 	String wUser="dbsoft";
@@ -548,4 +548,5 @@ public class TstDBSDate extends TestCase {
 		xDias = DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("01/12/2012"), true, -1);
 		assertEquals(18, xDias);
 	}
+
 }

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import br.com.dbsoft.util.DBSNumber;
 
-public class TstDBSNumber {
+public class TstNumber {
 
 	@Test
 	public void test_subtract() {

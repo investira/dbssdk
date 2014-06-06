@@ -9,6 +9,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface TstDBSTable {
+public @interface TstTable {
 
 }

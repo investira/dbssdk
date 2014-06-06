@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import br.com.dbsoft.file.DBSFileTransfer;
 
-public class TstDBSFileTransfer {
+public class TstFileTransfer {
 
 	
 	//@Test

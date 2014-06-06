@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import br.com.dbsoft.util.DBSFormat.NUMBER_SIGN;
 
-public class TstDBSFormat extends TestCase {
+public class TstFormat extends TestCase {
 
 	@Test
 	public void test_isDate() {

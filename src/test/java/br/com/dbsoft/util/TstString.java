@@ -14,7 +14,7 @@ import br.com.dbsoft.util.DBSFormat;
 import br.com.dbsoft.util.DBSFormat.NUMBER_SIGN;
 import br.com.dbsoft.util.DBSString;
 
-public class TstDBSString {
+public class TstString {
 
 	@Before
 	public void setUp() throws Exception {

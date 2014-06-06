@@ -13,7 +13,7 @@ import org.junit.Test;
 import br.com.dbsoft.util.DBSFile.SORT_BY;
 import br.com.dbsoft.util.DBSFile.SORT_ORDER;
 
-public class TstDBSFile {
+public class TstFile {
 
 	//@Test
 	public void testaZiparArquivo() throws IOException {
@@ -24,7 +24,7 @@ public class TstDBSFile {
 	@Test
 	@Ignore
 	public void testaDescompactarArquivo() throws IOException {
-		System.out.println(DBSFile.unzip("/home/jose_addario/BDI/bdi05151744.zip",
+		System.out.println(DBSFile.unzipFile("/home/jose_addario/BDI/bdi05151744.zip",
 				"/home/jose_addario/BDI/BDI05151733/"));
 		
 	}

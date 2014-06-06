@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class TstDBSRow {
+public class TstRow {
 
 	@Test
 	public void test_setRowValues(){

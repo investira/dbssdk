@@ -3,7 +3,7 @@ package br.com.dbsoft.io;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-public class TstDBSDAOModel {
+public class TstDAOModel {
 
 	private Integer CRUD_ID;
 	private String CRUD;
