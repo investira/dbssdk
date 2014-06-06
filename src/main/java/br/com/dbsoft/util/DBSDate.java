@@ -243,8 +243,8 @@ public class DBSDate{
     
     /**
      * Retorna a data a partir da quantidade de milisegundos.<br/>
-     * @param pMilliSeconds número em milisegundos a partir de January 1, 1970, 00:00:00.
-     * @return Data no tipo Date
+     * @param pMilliSeconds número em milisegundos a partir de January 1, 1970, 00:00:00 <b>GMT</b>.
+     * @return Data no tipo Date convertida para a localização atual.
      */
     public static Date toDate(Long pMilliSeconds) {
     	Date xData = new Date(pMilliSeconds);
