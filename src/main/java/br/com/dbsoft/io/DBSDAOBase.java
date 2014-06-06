@@ -1,6 +1,7 @@
 package br.com.dbsoft.io;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSRow;
@@ -215,7 +217,10 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 		for (Field xField : xFields) {
 			try { 
 				xField.setAccessible(true);
-				setValue(xField.getName(), xField.get(pDataModel), pOriginalValue);
+				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+				if (!(xAnnotationTmp instanceof DBSTableModel)){
+					setValue(xField.getName(), xField.get(pDataModel), pOriginalValue);
+				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				wLogger.error(e);
 			}
