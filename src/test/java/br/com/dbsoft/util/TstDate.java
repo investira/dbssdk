@@ -4,7 +4,6 @@ package br.com.dbsoft.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -108,6 +107,15 @@ public class TstDate extends TestCase {
 		assertTrue("TESTE ESPERAVA TRUE", DBSDate.isTime("1:59:59"));
 		assertTrue("TESTE ESPERAVA TRUE", DBSDate.isTime("1:9:9"));
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void teste_toDateYMDHMS(){
+		assertEquals(DBSDate.toDateYMDHMS("2014-01-02 10:10:01").toLocaleString(), "02/01/2014 10:10:01");
+		assertEquals(DBSDate.toDateYMDHMS("2014/01/02 10:10:01").toLocaleString(), "02/01/2014 10:10:01");
+		assertEquals(DBSDate.toDateYMDHMS("20140102000201").toLocaleString(), "02/01/2014 00:02:01");
+	}
+	
 	@Test
 	public void test_toDate(){
 			//TESTANDO Date toDate(String pDia, String pMes, String pAno)
@@ -183,7 +191,7 @@ public class TstDate extends TestCase {
 	}
 	
 	@Test
-	public void test_getDias() throws ParseException{
+	public void test_getDias(){
 		//DIAS CORRIDOS NO MES DE NOVEMBRO DE 2013
 		int xDias = DBSDate.getDias(wConexao, DBSDate.toDate("14/01/2013"), DBSDate.toDate("07/03/2014"), false, -1);
 		assertEquals(417, xDias);
@@ -311,7 +319,7 @@ public class TstDate extends TestCase {
 		assertEquals(1170, DBSDate.getFinaisDeSemana(DBSDate.toDate("15/07/2000"), DBSDate.toDate("01/10/2011")));
 	}
 	@Test
-	public void test_getDiasDoAno() throws ParseException{
+	public void test_getDiasDoAno() {
 		assertEquals(251, DBSDate.getDiasDoAno(wConexao, 2011, true, -1));
 		assertEquals(251, DBSDate.getDiasDoAno(wConexao, 2011, true));
 		assertEquals(365, DBSDate.getDiasDoAno(wConexao, 2011, false));
@@ -420,8 +428,9 @@ public class TstDate extends TestCase {
 		assertEquals(DBSDate.toDate("31/12/2011"), DBSDate.getUltimoDiaDoMes(wConexao, DBSDate.toDate("15/12/2011"), false));
 		assertEquals(DBSDate.toDate("30/12/2011"), DBSDate.getUltimoDiaDoMes(wConexao, DBSDate.toDate("15/12/2011"), true));
 	}
+	
 	@Test
-	public void test_getDiasDoMes() throws ParseException{
+	public void test_getDiasDoMes(){
 		assertEquals(31, DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("31/01/2011"), false));
 		assertEquals(21, DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("31/01/2011"), true));
 		assertEquals(28, DBSDate.getDiasDoMes(wConexao, DBSDate.toDate("15/02/2011"), false));
@@ -506,6 +515,7 @@ public class TstDate extends TestCase {
 		assertEquals(DBSDate.toDate("03/10/2011"), DBSDate.getProximaSemana(wConexao, DBSDate.toDate("01/10/2011"), 0, 1, true));
 		assertEquals(DBSDate.toDate("02/10/2011"), DBSDate.getProximaSemana(wConexao, DBSDate.toDate("01/10/2011"), 0, 1, false));
 	}
+	
 	@Test
 	public void test_getProximoAniversario(){
 		assertNull("TESTE ESPERAVA NULL", DBSDate.getProximoAniversario(wConexao, DBSDate.toDate("01102011"), 10, PERIODICIDADE.MENSAL, false,-1));

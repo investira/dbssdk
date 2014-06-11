@@ -2,7 +2,6 @@ package br.com.dbsoft.tmp;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.DecimalFormatSymbols;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -14,7 +13,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
@@ -66,12 +64,7 @@ public class lixoIO  {
 		}
 	}
 	
-	@Test
-	public void teste(){
-		java.text.DecimalFormatSymbols xD = new DecimalFormatSymbols();
-		char xDecimalPoint = xD.getDecimalSeparator();
-		System.out.println("ENTROU:" + xDecimalPoint);
-		//wCn.getMetaData().
-	}	
+	
+
 	
 }
