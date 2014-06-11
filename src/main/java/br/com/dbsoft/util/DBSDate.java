@@ -339,9 +339,12 @@ public class DBSDate{
 		if (pData.contains("-")) {
 			// Data no formato ISO
 	    	return pvToDateLong(pData, "yyyy-MM-dd HH:mm:ss");
-		}else{
+		}else if(pData.contains("/")){
 			// Data no formato ABNT
 	    	return pvToDateLong(pData, "yyyy/MM/dd HH:mm:ss");
+		}else {
+			// Data no formato ABNT
+	    	return pvToDateLong(pData, "yyyyMMddHHmmss");
 		}
 	}
 
@@ -1538,7 +1541,6 @@ public class DBSDate{
 		}
 	
 		DateFormat xFormat = DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt", "BR"));
-		// Testa se existe '-' na data passada
 		xFormat = new SimpleDateFormat(pDateFormat);
 	    Date xDate = new Date(0);
 		xFormat.setLenient(false);
