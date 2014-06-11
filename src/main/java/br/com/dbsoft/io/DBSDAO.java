@@ -1331,12 +1331,11 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	private String pvCreatePKString(String pPK, String pTableName){
 		String xTableAlias = pTableName;
-		if (!DBSObject.isEmpty(wQuerySQL)){
+		if (!DBSObject.isEmpty(wQuerySQL) && !DBSObject.isEmpty(xTableAlias)){
 			//Retorna o nome da tabela ou alias se existir.
 			xTableAlias = DBSIO.getTableFromQuery(wQuerySQL, true, xTableAlias);
 		}
-		if (pPK == null ||
-			pPK.equals("")){
+		if (DBSObject.isEmpty(pPK)){
 			return "";
 		}
 		String 	 xPK = pPK.trim().toUpperCase();
