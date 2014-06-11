@@ -375,7 +375,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	@SuppressWarnings("unchecked")
 	public final void setDataModel(DataModelClass pDataModel) throws InstantiationException, IllegalAccessException {
-		//wDataModelValueOriginal = pDataModel;
 		wDataModelValueOriginal = (DataModelClass) pDataModel.getClass().newInstance();
 		DBSIO.copyDataModelFieldsValue(pDataModel, wDataModelValueOriginal);
 		wDataModel = pDataModel;
@@ -577,7 +576,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public synchronized final void run() throws DBSIOException{
 		try {
 			pvRetryReset();
-			wLogger.warn("Manual run");
 			pvRunTask();
 		} catch (Exception e) {
 			wLogger.error(e);
@@ -1017,7 +1015,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			afterRun(xE);
 			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).afterRun(xE);
+				wEventListeners.get(xX).afterRun(xE); 
 	        }
 		}catch(Exception e){
 			wLogger.error("AfterRun", e);
@@ -1049,7 +1047,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 				for (int xX=0; xX<wEventListeners.size(); xX++){
 					wEventListeners.get(xX).step(xE);
-					xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
+					xOk = (xE.isOk() && getRunStatus() == RunStatus.EMPTY);
 					if (!xOk){break;} //Em caso de solicitação de interrupção(interrupt() ou error()), sai do loop.
 					//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
 					Thread.yield();
@@ -1106,7 +1104,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		//Chame o metodo(evento) local para quando esta classe for extendida
 		interrupted(xE);
-		wLogger.warn("Interrupt Request:" + getCurrentStep() + ":" + getCurrentStepName());
+		wLogger.warn("Interrupt:Step:" + getCurrentStep() + ":" + getCurrentStepName());
 		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).interrupted(xE);
