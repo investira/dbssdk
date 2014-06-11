@@ -1,5 +1,6 @@
 package br.com.dbsoft.util;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 
 import java.io.BufferedInputStream;
@@ -35,9 +36,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
-
-
-
 
 import br.com.dbsoft.core.DBSSDK.APP_SERVER_PROPERTY;
 
@@ -237,133 +235,97 @@ public class DBSFile {
 	}
 
 	/**
-	 * Método de descompactação de arquivo
-	 * 
-	 * @param pSourceFile
-	 *            : path completo do arquivo zip a ser descompactado.
-	 * @param pDestinationFile
-	 *            : path completo do DIRETÓRIO de destino.
-	 * @return
+	 * Método de descompactação de arquivo na mesma pasta que se encontra o arquivo.
+	 * @param pZipFileName path completo do arquivo zip a ser descompactado.
+	 * @return Em caso de sucesso, retorna <b>File</b> do último arquivo contido no arquivo compactado
 	 * @throws IOException
 	 */
-	public static File unzip(String pFileZiped, String pDiretorio) {
-		
-		@SuppressWarnings("rawtypes")
-		Enumeration xFileZipedElements;
-		ZipFile xFileZiped = null;
-		ZipEntry xFileZipedObject = null;
-		try {
-			xFileZiped = new ZipFile(pFileZiped);
-			xFileZipedElements = xFileZiped.entries();
-			while (xFileZipedElements.hasMoreElements()) {
-				xFileZipedObject = (ZipEntry) xFileZipedElements.nextElement();
-				if (xFileZipedObject.isDirectory()) {
-					//System.err.println("Descompactando diretório: " + xFileZipedObject.getName());
-					(new File(pDiretorio + xFileZipedObject.getName())).getName();
-					continue;
-				}
-				//System.out.println("Descompactando arquivo:" + xFileZipedObject.getName());
-				pvCopyInputStream(xFileZiped.getInputStream(xFileZipedObject), 
-						new BufferedOutputStream(new FileOutputStream(pDiretorio + xFileZipedObject.getName())));
+	public static File unzipFile(String pZipFileName) {
+		return unzipFile(pZipFileName, null);
+	}
 
-			}
-		} catch (IOException e) {
-			wLogger.error("Erro ao descompactar", e);
+	/**
+	 * Método de descompactação de arquivo.
+	 * @param pZipFileName path completo do arquivo zip a ser descompactado.
+	 * @param pDestinationFolder Caminho completo do diretório de destino.<br/>
+	 * Se for nulo, será considerado o próprio caminho do arquivo compactado.
+	 * @return Em caso de sucesso, retorna <b>File</b> do último arquivo contido no arquivo compactado
+	 * @throws IOException
+	 */
+	public static File unzipFile(String pZipFileName, String pDestinationFolder) {
+		@SuppressWarnings("rawtypes")
+		Enumeration xZipFileElements;
+		ZipFile 	xZipFile = null;
+		ZipEntry 	xZipFileObject = null;
+		
+		if (pZipFileName == null){
 			return null;
-		}finally{
+		}
+		
+		File xFile = new File(pZipFileName);
+		if (pDestinationFolder == null){
+			pDestinationFolder = xFile.getParent();
+			if (pDestinationFolder == null){
+				wLogger.error("Pasta destino para descompatar " + pZipFileName + " não foi encontrada.");
+				return null;
+			}
+		}
+		if (xFile.exists()
+		 && xFile.canRead()) {
+			pDestinationFolder = DBSFile.getPathFromFolderName(pDestinationFolder);
 			try {
-				if (xFileZiped!=null){
-					xFileZiped.close();
+				xZipFile = new ZipFile(pZipFileName);
+				xZipFileElements = xZipFile.entries();
+				while (xZipFileElements.hasMoreElements()) {
+					xZipFileObject = (ZipEntry) xZipFileElements.nextElement();
+					pvCopyInputStream(xZipFile.getInputStream(xZipFileObject), 
+							new BufferedOutputStream(new FileOutputStream(pDestinationFolder + xZipFileObject.getName())));
+					
+					xFile = new File(pDestinationFolder + xZipFileObject.getName());
+					//Corrige a hora de criação
+					xFile.setLastModified(xZipFileObject.getTime());
 				}
 			} catch (IOException e) {
-				wLogger.error("Erro ao descompactar:close", e);
-			}
-		}
-		return new File(pDiretorio + xFileZipedObject.getName());
-	}
-	
-
-	
-	/**
-	 * Método de descompactação de arquivo
-	 * 
-	 * @param pSourceFile
-	 *            : path completo do arquivo zip a ser descompactado.
-	 * @param pDestinationFile
-	 *            : path completo do DIRETÓRIO de destino.
-	 * @return
-	 * @throws IOException
-	 */
-	@Deprecated
-	public static boolean unzip_OLD(String pSourceFile, String pDestinationFile)
-			throws IOException {
-		final Path xDestDirPath = Paths.get(pDestinationFile);
-		final Path xZipPath = Paths.get(pSourceFile);
-
-		if (!DBSFile.exists(pSourceFile)) {
-			return false;
-		}
-
-		if (Files.notExists(xDestDirPath)) {
-			//System.out.println("Creating Directory: " + xDestDirPath);
-			Files.createDirectories(xDestDirPath);
-		}
-
-		try (FileSystem xZipFileSystem = FileSystems.newFileSystem(xZipPath,
-				null)) {
-			
-			final Path xRoot = xZipFileSystem.getPath("/");
-
-			Files.walkFileTree(xRoot, new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult visitFile(Path pFile,
-						BasicFileAttributes attrs) throws IOException {
-					final Path xDestFile = Paths.get(xDestDirPath.toString(),
-							pFile.toString());
-					//System.out.printf("Extracting file %s to %s\n", pFile,
-					//		xDestFile);
-					Files.copy(pFile, xDestFile, COPY_ATTRIBUTES);
-					return FileVisitResult.CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult preVisitDirectory(Path pDirectory,
-						BasicFileAttributes attrs) throws IOException {
-					final Path xDirToCreate = Paths.get(
-							xDestDirPath.toString(), pDirectory.toString());
-					if (Files.notExists(xDirToCreate)) {
-					//	System.out.printf("Creating directory %s\n",
-					//			xDirToCreate);
-						Files.createFile(xDirToCreate);
+				wLogger.error("Erro ao descompactar arquivo " + pZipFileName, e);
+				return null;
+			}finally{
+				try {
+					if (xZipFile!=null){
+						xZipFile.close();
 					}
-					return FileVisitResult.CONTINUE;
+				} catch (IOException e) {
+					wLogger.error("Erro ao descompactar:close", e);
 				}
-			});
-			return true;
-		} catch (Exception e) {
-			wLogger.error(e);
-			return false;
-		}
+			}
+//			xFile = new File(pDestinationFolder + xZipFileObject.getName());
+		} else {
+			pZipFileName = null;
+			wLogger.error("unZip: não é possível ler arquivo " + pZipFileName + ".");
+		}		
+		
+		return xFile;
 	}
+	
 
+	
 	/**
 	 * Método de compactação de arquivos
 	 * 
-	 * @param pZipFilename
-	 * @param pFilenames
+	 * @param pZipFileName
+	 * @param pFileNames
 	 * @return
 	 * @throws IOException
 	 */
-	public static boolean zipFile(String pZipFilename, String... pFilenames){
-		String[] xFileName = pFilenames;
+	public static boolean zipFile(String pZipFileName, String... pFileNames){
+		String[] xFileName = pFileNames;
 		if (!DBSFile.exists(xFileName[0])) {
 			return false;
 		}
-		try (FileSystem xZipFileSystem = pvCreateZipFileSystem(pZipFilename,
+		try (FileSystem xZipFileSystem = pvCreateZipFileSystem(pZipFileName,
 				true)) {
 			final Path xRoot = xZipFileSystem.getPath("/");
 
-			for (String xFilename : pFilenames) {
+			for (String xFilename : pFileNames) {
 				final Path xSourcePath = Paths.get(xFilename);
 
 				if (!Files.isDirectory(xSourcePath)) {
@@ -511,6 +473,7 @@ public class DBSFile {
 		}
 	}
 
+	
 	/**
 	 * Método para mover arquivos
 	 * 
@@ -526,20 +489,18 @@ public class DBSFile {
 		}
 		File xOldFile = new File(pOld);
 		File xNewFile = new File(pNew);
-
-		boolean xIsOk = xOldFile
-				.renameTo(new File(xNewFile, xOldFile.getName()));
-		if (xIsOk) {
-			//System.out.println("Arquivo foi movido com sucesso");
-			return true;
-		} else {
-			//System.out.println("Nao foi possivel mover o arquivo");
+		if (xOldFile.exists()
+		&& !xNewFile.exists()){
+			return xOldFile.renameTo(xNewFile);
+		}else{
+			wLogger.error("Move não pode ser executado, por destino já existir.");
 			return false;
 		}
 	}
 
 	/**
-	 * Método de cópia de arquivos
+	 * Método de cópia de arquivos.<br/>
+	 * Sobre-escreve se arquivo com mesmo nome existir.
 	 * 
 	 * @param pFile
 	 *            : path completo do arquivo a ser copiado
@@ -557,7 +518,7 @@ public class DBSFile {
 		Path xPathFileCopied = Paths.get(pFileCopied);
 
 		try {
-			Files.copy(xPathSourceFile, xPathFileCopied, COPY_ATTRIBUTES);
+			Files.copy(xPathSourceFile, xPathFileCopied, REPLACE_EXISTING, COPY_ATTRIBUTES);
 			return true;
 		} catch (IOException e) {
 			wLogger.error(e);
@@ -596,6 +557,9 @@ public class DBSFile {
 	 */
 	public static boolean exists(String pFile) {
 		boolean xExists = false;
+		if (pFile==null){
+			return false;
+		}
 		try{
 			File xFile = new File(pFile);
 			xExists = xFile.exists();
@@ -670,29 +634,6 @@ public class DBSFile {
 	}
 
 	/**
-	 * Retorna somente o nome do arquivo a partir da caminho informado.<p>
-	 * Exemplos:<br/>
-	 * <b>http://www.acme.com/abc</b> retornará <b>abc/</b>.<br/>
-	 * <b>http://www.acme.com/abc/</b> retornará <b>vázio</b>.<br/>
-	 * <b>acme/</b> retornará <b>vázio</b>.<br/>
-	 * <b>acme</b> retornará <b>acme</b>.<br/>
-	 * <b>/acme/</b> retornará <b>vázio</b>.<br/>
-	 * <b>/acme/abc</b> retornará <b>abc</b>.<br/>
-	 * <b>/acme/abc.txt</b> retornará <b>abc.txt</b>.<br/>
-	 * @param pPath
-	 * @return
-	 */
-	public static String getFileNameFromPath(String pPath){
-		if (pPath == null){return "";}
-		int xI = pPath.lastIndexOf("/");
-		if (xI == -1){
-			return pPath;
-		}else{
-			return DBSString.getSubString(pPath, xI + 2, pPath.length());
-		}
-	}
-	
-	/**
 	 * Retorna o caminho do arquivo, incluindo "/" ao final(se não houver) e ao inicio quando não tiver sido informado o <b>procotolo</b>.<br/>
 	 * Exclui a parte do caminho após o último "/".<br/>
 	 * Considera que <b>pFileName</b> pode conter além do caminho, o nome de arquivo.
@@ -741,6 +682,29 @@ public class DBSFile {
 	 */
 	public static String getServerPath(){
 		return System.getProperty(APP_SERVER_PROPERTY.PATH.JBOSS);
+	}
+
+	/**
+	 * Retorna somente o nome do arquivo a partir da caminho informado.<p>
+	 * Exemplos:<br/>
+	 * <b>http://www.acme.com/abc</b> retornará <b>abc/</b>.<br/>
+	 * <b>http://www.acme.com/abc/</b> retornará <b>vázio</b>.<br/>
+	 * <b>acme/</b> retornará <b>vázio</b>.<br/>
+	 * <b>acme</b> retornará <b>acme</b>.<br/>
+	 * <b>/acme/</b> retornará <b>vázio</b>.<br/>
+	 * <b>/acme/abc</b> retornará <b>abc</b>.<br/>
+	 * <b>/acme/abc.txt</b> retornará <b>abc.txt</b>.<br/>
+	 * @param pPath
+	 * @return
+	 */
+	public static String getFileNameFromPath(String pPath){
+		if (pPath == null){return "";}
+		int xI = pPath.lastIndexOf("/");
+		if (xI == -1){
+			return pPath;
+		}else{
+			return DBSString.getSubString(pPath, xI + 2, pPath.length());
+		}
 	}
 
 	/**
@@ -901,13 +865,12 @@ public class DBSFile {
 	
 	
 	
-	private static FileSystem pvCreateZipFileSystem(String pZipFilename,
-			boolean create) throws IOException {
+	private static FileSystem pvCreateZipFileSystem(String pZipFilename, boolean pCreate) throws IOException {
 		final Path xPath = Paths.get(pZipFilename);
 		final URI xUri = URI.create("jar:file:" + xPath.toUri().getPath());
 
 		final Map<String, String> xEnv = new HashMap<>();
-		if (create) {
+		if (pCreate) {
 			xEnv.put("create", "true");
 		}
 		return FileSystems.newFileSystem(xUri, xEnv);
@@ -920,8 +883,7 @@ public class DBSFile {
 	 * @param pOutputStream
 	 * @throws IOException
 	 */
-	private static final void pvCopyInputStream(InputStream pInputStream,
-			OutputStream pOutputStream) throws IOException {
+	private static final void pvCopyInputStream(InputStream pInputStream, OutputStream pOutputStream) throws IOException {
 		byte[] xBuffer = new byte[1024];
 		int xFileLentgh;
 		while ((xFileLentgh = pInputStream.read(xBuffer)) >= 0) {
