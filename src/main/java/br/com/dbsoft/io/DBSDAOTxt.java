@@ -166,7 +166,8 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Tipo de encode do texto 
+	 * Tipo de encode do texto.<br/>
+	 * Confirme os valores contidos em <b>DBSSDK.FILE.ENCODE</b>
 	 * @return
 	 */
 	public String getEncode() {
@@ -174,7 +175,8 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Tipo de encode do texto 
+	 * Tipo de encode do texto.<br/>
+	 * Utilizar os valores contidos em <b>DBSSDK.FILE.ENCODE</b>
 	 * @return
 	 */
 	public void setEncode(String wEncode) {
