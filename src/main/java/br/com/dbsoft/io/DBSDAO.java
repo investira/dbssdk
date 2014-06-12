@@ -436,11 +436,11 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	public final void setCommandTableName(String pCommandTableName, String pPK) throws DBSIOException{
 		if (!DBSObject.isEmpty(pCommandTableName) && //Se nome não for vazio 
-			!wCommandTableName.equals(pCommandTableName)){//Se nome da table for diferente da anterior
+			!wCommandTableName.equals(pCommandTableName.trim())){//Se nome da table for diferente da anterior
 			if (wQueryColumns.size() > 0){
 				wLogger.error("DBSDAO: CommandTableName deve ser configurada ANTES de efetuar o Open() ou no momento da criação da nova instância do DAO.");
 			}
-			this.wCommandTableName = pCommandTableName;
+			this.wCommandTableName = pCommandTableName.trim();
 			pvSetPK(pPK);
 			pvCreateCommandColumns();
 		}
