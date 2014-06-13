@@ -33,7 +33,7 @@ public class TrocaNomes {
 		wConexao.close();
 	}
 	
-	//@Test
+	@Test
 	public void readLoop(){
 		try {
 			@SuppressWarnings("rawtypes")
@@ -42,12 +42,12 @@ public class TrocaNomes {
 			xDAO.moveBeforeFirstRow();
 			while(xDAO.moveNextRow()){
 				System.out.println(xDAO.getValue("Pessoa"));
-				xDAO.setValue("Pessoa", DBSString.toProper((String) xDAO.getValue("Pessoa")));
+				xDAO.setValue("Pessoa", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Pessoa"))));
 //				if (xDAO.getValue("Complemento")!=null){
 //					xDAO.setValue("Complemento", DBSString.toProper((String) xDAO.getValue("Complemento")));
 //				}
 				if (xDAO.getValue("Endereco")!=null){
-					xDAO.setValue("Endereco", DBSString.toProper((String) xDAO.getValue("Endereco")));
+					xDAO.setValue("Endereco", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Endereco"))));
 				}
 				xDAO.executeUpdate();
 				//System.out.println(xDAO.getValue("Cidade"));

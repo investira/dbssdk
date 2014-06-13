@@ -26,6 +26,7 @@ public class TstString {
 	
 	@Test
 	public void test_ascii(){
+		System.out.println(DBSString.changeStr("Odebrecht  Defesa  e  Tecnologia S.A.", "  ", " ",false));
 //		System.out.println(DBSString.toASCII("É"));
 //		pValue = DBSString.changeStr((String)pValue, "╔", "É");
 //		pValue = DBSString.changeStr((String)pValue, "ß", "á");
