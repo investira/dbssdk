@@ -1015,8 +1015,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					//Sai em caso de erro
 					if (!xE.isOk()){break;}
 		        }
-			}else{
-				wLogger.info("BeforeRun:False");
 			}
 			return xE.isOk();
 		}catch(Exception e){
