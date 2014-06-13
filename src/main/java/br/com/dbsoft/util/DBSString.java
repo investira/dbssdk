@@ -655,7 +655,7 @@ public class DBSString {
 	 * @param pTexto
 	 * @return
 	 */	
-	public static String CorretorOrtografico(String pTexto){
+	public static String corretorOrtografico(String pTexto){
 		String xTexto =  pTexto;
 		if(wDicionarioSilaba.isEmpty()){
 			pvDicionarioInit();
@@ -692,113 +692,6 @@ public class DBSString {
 	// Private
 	//*******************************************************************************************************
 
-	/**
-	 * Converte a primeira letra para maiúscula e o restante minúscula
-	 * @param pString
-	 * @return Para com a primeira letra maiúscula e o restante minúscula
-	 */
-	private static String pvToProper(String pString){
-		if (!DBSObject.isEmpty(pString)){
-			String xS = pString.substring(0, 1).toUpperCase();
-			if (pString.length()>1){
-				xS = xS + pString.substring(1).toLowerCase();
-			}
-			return xS;
-		}else{
-			return pString;
-		}
-	}
-
-	
-	/**
-	 * Troca parte da palavras por outro texto considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograticoSilaba(String pTexto){
-		String xTexto = pTexto;
-		String xKey = ""; 
-		Enumeration<Object> xDicionarioSilabaEnum;
-		xDicionarioSilabaEnum = wDicionarioSilaba.keys();
-		while (xDicionarioSilabaEnum.hasMoreElements()){
-			xKey = (String) xDicionarioSilabaEnum.nextElement();
-			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioSilaba.getProperty(xKey),true);
-		}
-		return xTexto;
-	}	
-	
-	/**
-	 * Troca uma palavra pela outra considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograficoPalavra(String pTexto){
-		List<String> 	xPalavras = new ArrayList<String>();
-		String 		 	xTexto = "";
-		String 			xPalavraErrada = ""; 
-
-		xPalavras = DBSString.toArray(pTexto, " ", false);
-		for (String xPalavra: xPalavras){
-			Enumeration<Object> xDicionarioPalavraEnum;
-			xDicionarioPalavraEnum = wDicionarioPalavra.keys();
-			while (xDicionarioPalavraEnum.hasMoreElements()){
-				xPalavraErrada = (String) xDicionarioPalavraEnum.nextElement();
-				if (xPalavraErrada.equals(xPalavra)){
-					xPalavra = DBSString.changeStr(xPalavra, xPalavraErrada, wDicionarioPalavra.getProperty(xPalavraErrada), true);
-					break;
-				}
-			}
-			if (xTexto.equals("")){
-				xTexto = xPalavra; 
-			}else{
-				xTexto = xTexto + " " + xPalavra;
-			}
-		}
-		return xTexto;
-	}
-
-	/**
-	 * Troca frase(Mais de uma palavra) por outra(s) considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograficoFrase(String pTexto){
-		String 	xTexto = pTexto;
-		String xKey = ""; 
-
-		Enumeration<Object> xDicionarioFraseEnum;
-		xDicionarioFraseEnum = wDicionarioFrase.keys();
-
-		while (xDicionarioFraseEnum.hasMoreElements()){
-			xKey = (String) xDicionarioFraseEnum.nextElement();
-			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioFrase.getProperty(xKey),true);
-		}
-		return xTexto;
-	}
-	
-	/**
-	 * Carrega os dicionarios uma única vez para melhor a performance
-	 */
-	private static void pvDicionarioInit(){
-		try {
-			wDicionarioSilaba.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_silaba.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			wDicionarioPalavra.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_palavra.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			wDicionarioFrase.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_frase.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	public static String toString(Object pValue) {
 		return toString(pValue, null);
 	}
@@ -848,6 +741,112 @@ public class DBSString {
 			}
 		}
 		return xString;
+	}
+	//*******************************************************************************************************
+	// Private
+	//*******************************************************************************************************
+	
+	/**
+	 * Converte a primeira letra para maiúscula e o restante minúscula
+	 * @param pString
+	 * @return Para com a primeira letra maiúscula e o restante minúscula
+	 */
+	private static String pvToProper(String pString){
+		if (!DBSObject.isEmpty(pString)){
+			String xS = pString.substring(0, 1).toUpperCase();
+			if (pString.length()>1){
+				xS = xS + pString.substring(1).toLowerCase();
+			}
+			return xS;
+		}else{
+			return pString;
+		}
+	}
+	/**
+	 * Troca parte da palavras por outro texto considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograticoSilaba(String pTexto){
+		String xTexto = pTexto;
+		String xKey = ""; 
+		Enumeration<Object> xDicionarioSilabaEnum;
+		xDicionarioSilabaEnum = wDicionarioSilaba.keys();
+		while (xDicionarioSilabaEnum.hasMoreElements()){
+			xKey = (String) xDicionarioSilabaEnum.nextElement();
+			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioSilaba.getProperty(xKey),true);
+		}
+		return xTexto;
+	}
+	/**
+	 * Troca uma palavra pela outra considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograficoPalavra(String pTexto){
+		List<String> 	xPalavras = new ArrayList<String>();
+		String 		 	xTexto = "";
+		String 			xPalavraErrada = ""; 
+	
+		xPalavras = DBSString.toArray(pTexto, " ", false);
+		for (String xPalavra: xPalavras){
+			Enumeration<Object> xDicionarioPalavraEnum;
+			xDicionarioPalavraEnum = wDicionarioPalavra.keys();
+			while (xDicionarioPalavraEnum.hasMoreElements()){
+				xPalavraErrada = (String) xDicionarioPalavraEnum.nextElement();
+				if (xPalavraErrada.equals(xPalavra)){
+					xPalavra = DBSString.changeStr(xPalavra, xPalavraErrada, wDicionarioPalavra.getProperty(xPalavraErrada), true);
+					break;
+				}
+			}
+			if (xTexto.equals("")){
+				xTexto = xPalavra; 
+			}else{
+				xTexto = xTexto + " " + xPalavra;
+			}
+		}
+		return xTexto;
+	}
+	/**
+	 * Troca frase(Mais de uma palavra) por outra(s) considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograficoFrase(String pTexto){
+		String 	xTexto = pTexto;
+		String xKey = ""; 
+	
+		Enumeration<Object> xDicionarioFraseEnum;
+		xDicionarioFraseEnum = wDicionarioFrase.keys();
+	
+		while (xDicionarioFraseEnum.hasMoreElements()){
+			xKey = (String) xDicionarioFraseEnum.nextElement();
+			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioFrase.getProperty(xKey),true);
+		}
+		return xTexto;
+	}
+	/**
+	 * Carrega os dicionarios uma única vez para melhor a performance
+	 */
+	private static void pvDicionarioInit(){
+		try {
+			wDicionarioSilaba.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_silaba.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			wDicionarioPalavra.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_palavra.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			wDicionarioFrase.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_frase.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	
