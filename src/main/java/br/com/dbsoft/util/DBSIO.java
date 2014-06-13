@@ -60,11 +60,6 @@ public class DBSIO{
 	
 	public static String		LOCK_FOR_UPDATE = " FOR UPDATE";
 	
-	private static Object 		wDado = null;
-	private static String 		wDadoTableName = "";
-	private static String 		wDadoCriterio = "";
-	private static String 		wDadoColumnName = "";
-	
 	public static enum MOVE_DIRECTION{
 		BEFORE_FIRST,
 		FIRST,
@@ -1245,21 +1240,6 @@ public class DBSIO{
 
 
 
-	
-	/**
-	 * Retorna o valor de uma coluna da tabela desejada segundo o Critério informado.
-	 * @param pCn Objeto da conexão
-	 * @param pTableName Nome da tabela
-	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado(Clausula Where).
-	 * Quando criar a string do critério, utilize as funções toSQL... contidas nesta classe para certificar que os valores estarão de acordo com o tipo de dado que se refere
-	 * @param pColumnName Nome da columa da qual se deseja o valor
-	 * @return valor da coluna 
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T  getDado(Connection pCn, String pTableName, String pCriterio, String pColumnName) throws DBSIOException{
-		return (T) getDado(pCn, pTableName, pCriterio, pColumnName, false);
-	}
-
 	/**
 	 * Retorna o valor de uma coluna da tabela desejada segundo o Critério informado, convertida para o tipo de class informado.
 	 * @param pCn Objeto da conexão
@@ -1272,7 +1252,7 @@ public class DBSIO{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getDado(Connection pCn, String pTableName, String pCriterio, String pColumnName, Class<?> pReturnedClass) throws DBSIOException{
-		return (T) DBSObject.toClass(getDado(pCn, pTableName, pCriterio, pColumnName, false), pReturnedClass);
+		return (T) DBSObject.toClass(getDado(pCn, pTableName, pCriterio, pColumnName), pReturnedClass);
 	}
 	
 	/**
@@ -1284,18 +1264,11 @@ public class DBSIO{
 	 * @param pColumnName Nome da columa da qual se deseja o valor
 	 * @return valor da coluna 
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getDado(Connection pCn, String pTableName, String pCriterio, String pColumnName, boolean pIgnoreCache) throws DBSIOException{
+	public static <T> T getDado(Connection pCn, String pTableName, String pCriterio, String pColumnName) throws DBSIOException{
 		if (pCn == null){
 			return null;
 		}
-		if (!pIgnoreCache){ 
-			if (wDadoTableName.equals(pTableName) &&
-			    wDadoCriterio.equals(pCriterio) &&
-			    wDadoColumnName.equals(pColumnName)){
-				return (T) wDado; //Utiliza último valor retornado
-			}
-		}
+
 		DBSDAO<Object> xDAO = new DBSDAO<Object>(pCn);
 		String xSQL = "Select " + pColumnName;
 		
@@ -1309,10 +1282,6 @@ public class DBSIO{
 
 		if (xDAO.open(xSQL)){
 			if (xDAO.getRowsCount() > 0){
-				//Salva últimos parametros
-				wDadoTableName = pTableName; 
-				wDadoCriterio = pCriterio;
-				wDadoColumnName = pColumnName;
 				String xColumnName = pColumnName;
 				int xI = pColumnName.indexOf(".");
 				//Recupera somente a parte no nome após o "." caso exista.
@@ -1320,9 +1289,9 @@ public class DBSIO{
 					xColumnName = DBSString.getSubString(pColumnName, xI + 2, pColumnName.length());
 				}
 				//Salva valor
-				wDado = xDAO.getValue(xColumnName); 
+				T xDado = xDAO.getValue(xColumnName); 
 				xDAO.close();
-				return (T) wDado;
+				return xDado;
 			}
 			xDAO.close();
 		}
@@ -1469,6 +1438,7 @@ public class DBSIO{
 			return xCount;
 		} catch (SQLException e) {
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
+			wLogger.error(e);
 			DBSIO.endTrans(pConnection, false);
 			throwIOException(pSQL, e, pConnection);
 			return 0;
