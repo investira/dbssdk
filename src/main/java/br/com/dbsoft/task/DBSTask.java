@@ -3,7 +3,6 @@ package br.com.dbsoft.task;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +128,9 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private TaskState 				wTaskState = TaskState.STOPPED;
 	private RunStatus				wRunStatus = RunStatus.EMPTY;
 	private RunStatus				wLastRunStatus = RunStatus.EMPTY;
-	private Time					wLastRunDuration = Time.valueOf("0:0:0");
+	private Long					wTimeOut = 0L;
+	private Long					wTimeStarted = 0L;
+	private Long					wTimeEnded = 0L;
 	private Date					wScheduleDate;
 	private	int						wRetryOnErrorSeconds = 0;
 	private int						wRetryOnErrorTimes = 3;
@@ -142,7 +143,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private String 					wUserName;
 	private String 					wUserPassword;
 	private boolean					wReRun = true;
-	private Long					wTimeStarted = 0L;
 	private int						wRetryOnErrorCount = 0;
 	private	boolean					wTransactionEnabled = true;
 
@@ -224,20 +224,49 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public void setUserPassword(String pUserPassword) {wUserPassword = pUserPassword;}
 
 	/**
-	 * Retorna o tempo atual de execução, caso a tarefa esteja sendo executado ou o tempo da última execução, caso já tenha sido finalizada.<br/>
+	 * Retorna o tempo atual de execução, caso a tarefa esteja sendo executado 
+	 * ou o tempo da última execução, caso já tenha sido finalizada.<br/>
 	 * Retorna 0 caso a tarefa ainda não tenha sido executada.
 	 * @return
 	 */
-	public Time getLastRunDuration() {
-		pvCalculaDuration();
-		return wLastRunDuration; //DBSDate.toTime(wLastRunDuration);
+	public Long getTimeElapsed() {
+		return wTimeEnded - wTimeStarted; 
 	}
+
 	/**
-	 * Seta o tempo de execução.
+	 * Tempo em millisegundos para interromper a tarefa, caso seja ultrapassado.<br/>
+	 * 0 não há timeout.
 	 * @return
 	 */
-	public void setLastTunDuration(Time pTime){
-		wLastRunDuration = pTime;
+	public Long getTimeOut() {
+		return wTimeOut;
+	}
+
+	/**
+	 * Tempo em millisegundos para interromper a tarefa, caso seja ultrapassado.<br/>
+	 * 0 não há timeout.
+	 * @param pTimeOut
+	 */
+	public void setTimeOut(Long pTimeOut) {
+		wTimeOut = pTimeOut;
+	}
+	/**
+	 * Retorna se tarefa ultrapassou o tempo permitido.
+	 * @return
+	 */
+	public boolean isTimeOut(){
+		if (wTimeOut == 0L){
+			return false;
+		}
+		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
+	}
+	
+	/**
+	 * Retorna a hora iniciada
+	 * @return
+	 */
+	public Long getTimeStarted(){
+		return wTimeStarted;
 	}
 
 	/**
@@ -660,6 +689,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	private synchronized void pvRunTaskSteps() throws DBSIOException{
 		wTimeStarted = System.currentTimeMillis();
+		wTimeEnded = wTimeStarted;
 		while (wReRun){
 			wReRun = false;
 			//Verifica se está em execução antes de iniciar
@@ -711,7 +741,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				setLastRunStatus(getRunStatus());
 				throw new DBSIOException(e);
 			}finally{
-				pvCalculaDuration();
 				pvSetTaskState(pvGetNotRunnigTaskState());
 				//Se foi configurado a quantidade de segundos para uma nova tentativa...
 				if (wRetryOnErrorSeconds != 0){
@@ -738,6 +767,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				}
 			}
 		}
+		wTimeEnded = System.currentTimeMillis();
 		wReRun = true;
 	}
 
@@ -830,12 +860,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		}
 		wPercentageCompleted = DBSNumber.round(wPercentageCompleted, 3);
 		pvFireEventTaskUpdated();
-	}
-
-	private void pvCalculaDuration(){
-		if (getTaskState() == TaskState.RUNNING){
-			wLastRunDuration = DBSDate.toTime(System.currentTimeMillis() - wTimeStarted);
-		}
 	}
 
 	/**
@@ -1439,6 +1463,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	protected boolean isMessageValidated(DBSMessage pMessage){
 		return isMessageValidated(pMessage.getMessageText());
 	}
+
 
 
 

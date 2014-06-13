@@ -14,10 +14,13 @@ public class Tmp {
 
 	@Test
 	public void teste_date(){
+		Long xTime = 0L;
+		xTime = System.currentTimeMillis();
+		System.out.println(DBSDate.toTimestamp(xTime));
 //		System.out.println(DBSDate.toDateYMDHMS("2014-01-02 10:10:01").toLocaleString());
 //		System.out.println(DBSDate.toDateYMDHMS("2014/01/02 10:10:01").toLocaleString());
 //		System.out.println(DBSDate.toDateYMDHMS("20140102000201").toGMTString());
-		System.out.println(DBSDate.toDateYMDHMS("2014a102000201").toLocaleString());
+//		System.out.println(DBSDate.toDateYMDHMS("2014a102000201").toLocaleString());
 //		assertEquals(DBSDate.toDateYMDHMS("2014-01-02 10:10:01").toLocaleString(), "02/01/2014 10:10:01");
 //		assertEquals(DBSDate.toDateYMDHMS("2014/01/02 10:10:01").toLocaleString(), "02/01/2014 10:10:01");
 //		assertEquals(DBSDate.toDateYMDHMS("20140102000201").toLocaleString(), "02/01/2014 00:02:01");

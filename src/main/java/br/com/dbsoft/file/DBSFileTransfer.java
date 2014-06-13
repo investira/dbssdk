@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.core.DBSSDKMessages;
 import br.com.dbsoft.error.DBSException;
 import br.com.dbsoft.task.IDBSTaskEventsListener;
-import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
@@ -141,11 +140,11 @@ public class DBSFileTransfer{
 	private String 							wURL;
 	private String 							wLocalFileName = null;
 	private Timestamp						wVersion;
-	private Long							wTimeOut = 0L;
 	private List<IDBSFileTransferEvents>	wEventListeners = new ArrayList<IDBSFileTransferEvents>();
 	private boolean							wInterrupted; 
-	private long							wTimeStarted;
-	private long							wTimeEnded;
+	private Long							wTimeStarted = 0L;
+	private Long							wTimeEnded = 0L;
+	private Long							wTimeOut = 0L;
 	private TransferState					wTransferState;
 	private LocalFileNameOrigin				wLocalFileNameOrigin = LocalFileNameOrigin.USER;
 	private String							wRemoteServer;
@@ -202,6 +201,41 @@ public class DBSFileTransfer{
 	 */
 	public final void setTimeOut(Long pTimeOut) {
 		wTimeOut = pTimeOut;
+	}
+
+	/**
+	 * Retorna se tarefa ultrapassou o tempo permitido.
+	 * @return
+	 */
+	public boolean isTimeOut(){
+		if (wTimeOut == 0L){
+			return false;
+		}
+		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
+	}
+	/**
+	 * Retorna date/hora que foi iniciado o transfer
+	 * @return
+	 */
+	public final Long getTimeStarted(){
+		return wTimeStarted;
+	}
+
+	/**
+	 * Retorna data/hora que foi finalizado o transfer ou a hora atual caso esteja em processo de transferencia
+	 * @return
+	 */
+	public final Long getTimeEnded(){
+		return wTimeEnded;
+	}
+
+	/**
+	 * Retorna o tempo de corrido
+	 * @return
+	 */
+	public final Long getTimeElapsed(){
+		return wTimeEnded - wTimeStarted;
+	
 	}
 
 	/**
@@ -312,7 +346,6 @@ public class DBSFileTransfer{
 		}
 	}
 
-
 	/**
 	 * Retornar se o transfer foi interrompido
 	 * @return boolean
@@ -321,41 +354,6 @@ public class DBSFileTransfer{
 		return wInterrupted;
 	}
 	
-	/**
-	 * Retorna date/hora que foi iniciado o transfer
-	 * @return
-	 */
-	public final Timestamp getTimeStarted(){
-		return DBSDate.toTimestamp(wTimeStarted);
-	}
-	
-	public final void setTimeStarted(){
-		wTimeStarted = System.currentTimeMillis();
-		wTimeEnded = wTimeStarted;
-
-	}
-		
-	/**
-	 * Retorna data/hora que foi finalizado o transfer ou a hora atual caso esteja em processo de transferencia
-	 * @return
-	 */
-	public final Timestamp getTimeEnded(){
-		return DBSDate.toTimestamp(wTimeEnded);
-	}
-	
-	public final void setTimeEnded(){
-		wTimeEnded = System.currentTimeMillis();
-	}
-	
-	/**
-	 * Retorna o tempo de corrido
-	 * @return
-	 */
-	public final Long getElapsedTime(){
-		return wTimeEnded - wTimeStarted;
-
-	}
-
 	/**
 	 * Executa o download do arquivo,
 	 * 
@@ -455,7 +453,6 @@ public class DBSFileTransfer{
 		xConnection.setDoOutput(false);
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
-		setMsgErro(null);
 		
 		//Recupera nome do arquivo
 		String xContent = xConnection.getHeaderField("Content-Disposition");
@@ -514,7 +511,7 @@ public class DBSFileTransfer{
 			wInterrupted = false;
 			try {
 				while ((xBytesReaded = xReader.read(xBuffer)) != -1 && 
-						(getElapsedTime() < wTimeOut || wTimeOut == 0L) && 
+						!isTimeOut() && 
 						!wInterrupted) { //Se o timeout for 0 ele irá ler até acabar.
 					xDownloadedFile.write(xBuffer, 0, xBytesReaded);
 					xBuffer = new byte[153600];
@@ -530,7 +527,7 @@ public class DBSFileTransfer{
 				setTransferState(TransferState.NOTTRANSFERING);
 			}
 			
-			if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
+			if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
 //				wLogger.warn("Erro de Timeout.");
 				setMsgErro(DBSSDKMessages.ErroTimeout, Level.WARN);
 				return null;
@@ -580,7 +577,7 @@ public class DBSFileTransfer{
 	    	}
 	    }   
 		
-		if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
+		if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
 //			wLogger.warn("Erro de Timeout.");
 			setMsgErro(DBSSDKMessages.ErroTimeout);
 			return null;
@@ -596,7 +593,9 @@ public class DBSFileTransfer{
 	 * Chamada quando é iniciada a execução
 	 */
 	private void pvFireEventStarted(){
-		setTimeStarted();
+		wTimeStarted = System.currentTimeMillis();
+		wTimeEnded = wTimeStarted;
+
 		setTransferState(TransferState.TRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).started(this);
@@ -607,7 +606,8 @@ public class DBSFileTransfer{
 	 * Chamada quando é iniciada a execução
 	 */
 	private void pvFireEventEnded(){
-		setTimeEnded();
+		wTimeEnded = System.currentTimeMillis();
+
 		setTransferState(TransferState.NOTTRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).ended(this);

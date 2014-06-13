@@ -1,4 +1,4 @@
-package br.com.dbsoft.tmp;
+package br.com.dbsoft.util;
 
 import org.junit.Assert;
 import org.junit.Test;
