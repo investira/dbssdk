@@ -14,8 +14,8 @@ import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSString;
 
 public class TrocaNomes {
-	//String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull";
-	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
+	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull";
+//	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
 	String user="dbsoft";
 	String password="dbs0ft";
 	Connection wConexao;
@@ -42,7 +42,7 @@ public class TrocaNomes {
 			xDAO.moveBeforeFirstRow();
 			while(xDAO.moveNextRow()){
 				System.out.println(xDAO.getValue("Pessoa"));
-				//xDAO.setValue("Pessoa", DBSString.toProper((String) xDAO.getValue("Pessoa")));
+				xDAO.setValue("Pessoa", DBSString.toProper((String) xDAO.getValue("Pessoa")));
 //				if (xDAO.getValue("Complemento")!=null){
 //					xDAO.setValue("Complemento", DBSString.toProper((String) xDAO.getValue("Complemento")));
 //				}
