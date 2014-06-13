@@ -14,8 +14,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.core.DBSSDKMessages;
 import br.com.dbsoft.error.DBSException;
 import br.com.dbsoft.task.IDBSTaskEventsListener;
 import br.com.dbsoft.util.DBSDate;
@@ -147,6 +149,7 @@ public class DBSFileTransfer{
 	private TransferState					wTransferState;
 	private LocalFileNameOrigin				wLocalFileNameOrigin = LocalFileNameOrigin.USER;
 	private String							wRemoteServer;
+	private String	 						wMsgErro;
 
 	/**
 	 * Construtor que configura os parametros para efetuar a transferencia.<br/>
@@ -278,6 +281,37 @@ public class DBSFileTransfer{
 			pvFireEventTransferStateChanged();
 		}
 	}
+	
+	/**
+	* Retorna a mensagem de erro, caso tenha.
+	* @return Mensagem String
+	*/
+	public String getMsgErro() {
+		return wMsgErro;
+	}
+	
+	/**
+	* Configura a mensagem de erro a ser recuperada por quem executar o download.
+	* @param pMsgErro
+	*/
+	public void setMsgErro(String pMsgErro) {
+		wMsgErro = pMsgErro;
+	}
+	public void setMsgErro(String pMsgErro, Level pLevel) {
+		setMsgErro(pMsgErro);
+		if (!DBSObject.isEmpty(pLevel)) {
+			if (pLevel == Level.ERROR) {
+				wLogger.error(pMsgErro);
+			} else if (pLevel == Level.WARN) {
+				wLogger.warn(pMsgErro);
+			} else if (pLevel == Level.INFO) {
+				wLogger.info(pMsgErro);
+			} else if (pLevel == Level.DEBUG) {
+				wLogger.debug(pMsgErro);
+			}
+		}
+	}
+
 
 	/**
 	 * Retornar se o transfer foi interrompido
@@ -329,7 +363,7 @@ public class DBSFileTransfer{
 	 */
 	public final synchronized File transfer() {
 		if (wURL == null){
-			wLogger.error("URL remota não informada!");
+			setMsgErro(DBSSDKMessages.URLRemotaNaoInformada, Level.ERROR);
 		}
 
 		//---- chama evento -----------------------
@@ -342,7 +376,8 @@ public class DBSFileTransfer{
 		try {
 			xURL = new URL(wURL);
 		} catch (MalformedURLException e1) {
-			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
+//			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
+			setMsgErro(DBSSDKMessages.ErroConvertendoURL + wURL, Level.ERROR);
 			xURL = null;
 		}
 
@@ -353,9 +388,11 @@ public class DBSFileTransfer{
 				xFile = pvDownloadFile(wURL);
 			}
 		} catch (FileNotFoundException e) {
-			wLogger.error("Arquivo não encontrado:" + wURL);
+//			wLogger.error("Arquivo não encontrado:" + wURL);
+			setMsgErro(DBSSDKMessages.ArquivoNaoEncontrado + wURL, Level.ERROR);
 		} catch (IOException e) {
-			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
+//			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
+			setMsgErro(DBSSDKMessages.ErroGenerico + e.getLocalizedMessage(), Level.ERROR);
 		}
 		
 		//---- chama evento -----------------------
@@ -418,7 +455,7 @@ public class DBSFileTransfer{
 		xConnection.setDoOutput(false);
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
-		
+		setMsgErro(null);
 		
 		//Recupera nome do arquivo
 		String xContent = xConnection.getHeaderField("Content-Disposition");
@@ -441,7 +478,8 @@ public class DBSFileTransfer{
 		}
 		
 		if (DBSObject.isEmpty(xRemoteFileName)){
-			wLogger.info("Nome do arquivo local não foi informado.");
+//			wLogger.info("Nome do arquivo local não foi informado.");
+			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado);
 			xConnection.disconnect();
 			setTransferState(TransferState.NOTTRANSFERING);
 			return null;
@@ -454,7 +492,8 @@ public class DBSFileTransfer{
 			wRemoteServer = xConnection.getHeaderField("Server");
 			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
 				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getVersion().getTime()) {
-					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
+//					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
+					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
 					setTransferState(TransferState.NOTTRANSFERING);
 					return null;
 				}
@@ -492,16 +531,19 @@ public class DBSFileTransfer{
 			}
 			
 			if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
-				wLogger.warn("Erro de Timeout.");
+//				wLogger.warn("Erro de Timeout.");
+				setMsgErro(DBSSDKMessages.ErroTimeout, Level.WARN);
 				return null;
 			} else if (wInterrupted) {
-				wLogger.warn("Processo interrompido pelo usuário.");
+//				wLogger.warn("Processo interrompido pelo usuário.");
+				setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
 				return null;
 			} else {
 				return xInputFile;
 			}
 		} else {
-			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
+//			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
+			setMsgErro(DBSSDKMessages.ErroGenerico + xConnection.getResponseMessage(), Level.ERROR);
 			return null;
 		}
 	}
@@ -539,7 +581,8 @@ public class DBSFileTransfer{
 	    }   
 		
 		if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
-			wLogger.warn("Erro de Timeout.");
+//			wLogger.warn("Erro de Timeout.");
+			setMsgErro(DBSSDKMessages.ErroTimeout);
 			return null;
 		} else {
 			setVersion(new Timestamp(xSource.lastModified()));
