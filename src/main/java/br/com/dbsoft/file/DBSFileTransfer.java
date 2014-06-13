@@ -453,7 +453,7 @@ public class DBSFileTransfer{
 		xConnection.setDoOutput(false);
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
-		
+		setMsgErro(null);
 		
 		//Recupera nome do arquivo
 		String xContent = xConnection.getHeaderField("Content-Disposition");
@@ -550,6 +550,7 @@ public class DBSFileTransfer{
 
 		File xSource = new File(pURL);
 		File xLocalFile = new File(wLocalFileName);
+		setMsgErro(null);
 		
 		if (!xLocalFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
 			DBSFile.mkDir(xLocalFile);

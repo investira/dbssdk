@@ -247,6 +247,9 @@ public class DBSDate{
      * @return Data no tipo Date convertida para a localização atual.
      */
     public static Date toDate(Long pMilliSeconds) {
+    	if (DBSObject.isNull(pMilliSeconds)) {
+    		return null;
+    	}
     	Date xData = new Date(pMilliSeconds);
     	return xData;  
     }		
@@ -258,6 +261,9 @@ public class DBSDate{
 	 * @return Data no tipo Date
 	 */
 	public static Date toDate(Calendar pData) {
+		if (DBSObject.isNull(pData)) {
+    		return null;
+    	}
 		return toDate(pData.getTimeInMillis());
 	}
 	
@@ -267,6 +273,9 @@ public class DBSDate{
 	 * @return Data no tipo Date
 	 */
 	public static Date toDate(Timestamp pData) {
+		if (DBSObject.isNull(pData)) {
+    		return null;
+    	}
 		return toDate(pData.getTime());
 	}
 	
