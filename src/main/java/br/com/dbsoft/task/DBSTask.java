@@ -230,6 +230,9 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	public Long getTimeElapsed() {
+		if (getTaskState() == TaskState.RUNNING){
+			wTimeEnded = System.currentTimeMillis();
+		}
 		return wTimeEnded - wTimeStarted; 
 	}
 
@@ -728,6 +731,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 							pvSetRunStatus(RunStatus.SUCCESS);
 						}
 						setLastRunStatus(getRunStatus());
+						wTimeEnded = System.currentTimeMillis();
 						if (getRunStatus() != RunStatus.INTERRUPTED){
 							pvFireEventAfterRun();
 						}
@@ -767,7 +771,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				}
 			}
 		}
-		wTimeEnded = System.currentTimeMillis();
 		wReRun = true;
 	}
 
