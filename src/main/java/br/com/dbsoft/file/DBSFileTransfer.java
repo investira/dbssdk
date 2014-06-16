@@ -459,6 +459,7 @@ public class DBSFileTransfer{
 		String xContent = xConnection.getHeaderField("Content-Disposition");
 		
 		String xRemoteFileName = DBSFile.getFileNameFromPath(wLocalFileName);
+
 		//Recupera nome do arquivo enviado pela conexão
 		if(xContent != null 
 		&& xContent.indexOf("=") != -1) {
@@ -487,7 +488,10 @@ public class DBSFileTransfer{
 			//Reconstroi o nome do arquivo local
 	    	wLocalFileName = DBSFile.getPathFromFileName(wLocalFileName) + xRemoteFileName;
 			//Salva qual o servidor utilizado
-			wRemoteServer = xConnection.getHeaderField("Server");
+			wRemoteServer = xConnection.getHeaderField("Server"); 
+			if (wRemoteServer == null){
+				wRemoteServer = xConnection.getHeaderField("X-Powered-By");
+			}
 			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
 				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getVersion().getTime()) {
 //					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
