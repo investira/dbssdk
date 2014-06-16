@@ -2697,7 +2697,7 @@ public class DBSIO{
 		List<String> xTmps;
 		List<String> xBlocks;
 		List<String> xTables =  new ArrayList<String>();
-		xI = DBSString.getInStr(xS, " FROM ",false);
+		xI = DBSString.getInStr(xS.toUpperCase(), " FROM ",false);
 		if (xI == 0){
 			return null;
 		}else {
@@ -2734,7 +2734,7 @@ public class DBSIO{
 		//Recupera os nomes das tabelas ou o Alias 
 		xBlocks = DBSString.toArray(xS,",");
 		for (String xBlock:xBlocks){
-			xTmps = DBSString.toArray(xBlock," JOIN ");
+			xTmps = DBSString.toArray(xBlock," JOIN ", false);
 			for (String xTable:xTmps){
 				int x = 0;
 				x = DBSString.getInStr(xTable," ON ", false);
