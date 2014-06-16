@@ -132,8 +132,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private Long					wTimeStarted = 0L;
 	private Long					wTimeEnded = 0L;
 	private Date					wScheduleDate;
-	private	int						wRetryOnErrorSeconds = 60;
-	private int						wRetryOnErrorTimes = 3;
+	private	int						wRetryOnErrorSeconds = 0;
+	private int						wRetryOnErrorTimes = 0;
 	private Timer					wTimer;// = new Timer();
 	private RunByThread				wRunThread;
 	private boolean					wMultiTask = true;
@@ -366,7 +366,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Quantidade de segundos para efetuar nova tentativa em caso de erro.<br/>
 	 * Valor <b>0</b> indica que <b>não</b> será efetuada nova tentativa.
-	 * O padrão são <b>60 segundos</b>.
+	 * O padrão é <b>0</b>.
 	 * @return
 	 */
 	public final void setRetryOnErrorSeconds(int pRetryOnErrorSeconds) {wRetryOnErrorSeconds = pRetryOnErrorSeconds;}
@@ -374,7 +374,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Número máximo de tentativas em caso de erros sucessivos.<br/>
 	 * Valor <b>0</b> indica que não há limite de tentativas.  
-	 * O padrão são 3 tentativas.
+	 * O padrão é 0.
 	 * @return
 	 */
 	public final int getRetryOnErrorTimes() {return wRetryOnErrorTimes;}
@@ -382,7 +382,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Número máximo de tentativas em caso de erros sucessivos.<br/>
 	 * Valor <b>0</b> indica que não há limite de tentativas.  
-	 * O padrão são 3 tentativas.
+	 * O padrão é 0.
 	 * @return
 	 */
 	public final void setRetryOnErrorTimes(int pRetryOnErrorTimes) {wRetryOnErrorTimes = pRetryOnErrorTimes;}
@@ -747,7 +747,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}finally{
 				pvSetTaskState(pvGetNotRunnigTaskState());
 				//Se foi configurado a quantidade de segundos para uma nova tentativa...
-				if (wRetryOnErrorSeconds != 0 
+				if (wRetryOnErrorSeconds > 0 
 				 && wRetryOnErrorTimes > 0){
 					//Se a execução terminou com erro...
 					if (getRunStatus() == RunStatus.ERROR){
@@ -943,7 +943,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @throws DBSIOException 
 	 */
 	private void pvRetrySchedule() throws DBSIOException{
-		if (wRetryOnErrorSeconds!=0){
+		if (wRetryOnErrorSeconds > 0
+		 && wRetryOnErrorTimes > 0){
 			Date xData = DBSDate.getNowDate();
 			xData = DBSDate.getDateAddSeconds(xData, wRetryOnErrorSeconds);
 			wLogger.warn(getName() + ":Tentativa " + wRetryOnErrorCount + " de " + wRetryOnErrorTimes + " será executada em: " + DBSFormat.getFormattedDateCustom(xData, "dd/MM/yyyy HH:mm:ss"));
