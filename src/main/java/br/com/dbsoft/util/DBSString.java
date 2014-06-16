@@ -381,8 +381,9 @@ public class DBSString {
 	}
 
 	/**
-	 * Separa um Array a patir de uma String, separado por um delimitador informado
-	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
+	 * Separa um Array a patir de uma String, separado por um delimitador informado.
+	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)<br/>
+	 * Maiúscula e minúsculo serão consderados nomes diferentes.
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
 	 * @return Array com o conteúdo em cada linha 
@@ -396,7 +397,7 @@ public class DBSString {
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
-	 * @param pCaseMatch indica se o delimitador considerará o caixa 
+	 * @param pCaseMatch indica se o delimitador considerará a caixa 
 	 * @return Array com o conteúdo em cada linha 
 	 */
 	public static ArrayList<String> toArray(String pTextoBase, String pDelimitador, boolean pCaseMatch){
@@ -408,7 +409,7 @@ public class DBSString {
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos. Não faz a delimitação dos campos se delimitador for nulo ou vázio
-	 * @param pCaseMatch indica se o delimitador considerará o caixa
+	 * @param pCaseMatch indica se o delimitador considerará a caixa
 	 * @param pTrim Indicador se exclui espaços no inicio e fim da string antes de inclui-lá no array
 	 * @return Array com o conteúdo em cada linha 
 	 */
