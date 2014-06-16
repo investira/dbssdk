@@ -132,7 +132,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private Long					wTimeStarted = 0L;
 	private Long					wTimeEnded = 0L;
 	private Date					wScheduleDate;
-	private	int						wRetryOnErrorSeconds = 0;
+	private	int						wRetryOnErrorSeconds = 60;
 	private int						wRetryOnErrorTimes = 3;
 	private Timer					wTimer;// = new Timer();
 	private RunByThread				wRunThread;
@@ -366,7 +366,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Quantidade de segundos para efetuar nova tentativa em caso de erro.<br/>
 	 * Valor <b>0</b> indica que <b>não</b> será efetuada nova tentativa.
-	 * O padrão é <b>0</b>.
+	 * O padrão são <b>60 segundos</b>.
 	 * @return
 	 */
 	public final void setRetryOnErrorSeconds(int pRetryOnErrorSeconds) {wRetryOnErrorSeconds = pRetryOnErrorSeconds;}
@@ -747,7 +747,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}finally{
 				pvSetTaskState(pvGetNotRunnigTaskState());
 				//Se foi configurado a quantidade de segundos para uma nova tentativa...
-				if (wRetryOnErrorSeconds != 0){
+				if (wRetryOnErrorSeconds != 0 
+				 && wRetryOnErrorTimes > 0){
 					//Se a execução terminou com erro...
 					if (getRunStatus() == RunStatus.ERROR){
 						//Desativa ReRun, caso tenha sido ativado pelo usuário, pois a prioridade é agendar a nova tentativa
