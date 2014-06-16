@@ -1,4 +1,4 @@
-package br.com.dbsoft.io;
+package br.com.dbsoft.tmp;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,15 +9,19 @@ import org.junit.Test;
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.util.DBSIO;
-
 import br.com.dbsoft.util.DBSString;
 
 public class TrocaNomes {
-	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull";
+	String url = "jdbc:mysql://ifeed.com.br:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
-	String user="dbsoft";
+	String user="root";
 	String password="dbs0ft";
+//	String user="dbsoft";
+//	String password="dbs0ft";	
 	Connection wConexao;
 
 	@Before
@@ -37,18 +41,18 @@ public class TrocaNomes {
 	public void readLoop(){
 		try {
 			@SuppressWarnings("rawtypes")
-			DBSDAO xDAO = new DBSDAO(wConexao, "COR_PESSOA");
-			xDAO.open("Select * from Cor_Pessoa");
+			DBSDAO xDAO = new DBSDAO(wConexao, "GR_PRODUTO_TIPO");
+			xDAO.open("Select * from GR_PRODUTO_TIPO");
 			xDAO.moveBeforeFirstRow();
 			while(xDAO.moveNextRow()){
-				System.out.println(xDAO.getValue("Pessoa"));
-				xDAO.setValue("Pessoa", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Pessoa"))));
+				System.out.println(xDAO.getValue("Produto_Tipo"));
+				xDAO.setValue("Produto_Tipo", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Produto_Tipo"))));
 //				if (xDAO.getValue("Complemento")!=null){
 //					xDAO.setValue("Complemento", DBSString.toProper((String) xDAO.getValue("Complemento")));
 //				}
-				if (xDAO.getValue("Endereco")!=null){
-					xDAO.setValue("Endereco", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Endereco"))));
-				}
+//				if (xDAO.getValue("Endereco")!=null){
+//					xDAO.setValue("Endereco", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("Endereco"))));
+//				}
 				xDAO.executeUpdate();
 				//System.out.println(xDAO.getValue("Cidade"));
 			}
