@@ -30,14 +30,12 @@ public class DBSCNPJCPF {
 			if (isCNPJ(pCPFCNPJ)) {
 				return true;
 			} else {
-				wLogger.error("CNPJ "+ pCPFCNPJ +" Inválido!");
 				return false;
 			}
 		} else {
 			if (isCPF(pCPFCNPJ)) {
 				return true;
 			} else {
-				wLogger.error("CPF "+ pCPFCNPJ +" Inválido!");
 				return false; 
 			}
 		}
