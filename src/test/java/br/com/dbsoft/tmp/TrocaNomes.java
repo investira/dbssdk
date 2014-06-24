@@ -14,10 +14,12 @@ import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSString;
 
 public class TrocaNomes {
-	String url = "jdbc:mysql://ifeed.com.br:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url = "jdbc:mysql://ifeed.com.br:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url = "jdbc:mysql://ifeed.com.br:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url="jdbc:mysql://192.168.0.106:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
 	String user="root";
 	String password="dbs0ft";
@@ -46,9 +48,9 @@ public class TrocaNomes {
 			xDAO.open("Select * from ATV_ATIVO_TIPO");
 			xDAO.moveBeforeFirstRow();
 			while(xDAO.moveNextRow()){
-				System.out.println(xDAO.getValue("ATIVO_TIPO") + ":" + DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
-//				xDAO.setValue("ATIVO_TIPO", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
-//				xDAO.executeUpdate();
+//				System.out.println(xDAO.getValue("ATIVO_TIPO") + ":" + DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
+				xDAO.setValue("ATIVO_TIPO", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
+				xDAO.executeUpdate();
 
 			}
 			DBSIO.endTrans(wConexao, true);
@@ -59,7 +61,7 @@ public class TrocaNomes {
 	}	
 	
 //	@Test
-	public void readLoop(){
+	public void trocaProdutoTipo(){
 		try {
 			@SuppressWarnings("rawtypes")
 			DBSDAO xDAO = new DBSDAO(wConexao, "GR_PRODUTO_TIPO");
