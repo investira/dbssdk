@@ -23,6 +23,7 @@ import br.com.dbsoft.task.IDBSTaskEventsListener;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 /**
  * @author ricardo.villar
@@ -465,6 +466,7 @@ public class DBSFileTransfer{
 		&& xContent.indexOf("=") != -1) {
 		    String[] xFileName = xContent.split("=");
 		    xRemoteFileName = DBSObject.getNotEmpty(xFileName[1], null);
+		    xRemoteFileName = DBSString.changeStr(xRemoteFileName, "\"", "");
 		    wLocalFileNameOrigin = LocalFileNameOrigin.HEADER;
 		}else{
 			//Recupera nome da URL se não foi definido o nome pelo usuário
