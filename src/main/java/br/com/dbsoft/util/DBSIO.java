@@ -2564,8 +2564,10 @@ public class DBSIO{
 		DB_SERVER xDBP = getDataBaseProduct(pConnection);
 		if (xDBP == DB_SERVER.ORACLE) {
 	        return "Decode(" + pSeCampo + "," + pIgualA + "," + pUsa + "," + pSenao + ")";
-	    } else {
+	    } else if (xDBP == DB_SERVER.MYSQL) {
 	        return "if(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
+	    } else {
+	    	return "iff(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    }
 	}
 
