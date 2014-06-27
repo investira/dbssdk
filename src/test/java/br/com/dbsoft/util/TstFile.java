@@ -24,8 +24,8 @@ public class TstFile {
 	@Test
 	@Ignore
 	public void testaDescompactarArquivo() throws IOException {
-		System.out.println(DBSFile.unzipFile("/home/jose_addario/BDI/bdi05151744.zip",
-				"/home/jose_addario/BDI/BDI05151733/"));
+//		System.out.println(DBSFile.unzipFile("/home/jose_addario/BDI/bdi05151744.zip",
+//				"/home/jose_addario/BDI/BDI05151733/"));
 		
 	}
 

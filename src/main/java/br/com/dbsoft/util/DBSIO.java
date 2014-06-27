@@ -2595,7 +2595,7 @@ public class DBSIO{
 		if (xDBP == DB_SERVER.ORACLE) {
 	        return "Decode(" + pSeCampo + "," + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    } else {
-	        return "iif(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
+	        return "if(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    }
 	}
 
