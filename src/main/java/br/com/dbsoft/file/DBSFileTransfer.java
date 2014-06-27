@@ -14,14 +14,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.core.DBSSDKMessages;
 import br.com.dbsoft.error.DBSException;
 import br.com.dbsoft.task.IDBSTaskEventsListener;
-import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 /**
  * @author ricardo.villar
@@ -139,14 +141,15 @@ public class DBSFileTransfer{
 	private String 							wURL;
 	private String 							wLocalFileName = null;
 	private Timestamp						wVersion;
-	private Long							wTimeOut = 0L;
 	private List<IDBSFileTransferEvents>	wEventListeners = new ArrayList<IDBSFileTransferEvents>();
 	private boolean							wInterrupted; 
-	private long							wTimeStarted;
-	private long							wTimeEnded;
+	private Long							wTimeStarted = 0L;
+	private Long							wTimeEnded = 0L;
+	private Long							wTimeOut = 0L;
 	private TransferState					wTransferState;
 	private LocalFileNameOrigin				wLocalFileNameOrigin = LocalFileNameOrigin.USER;
 	private String							wRemoteServer;
+	private String	 						wMsgErro;
 
 	/**
 	 * Construtor que configura os parametros para efetuar a transferencia.<br/>
@@ -199,6 +202,41 @@ public class DBSFileTransfer{
 	 */
 	public final void setTimeOut(Long pTimeOut) {
 		wTimeOut = pTimeOut;
+	}
+
+	/**
+	 * Retorna se tarefa ultrapassou o tempo permitido.
+	 * @return
+	 */
+	public boolean isTimeOut(){
+		if (wTimeOut == 0L){
+			return false;
+		}
+		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
+	}
+	/**
+	 * Retorna date/hora que foi iniciado o transfer
+	 * @return
+	 */
+	public final Long getTimeStarted(){
+		return wTimeStarted;
+	}
+
+	/**
+	 * Retorna data/hora que foi finalizado o transfer ou a hora atual caso esteja em processo de transferencia
+	 * @return
+	 */
+	public final Long getTimeEnded(){
+		return wTimeEnded;
+	}
+
+	/**
+	 * Retorna o tempo de corrido
+	 * @return
+	 */
+	public final Long getTimeElapsed(){
+		return wTimeEnded - wTimeStarted;
+	
 	}
 
 	/**
@@ -278,6 +316,36 @@ public class DBSFileTransfer{
 			pvFireEventTransferStateChanged();
 		}
 	}
+	
+	/**
+	* Retorna a mensagem de erro, caso tenha.
+	* @return Mensagem String
+	*/
+	public String getMsgErro() {
+		return wMsgErro;
+	}
+	
+	/**
+	* Configura a mensagem de erro a ser recuperada por quem executar o download.
+	* @param pMsgErro
+	*/
+	public void setMsgErro(String pMsgErro) {
+		wMsgErro = pMsgErro;
+	}
+	public void setMsgErro(String pMsgErro, Level pLevel) {
+		setMsgErro(pMsgErro);
+		if (!DBSObject.isEmpty(pLevel)) {
+			if (pLevel == Level.ERROR) {
+				wLogger.error(pMsgErro);
+			} else if (pLevel == Level.WARN) {
+				wLogger.warn(pMsgErro);
+			} else if (pLevel == Level.INFO) {
+				wLogger.info(pMsgErro);
+			} else if (pLevel == Level.DEBUG) {
+				wLogger.debug(pMsgErro);
+			}
+		}
+	}
 
 	/**
 	 * Retornar se o transfer foi interrompido
@@ -288,48 +356,13 @@ public class DBSFileTransfer{
 	}
 	
 	/**
-	 * Retorna date/hora que foi iniciado o transfer
-	 * @return
-	 */
-	public final Timestamp getTimeStarted(){
-		return DBSDate.toTimestamp(wTimeStarted);
-	}
-	
-	public final void setTimeStarted(){
-		wTimeStarted = System.currentTimeMillis();
-		wTimeEnded = wTimeStarted;
-
-	}
-		
-	/**
-	 * Retorna data/hora que foi finalizado o transfer ou a hora atual caso esteja em processo de transferencia
-	 * @return
-	 */
-	public final Timestamp getTimeEnded(){
-		return DBSDate.toTimestamp(wTimeEnded);
-	}
-	
-	public final void setTimeEnded(){
-		wTimeEnded = System.currentTimeMillis();
-	}
-	
-	/**
-	 * Retorna o tempo de corrido
-	 * @return
-	 */
-	public final Long getElapsedTime(){
-		return wTimeEnded - wTimeStarted;
-
-	}
-
-	/**
 	 * Executa o download do arquivo,
 	 * 
 	 * @return boolean True se conseguir realizar a operação.
 	 */
 	public final synchronized File transfer() {
 		if (wURL == null){
-			wLogger.error("URL remota não informada!");
+			setMsgErro(DBSSDKMessages.URLRemotaNaoInformada, Level.ERROR);
 		}
 
 		//---- chama evento -----------------------
@@ -342,7 +375,8 @@ public class DBSFileTransfer{
 		try {
 			xURL = new URL(wURL);
 		} catch (MalformedURLException e1) {
-			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
+//			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
+			setMsgErro(DBSSDKMessages.ErroConvertendoURL + wURL, Level.ERROR);
 			xURL = null;
 		}
 
@@ -353,9 +387,11 @@ public class DBSFileTransfer{
 				xFile = pvDownloadFile(wURL);
 			}
 		} catch (FileNotFoundException e) {
-			wLogger.error("Arquivo não encontrado:" + wURL);
+//			wLogger.error("Arquivo não encontrado:" + wURL);
+			setMsgErro(DBSSDKMessages.ArquivoNaoEncontrado + wURL, Level.ERROR);
 		} catch (IOException e) {
-			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
+//			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
+			setMsgErro(DBSSDKMessages.ErroGenerico + e.getLocalizedMessage(), Level.ERROR);
 		}
 		
 		//---- chama evento -----------------------
@@ -418,17 +454,19 @@ public class DBSFileTransfer{
 		xConnection.setDoOutput(false);
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
-		
+		setMsgErro(null);
 		
 		//Recupera nome do arquivo
 		String xContent = xConnection.getHeaderField("Content-Disposition");
 		
 		String xRemoteFileName = DBSFile.getFileNameFromPath(wLocalFileName);
+
 		//Recupera nome do arquivo enviado pela conexão
 		if(xContent != null 
 		&& xContent.indexOf("=") != -1) {
 		    String[] xFileName = xContent.split("=");
 		    xRemoteFileName = DBSObject.getNotEmpty(xFileName[1], null);
+		    xRemoteFileName = DBSString.changeStr(xRemoteFileName, "\"", "");
 		    wLocalFileNameOrigin = LocalFileNameOrigin.HEADER;
 		}else{
 			//Recupera nome da URL se não foi definido o nome pelo usuário
@@ -441,7 +479,8 @@ public class DBSFileTransfer{
 		}
 		
 		if (DBSObject.isEmpty(xRemoteFileName)){
-			wLogger.info("Nome do arquivo local não foi informado.");
+//			wLogger.info("Nome do arquivo local não foi informado.");
+			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado);
 			xConnection.disconnect();
 			setTransferState(TransferState.NOTTRANSFERING);
 			return null;
@@ -451,10 +490,14 @@ public class DBSFileTransfer{
 			//Reconstroi o nome do arquivo local
 	    	wLocalFileName = DBSFile.getPathFromFileName(wLocalFileName) + xRemoteFileName;
 			//Salva qual o servidor utilizado
-			wRemoteServer = xConnection.getHeaderField("Server");
+			wRemoteServer = xConnection.getHeaderField("Server"); 
+			if (wRemoteServer == null){
+				wRemoteServer = xConnection.getHeaderField("X-Powered-By");
+			}
 			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
 				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getVersion().getTime()) {
-					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
+//					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
+					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
 					setTransferState(TransferState.NOTTRANSFERING);
 					return null;
 				}
@@ -475,7 +518,7 @@ public class DBSFileTransfer{
 			wInterrupted = false;
 			try {
 				while ((xBytesReaded = xReader.read(xBuffer)) != -1 && 
-						(getElapsedTime() < wTimeOut || wTimeOut == 0L) && 
+						!isTimeOut() && 
 						!wInterrupted) { //Se o timeout for 0 ele irá ler até acabar.
 					xDownloadedFile.write(xBuffer, 0, xBytesReaded);
 					xBuffer = new byte[153600];
@@ -491,17 +534,20 @@ public class DBSFileTransfer{
 				setTransferState(TransferState.NOTTRANSFERING);
 			}
 			
-			if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
-				wLogger.warn("Erro de Timeout.");
+			if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
+//				wLogger.warn("Erro de Timeout.");
+				setMsgErro(DBSSDKMessages.ErroTimeout, Level.WARN);
 				return null;
 			} else if (wInterrupted) {
-				wLogger.warn("Processo interrompido pelo usuário.");
+//				wLogger.warn("Processo interrompido pelo usuário.");
+				setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
 				return null;
 			} else {
 				return xInputFile;
 			}
 		} else {
-			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
+//			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
+			setMsgErro(DBSSDKMessages.ErroGenerico + xConnection.getResponseMessage(), Level.ERROR);
 			return null;
 		}
 	}
@@ -510,6 +556,7 @@ public class DBSFileTransfer{
 
 		File xSource = new File(pURL);
 		File xLocalFile = new File(wLocalFileName);
+		setMsgErro(null);
 		
 		if (!xLocalFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
 			DBSFile.mkDir(xLocalFile);
@@ -538,8 +585,9 @@ public class DBSFileTransfer{
 	    	}
 	    }   
 		
-		if (getElapsedTime() > wTimeOut && wTimeOut != 0L) {
-			wLogger.warn("Erro de Timeout.");
+		if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
+//			wLogger.warn("Erro de Timeout.");
+			setMsgErro(DBSSDKMessages.ErroTimeout);
 			return null;
 		} else {
 			setVersion(new Timestamp(xSource.lastModified()));
@@ -553,7 +601,9 @@ public class DBSFileTransfer{
 	 * Chamada quando é iniciada a execução
 	 */
 	private void pvFireEventStarted(){
-		setTimeStarted();
+		wTimeStarted = System.currentTimeMillis();
+		wTimeEnded = wTimeStarted;
+
 		setTransferState(TransferState.TRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).started(this);
@@ -564,7 +614,8 @@ public class DBSFileTransfer{
 	 * Chamada quando é iniciada a execução
 	 */
 	private void pvFireEventEnded(){
-		setTimeEnded();
+		wTimeEnded = System.currentTimeMillis();
+
 		setTransferState(TransferState.NOTTRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).ended(this);

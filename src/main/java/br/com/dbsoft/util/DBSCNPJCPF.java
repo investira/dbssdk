@@ -23,18 +23,19 @@ public class DBSCNPJCPF {
 	 * @return boolean
 	 */
 	public static boolean validarCPFCNPJ(String pCPFCNPJ) {
+		if (DBSObject.isEmpty(pCPFCNPJ)) {
+			return false;
+		}
 		if (pCPFCNPJ.length() > 11) {
 			if (isCNPJ(pCPFCNPJ)) {
 				return true;
 			} else {
-				wLogger.error("CNPJ "+ pCPFCNPJ +" Inválido!");
 				return false;
 			}
 		} else {
 			if (isCPF(pCPFCNPJ)) {
 				return true;
 			} else {
-				wLogger.error("CPF "+ pCPFCNPJ +" Inválido!");
 				return false; 
 			}
 		}

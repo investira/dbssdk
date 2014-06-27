@@ -48,7 +48,7 @@ public class DBSString {
 	 * @param pTextoBase Texto que será utilizado como base da pesquisa 
 	 * @param pTextoPesquisa Texto a ser pesquisado
 	 * @param pInicialPosition Informa posição incial a partir do qual será inciada a pesquisa dentro da String
-	 * @param pCaseMatch False=Efetua a pesquisa independente da caixa. 
+	 * @param pCaseMatch False=Efetua a pesquisa independentemente da caixa. 
 	 * @return Retorna posição da string ou 0 caso seja não encontrada.
 	 */
 	public static int getInStr(String pTextoBase, String pTextoPesquisa, int pInicialPosition, boolean pCaseMatch){
@@ -79,7 +79,7 @@ public class DBSString {
 	 * Retorna o número da posição de uma string, dentro de outra string
 	 * @param pTextoBase Texto que será utilizado como base da pesquisa 
 	 * @param pTextoPesquisa Texto a ser pesquisado
-	 * @param pCaseMatch False=Efetua a pesquisa independente da caixa. Default = true;
+	 * @param pCaseMatch False=Efetua a pesquisa independentemente da caixa. Default = true;
 	 * @return Retorna posição da string ou 0 caso seja não encontrada.
 	 */
 	public static int getInStr(String pTextoBase, String pTextoPesquisa, boolean pCaseMatch){
@@ -143,7 +143,7 @@ public class DBSString {
 	}
 	
 	/**
-	 * Substitui uma determinada string por outra independente do tamanho de cada uma delas
+	 * Substitui uma determinada string por outra independentemente do tamanho de cada uma delas
 	 * @param pTextoBase Texto base a ser pesquisado
 	 * @param pTextoAntigo Texto antigo a ser substituido
 	 * @param pTextoNovo Texto novo a utilizado em substituição ao antigo
@@ -159,19 +159,19 @@ public class DBSString {
 	}
 	
 	/**
-	 * Substitui uma determinada string por outra independente do tamanho de cada uma delas
+	 * Substitui uma determinada string por outra independentemente do tamanho de cada uma delas
 	 * @param pTextoBase Texto base a ser pesquisado
 	 * @param pTextoAntigo Texto antigo a ser substituido
 	 * @param pTextoNovo Texto novo a utilizado em substituição ao antigo
-	 * @param pCaseMatch False=Efetua a substituição independente da caixa 
+	 * @param pCaseMatch False=Efetua a substituição independentemente da caixa 
 	 * @return Texto modificado
 	 */
 	public static String changeStr(String pTextoBase, String pTextoAntigo, String pTextoNovo, boolean pCaseMatch){
 		if (pCaseMatch){
 			return changeStr(pTextoBase, pTextoAntigo, pTextoNovo);
 		}else{
-			if (DBSObject.isEmpty(pTextoBase) || 
-				DBSObject.isEmpty(pTextoAntigo)){
+			if (DBSObject.isNull(pTextoBase) || 
+				DBSObject.isNull(pTextoAntigo)){
 				return pTextoBase;
 			}
 			String xTextoAntigo = pTextoAntigo.toLowerCase(); //utiliza caixa alta para normalizar e evitar que se tenha que testar todas as variácoes de caixa
@@ -331,8 +331,8 @@ public class DBSString {
 	/**
 	 * Converte um valor numérico para string, excluido a separação decimal e fixando o tamanho das casas decimais
 	 * @param pValor Valor numérico a ser convertido;
-	 * @param pTamanhoMinimoDaString Tamanho mínimo que ter� a string de retorno;
-	 * @param pCadasDecimais Quantidade de casas decimais que se�o consideradas como significativas.
+	 * @param pTamanhoMinimoDaString Tamanho mínimo que terá a string de retorno;
+	 * @param pCadasDecimais Quantidade de casas decimais que serão consideradas como significativas.
 	 * @return String
 	 */
 	public static String getNumeroSemPonto(Double pValor, int pTamanhoMinimoDaString, int pCasasDecimais){
@@ -381,8 +381,9 @@ public class DBSString {
 	}
 
 	/**
-	 * Separa um Array a patir de uma String, separado por um delimitador informado
-	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
+	 * Separa um Array a patir de uma String, separado por um delimitador informado.
+	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)<br/>
+	 * Maiúscula e minúsculo serão consderados nomes diferentes.
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
 	 * @return Array com o conteúdo em cada linha 
@@ -396,7 +397,7 @@ public class DBSString {
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
-	 * @param pCaseMatch indica se o delimitador considerará o caixa 
+	 * @param pCaseMatch indica se o delimitador considerará a caixa 
 	 * @return Array com o conteúdo em cada linha 
 	 */
 	public static ArrayList<String> toArray(String pTextoBase, String pDelimitador, boolean pCaseMatch){
@@ -408,7 +409,7 @@ public class DBSString {
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos. Não faz a delimitação dos campos se delimitador for nulo ou vázio
-	 * @param pCaseMatch indica se o delimitador considerará o caixa
+	 * @param pCaseMatch indica se o delimitador considerará a caixa
 	 * @param pTrim Indicador se exclui espaços no inicio e fim da string antes de inclui-lá no array
 	 * @return Array com o conteúdo em cada linha 
 	 */
@@ -632,44 +633,39 @@ public class DBSString {
 	    return String.format("%x", new BigInteger(1, pBytes));
 	}
 	
-    /**
-     * Converte string com valores em hexa para valores decimais 
-     * @param pHex
-     * @return
-     * @throws NoSuchAlgorithmException
-     */
-    public static byte[] fromHex(String pHex){
-        byte[] xBytes = new byte[pHex.length() / 2];
-        for(int i = 0; i<xBytes.length ;i++)
-        {
-            xBytes[i] = (byte)Integer.parseInt(pHex.substring(2 * i, 2 * i + 2), 16);
-        }
-        return xBytes;
-    }
     
-	/**
-	 * Corrige erros ortográficos a partir do dicionário interno.
-	 * Para inclur novas palavras, deve-se editar os arquivs: dicionario_acento e dicionario_palavra.
-	 * dicionario_acento: correções de acentuação assumindo que a palavra esta correta
-	 * dicionario_palavra: troca uma palavra pela outra, considerando inclusive a caixa da letra
-	 * @param pTexto
-	 * @return
-	 */	
-	public static String CorretorOrtografico(String pTexto){
-		String xTexto =  pTexto;
-		if(wDicionarioSilaba.isEmpty()){
-			pvDicionarioInit();
-		}
-		//System.out.println(pTexto);
-		xTexto = pvCorretorOrtograticoSilaba(xTexto);
-		//System.out.println(pTexto);
-		xTexto = pvCorretorOrtograficoPalavra(xTexto);
-		//System.out.println(pTexto);
-		xTexto = pvCorretorOrtograficoFrase(xTexto);
-		//System.out.println(pTexto);
-		return xTexto;
+    
+	
+	
+	//*******************************************************************************************************
+	// Private
+	//*******************************************************************************************************
+
+	public static String toString(Object pValue) {
+		return toString(pValue, null);
 	}
 	
+	public static String toString(Object pValue, String pDefault) {
+		if (DBSObject.isEmpty(pValue)) {
+			return pDefault;
+		}
+		return pValue.toString();
+	}
+
+	/**
+	 * Converte string com valores em hexa para valores decimais 
+	 * @param pHex
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static byte[] fromHex(String pHex){
+	    byte[] xBytes = new byte[pHex.length() / 2];
+	    for(int i = 0; i<xBytes.length ;i++)
+	    {
+	        xBytes[i] = (byte)Integer.parseInt(pHex.substring(2 * i, 2 * i + 2), 16);
+	    }
+	    return xBytes;
+	}
 	/**
 	 * Retorna se a string é somente ccontinuida de letra alfabética
 	 * @param pString
@@ -687,129 +683,6 @@ public class DBSString {
 		}
 		return true;
 	}
-	
-	//*******************************************************************************************************
-	// Private
-	//*******************************************************************************************************
-
-	/**
-	 * Converte a primeira letra para maiúscula e o restante minúscula
-	 * @param pString
-	 * @return Para com a primeira letra maiúscula e o restante minúscula
-	 */
-	private static String pvToProper(String pString){
-		if (!DBSObject.isEmpty(pString)){
-			String xS = pString.substring(0, 1).toUpperCase();
-			if (pString.length()>1){
-				xS = xS + pString.substring(1).toLowerCase();
-			}
-			return xS;
-		}else{
-			return pString;
-		}
-	}
-
-	
-	/**
-	 * Troca parte da palavras por outro texto considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograticoSilaba(String pTexto){
-		String xTexto = pTexto;
-		String xKey = ""; 
-		Enumeration<Object> xDicionarioSilabaEnum;
-		xDicionarioSilabaEnum = wDicionarioSilaba.keys();
-		while (xDicionarioSilabaEnum.hasMoreElements()){
-			xKey = (String) xDicionarioSilabaEnum.nextElement();
-			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioSilaba.getProperty(xKey),true);
-		}
-		return xTexto;
-	}	
-	
-	/**
-	 * Troca uma palavra pela outra considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograficoPalavra(String pTexto){
-		List<String> 	xPalavras = new ArrayList<String>();
-		String 		 	xTexto = "";
-		String 			xPalavraErrada = ""; 
-
-		xPalavras = DBSString.toArray(pTexto, " ", false);
-		for (String xPalavra: xPalavras){
-			Enumeration<Object> xDicionarioPalavraEnum;
-			xDicionarioPalavraEnum = wDicionarioPalavra.keys();
-			while (xDicionarioPalavraEnum.hasMoreElements()){
-				xPalavraErrada = (String) xDicionarioPalavraEnum.nextElement();
-				if (xPalavraErrada.equals(xPalavra)){
-					xPalavra = DBSString.changeStr(xPalavra, xPalavraErrada, wDicionarioPalavra.getProperty(xPalavraErrada), true);
-					break;
-				}
-			}
-			if (xTexto.equals("")){
-				xTexto = xPalavra; 
-			}else{
-				xTexto = xTexto + " " + xPalavra;
-			}
-		}
-		return xTexto;
-	}
-
-	/**
-	 * Troca frase(Mais de uma palavra) por outra(s) considerando a caixa da letra a partir do dicinário interno
-	 * É respeitado a ordem que a frase está no dicionário 
-	 * @param pTexto
-	 * @return
-	 */
-	private static String pvCorretorOrtograficoFrase(String pTexto){
-		String 	xTexto = pTexto;
-		String xKey = ""; 
-
-		Enumeration<Object> xDicionarioFraseEnum;
-		xDicionarioFraseEnum = wDicionarioFrase.keys();
-
-		while (xDicionarioFraseEnum.hasMoreElements()){
-			xKey = (String) xDicionarioFraseEnum.nextElement();
-			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioFrase.getProperty(xKey),true);
-		}
-		return xTexto;
-	}
-	
-	/**
-	 * Carrega os dicionarios uma única vez para melhor a performance
-	 */
-	private static void pvDicionarioInit(){
-		try {
-			wDicionarioSilaba.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_silaba.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			wDicionarioPalavra.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_palavra.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			wDicionarioFrase.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_frase.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public static String toString(Object pValue) {
-		return toString(pValue, null);
-	}
-	
-	public static String toString(Object pValue, String pDefault) {
-		if (DBSObject.isEmpty(pValue)) {
-			return pDefault;
-		}
-		return pValue.toString();
-	}
-
 	/**
 	 * Busca dentro do array se existe a string informada e retorna a posição.
 	 * Se não eistir, retorna -1; 
@@ -848,6 +721,139 @@ public class DBSString {
 			}
 		}
 		return xString;
+	}
+	//*******************************************************************************************************
+	// Private
+	//*******************************************************************************************************
+	
+	/**
+	 * Corrige erros ortográficos a partir do dicionário interno.
+	 * Para inclur novas palavras, deve-se editar os arquivs: dicionario_acento e dicionario_palavra.
+	 * dicionario_acento: correções de acentuação assumindo que a palavra esta correta
+	 * dicionario_palavra: troca uma palavra pela outra, considerando inclusive a caixa da letra
+	 * @param pTexto
+	 * @return
+	 */	
+	public static String corretorOrtografico(String pTexto){
+		if (pTexto==null){
+			return null;
+		}
+		String xTexto =  pTexto;
+		if(wDicionarioSilaba.isEmpty()){
+			pvDicionarioInit();
+		}
+		//Retira duplo espaço
+		xTexto = DBSString.changeStr(xTexto, "  ", " ", false);
+		//System.out.println(pTexto);
+		xTexto = pvCorretorOrtograticoSilaba(xTexto);
+		//System.out.println(pTexto);
+		xTexto = pvCorretorOrtograficoPalavra(xTexto);
+		//System.out.println(pTexto);
+		xTexto = pvCorretorOrtograficoFrase(xTexto);
+		//System.out.println(pTexto);
+		return xTexto;
+	}
+	/**
+	 * Converte a primeira letra para maiúscula e o restante minúscula
+	 * @param pString
+	 * @return Para com a primeira letra maiúscula e o restante minúscula
+	 */
+	private static String pvToProper(String pString){
+		if (!DBSObject.isEmpty(pString)){
+			String xS = pString.substring(0, 1).toUpperCase();
+			if (pString.length()>1){
+				xS = xS + pString.substring(1).toLowerCase();
+			}
+			return xS;
+		}else{
+			return pString;
+		}
+	}
+	/**
+	 * Troca parte da palavras por outro texto considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograticoSilaba(String pTexto){
+		String xTexto = pTexto;
+		String xKey = ""; 
+		Enumeration<Object> xDicionarioSilabaEnum;
+		xDicionarioSilabaEnum = wDicionarioSilaba.keys();
+		while (xDicionarioSilabaEnum.hasMoreElements()){
+			xKey = (String) xDicionarioSilabaEnum.nextElement();
+			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioSilaba.getProperty(xKey),true);
+		}
+		return xTexto;
+	}
+	/**
+	 * Troca uma palavra pela outra considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograficoPalavra(String pTexto){
+		List<String> 	xPalavras = new ArrayList<String>();
+		String 		 	xTexto = "";
+		String 			xPalavraErrada = ""; 
+	
+		xPalavras = DBSString.toArray(pTexto, " ", false);
+		for (String xPalavra: xPalavras){
+			Enumeration<Object> xDicionarioPalavraEnum;
+			xDicionarioPalavraEnum = wDicionarioPalavra.keys();
+			while (xDicionarioPalavraEnum.hasMoreElements()){
+				xPalavraErrada = (String) xDicionarioPalavraEnum.nextElement();
+				if (xPalavraErrada.equals(xPalavra)){
+					xPalavra = DBSString.changeStr(xPalavra, xPalavraErrada, wDicionarioPalavra.getProperty(xPalavraErrada), true);
+					break;
+				}
+			}
+			if (xTexto.equals("")){
+				xTexto = xPalavra; 
+			}else{
+				xTexto = xTexto + " " + xPalavra;
+			}
+		}
+		return xTexto;
+	}
+	/**
+	 * Troca frase(Mais de uma palavra) por outra(s) considerando a caixa da letra a partir do dicinário interno
+	 * É respeitado a ordem que a frase está no dicionário 
+	 * @param pTexto
+	 * @return
+	 */
+	private static String pvCorretorOrtograficoFrase(String pTexto){
+		String 	xTexto = pTexto;
+		String xKey = ""; 
+	
+		Enumeration<Object> xDicionarioFraseEnum;
+		xDicionarioFraseEnum = wDicionarioFrase.keys();
+	
+		while (xDicionarioFraseEnum.hasMoreElements()){
+			xKey = (String) xDicionarioFraseEnum.nextElement();
+			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioFrase.getProperty(xKey),true);
+		}
+		return xTexto;
+	}
+	/**
+	 * Carrega os dicionarios uma única vez para melhor a performance
+	 */
+	private static void pvDicionarioInit(){
+		try {
+			wDicionarioSilaba.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_silaba.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			wDicionarioPalavra.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_palavra.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			wDicionarioFrase.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_frase.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	

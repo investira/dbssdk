@@ -216,12 +216,15 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 		//Loop para percorrer os atributos do Objeto passado
 		for (Field xField : xFields) {
 			try { 
-				xField.setAccessible(true);
-				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
-				if (!(xAnnotationTmp instanceof DBSTableModel)){
-					setValue(xField.getName(), xField.get(pDataModel), pOriginalValue);
+				//Ignora se campo tiver sido declarado como static
+				if (!java.lang.reflect.Modifier.isStatic(xField.getModifiers())){
+					xField.setAccessible(true);
+					Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+					if (!(xAnnotationTmp instanceof DBSTableModel)){
+						setValue(xField.getName(), xField.get(pDataModel), pOriginalValue);
+					}
 				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException | IllegalAccessException e) {  
 				wLogger.error(e);
 			}
 		}
