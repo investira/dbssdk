@@ -2220,17 +2220,14 @@ public class DBSIO{
 			if (pValue==null){
 				return "NULL";
 			}
-	//		if (pValue == null){
-	//			return "''";
-	//		}else{
-				pValue = DBSString.changeStr((String)pValue, "'", "''");
-				pValue = DBSString.changeStr((String)pValue, "\\", "\\\\");
-				//TODO ENCONTRAR UMA FORMA MELHOR PARA A SITUAÇÃO ABAIXO - AVILA
-				//DEVE-SE RECEBER A STRING JÁ CONVERTIDA, ISTO É, SEM OS CARACTERES ABAIXO - RICARDO
-				pValue = DBSString.changeStr((String)pValue, "╔", "É");
-				pValue = DBSString.changeStr((String)pValue, "ß", "á");
-				return "'" + pValue + "'";
-	//		}
+			String xValue = DBSString.toString(pValue);
+			xValue = DBSString.changeStr(xValue, "'", "''");
+			xValue = DBSString.changeStr(xValue, "\\", "\\\\");
+			//TODO ENCONTRAR UMA FORMA MELHOR PARA A SITUAÇÃO ABAIXO - AVILA
+			//DEVE-SE RECEBER A STRING JÁ CONVERTIDA, ISTO É, SEM OS CARACTERES ABAIXO - RICARDO
+			xValue = DBSString.changeStr(xValue, "╔", "É");
+			xValue = DBSString.changeStr(xValue, "ß", "á");
+			return "'" + xValue + "'";
 		}
 
 	/**
