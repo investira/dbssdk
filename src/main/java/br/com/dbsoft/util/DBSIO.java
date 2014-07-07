@@ -1438,7 +1438,7 @@ public class DBSIO{
 			return xCount;
 		} catch (SQLException e) {
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
-			wLogger.error(e);
+			wLogger.error(pSQL, e);
 			DBSIO.endTrans(pConnection, false);
 			throwIOException(pSQL, e, pConnection);
 			return 0;
