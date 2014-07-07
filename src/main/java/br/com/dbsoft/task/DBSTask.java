@@ -145,6 +145,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private boolean					wReRun = true;
 	private int						wRetryOnErrorCount = 0;
 	private	boolean					wTransactionEnabled = true;
+	private boolean					wRunningScheduled = false; 
 
 
 	public DBSTask(){
@@ -601,6 +602,15 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 	
 	/**
+	 * Retorna se quem iniciou a tarefa foi um agendamento.<br/>
+	 * @return true : Tarefa iniciada por agendamento
+	 * false: Tarefa iniciada manualmente ou tarefa estiver parada.
+	 */
+	public final boolean isRunningScheduled(){
+		return wRunningScheduled;
+	}
+	
+	/**
 	 * Executa a tarefa se não estiver em execução.<br/>
 	 * Caso não sejá multifarefa, este metodo só terminará ao final da execução da tarefa. 
 	 * @throws Exception 
@@ -627,7 +637,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}
 			interrupt();
 			pvDesativaAgendamento();
-			pvSetTaskState(pvGetNotRunnigTaskState());
+			pvSetTaskStateToNotRunnig();
 			removeAllEventListeners();
 		}catch(Exception e){
 			wLogger.error(getName(), e);
@@ -676,11 +686,13 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					pvRunTaskSteps();
 				}
 			}catch(Exception e){
+				wRunningScheduled = false;
 				wLogger.error(getName(), e);
 				pvInterrupt(RunStatus.ERROR);
 				throw new DBSIOException(e);
 			}
 		}else{
+			wRunningScheduled = false;
 			wLogger.warn("Tarefa já em execução. Nova solicitação de execução foi ignorada.");
 		}
 	}
@@ -745,7 +757,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				setLastRunStatus(getRunStatus());
 				throw new DBSIOException(e);
 			}finally{
-				pvSetTaskState(pvGetNotRunnigTaskState());
+				pvSetTaskStateToNotRunnig();
 				//Se foi configurado a quantidade de segundos para uma nova tentativa...
 				if (wRetryOnErrorSeconds > 0 
 				 && wRetryOnErrorTimes > 0){
@@ -772,6 +784,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				}
 			}
 		}
+		wRunningScheduled = false;
 		wReRun = true;
 	}
 
@@ -963,15 +976,16 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	/**
-	 * Retorna a situação do Status considerando as tarefas agendadas estarão como "aguardando". Tarefas sem agendamento estão "Paradas"
+	 * Seta a situação do Status considerando as tarefas agendadas estarão como "aguardando". Tarefas sem agendamento estão "Paradas".
 	 * @return
+	 * @throws DBSIOException 
 	 */
-	private TaskState pvGetNotRunnigTaskState(){
+	private void pvSetTaskStateToNotRunnig() throws DBSIOException{
 		if (wScheduleDate != null
 		 && wScheduleDate.after(DBSDate.getNowTimestamp())){
-			return TaskState.SCHEDULED;
+			pvSetTaskState(TaskState.SCHEDULED);
 		}else{
-			return TaskState.STOPPED;
+			pvSetTaskState(TaskState.STOPPED);
 		}
 	}
 	
@@ -1222,11 +1236,13 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		public void run() {
 			try{
 				wLogger.info("Inicio:Timer");
+				wRunningScheduled = true;
 				pvRunTask();
 			} catch (Exception e) {
 				wLogger.error(e);
 			}
 		}
+		
 	}
 
 	@Override
