@@ -9,9 +9,12 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
@@ -328,6 +331,22 @@ public class DBSDate{
 		DateTime xDataTime = new DateTime(pData.getYear(), pData.getMonth(), pData.getDay(), pData.getHour(), pData.getMinute());
 		return DBSDate.toDate(xDataTime);
 	}
+	
+	public static XMLGregorianCalendar toXMLGregorianCalendar(Object pDate){
+		return toXMLGregorianCalendar(toDate(pDate));
+	}
+	public static XMLGregorianCalendar toXMLGregorianCalendar(Date pDate){
+        GregorianCalendar gCalendar = new GregorianCalendar();
+        gCalendar.setTime(pDate);
+        XMLGregorianCalendar xmlCalendar = null;
+        try {
+            xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
+        } catch (DatatypeConfigurationException ex) {
+        	wLogger.error(ex);
+        }
+        return xmlCalendar;
+    }
+
 
 	/**
 	 * Retorna a data e hora no tipo Date, a partir de uma string com data e hora.
