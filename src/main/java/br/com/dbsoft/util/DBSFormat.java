@@ -118,7 +118,7 @@ public class DBSFormat {
 		return getFormattedDateTime(xDate);
 	}
 	/**
-	 * Retorna string contendo a data formatada contendo data, hora e segundos
+	 * Retorna string contendo a data formatada contendo hora, minutos e segundos
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
@@ -136,7 +136,7 @@ public class DBSFormat {
 		return xFormat.format(DBSDate.toDate(pDate));
 	}
 	/**
-	 * Retorna string contendo a data formatada data e hora
+	 * Retorna string contendo a data formatada hora, minutos e segundos
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
