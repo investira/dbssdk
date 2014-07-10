@@ -34,6 +34,10 @@ public class DBSFormat {
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
+	public static String getFormattedDate(Long pDate){
+		return getFormattedDate(DBSDate.toDate(pDate));
+	}
+	
 	public static String getFormattedDate(Object pDate){
 		if (DBSObject.isEmpty(pDate)){
 			return "";
