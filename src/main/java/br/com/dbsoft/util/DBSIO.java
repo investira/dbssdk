@@ -2897,7 +2897,10 @@ public class DBSIO{
 			}
 			xSQLColumns += ")";
 		}else if(pCommand==COMMAND.UPDATE){
-			String xSQLColumnNecessaria = "";
+			/*Comentado em 14/07/2014 para evitar update sem haver alteração de valor.
+			 * Este mecanismo era utilizado para forçar que possíveis triggers fossem disparados quando ocorresse o update.
+			*/
+//			String xSQLColumnNecessaria = "";
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
 				if (!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
@@ -2908,17 +2911,23 @@ public class DBSIO{
 						 || !DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))){
 							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
 							xVirgula = ",";
-						}else{
-							xSQLColumnNecessaria = pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + xColumn.getColumnName();
+							/*
+							 * Comentado: ver comentário acima
+							 */
+//						}else{
+//							xSQLColumnNecessaria = pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + xColumn.getColumnName();
 						}
 					}
 				}
 			}
+			/*
+			 * Comentado: ver comentário acima
+			 */
 			//Se não existem colunas que sofrerão o update, por não ter havido alteração de valores das respectivas colunas...
-			if (xSQLColumns.equals("")){
-				//Força a existência de pelo menos uma coluna para obrigar que o update seja realizado
-				xSQLColumns = xSQLColumnNecessaria;
-			}
+//			if (xSQLColumns.equals("")){
+//				//Força a existência de pelo menos uma coluna para obrigar que o update seja realizado
+//				xSQLColumns = xSQLColumnNecessaria;
+//			}
 		}else if(pCommand==COMMAND.SELECT){
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
