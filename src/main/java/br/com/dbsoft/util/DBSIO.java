@@ -678,56 +678,7 @@ public class DBSIO{
 	}
 	
 	
-	
-	
-//	/**
-//	 * Executa um comando sql diretamente no banco de dados e recupera os valores do autoincremento efetuados pelo banco
-//	 * @param <T>
-//	 * @param pConnection conexão com o banco de dados
-//	 * @param pSQL Comando SQL
-//	 * @return Quantidade de registros afetados
-//	 * @throws DBSIOException 
-//	 * @throws Throwable 
-//	 * @throws Exception 
-//	 */
-//	private static <T> int pvGetAutoIncrementedColumnValue(Connection pConnection, String pSQL, DBSDAO<T> pDAO) throws DBSIOException {
-//		int xCount=0;
-//		PreparedStatement xPS;
-//		ResultSet xRS;
-//		try {
-//			xPS = pConnection.prepareStatement(pSQL, PreparedStatement.RETURN_GENERATED_KEYS);
-//			//Executa o INSERT
-//			xPS.executeUpdate();
-//			//Recupera Recordset contendo os valores gerados para as columnas como autoincrement ou sequences 
-//			xRS = xPS.getGeneratedKeys();
-//			//Loop para recuperas as colunas com os respectivos valores
-//			while (DBSIO.moveNext(xRS)){
-//				for (int xX=1; xX <= xRS.getMetaData().getColumnCount(); xX++){
-//					//Atualiza os valores em memória, das colunas que tiveram seu valores gerados automaticamente após o insert  
-//					pDAO.setValue(pDAO.getPK(), xRS.getInt(xX)); //Assume que as colunas com autoincrement/sequences são integer
-//				}
-//			}
-//			//Recupera a quantidade de registros efetados.
-//			xCount = xPS.getUpdateCount();
-//			xRS.close();
-//			xPS.close();
-//			return xCount;
-//		} catch (SQLException e) {
-//			wLogger.error(pSQL, e);
-//			throw new DBSIOException(pSQL, e);
-//		}
-//	}
-//	DATABASEPRODUCT xDBP = getDataBaseProduct(pConnection);
-//	if (xDBP.equals(DATABASEPRODUCT.ORACLE)){
-//		String xSql = "Select " & pIdName & ".currval From Dual"
-//                If IOOpenRecordSet(pDB, xTeste, Sql, adOpenStatic, , True) Then
-//                    GetID = xTeste("currval").Value
-//                    IOClose xTeste
-//                Else
-//                    GetID = -1
-//                    IOClose xTeste
-//                End If			
-//	}else{	
+
 
 	/**
 	 * Move o valor para a coluna conforme o index do atributo do DataModel informado
@@ -867,23 +818,6 @@ public class DBSIO{
 			pDaoTarget.setValue(xColumn.getColumnName(), xColumn.getValue());
 		}
 	}
-	
-	/**
-	 * Move o valor informado para o campo do tributo da classe informada conforme o nome informado
-	 * @param pDataModel Instancia da classe
-	 * @param pFieldName Nome do atributo/coluna
-	 * @param pValue valor do atributo
-	 */	
-//	public final static <T> void setDataModelValue(T pDataModel, String pFieldName, Object pValue){
-//		Field xField = null;
-//		if (pDataModel != null){
-//			xField = getDataModelField(pDataModel, pFieldName);
-//			if (xField != null){
-//				pvSetDataModelValue(pDataModel, xField, pValue);
-//			}
-//		}
-//	}	
-	
 		
 	/**
 	 * Retorna campo a partir no nome do propriedade existente no datamodel 
@@ -1438,9 +1372,13 @@ public class DBSIO{
 			return xCount;
 		} catch (SQLException e) {
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
-			wLogger.error(pSQL, e);
 			DBSIO.endTrans(pConnection, false);
-			throwIOException(pSQL, e, pConnection);
+			
+			String xMSG = e.getMessage() + ":" + pSQL;
+			wLogger.error(xMSG);
+
+			throwIOException(xMSG, e, pConnection);
+
 			return 0;
 		}
 	}
@@ -2569,6 +2507,123 @@ public class DBSIO{
 	}
 
 	/**
+	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
+	 * @param pSQLQuery Query SQL a ser resquisada
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
+	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
+	 */
+	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias){
+		return getTablesFromQuery(pSQLQuery, pReturnAlias, null);
+	}
+
+	/**
+	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
+	 * Caso não exista <i>Alias</i> será retornardo o mesmo noma da tabela.
+	 * @param pSQLQuery Query SQL a ser resquisada
+	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
+	 * @param pNameToFind Se <b>pReturnAlias=true</b> retorna o nome do <i>Alias</i> que representa a tabela informada em <b>pTableNameToFind</b>.Se tabela não tiver <i>Alias</i>, retorna o próprio nome da tabela.<br/>
+	 *   					   Se <b>pReturnAlias=false</b> retorna o nome da tabela que representa o <i>Alias</i> informado em <b>pTableNameToFind</b>.<br/>
+	 *   					   Se for nulo, retorna todas as tabelas ou <i>Alias</i> da query.
+	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
+	 */
+	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias, String pNameToFind){
+		int xI;
+		int xF;
+		boolean xFindName = !DBSObject.isEmpty(pNameToFind);
+		String xS = pSQLQuery.trim(); 
+		String xAliasName;
+		List<String> xTmps;
+		List<String> xBlocks;
+		List<String> xTables =  new ArrayList<String>();
+		xI = DBSString.getInStr(xS.toUpperCase(), " FROM ",false);
+		if (xI == 0){
+			return null;
+		}else {
+			xI+=6; //Adiciona 6 para desconsiderar a própria string " FROM "
+		}
+		//Determina onde termina a clausula FROM
+		xF = DBSString.getInStr(xS," WHERE ", false);
+		if (xF==0){
+			xF = DBSString.getInStr(xS," LIKE ", false);
+			if (xF==0){
+				xF = DBSString.getInStr(xS," GROUP BY ", false);
+				if (xF==0){
+					xF = DBSString.getInStr(xS," HAVING ", false);
+					if (xF==0){
+						xF = DBSString.getInStr(xS," ORDER BY ", false);
+						if (xF==0){
+							xF = xS.length();
+						}
+					}
+				}
+			}
+		}
+		
+		//Recupera somente o texto referente a clausula "FROM" do texto original mantendo a caixa do texto
+		xS = DBSString.getSubString(pSQLQuery, xI, xF - xI + 1);
+	
+		//Exclui textos de comandos
+		xS = DBSString.changeStr(xS, " INNER ", " ", false);
+		xS = DBSString.changeStr(xS, " OUTER ", " ", false);
+		xS = DBSString.changeStr(xS, " LEFT ", " ", false);
+		xS = DBSString.changeStr(xS, " RIGHT ", " ", false);
+		xS = DBSString.changeStr(xS, " NATURAL ", " ", false);
+		
+		//Recupera os nomes das tabelas ou o Alias 
+		xBlocks = DBSString.toArray(xS,",");
+		for (String xBlock:xBlocks){
+			xTmps = DBSString.toArray(xBlock," JOIN ", false);
+			for (String xTable:xTmps){
+				int x = 0;
+				x = DBSString.getInStr(xTable," ON ", false);
+				if (x > 0){
+					//Considera o texto anterior ao " ON " como sendo o nome da tabela
+					xTable = DBSString.getSubString(xTable, 1, x);
+				}
+				x = DBSString.getInStr(xTable," AS ", false);
+				if (x > 0){
+					//Salva o Alias
+					xAliasName = DBSString.getSubString(xTable, x + 4, xTable.length());
+					//Salva o Nome da tabela
+					xTable = DBSString.getSubString(xTable, 1, x - 1);
+				}else{
+					//Alias será igual ao nome.
+					xAliasName = xTable;
+				}
+	
+				//Se for para retornar somente o alias que representa a tabela informada ou vice-versa.
+				if (xFindName){
+					if (pReturnAlias){
+						//Retorna o Alias se o nome da tabela informado for iqual a tabela lida
+						if (pNameToFind.equalsIgnoreCase(xTable)){
+							xTables.add(xAliasName.trim());
+							break;
+						}
+					}else{
+						//Retorna a tabela se o nome do alias informado for iqual ao alias lido
+						if (pNameToFind.equalsIgnoreCase(xAliasName)){
+							xTables.add(xTable.trim());
+							break;
+						}
+					}
+				}else{
+					if (pReturnAlias){
+						xTables.add(xAliasName.trim());
+					}else{
+						xTables.add(xTable.trim());
+					}
+				}
+			}
+		}
+		return xTables;
+	}
+	
+	
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+
+	/**
 	 * Retorna sequence do registro recem incluído
 	 * @param pConnection
 	 * @param pSQL
@@ -2586,9 +2641,6 @@ public class DBSIO{
 		return xId;
 	}
 
-	//######################################################################################################### 
-	//## Private Methods                                                                                      #
-	//#########################################################################################################
 	private static void pvGetConnectionTimeout(Connection pConnection, Throwable e, int pTimeout, int pTimes) throws DBSIOException{
 		if (pTimeout == 0) {
 			throwIOException(e, pConnection);
@@ -2666,121 +2718,6 @@ public class DBSIO{
 	private static boolean pvRollbackTrans(Connection pConnection) throws DBSIOException{
 		return pvRollbackTrans(pConnection, null);
 	}
-
-	/**
-	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
-	 * @param pSQLQuery Query SQL a ser resquisada
-	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
-	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
-	 */
-	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias){
-		return getTablesFromQuery(pSQLQuery, pReturnAlias, null);
-	}
-
-	/**
-	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
-	 * Caso não exista <i>Alias</i> será retornardo o mesmo noma da tabela.
-	 * @param pSQLQuery Query SQL a ser resquisada
-	 * @param pReturnAlias Se retorna o nome real da tabela ou o <i>Alias</i> se existir. 
-	 * @param pNameToFind Se <b>pReturnAlias=true</b> retorna o nome do <i>Alias</i> que representa a tabela informada em <b>pTableNameToFind</b>.Se tabela não tiver <i>Alias</i>, retorna o próprio nome da tabela.<br/>
-	 *   					   Se <b>pReturnAlias=false</b> retorna o nome da tabela que representa o <i>Alias</i> informado em <b>pTableNameToFind</b>.<br/>
-	 *   					   Se for nulo, retorna todas as tabelas ou <i>Alias</i> da query.
-	 * @return Array com os nomes da tabelas, sendo a primeira, index = 0.
-	 */
-	public static List<String> getTablesFromQuery(String pSQLQuery, boolean pReturnAlias, String pNameToFind){
-		int xI;
-		int xF;
-		boolean xFindName = !DBSObject.isEmpty(pNameToFind);
-		String xS = pSQLQuery.trim(); 
-		String xAliasName;
-		List<String> xTmps;
-		List<String> xBlocks;
-		List<String> xTables =  new ArrayList<String>();
-		xI = DBSString.getInStr(xS.toUpperCase(), " FROM ",false);
-		if (xI == 0){
-			return null;
-		}else {
-			xI+=6; //Adiciona 6 para desconsiderar a própria string " FROM "
-		}
-		//Determina onde termina a clausula FROM
-		xF = DBSString.getInStr(xS," WHERE ", false);
-		if (xF==0){
-			xF = DBSString.getInStr(xS," LIKE ", false);
-			if (xF==0){
-				xF = DBSString.getInStr(xS," GROUP BY ", false);
-				if (xF==0){
-					xF = DBSString.getInStr(xS," HAVING ", false);
-					if (xF==0){
-						xF = DBSString.getInStr(xS," ORDER BY ", false);
-						if (xF==0){
-							xF = xS.length();
-						}
-					}
-				}
-			}
-		}
-		
-		//Recupera somente o texto referente a clausula "FROM" do texto original mantendo a caixa do texto
-		xS = DBSString.getSubString(pSQLQuery, xI, xF - xI + 1);
-
-		//Exclui textos de comandos
-		xS = DBSString.changeStr(xS, " INNER ", " ", false);
-		xS = DBSString.changeStr(xS, " OUTER ", " ", false);
-		xS = DBSString.changeStr(xS, " LEFT ", " ", false);
-		xS = DBSString.changeStr(xS, " RIGHT ", " ", false);
-		xS = DBSString.changeStr(xS, " NATURAL ", " ", false);
-		
-		//Recupera os nomes das tabelas ou o Alias 
-		xBlocks = DBSString.toArray(xS,",");
-		for (String xBlock:xBlocks){
-			xTmps = DBSString.toArray(xBlock," JOIN ", false);
-			for (String xTable:xTmps){
-				int x = 0;
-				x = DBSString.getInStr(xTable," ON ", false);
-				if (x > 0){
-					//Considera o texto anterior ao " ON " como sendo o nome da tabela
-					xTable = DBSString.getSubString(xTable, 1, x);
-				}
-				x = DBSString.getInStr(xTable," AS ", false);
-				if (x > 0){
-					//Salva o Alias
-					xAliasName = DBSString.getSubString(xTable, x + 4, xTable.length());
-					//Salva o Nome da tabela
-					xTable = DBSString.getSubString(xTable, 1, x - 1);
-				}else{
-					//Alias será igual ao nome.
-					xAliasName = xTable;
-				}
-
-				//Se for para retornar somente o alias que representa a tabela informada ou vice-versa.
-				if (xFindName){
-					if (pReturnAlias){
-						//Retorna o Alias se o nome da tabela informado for iqual a tabela lida
-						if (pNameToFind.equalsIgnoreCase(xTable)){
-							xTables.add(xAliasName.trim());
-							break;
-						}
-					}else{
-						//Retorna a tabela se o nome do alias informado for iqual ao alias lido
-						if (pNameToFind.equalsIgnoreCase(xAliasName)){
-							xTables.add(xTable.trim());
-							break;
-						}
-					}
-				}else{
-					if (pReturnAlias){
-						xTables.add(xAliasName.trim());
-					}else{
-						xTables.add(xTable.trim());
-					}
-				}
-			}
-		}
-		return xTables;
-	}
-	
-	
-
 
 	/**
 	 * Move o valor informado para a coluna do tributo da classe informada
