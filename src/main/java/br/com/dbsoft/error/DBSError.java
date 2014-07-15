@@ -126,8 +126,13 @@ public class DBSError {
 	}
 	
 	private static Integer pvToCodes_MYSQL(SQLException e){
+		int xCode = e.getErrorCode();
+		if (xCode == 1451){
+			return CODES.INTEGRITY_CONSTRAINT;
+		}
 		return CODES.GENERIC;
 	}
+	
 	private static Integer pvToCodes_POSTGRESQL(SQLException e){
 		return CODES.GENERIC;
 	}
