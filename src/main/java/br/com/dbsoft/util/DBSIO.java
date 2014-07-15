@@ -1374,7 +1374,7 @@ public class DBSIO{
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
 			DBSIO.endTrans(pConnection, false);
 			
-			String xMSG = e.getMessage() + ":" + pSQL;
+			String xMSG = "[" + e.getErrorCode() + "]" + e.getMessage() + ":" + pSQL;
 			wLogger.error(xMSG);
 
 			throwIOException(xMSG, e, pConnection);

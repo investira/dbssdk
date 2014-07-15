@@ -20,6 +20,7 @@ public class DBSError {
 		public static Integer INVALID_LOGIN = 3;
 		public static Integer LARGE_VALUE = 4;
 		public static Integer PASSWORD_EXPIRED = 5;
+		public static Integer DUPLICATED_KEY = 6;
 	}
 	
 	protected static Logger				wLogger = Logger.getLogger(DBSError.class);
@@ -129,6 +130,8 @@ public class DBSError {
 		int xCode = e.getErrorCode();
 		if (xCode == 1451){
 			return CODES.INTEGRITY_CONSTRAINT;
+		}else if (xCode == 1062){
+			return CODES.DUPLICATED_KEY;
 		}
 		return CODES.GENERIC;
 	}
