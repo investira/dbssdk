@@ -408,7 +408,17 @@ public class DBSDate{
 		Timestamp xT = new Timestamp(toDateTime(pMilliSeconds.longValue()).getMillis());
 		return xT;
 	}
-	
+
+	/**
+	 * Retorna uma Data do tipo <b>Timestamp</b> a partir da hora.
+	 * @param pData
+	 * @return
+	 */
+	public static Timestamp toTimestamp(Time pTime){
+		Timestamp xT = new Timestamp(pTime.getTime());
+		return xT;
+	}
+
 	/**
 	 * Retorna uma Data do tipo Timestamp, a partir de uma data do tipo Object.
 	 * Se object for ""(vazio), retorna nulo.
@@ -423,6 +433,8 @@ public class DBSDate{
 			return null;
 		}else if (pData instanceof Date){
 			return new Timestamp(((Date) pData).getTime());
+		} else if (pData instanceof Time) {
+			return new Timestamp(((Time) pData).getTime());
 		} else if (pData instanceof Timestamp) {
 			return (Timestamp) pData;
 		} else if (pData instanceof Integer) {
@@ -515,6 +527,11 @@ public class DBSDate{
 					  TimeUnit.MILLISECONDS.toSeconds(pMilliseconds)); 
 	}
 	
+	/**
+	 * Retorna a hora a partir da quantidade de milisegundos.
+	 * @param pMilliseconds
+	 * @return hora
+	 */
 	public static Time toTime(Object pMilliseconds){
 		if (pMilliseconds instanceof Number){
 			return toTime((Long) pMilliseconds); 
@@ -523,6 +540,15 @@ public class DBSDate{
 		}
 	}
 	
+	/**
+	 * Retorna a hora a partir da quantidade de timestamp.
+	 * @param pMilliseconds
+	 * @return hora
+	 */
+	public static Time toTime(Timestamp pTimestamp){
+		return toTime(pTimestamp.getTime());
+	}
+
 	/**
 	 * Retornar data no tipo Calender a partir de data no tipo Date
 	 * @param pData do tipo Date que se seja converte
