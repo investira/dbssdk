@@ -31,8 +31,7 @@ public final class DBSSDK {
 				BRANCO,
 				INEXISTENTE,
 				NAO_SELECIONADO,
-				NAO_SELECIONADA,
-				ORDENS;
+				NAO_SELECIONADA;
 				
 				String toString;
 	
@@ -67,8 +66,6 @@ public final class DBSSDK {
 						return "(Não selecionado)";
 					case NAO_SELECIONADA:
 						return "(Não selecionada)";
-					case ORDENS:
-						return "(Ordens)";
 					default:
 						return "";
 					}
