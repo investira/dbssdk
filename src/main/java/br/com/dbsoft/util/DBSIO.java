@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.core.DBSSDK.IO.DB_SERVER;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
+import br.com.dbsoft.core.DBSSDK.UI.COMBOBOX;
 import br.com.dbsoft.core.DBSSDK.UI.COMBOBOX.NULL_TEXT;
 import br.com.dbsoft.error.DBSError;
 import br.com.dbsoft.error.DBSIOException;
@@ -625,8 +626,8 @@ public class DBSIO{
 		}
 
 		//Inclui o texto do item nulo
-		if (!pNullText.equals(NULL_TEXT.NAO_EXIBIR)){
-			xValues.put("", pNullText.toString());
+		if (pNullText != NULL_TEXT.NAO_EXIBIR){
+			xValues.put(COMBOBOX.NULL_VALUE, pNullText.toString());
 		}
 		
 		try {
@@ -641,7 +642,7 @@ public class DBSIO{
 					xCount = 0;
 					for (String xC: xColumns){
 						xCount++;
-						xValue = xDAO.getValue(xC);
+						xValue = DBSObject.getNotEmpty(xDAO.getValue(xC),"").toString().trim();
 						if (!DBSObject.isEmpty(xValue) &&
 							!xValue.equals("*") &&
 							!xValue.equals("")){
