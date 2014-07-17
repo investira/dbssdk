@@ -18,7 +18,7 @@ public final class DBSSDK {
 		}
 		
 		public final static class COMBOBOX{
-			public final static String NULL_VALUE = "";
+			public final static String NULL_VALUE = ""; //Valor do item null na lista. Para mantém conformidade com o JSF que por não se possível enviar NULL, irá considerar o valor 'vázio' como nulo.
 			
 			public enum NULL_TEXT{
 				NAO_EXIBIR,
