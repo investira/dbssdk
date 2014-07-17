@@ -515,6 +515,18 @@ public class DBSDate{
 	public static Time toTime(Long pHora, Long pMinuto, Long pSegundo) {
 		return toTime(pHora.toString(),pMinuto.toString(), pSegundo.toString());
 	}
+
+	/**
+	 * Retorna a hora a partir das strings de hora, minuto e segundo
+	 * @param pHora
+	 * @param pMinuto
+	 * @param pSegundo
+	 * @return Hora
+	 * @throws ParseException 
+	 */
+	public static Time toTime(Integer pHora, Integer pMinuto, Integer pSegundo) {
+		return toTime(pHora.toString(),pMinuto.toString(), pSegundo.toString());
+	}
 	
 	/**
 	 * Retorna a hora a partir da quantidade de milisegundos.
@@ -528,16 +540,25 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna a hora a partir da quantidade de milisegundos.
+	 * Retorna a hora a partir do object.
 	 * @param pMilliseconds
 	 * @return hora
 	 */
-	public static Time toTime(Object pMilliseconds){
-		if (pMilliseconds instanceof Number){
-			return toTime((Long) pMilliseconds); 
-		}else{
+	public static Time toTime(Object pObject){
+		if (DBSObject.isEmpty(pObject)) {
 			return null;
 		}
+		if (pObject instanceof Time){
+			return (Time) pObject;
+		}else if (pObject instanceof Date){
+			return toTime((Date) pObject);
+		} else if (pObject instanceof Timestamp) {
+			return toTime((Timestamp) pObject);
+		} else  if (pObject instanceof Number){
+			return toTime((Long) pObject); 
+		} else {
+			return (Time) pObject;
+		}		
 	}
 	
 	/**
@@ -546,7 +567,18 @@ public class DBSDate{
 	 * @return hora
 	 */
 	public static Time toTime(Timestamp pTimestamp){
-		return toTime(pTimestamp.getTime());
+		Calendar xC = toCalendar(pTimestamp);
+		return toTime(xC.get(Calendar.HOUR_OF_DAY), xC.get(Calendar.MINUTE), xC.get(Calendar.SECOND));
+	}
+
+	/**
+	 * Retorna a hora a partir da data.
+	 * @param pMilliseconds
+	 * @return hora
+	 */
+	public static Time toTime(Date pDate){
+		Calendar xC = toCalendar(pDate);
+		return toTime(xC.get(Calendar.HOUR_OF_DAY), xC.get(Calendar.MINUTE), xC.get(Calendar.SECOND));
 	}
 
 	/**
