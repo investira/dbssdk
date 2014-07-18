@@ -15,7 +15,7 @@ public  class DBSBoolean {
 			return pDefaultValue;
 		}
 		if (DBSNumber.isNumber(pValue.toString())) {
-			if (DBSNumber.toInteger(pValue) == 0) {
+			if (DBSNumber.toInteger(pValue, 0) == 0) {
 				return false;
 			} else {
 				return true;
@@ -24,18 +24,16 @@ public  class DBSBoolean {
 			return (Boolean) pValue;
 		} else if (pValue instanceof String) {
 			String xValue = ((String) pValue).trim().toUpperCase();
-			if (xValue.equals("FALSE")){
-				return false;
-			}else if (xValue.equals("N")){
-				return false;
-			}else if (xValue.equals("S") || xValue.equals("SIM") || xValue.equals("Aberto")){
-				return true;
-			} else {
+			if (xValue.equals("S") 
+			 || xValue.equals("TRUE")
+			 || xValue.equals("SIM")
+			 || xValue.equals("YES")
+			 || xValue.equals("Y")
+			 || xValue.equals("ABERTO")){
 				return true;
 			}
-		} else {
-			return null;
 		}
+		return false;
 	}
 	
 	public static String toSN(Object pValue) {
