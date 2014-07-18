@@ -99,11 +99,14 @@ public  class DBSObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T toClass(T pValue, Class<?> pClass){
-		if (pValue==null){
-			return null;
-		}
 		if (pClass==null){
 			return pValue;
+		}
+		if (pClass.isAssignableFrom(Boolean.class)){
+			return (T) DBSBoolean.toBoolean(pValue);
+		}
+		if (pValue==null){
+			return null;
 		}
 		if (pClass.isAssignableFrom(Integer.class)){
 			pValue = (T) DBSNumber.toInteger(pValue);
@@ -119,8 +122,6 @@ public  class DBSObject {
 			pValue = (T) DBSDate.toTimestamp(pValue);
 		}else if (pClass.isAssignableFrom(Time.class)){
 			pValue = (T) DBSDate.toTime(pValue);
-		}else if (pClass.isAssignableFrom(Boolean.class)){
-			pValue = (T) DBSBoolean.toBoolean(pValue);
 		}
 		return pValue;
 	}
