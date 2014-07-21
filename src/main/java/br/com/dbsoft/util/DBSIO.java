@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
@@ -31,8 +31,8 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.annotation.DBSTableModel;
-import br.com.dbsoft.core.DBSSDK.IO.DB_SERVER;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
+import br.com.dbsoft.core.DBSSDK.IO.DB_SERVER;
 import br.com.dbsoft.core.DBSSDK.UI.COMBOBOX;
 import br.com.dbsoft.core.DBSSDK.UI.COMBOBOX.NULL_TEXT;
 import br.com.dbsoft.error.DBSError;
@@ -2507,6 +2507,24 @@ public class DBSIO{
 	    }
 	}
 
+	/**
+	 * Retorna String com o comando Bitwise AND que executa comparação binária entre o pCampo e o pValor
+	 * @param pConnection
+	 * @param pCampo
+	 * @param pValor
+	 * @return
+	 */
+	public static String toSQLBitAnd(Connection pConnection, String pCampo, int pValor) {
+		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+		if (xDBP == DB_SERVER.ORACLE) {
+	        return " BITAND(" + pCampo + "," + pValor + ") = " + pValor;
+	    } else if (xDBP == DB_SERVER.MYSQL) {
+	    	return " (" + pCampo + " & " + pValor + ") = " + pValor;
+	    } else {
+	    	return " (" + pCampo + " & " + pValor + ") = " + pValor;
+	    }
+	}
+	
 	/**
 	 * Recupera o nome das tabelas ou o <i>Alias</i> que fazem parte da Query SQL.
 	 * @param pSQLQuery Query SQL a ser resquisada

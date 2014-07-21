@@ -645,14 +645,14 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 	
 	/**
-	 * Interrompter a tarefa, não executando a próxima etapa(se houve).
+	 * Troca o RunStatus para interrompido. 
 	 * A interrupção não acaba com o thread da tarefa, 
 	 * somente seta a variável local indicando que a tarefa foi interrompida.
 	 * Cabe ao usuário testar se a tarefa foi interrompida dentro da etapa 
 	 * que estiver em execução.
 	 * @throws DBSIOException 
 	 */	
-	public synchronized final void interrupt() throws DBSIOException{
+	public final void interrupt() throws DBSIOException{
 		pvInterrupt(RunStatus.INTERRUPTED);
 	}
 

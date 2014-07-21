@@ -405,7 +405,7 @@ public class DBSFileTransfer{
 	/**
 	 * Interrmpo o processo de download
 	 */
-	public final synchronized void interrupt() {
+	public final void interrupt() {
 		this.wInterrupted = true;
 		pvFireEventInterrupted();
 	}
@@ -518,8 +518,8 @@ public class DBSFileTransfer{
 			wInterrupted = false;
 			try {
 				while ((xBytesReaded = xReader.read(xBuffer)) != -1 && 
-						!isTimeOut() && 
-						!wInterrupted) { //Se o timeout for 0 ele irá ler até acabar.
+						!isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
+						!wInterrupted) {
 					xDownloadedFile.write(xBuffer, 0, xBytesReaded);
 					xBuffer = new byte[153600];
 					//xBytesReadedTotal += xBytesReaded;
