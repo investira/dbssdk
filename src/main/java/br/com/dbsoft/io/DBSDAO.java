@@ -268,10 +268,11 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
-	 * Inserir linha em branco ao resultaDataModel do DAO<br/>.
-	 * Linha é crida somente na memória. Usuário deverá implementar a inclusão na tabela.
+	 * Inserir linha em branco ao resultaDataModel do DAO.<br/>
+	 * Linha é criada somente na memória.
+	 * @throws DBSIOException 
 	 */
-	public final void insertEmptyRow(){
+	public final void insertEmptyRow() throws DBSIOException{
 		DBSIO.insertEmptyRow(this);
 	}
 	
