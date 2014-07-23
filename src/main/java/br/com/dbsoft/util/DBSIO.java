@@ -1780,31 +1780,33 @@ public class DBSIO{
 	/**
 	 * Inserir linha em branco ao resultaDataModel do DAO<br/>.
 	 * Linha é crida somente na memória. Usuário deverá implementar a inclusão na tabela.
+	 * @throws DBSIOException 
 	 */
-	public static void insertEmptyRow(DBSDAO<?> pDAO){
+	public static void insertEmptyRow(DBSDAO<?> pDAO) throws DBSIOException{
 		boolean xAdd = true;
-
 		DBSResultDataModel xR = pDAO.getResultDataModel();
 		@SuppressWarnings("unchecked")
 		ArrayList<SortedMap<String, Object>> xListNew = (ArrayList<SortedMap<String, Object>>) IteratorUtils.toList(xR.iterator());
-		//Verifica a última linha já é um registro linha em branco, para evitar a incluisão desnecessária de uma nova linha.
+		//Verifica a última linha já é uma linha em branco, para evitar a incluisão desnecessária de uma nova linha.
 		if (xListNew.size()>0){
 			for (Entry<String, Object> xColumn:xListNew.get(xListNew.size()-1).entrySet()){
-				//Verifica se coluna existe e se é PK para testar se o respectivo valor é null.
+				//Considera se é uma linha em branco se a coluna que contém a PK estiver nula.
 				DBSColumn xC = pDAO.getCommandColumn(xColumn.getKey());
 				if (xC !=null){
 					if (xC.getPK()){
 						if (xColumn.getValue() == null){
 							xAdd = false;
+							break;
 						}
 					}
 				}
-//				System.out.println(xColumn.getKey()); 
 			}
 		}
+		//Adiciona nova linha
 		if (xAdd){
 			xListNew.add(new TreeMap<String, Object>());
 			pDAO.getResultDataModel().setWrappedData(xListNew.toArray());
+			pDAO.setCurrentRowIndex(pDAO.getResultDataModel().getRowCount()-1);
 		}
 	}
 
