@@ -1494,7 +1494,7 @@ public class DBSIO{
 			wLogger.error("A tabela " + pDAO.getCommandTableName() + " não possui colunas para efetuar o " + pDAOCommand.toString() + ". Verifique se o nome está correto, inclusive quanto a nome minúsculo e maiúsculo.");
 			return 0;
 		}
-		String xSQLCommand = getDAOSQLCommand(pDAO, pDAOCommand, pAdditionalSQLWhereCondition);
+		String xSQLCommand = getDAOSQLCommand(pDAO, pDAOCommand, pAdditionalSQLWhereCondition); 
 		//TODO DEIXAR COMENTANDO O SYSTEM.OUT ABAIXO
 //		System.out.println(xSQLCommand);
 		if (DBSObject.isEmpty(xSQLCommand)){
@@ -2156,10 +2156,10 @@ public class DBSIO{
 		 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 		 */
 		public static String toSQLString(Connection pConnection, Object pValue){
-			if (pValue==null){
+			String xValue = DBSString.toString(pValue);
+			if (xValue==null){
 				return "NULL";
 			}
-			String xValue = DBSString.toString(pValue);
 			xValue = DBSString.changeStr(xValue, "'", "''");
 			xValue = DBSString.changeStr(xValue, "\\", "\\\\");
 			//TODO ENCONTRAR UMA FORMA MELHOR PARA A SITUAÇÃO ABAIXO - AVILA
