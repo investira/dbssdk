@@ -576,9 +576,9 @@ public class DBSIO{
 //		int xI = DBSString.getInStr(" " + pSQLStatement, " From ", false);
 //		pSQLStatement = DBSString.getSubString(pSQLStatement, xI, pSQLStatement.length());
 		if (pSQLStatement.toLowerCase().startsWith("from")){
-			pSQLStatement = "Select Count(*) " + pSQLStatement; //Pesquisa com único select
+			pSQLStatement = "Select Count(1) " + pSQLStatement; //Pesquisa com único select
 		}else{
-			pSQLStatement = "Select Count(*) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
+			pSQLStatement = "Select Count(1) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
 		}
 		int xCount = 0;
 
