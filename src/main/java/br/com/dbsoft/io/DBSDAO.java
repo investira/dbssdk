@@ -289,7 +289,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Indica qual o registro corrente a partir o indice informado
+	 * Seta o registro corrente a partir o indice informado.<br/>
+	 * Caso indice seja maior que o existente, posiciona no último.<br/>
+	 * Caso não existam registros, posiciona no 'anterior ao primeiro'(-1).
 	 * @param pRowIndex
 	 * @throws DBSIOException 
 	 */
@@ -575,7 +577,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			xAchou = true;
 		}
 		if (!xAchou){
-			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+			wLogger.error("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 	}
 	
