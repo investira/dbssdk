@@ -11,8 +11,34 @@ import br.com.dbsoft.util.DBSDate;
 
 
 public class Tmp {
-
+	
+	private static Integer Banco = 1;
+	private static Integer Dtvm = 2;
+	private static Integer Ctvm= 4;
+	private static Integer Fundo = 8;
+	
 	@Test
+	public void teste_bit(){
+		Integer xImport = 0;
+		
+		xImport = xImport & ~Banco;
+		System.out.println(xImport);
+		
+		xImport = xImport & ~Banco;
+		System.out.println(xImport);
+		
+		xImport = xImport | Dtvm;
+		System.out.println(xImport);
+
+		xImport = xImport & ~Ctvm;
+		System.out.println(xImport);
+		
+		int xAtual = Banco & Fundo;
+	 
+	
+	}	
+
+//	@Test
 	public void teste_date(){
 		Long xTime = 0L;
 		xTime = System.currentTimeMillis();
