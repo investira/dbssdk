@@ -578,6 +578,8 @@ public class DBSIO{
 		if (pSQLStatement.toLowerCase().startsWith("from")){
 			pSQLStatement = "Select Count(1) " + pSQLStatement; //Pesquisa com único select
 		}else{
+			//Retira o '*' da syntaxe para evitar erro de duplicidade de nome de coluna
+			pSQLStatement = DBSString.changeStr(pSQLStatement, " * ", " 1 ");
 			pSQLStatement = "Select Count(1) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
 		}
 		int xCount = 0;
