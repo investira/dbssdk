@@ -4,11 +4,12 @@ public interface IDBSDAOEventsListener {
 	
 	/**
 	 * Chamado antes de exeutar o open(Recorset ou file)
+	 * No DAO com <b>setType(TYPE.FIXED_COLUMNS)<b/> este evento deve ser utilizado para configurar as colunas fixas;
 	 * @param pEvent Informações do evento
 	 */
 	public abstract void beforeOpen(DBSDAOEvent pEvent);
 	/**
-	 * Chamado depois de exeutar a pesquisa SQL do Open ou Refresh
+	 * Chamado depois de exeutar a pesquisa SQL do Open ou Refresh.<br/>
 	 * @param pEvent Informações do evento
 	 */
 	public abstract void afterOpen(DBSDAOEvent pEvent);
