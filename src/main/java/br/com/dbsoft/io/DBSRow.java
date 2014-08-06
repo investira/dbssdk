@@ -29,7 +29,7 @@ public class DBSRow implements Serializable {
 	//######################################################################################################### 
 	//## Working Variables                                                                                    #
 	//#########################################################################################################
-	protected static Logger			wLogger = Logger.getLogger(DBSRow.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 
 	private LinkedHashMap<String, DBSColumn> wColumns =  new LinkedHashMap<String, DBSColumn>();
 	

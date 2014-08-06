@@ -23,7 +23,7 @@ import br.com.dbsoft.util.DBSSession;
  */
 public abstract class DBSPushBean  {
 
-	protected static Logger wLogger = Logger.getLogger(DBSPushBean.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 
 	protected Queue<AsyncContext> wOnGoingRequests = new ConcurrentLinkedQueue<>();
 	

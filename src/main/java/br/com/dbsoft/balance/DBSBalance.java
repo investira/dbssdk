@@ -16,7 +16,7 @@ import br.com.dbsoft.util.DBSIO;
  */
 public abstract class DBSBalance<OperationDataClass> {
 	
-	protected static Logger	wLogger = Logger.getLogger(DBSBalance.class);
+	protected Logger	wLogger = Logger.getLogger(this.getClass());
 	
 	protected Connection 			wConnection;
 	protected OperationDataClass 	wOperationData;

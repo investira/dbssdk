@@ -23,7 +23,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	
 	private static final long serialVersionUID = -217620999386905654L;
 
-	protected static Logger		wLogger = Logger.getLogger(DBSDAOBase.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
 	private List<IDBSDAOEventsListener>		wEventListeners = new ArrayList<IDBSDAOEventsListener>();
 	private boolean 						wRowPositionChanged = false;
