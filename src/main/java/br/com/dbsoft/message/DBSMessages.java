@@ -17,7 +17,7 @@ import br.com.dbsoft.util.DBSObject;
  */
 public class DBSMessages<MessageClass extends DBSMessage>  {
 
-	protected static Logger				wLogger = Logger.getLogger(DBSMessages.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
 	protected LinkedHashMap<String, MessageClass> 	wMessages =  new LinkedHashMap<String, MessageClass>(); 
 	protected String 								wCurrentMessageKey;

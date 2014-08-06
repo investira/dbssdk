@@ -17,7 +17,7 @@ import br.com.dbsoft.error.DBSIOException;
  */
 public class DBSTasks<TaskClass extends DBSTask<?>> {
 
-	protected static Logger				wLogger = Logger.getLogger(DBSTasks.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 
 	protected LinkedHashMap<String, TaskClass> 		wTasks = new LinkedHashMap<String, TaskClass>();
 	private ArrayList<TaskClass> 					wTasksList = new ArrayList<TaskClass>();

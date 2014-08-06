@@ -20,11 +20,9 @@ public class DBSColumn implements Serializable{
 	//## Working Variables                                                                                    #
 	//#########################################################################################################
 	
-    /**
-	 * 
-	 */
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
+
 	private static final long 		serialVersionUID = 1733510151561276507L;
-	protected static Logger			wLogger = Logger.getLogger(DBSColumn.class);
 	
 	private String 					wTableName;
 	private String 					wColumnName;

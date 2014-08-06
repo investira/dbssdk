@@ -8,7 +8,7 @@ public class DBSException extends Exception {
 
 	private static final long serialVersionUID = -8315170852933944554L;
 	
-	protected static Logger			wLogger = Logger.getLogger(DBSException.class);
+	protected Logger			wLogger = Logger.getLogger(this.getClass());
 
 	public DBSException(){
 		super();
