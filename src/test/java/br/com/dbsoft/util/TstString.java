@@ -2,16 +2,10 @@ package br.com.dbsoft.util;
 
 import static org.junit.Assert.*;
 
-import java.sql.Date;
-import java.util.ArrayList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.dbsoft.util.DBSDate;
-import br.com.dbsoft.util.DBSFormat;
-import br.com.dbsoft.util.DBSFormat.NUMBER_SIGN;
 import br.com.dbsoft.util.DBSString;
 
 public class TstString {
