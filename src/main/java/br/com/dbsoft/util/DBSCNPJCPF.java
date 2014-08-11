@@ -47,7 +47,7 @@ public class DBSCNPJCPF {
 	 * @param pCNPJ
 	 * @return boolean
 	 */
-	private static boolean isCNPJ(String pCNPJ) {
+	public static boolean isCNPJ(String pCNPJ) {
 		// considera-se erro CNPJ's formados por uma sequencia de numeros iguais
 		if (pCNPJ.equals("00000000000000") || pCNPJ.equals("11111111111111")
 				|| pCNPJ.equals("22222222222222")
@@ -120,7 +120,7 @@ public class DBSCNPJCPF {
 	 * @param pCPF
 	 * @return boolean
 	 */
-	private static boolean isCPF(String pCPF) {
+	public static boolean isCPF(String pCPF) {
 		// considera-se erro CPF's formados por uma sequencia de numeros iguais
 		if (pCPF.equals("00000000000") || pCPF.equals("11111111111")
 				|| pCPF.equals("22222222222") || pCPF.equals("33333333333")
@@ -201,7 +201,7 @@ public class DBSCNPJCPF {
 		return pCNPJ;
 	}
 	
-	public static String formartCNPJ_CPF(String pCPFCNPJ) {
+	public static String formatCNPJ_CPF(String pCPFCNPJ) {
 		if (pCPFCNPJ.length() > 11) {
 			if (isCNPJ(pCPFCNPJ)) {
 				return pvFormatCNPJ(pCPFCNPJ);
