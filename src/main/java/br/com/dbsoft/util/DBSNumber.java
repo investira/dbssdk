@@ -566,7 +566,8 @@ public class DBSNumber {
 	}
 	
 	/**
-	 * Retorna valor truncado 
+	 * Retorna valor truncado.<br/>
+	 * Caso a quantidade de casas seja negativa irá truncar até parte inteira. 
 	 * @param pValor Valor que se deseja truncar
 	 * @param pCasasDecimais Quantidade de casas decimais
 	 * @return Resultado
@@ -576,15 +577,13 @@ public class DBSNumber {
 			DBSObject.isEmpty(pCasasDecimais)){
 			return null;
 		}	
-		if (pCasasDecimais < 0){
-			return null;
-		}
 		BigDecimal xValor = toBigDecimal(pValor);
 		return toDouble(trunc(xValor, pCasasDecimais));
 	}
 
 	/**
-	 * Retorna valor truncado 
+	 * Retorna valor truncado.<br/>
+	 * Caso a quantidade de casas seja negativa irá truncar até parte inteira. 
 	 * @param pValor Valor que se deseja truncar
 	 * @param pCasasDecimais Quantidade de casas decimais
 	 * @return Resultado
@@ -594,9 +593,6 @@ public class DBSNumber {
 			DBSObject.isEmpty(pCasasDecimais)){
 			return null;
 		}	
-		if (pCasasDecimais < 0){
-			return null;
-		}
 		BigDecimal xAjuste = new BigDecimal(Math.pow(10, pCasasDecimais));
 		BigDecimal xInteiro;
 		//Multiplica pela quantidade de casas a serem considerada
@@ -609,32 +605,25 @@ public class DBSNumber {
 
 	
 	/**
-	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4) 
+	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar até parte inteira. 
 	 * @param pValor Valor que se deseja arredondar
 	 * @param pCasasDecimais Quantidade de casas decimais
 	 * @return Resultado
 	 */
-	public static Double round(Double pValor, Integer pCasasDecimais){
+	public static Double round(Object pValor, Integer pCasasDecimais){
 		if (DBSObject.isEmpty(pValor) ||
 			DBSObject.isEmpty(pCasasDecimais)){
 			return null;
 		}	
-		if (pCasasDecimais < 0){
-			return null;
-		}
-		Long xAjuste = (long) Math.pow(10, pCasasDecimais);
-		Long xInteiro;
-		//Multiplica pela quantidade de casas a serem considerada
-		pValor = DBSNumber.multiply(pValor, xAjuste.doubleValue());
-		//Arredonda
-		pValor = Math.rint(pValor);
-		//Retorna a parte inteira;
-		xInteiro = pValor.longValue();
-		pValor = DBSNumber.divide(xInteiro.doubleValue(), xAjuste.doubleValue());
-		return pValor;
+
+		BigDecimal xValor = toBigDecimal(pValor);
+		return toDouble(round(xValor, pCasasDecimais));
 	}
+
 	/**
-	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4) 
+	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar até parte inteira. 
 	 * @param pValor Valor que se deseja arredondar
 	 * @param pCasasDecimais Quantidade de casas decimais
 	 * @return Resultado
@@ -645,9 +634,6 @@ public class DBSNumber {
 			DBSObject.isEmpty(pCasasDecimais)){
 			return null;
 		}	
-		if (pCasasDecimais < 0){
-			return null;
-		}
 		BigDecimal xAjuste = new BigDecimal( Math.pow(10, pCasasDecimais));
 		BigDecimal xInteiro;
 		//Multiplica pela quantidade de casas a serem considerada
