@@ -44,12 +44,12 @@ public class TrocaNomes {
 	public void trocaAtivoTipo(){
 		try {
 			@SuppressWarnings("rawtypes")
-			DBSDAO xDAO = new DBSDAO(wConexao, "ATV_ATIVO_TIPO");
-			xDAO.open("Select * from ATV_ATIVO_TIPO");
+			DBSDAO xDAO = new DBSDAO(wConexao, "COR_ATIVIDADE_CLASSE");
+			xDAO.open("Select * from COR_ATIVIDADE_CLASSE");
 			xDAO.moveBeforeFirstRow();
 			while(xDAO.moveNextRow()){
 //				System.out.println(xDAO.getValue("ATIVO_TIPO") + ":" + DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
-				xDAO.setValue("ATIVO_TIPO", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
+				xDAO.setValue("ATIVIDADE_CLASSE", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVIDADE_CLASSE"))));
 				xDAO.executeUpdate();
 
 			}
