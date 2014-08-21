@@ -752,11 +752,8 @@ public class DBSNumber {
 		if (DBSObject.isEmpty(pValor)) {
 			return (BigDecimal) pDefaultValue;
 		}
-		if (pValor instanceof BigDecimal) {
-			return (BigDecimal) pValor;
-		} else if (pValor instanceof Integer ||
-				   pValor instanceof Long ||
-				   pValor instanceof Double) {
+		if (pValor instanceof Number) {
+			//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValor for Double
 			BigDecimal x = new BigDecimal(pValor.toString());
 			return x;
 		} else if (pValor instanceof String) {	
