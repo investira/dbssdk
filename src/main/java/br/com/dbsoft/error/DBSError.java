@@ -21,10 +21,11 @@ public class DBSError {
 		public static Integer LARGE_VALUE = 4;
 		public static Integer PASSWORD_EXPIRED = 5;
 		public static Integer DUPLICATED_KEY = 6;
+		public static Integer FK_CONSTRAINT = 7;
 	}
 	
 	protected static Logger				wLogger = Logger.getLogger(DBSError.class);
-	private static DBSLinkedProperties 	wExceptionMessages = new DBSLinkedProperties();
+	private static DBSLinkedProperties 	wMessagesSQL = new DBSLinkedProperties();
 
 	//######################################################################################################### 
 	//## Public Methods                                                                                     #
@@ -34,15 +35,27 @@ public class DBSError {
 	 * @param pSQLException
 	 * @return
 	 */
-	public static String getErrorMessage(String pErrorCode){
-		if(wExceptionMessages.isEmpty()){
+	public static String getErrorMessageSQL(String pErrorCode){
+		if(wMessagesSQL.isEmpty()){
 			pvErrorMessageInit();
 		}
-		String xMsg = DBSObject.getNotNull(wExceptionMessages.get(pErrorCode),"").toString();
-//		if (!xMsg.equals("")){
-//			xMsg = xMsg + "[" + pErrorCode + "]";
-//		}
+		String xMsg = "";
+		if (pErrorCode !=null){
+			xMsg = DBSObject.getNotNull(wMessagesSQL.get(pErrorCode),"").toString();
+		}
 		return xMsg;
+	}
+	
+	/**
+	 * Retorna texto traduzido da mensagem de erro
+	 * @param pSQLException
+	 * @return
+	 */
+	public static String getErrorMessageSQL(Integer pErrorCode){
+		if (pErrorCode !=null){
+			return getErrorMessageSQL(pErrorCode.toString());
+		}
+		return "";
 	}
 	
 	
@@ -132,6 +145,8 @@ public class DBSError {
 			return CODES.INTEGRITY_CONSTRAINT;
 		}else if (xCode == 1062){
 			return CODES.DUPLICATED_KEY;
+		}else if (xCode == 1452){
+			return CODES.FK_CONSTRAINT;
 		}
 		return CODES.GENERIC;
 	}
@@ -149,7 +164,7 @@ public class DBSError {
 	 */
 	private static void pvErrorMessageInit(){
 		try {
-			wExceptionMessages.load(DBSString.class.getResourceAsStream("/META-INF/error_messages_br.properties"));
+			wMessagesSQL.load(DBSString.class.getResourceAsStream("/META-INF/error_messages_sql_br.properties"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
