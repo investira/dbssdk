@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
+import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSObject;
 
@@ -37,6 +38,9 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 		return wMessages.entrySet().iterator();
 	}
 	
+	public void add(DBSIOException e){
+		add(MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), e.getOriginalException().getLocalizedMessage());
+	}
 	
 	/**
 	 * Inclui uma mensagem na fila para ser exibida.
@@ -46,7 +50,7 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 	 * @param pMessageText Texto da mensagem
 	 * @param pMessageTooltip Texto adicional a mensagem para se utilizado como diga
 	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime){
+	public synchronized void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime){
 		//Caso a mensagem já exista, o que indica que já pode ter sido exibida(validada)...
 		if (wMessages.containsKey(pMessageKey)){
 			//Exclui ela da fila
@@ -61,13 +65,11 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 			xM.setTime(pTime);
 			wMessages.put(pMessageKey, xM);
 			pvFindNextMessage();
-		} catch (InstantiationException e) {
-			wLogger.error(e);
-		} catch (IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			wLogger.error(e);
 		}
 	}
-
+	
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
 	 */
@@ -83,6 +85,7 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 	 * @param pMessageText Texto da mensagem
 	 */
 	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+//		add(pMessageKey, pMessageType, pMessageText, pMessageTooltip, null);
 		add(pMessageKey, pMessageType, pMessageText, pMessageTooltip, null);
 	}
 
@@ -108,36 +111,52 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 		add(pMessageKey, pMessageType, pMessageText, "", pTime);
 	}
 	
-
 	/**
 	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chava da mensagem é gerada sequencialmente
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime){
-		Integer xI = wMessages.size();
-		while (wMessages.containsKey(xI.toString())){
-			xI++;
-		}
-		add(xI.toString(), pMessageType, pMessageText, pTime);
-	}
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chava da mensagem é gerada sequencialmente
+	 * A chave da mensagem é o próprio texto
 	 * @param pMessageType
 	 * @param pMessageText
 	 */
 	public void add(MESSAGE_TYPE pMessageType, String pMessageText){
-		add(pMessageType, pMessageText, null);
+		add(pMessageType, pMessageText, null, null);
 	}
+
+	/**
+	 * Inclui uma mensagem na fila para ser exibida.
+	 * A chave da mensagem é o próprio texto
+	 * @param pMessageType
+	 * @param pMessageText
+	 */
+	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+		add(pMessageType, pMessageText, pMessageTooltip, null);
+	}
+
+	/**
+	 * Inclui uma mensagem na fila para ser exibida.
+	 * A chave da mensagem é o próprio texto
+	 * @param pMessageType
+	 * @param pMessageText
+	 */
+	public void add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime){
+		add(pMessageType, pMessageText, null, pTime);
+	}
+
+	/**
+	 * Inclui uma mensagem na fila para ser exibida.
+	 * A chave da mensagem é o próprio texto
+	 * @param pMessageType
+	 * @param pMessageText
+	 */
+	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime){
+		add(pMessageText, pMessageType, pMessageText, pMessageTooltip, pTime);
+	}
+	
 
 	/**
 	 * Adiciona todas as mensagems a fila
 	 * @param pMessages
 	 */
-	public <M extends DBSMessages<?>> void addAll(M pMessages){
+	public synchronized <M extends DBSMessages<?>> void addAll(M pMessages){
 		for (Object xM : pMessages.getMessages().values()) {
 			DBSMessage xMsg = (DBSMessage) xM;
 			add(xMsg.getMessageText(), xMsg.getMessageType(), xMsg.getMessageText(), xMsg.getMessageTooltip(), xMsg.getTime());
