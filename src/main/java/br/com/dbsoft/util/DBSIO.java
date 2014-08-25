@@ -143,7 +143,6 @@ public class DBSIO{
 			xConnection.setAutoCommit(false);
 			return xConnection; 
 		} catch (SQLException e) {
-			wLogger.error("Error getConnection3:" + e.getLocalizedMessage());
 			throwIOException(e);
 			return null;
 		}
@@ -330,7 +329,6 @@ public class DBSIO{
 			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); //ResultSet.CONCUR_UPDATABLE
 			xResultSet = xST.executeQuery(pQuerySQL);
 		}catch(SQLException e){
-			wLogger.error("openResultSet:" + pQuerySQL, e);
 			throwIOException(pQuerySQL, e, pConnection);
 			try {
 				xST.close();
@@ -421,7 +419,6 @@ public class DBSIO{
 			DatabaseMetaData xDMD = pConnection.getMetaData();
 			return  xDMD.getColumns(null, null, pTableName, null);
 		} catch (SQLException e) {
-			wLogger.error("getTableColumnsMetaData", e);
 			throwIOException(e, pConnection);
 			return null;
 		}
@@ -535,7 +532,6 @@ public class DBSIO{
 					return 0;
 				}
 			} catch (SQLException e) {
-				wLogger.error("getResultSetRowsCount", e);
 				throwIOException(e);
 				return 0;
 			}
@@ -1037,7 +1033,6 @@ public class DBSIO{
 					pResultSet.beforeFirst();
 				}
 			} catch (SQLException e) {
-				wLogger.error(e);
 				throwIOException(e);
 			}
 		}
@@ -1377,10 +1372,7 @@ public class DBSIO{
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
 			DBSIO.endTrans(pConnection, false);
 			
-			String xMSG = "[" + e.getErrorCode() + "]" + e.getMessage() + ":" + pSQL;
-			wLogger.error(xMSG);
-
-			throwIOException(xMSG, e, pConnection);
+			throwIOException(pSQL, e, pConnection);
 
 			return 0;
 		}
@@ -1447,13 +1439,8 @@ public class DBSIO{
 			}
 		} catch (SQLException e) {
 			//Verifica se o erro é tratado
-			String xMsg = DBSError.getErrorMessage(e.getSQLState());
-			if (xMsg.equals("")){
-				wLogger.error(pSQL, e);
-			}else{
-				wLogger.error(xMsg + ":" + pSQL);
-			}
 			DBSIO.endTrans(pConnection, false);
+
 			throwIOException(pSQL, e, pConnection);
 			return 0;
 		}
@@ -1536,7 +1523,7 @@ public class DBSIO{
 	 * @throws DBSIOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand, String pTableName, String pPK) {
+	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand, String pTableName, String pPK) throws DBSIOException {
 		int xI = -1;
 		if (pCn!=null &&
 			pDataModel != null){
@@ -1561,13 +1548,8 @@ public class DBSIO{
 					}else if(pDAOCommand == COMMAND.DELETE){
 						xI = xDAO.executeDelete(pDataModel);
 					}
-				} catch (Exception xE) {
-					wLogger.error("executeDataModelCommand", xE);
-					try {
-						throw xE;
-					} catch (Exception e) {
-						wLogger.error("executeDataModelCommand2", e);
-					}
+				} catch(DBSIOException e){
+					throw e;
 				} finally{
 					try {
 						xDAO.close();
@@ -2027,7 +2009,6 @@ public class DBSIO{
 				return true;
 			}
 		} catch (SQLException e) {
-			wLogger.error("isResultSetOnValidRow", e);
 			throwIOException(e);
 			return false;
 		}
@@ -2698,7 +2679,6 @@ public class DBSIO{
 				return true;
 			}
 		} catch (SQLException e) {
-			wLogger.error("DBSIO:pvCommitTrans",e);
 			throwIOException(e);
 			return false;
 		}
@@ -2717,7 +2697,7 @@ public class DBSIO{
 				wLogger.error("DBSIO:pvRollbackTrans:Conexão fechada");
 				return false;
 			}else{
-				if (DBSObject.isEmpty(pSavePoint)){
+				if (DBSObject.isEmpty(pSavePoint)){ 
 					pConnection.rollback();
 					return true;
 				}else{
@@ -2726,7 +2706,6 @@ public class DBSIO{
 				}
 			}
 		} catch (SQLException e) {
-			wLogger.error("DBSIO:pvRollbackTrans", e);
 			throwIOException(e, pConnection);
 			return false;
 		}

@@ -52,6 +52,20 @@ public  class DBSObject {
 		return true;
 	}
 	
+	/**
+	 * Retorna valor inteiro se id por maior que zero e nulo se for menor que 1 ou nulo.
+	 * @param pId
+	 * @return
+	 */
+	public static Integer toId(Object pId){
+		Integer xId = DBSNumber.toInteger(pId, 0);
+		//maior que zero
+		if (xId.compareTo(0) > 0){
+			return xId;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Retorna o mesmo dado informado quando este não for nulo. 
