@@ -49,6 +49,9 @@ public class DBSCNPJCPF {
 	 */
 	public static boolean isCNPJ(String pCNPJ) {
 		// considera-se erro CNPJ's formados por uma sequencia de numeros iguais
+		if (pCNPJ == null){
+			return false;
+		}
 		if (pCNPJ.equals("00000000000000") || pCNPJ.equals("11111111111111")
 				|| pCNPJ.equals("22222222222222")
 				|| pCNPJ.equals("33333333333333")
