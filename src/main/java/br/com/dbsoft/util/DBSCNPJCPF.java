@@ -49,18 +49,19 @@ public class DBSCNPJCPF {
 	 */
 	public static boolean isCNPJ(String pCNPJ) {
 		// considera-se erro CNPJ's formados por uma sequencia de numeros iguais
-		if (pCNPJ == null){
+		if (DBSObject.isEmpty(pCNPJ)){
 			return false;
 		}
-		if (pCNPJ.equals("00000000000000") || pCNPJ.equals("11111111111111")
-				|| pCNPJ.equals("22222222222222")
-				|| pCNPJ.equals("33333333333333")
-				|| pCNPJ.equals("44444444444444")
-				|| pCNPJ.equals("55555555555555")
-				|| pCNPJ.equals("66666666666666")
-				|| pCNPJ.equals("77777777777777")
-				|| pCNPJ.equals("88888888888888")
-				|| pCNPJ.equals("99999999999999") || (pCNPJ.length() != 14))
+		if (pCNPJ.equals("00000000000000") 
+		 || pCNPJ.equals("11111111111111")
+		 || pCNPJ.equals("22222222222222")
+		 || pCNPJ.equals("33333333333333")
+		 || pCNPJ.equals("44444444444444")
+		 || pCNPJ.equals("55555555555555")
+		 || pCNPJ.equals("66666666666666")
+		 || pCNPJ.equals("77777777777777")
+		 || pCNPJ.equals("88888888888888")
+		 || pCNPJ.equals("99999999999999") || (pCNPJ.length() != 14))
 			return (false);
 
 		char dig13, dig14;
@@ -124,13 +125,21 @@ public class DBSCNPJCPF {
 	 * @return boolean
 	 */
 	public static boolean isCPF(String pCPF) {
+		if (DBSObject.isEmpty(pCPF)){
+			return false;
+		}
 		// considera-se erro CPF's formados por uma sequencia de numeros iguais
-		if (pCPF.equals("00000000000") || pCPF.equals("11111111111")
-				|| pCPF.equals("22222222222") || pCPF.equals("33333333333")
-				|| pCPF.equals("44444444444") || pCPF.equals("55555555555")
-				|| pCPF.equals("66666666666") || pCPF.equals("77777777777")
-				|| pCPF.equals("88888888888") || pCPF.equals("99999999999")
-				|| (pCPF.length() != 11))
+		if (pCPF.equals("00000000000") 
+		 || pCPF.equals("11111111111")
+		 || pCPF.equals("22222222222") 
+		 || pCPF.equals("33333333333")
+		 || pCPF.equals("44444444444") 
+		 || pCPF.equals("55555555555")
+		 || pCPF.equals("66666666666") 
+		 || pCPF.equals("77777777777")
+		 || pCPF.equals("88888888888") 
+		 || pCPF.equals("99999999999")
+		 || (pCPF.length() != 11))
 			return (false);
 
 		char dig10, dig11;
@@ -192,6 +201,9 @@ public class DBSCNPJCPF {
 	 * @return String
 	 */
 	public static String noMask(String pCNPJ) {
+		if (DBSObject.isEmpty(pCNPJ)){
+			return "";
+		}
 		int xInStr = DBSString.getInStr(pCNPJ, ".");
 		while (xInStr > 0) {
 			pCNPJ = DBSString.getSubString(pCNPJ, 1, xInStr-1) + DBSString.getSubString(pCNPJ, xInStr+1, pCNPJ.length());
@@ -205,6 +217,10 @@ public class DBSCNPJCPF {
 	}
 	
 	public static String formatCNPJ_CPF(String pCPFCNPJ) {
+		if (DBSObject.isEmpty(pCPFCNPJ)){
+			return "";
+		}
+
 		if (pCPFCNPJ.length() > 11) {
 			if (isCNPJ(pCPFCNPJ)) {
 				return pvFormatCNPJ(pCPFCNPJ);
@@ -224,14 +240,18 @@ public class DBSCNPJCPF {
 	
 	private static String pvFormatCNPJ(String pCNPJ) {
 		// máscara do CNPJ: 99.999.999.9999-99
-		return (pCNPJ.substring(0, 2) + "." + pCNPJ.substring(2, 5) + "."
-				+ pCNPJ.substring(5, 8) + "." + pCNPJ.substring(8, 12) + "-" + pCNPJ
-					.substring(12, 14));
+		return (pCNPJ.substring(0, 2) + "." + 
+				pCNPJ.substring(2, 5) + "." + 
+				pCNPJ.substring(5, 8) + "." + 
+				pCNPJ.substring(8, 12) + "-" + 
+				pCNPJ.substring(12, 14));
 	}
 	
 	private static String pvFormatCPF(String pCPF) {
 		// máscara do CNPJ: 999.999.999-99
-		return (pCPF.substring(0, 3) + "." + pCPF.substring(3, 6) + "."
-				+ pCPF.substring(6, 9) + "-" + pCPF.substring(9, 11));
+		return (pCPF.substring(0, 3) + "." + 
+				pCPF.substring(3, 6) + "." + 
+				pCPF.substring(6, 9) + "-" + 
+				pCPF.substring(9, 11));
 	}
 }
