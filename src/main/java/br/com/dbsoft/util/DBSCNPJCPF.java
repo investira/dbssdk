@@ -17,8 +17,8 @@ public class DBSCNPJCPF {
 	private static Logger wLogger = Logger.getLogger(DBSCNPJCPF.class);
 	
 	/**
-	 * Verifica se o CNPJ/CPF passado é válido.
-	 * 
+	 * Retormna se CNPJ ou CPF é válido.<br/>
+	 * Identificará se é CPF ou CNPJ pelo quantidade de caracteres enviados.
 	 * @param pCPFCNPJ
 	 * @return boolean
 	 */
@@ -42,8 +42,7 @@ public class DBSCNPJCPF {
 	}
 	
 	/**
-	 * Valida o CNPJ.
-	 * 
+	 * Retorna se CNPJ é válido.
 	 * @param pCNPJ
 	 * @return boolean
 	 */
@@ -119,8 +118,7 @@ public class DBSCNPJCPF {
 	}
 
 	/**
-	 * Valida o CPF
-	 * 
+	 * Retorna se CPF é válido.
 	 * @param pCPF
 	 * @return boolean
 	 */
@@ -196,7 +194,6 @@ public class DBSCNPJCPF {
 	
 	/**
 	 * Retira a máscara do CNPJ / CPF retornando a string apenas com números
-	 * 
 	 * @param pCNPJ
 	 * @return String
 	 */
@@ -216,6 +213,12 @@ public class DBSCNPJCPF {
 		return pCNPJ;
 	}
 	
+	/**
+	 * Retorna CPF ou CNPJ formatado.<br/>
+	 * Identificará se é CPF ou CNPJ pelo quantidade de caracteres enviados.
+	 * @param pCPFCNPJ
+	 * @return
+	 */
 	public static String formatCNPJ_CPF(String pCPFCNPJ) {
 		if (DBSObject.isEmpty(pCPFCNPJ)){
 			return "";
