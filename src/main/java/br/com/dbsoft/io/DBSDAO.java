@@ -762,18 +762,22 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Le os registros da tabela de comando utilizando como filtro os valores dos campos chaves ou todos os registros, se as chaves não foram informadas.<br/>
+	 * Le os registros da tabela de comando(CommandTable) utilizando como filtro os valores das colunas definidas como chaves.<br/> 
+	 * Se não houver definição das colunas que são chaves, serão lidos todos os registros.<br/>
+	 * A definição das colunas que são chaves é efetuada manualmente no construtor do DAO ou é recuperada automaticamente
+	 * diretamente da definição da tabela no banco de dados. 
+	 * Também é possível indicar se a coluna é chave através do atributo <b>getCommandColumn("coluna").setPK(true).<b/>
+	 * O parametro <b>pAdditionalSQLWhereCondition</b> é um filtro adicional.<br/>
+	 * Este método é similar ao <b>open<b/>, porém a query SQL é criada automaticamente. 
 	 * Posiciona no primeiro registro lido de houver.<br/>
-	 * Se não houver, retorna false.    
-	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' que já será gerada automaticamente. <br/>
+	 * Se não houver registro, retorna false.    
+	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' já gerada automaticamente. <br/>
 	 * @return false se não encontrar nenhum registro
 	 * @throws SQLException 
 	 */
 	public synchronized boolean openCommandTable(String pAdditionalSQLWhereCondition) throws DBSIOException{
 		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
 			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeSelect: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
 			return false;
 		}
 		if (this.wConnection!=null){
@@ -785,10 +789,16 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 		return false;
 	}
+	
 	/**
-	 * Le os registros da tabela de comando utilizando como filtro os valores dos campos chaves ou todos os registros, se as chaves não foram informadas.<br/>
-	 * Posiciona no primeiro registro lido se houver.<br/>
-	 * Se não houver, retorna false.   
+	 * Le os registros da tabela de comando(CommandTable) utilizando como filtro os valores das colunas definidas como chaves.<br/> 
+	 * Se não houver definição das colunas que são chaves, serão lidos todos os registros.<br/>
+	 * A definição das colunas que são chaves é efetuada manualmente no construtor do DAO ou é recuperada automaticamente
+	 * diretamente da definição da tabela no banco de dados. 
+	 * Também é possível indicar se a coluna é chave através do atributo <b>getCommandColumn("coluna").setPK(true).<b/>
+	 * Este método é similar ao <b>open<b/>, porém a query SQL é criada automaticamente. 
+	 * Posiciona no primeiro registro lido de houver.<br/>
+	 * Se não houver registro, retorna false.    
 	 * @return false se não encontrar nenhum registro
 	 * @throws SQLException 
 	 */
@@ -812,7 +822,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Popula o resultset com os registros atuais e cria lista
+	 * Popula o resultset com os registros atuais e cria lista.
 	 * @return true = Sem erro; false = Com erro
 	 * @throws SQLException 
 	 */
