@@ -38,9 +38,9 @@ public abstract class DBSBalance<OperationDataClass> {
 
 	/**
 	 * Retorna dados da movimentação a partir do conteúdo dos dados informados no <b>OperationData</b> original.<br/>
-	 * Deve-se criar novo objeto do tipo <b>OperationDataClass</b> e setar seus valores, a partir da pesquisa no
+	 * Deve-se criar <b>novo</b> objeto do tipo <b>OperationDataClass</b> e setar seus valores a partir da pesquisa no
 	 * banco de dados, utilizando as informações do <b>OperationDataClass original</b>.
-	 * Deve-se retornar null caso o lançamento não seja encontrado.
+	 * Deve-se retornar <b>null</b> caso o lançamento não seja encontrado.
 	 * @param pOperationId
 	 * @return
 	 */
@@ -55,14 +55,14 @@ public abstract class DBSBalance<OperationDataClass> {
 	
 	/**
 	 * Insert ou Update da movimentação informada no <b>OperationData</b>.<br/>
-	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um update.
+	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.
 	 * @param pOperarionData
 	 * @return Quantidade de registros efetados.
 	 */
 	protected abstract Integer pvMergeEntry() throws DBSIOException;
 	
 	/**
-	 * Incrementa <b>wData<b/> para a próxima data.
+	 * Incrementa <b>wData</b> para a próxima data.
 	 * @throws DBSIOException
 	 */
 	protected abstract void pvIncrementDate() throws DBSIOException;
@@ -91,7 +91,7 @@ public abstract class DBSBalance<OperationDataClass> {
 	protected boolean afterDelete() throws DBSIOException{return true;}
 
 	/**
-	 * Método público para incluir movimentação ou altera caso já exista, conforme a <b>PK</b> informada.<br/>
+	 * Incluir movimentação ou alterar caso já exista, conforme a <b>PK</b> informada.<br/>
 	 * É necessário que a <b>PK</b> esteja nula para inclusão em tabelas com autoincrement.<br/>
 	 * @return Quantidade de registros efetados.
 	 * @throws DBSIOException
@@ -128,7 +128,7 @@ public abstract class DBSBalance<OperationDataClass> {
 	}
 
 	/**
-	 * Método público para exclui movimentação.
+	 * Excluir movimentação.
 	 * @return Quantidade de registros efetados.
 	 * @throws DBSIOException
 	 */
