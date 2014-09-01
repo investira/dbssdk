@@ -1604,6 +1604,20 @@ public class DBSDate{
 		xData = toDate(xDia, xMes, xAno);
 		return xData;
 	}
+	
+	/**
+    * Parse de string para data.
+    * @param pValue String no formato YYMMDD.
+    * @return Date
+    */
+	public static Date toDateYYMMDD(String pValue) {
+		Date xData = null;
+		String xAno = DBSString.getSubString(pValue, 1, 2);
+		String xMes = DBSString.getSubString(pValue, 3, 2);
+		String xDia = DBSString.getSubString(pValue, 5, 2);
+		xData = toDate(xDia, xMes, xAno);
+		return xData;
+	}
 
 	//========================================================================================
 	// privates
