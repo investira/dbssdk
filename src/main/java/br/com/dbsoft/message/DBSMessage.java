@@ -66,28 +66,33 @@ public class DBSMessage {
 	private String			wMessageTooltip = "";
 	private List<String>	wToUserIds;
 	private DateTime		wTime;
+	private String			wMessageKey = null;
 	
 	public DBSMessage(){}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
+		setMessageKey(pMessageText);
 		setMessageText(pMessageText);
 		setMessageType(pMessageType);
 		wMessageTextConstructor = pMessageText;
 	}
 	
-	/**
-	 * Retorna chave a chave da mensagem é o próprio texto.
-	 * Método existe somente para facilitar a compreensão da origem da chave.
-	 * @return
-	 */
 	public String getMessageKey(){
-		return getMessageText(); 
+		return wMessageKey; 
+	}
+
+	public void setMessageKey(String pMessageKey){
+		wMessageKey = pMessageKey; 
 	}
 	
 	public String getMessageText() {
 		return wMessageText;
 	}
 	public void setMessageText(String pMessageText) {
+		//Seta a chave como o próprio texto caso não tenha seja nula.
+		if (wMessageKey == null){
+			setMessageKey(pMessageText);
+		}
 		wMessageText = pMessageText;
 	}
 

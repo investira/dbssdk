@@ -59,8 +59,9 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 		try {
 			//Cria nova mensagem do tipo informado
 			MessageClass xM = wMessageClass.newInstance();
-			xM.setMessageText(pMessageText);
+			xM.setMessageKey(pMessageKey);
 			xM.setMessageType(pMessageType);
+			xM.setMessageText(pMessageText);
 			xM.setMessageTooltip(DBSObject.getNotNull(pMessageTooltip, ""));
 			xM.setTime(pTime);
 			wMessages.put(pMessageKey, xM);
