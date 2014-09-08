@@ -1174,6 +1174,7 @@ public class DBSIO{
 
 	/**
 	 * Retorna o valor de uma coluna da tabela desejada segundo o Critério informado, convertida para o tipo de class informado.
+	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
 	 * @param pCn Objeto da conexão
 	 * @param pTableName Nome da tabela
 	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado(Clausula Where).
@@ -1189,9 +1190,10 @@ public class DBSIO{
 	
 	/**
 	 * Retorna o valor de uma coluna da tabela desejada segundo o <b>pCritério</b> informado.
+	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
 	 * @param pCn Objeto da conexão
 	 * @param pTableName Nome da tabela
-	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado<b>(SQL da cláusula Where)</b>.
+	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado<b>(SQL da cláusula WHERE, NÃO devendo conter o aprópria termo 'WHERE')</b>.
 	 * Quando criar a string do critério, utilize as funções toSQL... contidas nesta classe para certificar que os valores estarão de acordo com o tipo de dado que se refere
 	 * @param pColumnName Nome da columa da qual se deseja o valor
 	 * @return valor da coluna 
@@ -1201,7 +1203,6 @@ public class DBSIO{
 			return null;
 		}
 
-		DBSDAO<Object> xDAO = new DBSDAO<Object>(pCn);
 		String xSQL = "Select " + pColumnName;
 		
 		if (!pTableName.equals("")){
@@ -1212,7 +1213,42 @@ public class DBSIO{
 			xSQL = xSQL + " Where " + pCriterio;
 		}
 
-		if (xDAO.open(xSQL)){
+		return getDado(pCn, xSQL, pColumnName);
+	}	
+
+	/**
+	 * Retorna o valor de uma coluna a partir da query informada<br>.
+	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
+	 * @param pCn Objeto da conexão
+	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
+	 * @param pColumnName Nome da columa da qual se deseja o valor
+	 * @param pReturnedClass class para a qual o valor será obrigatoriamente convertido 
+	 * @return valor da coluna 
+	 * @throws DBSIOException
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getDado(Connection pCn, String pSQL, String pColumnName, Class<?> pReturnedClass) throws DBSIOException{
+		return (T) DBSObject.toClass(getDado(pCn, pSQL, pColumnName), pReturnedClass);
+	}
+
+	/**
+	 * Retorna o valor de uma coluna a partir da query informada<br>.
+	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
+	 * @param pCn Objeto da conexão
+	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
+	 * @param pColumnName Nome da columa da qual se deseja o valor
+	 * @return valor da coluna 
+	 * @throws DBSIOException
+	 */
+	public static <T> T getDado(Connection pCn, String pSQL, String pColumnName) throws DBSIOException{
+		if (pCn == null
+		 || pSQL == null
+		 || pColumnName == null){
+			return null;
+		}
+
+		DBSDAO<Object> xDAO = new DBSDAO<Object>(pCn);
+		if (xDAO.open(pSQL)){
 			if (xDAO.getRowsCount() > 0){
 				String xColumnName = pColumnName;
 				int xI = pColumnName.indexOf(".");
