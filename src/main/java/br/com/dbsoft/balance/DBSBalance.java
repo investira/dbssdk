@@ -7,6 +7,9 @@ import java.sql.Savepoint;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.DBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -18,10 +21,10 @@ public abstract class DBSBalance<OperationDataClass> {
 	
 	protected Logger	wLogger = Logger.getLogger(this.getClass());
 	
-	protected Connection 			wConnection;
-	protected OperationDataClass 	wOperationData;
-	protected Date					wDate;
-
+	protected Connection 				wConnection;
+	protected OperationDataClass 		wOperationData;
+	protected Date						wDate;
+	protected DBSMessages<DBSMessage>	wMessages = new DBSMessages<DBSMessage>(DBSMessage.class);
 	
 	public DBSBalance(Connection pConnection) {
 		wConnection = pConnection;
@@ -174,5 +177,138 @@ public abstract class DBSBalance<OperationDataClass> {
 		}
 		return xOk;
 	} 
+	
+	//Messages
+	/**
+	 * Retorna texto da mensagem que está na fila
+	 * @return
+	 */
+	public String getMessageText(){
+//		return wMessages.getMessageText(); //Comentado em 16/01/14 - Ricardo. Aparentemente não fazia sentido
+		return wMessages.getCurrentMessageText();
+	}
+	
+	/**
+	 * Retorna texto da mensagem que está na fila
+	 * @return
+	 */
+	public String getMessageTooltip(){
+		return wMessages.getCurrentMessageTooltip();
+	}
+	
+	/**
+	 * Retorna texto da mensagem que está na fila
+	 * @return
+	 */
+	public DBSMessages<DBSMessage> getMessages(){
+		return wMessages;
+	}
+
+
+	/**
+	 * Retorna se há alguma mensagem na fila
+	 * @return
+	 */
+	/**
+	 * @return
+	 */
+	public Boolean getHasMessage(){
+		if (wMessages.getCurrentMessageKey()!=null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * Valida mensagem corrente. <br/>
+	 * Se for Warning chama o método warningMessageValidated passando o opção que o usuário escolheu.<br/>
+	 * Para implementar algum código após a confirmação, este método(warningMessageValidated) deverá ser sobreescrito. 
+	 * @param pIsValidated
+	 * @return
+	 */
+	public void setMessageValidated(Boolean pIsValidated){
+		if (wMessages!=null){
+			String xMessageKey = wMessages.getCurrentMessageKey();
+			wMessages.setValidated(pIsValidated);
+			messageValidated(xMessageKey, pIsValidated);
+		}
+	}
+	
+	/**
+	 * Método após a validação de qualquer mensagem.
+	 * @param pMessageKey
+	 * @param pIsValidated
+	 * @throws DBSIOException 
+	 */
+	protected void messageValidated(String pMessageKey, Boolean pIsValidated){}
+
+	// Protected ------------------------------------------------------------------------
+	/**
+	 * Limpa fila de mensagens
+	 */
+	protected void clearMessages(){
+		wMessages.clear();
+	}
+	
+	/**
+	 * Adiciona uma mensagem a fila
+	 * @param pMessageKey Chave da mensagem para ser utilizada quando se quer saber se a mensagem foi ou não confirmada pelo usuário
+	 * @param pMessageType Tipo de mensagem. Messagem do tipo warning requerem a confirmação do usuário
+	 * @param pMessageText Texto da mensagem
+	 */
+	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
+		addMessage(pMessageKey, pMessageType, pMessageText, "");
+	}
+
+	/**
+	 * Adiciona uma mensagem a fila
+	 * @param pMessageKey Chave da mensagem para ser utilizada quando se quer saber se a mensagem foi ou não confirmada pelo usuário
+	 * @param pMessageType Tipo de mensagem. Messagem do tipo warning requerem a confirmação do usuário
+	 * @param pMessageText Texto da mensagem
+	 */
+	protected void addMessage(MESSAGE_TYPE pMessageType, String pMessageText){
+		wMessages.add(pMessageType, pMessageText);
+	}
+
+	/**
+	 * Adiciona uma mensagem a fila
+	 * @param pMessage
+	 */
+	protected void addMessage(DBSMessage pMessage){
+		addMessage(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip());
+	}
+
+	
+	/**
+	 * Adiciona uma mensagem a fila
+	 * @param pMessage
+	 */
+	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+		//Configura o icone do dialog confome o tipo de mensagem
+		wMessages.add(pMessageKey, pMessageType, pMessageText, pMessageTooltip);
+	}
+	/**
+	 * Remove uma mensagem da fila
+	 * @param pMessageKey
+	 */
+	protected void removeMessage(String pMessageKey){
+		wMessages.remove(pMessageKey);
+	}
+
+	/**
+	 * Retorna se mensagem foi validada
+	 * @param pMessageKey
+	 * @return
+	 */
+	protected boolean isMessageValidated(String pMessageKey){
+		return wMessages.isValidated(pMessageKey);
+	}
+	
+	protected boolean isMessageValidated(DBSMessage pMessage){
+		return isMessageValidated(pMessage.getMessageText());
+	}
+
+	
 }
 
