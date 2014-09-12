@@ -1175,7 +1175,7 @@ public class DBSIO{
 	/**
 	 * Retorna o valor de uma coluna da tabela desejada segundo o Critério informado, convertida para o tipo de class informado.
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
-	 * @param pCn Objeto da conexão
+	 * @param pCn Conexão com o banco de dados
 	 * @param pTableName Nome da tabela
 	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado(Clausula Where).
 	 * Quando criar a string do critério, utilize as funções toSQL... contidas nesta classe para certificar que os valores estarão de acordo com o tipo de dado que se refere
@@ -1191,7 +1191,7 @@ public class DBSIO{
 	/**
 	 * Retorna o valor de uma coluna da tabela desejada segundo o <b>pCritério</b> informado.
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
-	 * @param pCn Objeto da conexão
+	 * @param pCn Conexão com o banco de dados
 	 * @param pTableName Nome da tabela
 	 * @param pCriterio Critério de seleção para a pesquisa do registro desejado<b>(SQL da cláusula WHERE, NÃO devendo conter o aprópria termo 'WHERE')</b>.
 	 * Quando criar a string do critério, utilize as funções toSQL... contidas nesta classe para certificar que os valores estarão de acordo com o tipo de dado que se refere
@@ -1219,7 +1219,7 @@ public class DBSIO{
 	/**
 	 * Retorna o valor de uma coluna a partir da query informada<br>.
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
-	 * @param pCn Objeto da conexão
+	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
 	 * @param pColumnName Nome da columa da qual se deseja o valor
 	 * @param pReturnedClass class para a qual o valor será obrigatoriamente convertido 
@@ -1234,7 +1234,7 @@ public class DBSIO{
 	/**
 	 * Retorna o valor de uma coluna a partir da query informada<br>.
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
-	 * @param pCn Objeto da conexão
+	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
 	 * @param pColumnName Nome da columa da qual se deseja o valor
 	 * @return valor da coluna 
@@ -1269,11 +1269,11 @@ public class DBSIO{
 	
 	/**
 	 * Retorna os valores dos atributos do dataModel informado a partir das colunas que possuam o mesmo nome.<br/>Serão retornados os dados do primeiro registro encontrado conforme resultado do SQL informado.
-	 * @param pCn Objeto da conexão
+	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Nome da tabela
 	 * @return DataModel 
 	 */
-	public static <T> T getDadoDataModel(Class<T> pDataModelClass, Connection pCn, String pSQL) throws DBSIOException{
+	public static <T> T getDadoDataModel(Connection pCn, Class<T> pDataModelClass, String pSQL) throws DBSIOException{
 		DBSDAO<T> xDAO = new DBSDAO<T>(pDataModelClass, pCn);
 		T xDataModel = xDAO.createDataModel();
 		xDAO.open(pSQL);
@@ -1286,13 +1286,13 @@ public class DBSIO{
 	
 	/**
 	 * Grava os valores dos atributos do dataModel 
+	 * @param pCn Conexão com o banco de dados
 	 * @param <T>
-	 * @param pCn Objeto da conexão
 	 * @param pSQL Nome da tabela
 	 * @return A quantidade de registros afetados 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> int setDadoDataModel(T pDataModel, Connection pCn, String pTableName) throws DBSIOException{
+	public static <T> int setDadoDataModel(Connection pCn, T pDataModel, String pTableName) throws DBSIOException{
 		DBSDAO<T> xDAO = new DBSDAO<T>((Class<T>) pDataModel.getClass(), pCn, pTableName);
 		return xDAO.executeMerge(pDataModel);
 	}	
@@ -1375,7 +1375,7 @@ public class DBSIO{
 
 	/**
 	 * Executa um comando sql diretamente no banco de dados
-	 * @param pConnection conexão com o banco de dados
+	 * @param pConnection Conexão com o banco de dados
 	 * @param pSQL Comando SQL
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException 
@@ -1417,7 +1417,7 @@ public class DBSIO{
 	/**
 	 * Executa um comando sql diretamente no banco de dados e recupera os valores do autoincremento efetuados pelo banco
 	 * @param <T>
-	 * @param pConnection conexão com o banco de dados
+	 * @param pConnection Conexão com o banco de dados
 	 * @param pSQL Comando SQL
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException 
@@ -1536,22 +1536,22 @@ public class DBSIO{
 
 	/**
 	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @param pDAOCommand Comando(Insert, Update ou Delete)
 	 * @param pTableName Nome da tabela que receberá o comando
 	 * @param pPK Nomes das colunas que serão utilizadas como chave primária. Caso omitido, será utilizado o PK de própria tabela
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelCommand(T pDataModel, Connection pCn, COMMAND pDAOCommand, String pTableName, String pPK) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, null, pCn, pDAOCommand, pTableName, pPK);
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, COMMAND pDAOCommand, String pTableName, String pPK) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, null, pDAOCommand, pTableName, pPK);
 	}	
 
 	/**
 	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @param pDAOCommand Comando(Insert, Update ou Delete)
 	 * @param pTableName Nome da tabela que receberá o comando
 	 * @param pPK Nomes das colunas que serão utilizadas como chave primária. Caso omitido, será utilizado o PK de própria tabela
@@ -1559,7 +1559,7 @@ public class DBSIO{
 	 * @throws DBSIOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand, String pTableName, String pPK) throws DBSIOException {
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, T pDataModelValueOriginal, COMMAND pDAOCommand, String pTableName, String pPK) throws DBSIOException {
 		int xI = -1;
 		if (pCn!=null &&
 			pDataModel != null){
@@ -1602,32 +1602,32 @@ public class DBSIO{
 	
 	/**
 	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @param pDAOCommand Comando(Insert, Update ou Delete)
 	 * @param pTableName Nome da tabela que receberá o comando
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelCommand(T pDataModel, Connection pCn, COMMAND pDAOCommand, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, pDAOCommand, pTableName, "");
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, COMMAND pDAOCommand, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, pDAOCommand, pTableName, "");
 	}	
 
-	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, pTableName, "");
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, T pDataModelValueOriginal, COMMAND pDAOCommand, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, pDAOCommand, pTableName, "");
 	}	
 	
 	/**
 	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @param pDAOCommand Comando(Insert, Update ou Delete)
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelCommand(T pDataModel, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, null, pCn, pDAOCommand);
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, COMMAND pDAOCommand) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, null, pDAOCommand);
 	}
 	
 //	/**
@@ -1655,31 +1655,31 @@ public class DBSIO{
 	/**
 	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @param pDAOCommand Comando(Insert, Update ou Delete)
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	public static <T> int executeDataModelCommand(Connection pCn, T pDataModel, T pDataModelValueOriginal, COMMAND pDAOCommand) throws DBSIOException{
 		DBSTableModel xAnnotation = getAnnotationDataModel(pDataModel);
 		if (xAnnotation == null){
 			return -1;
 		}
-		return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, pDAOCommand, xAnnotation.tablename(), "");
 	}
 	
 	/**
 	 * Executa o merge dos dados contidos no DataModel. Isto é, se existir o registro, altera os dados, se não existir, inclui
 	 * É utilizada a chave primária da tabela
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelMerge(T pDataModel, Connection pCn) throws DBSIOException{
-		return executeDataModelMerge(pDataModel, null, pCn);
+	public static <T> int executeDataModelMerge(Connection pCn, T pDataModel) throws DBSIOException{
+		return executeDataModelMerge(pCn, pDataModel, null);
 	}	
 
 	/**
@@ -1687,19 +1687,19 @@ public class DBSIO{
 	 * Se existir o registro efatua uma alteração de dados, se não existir, inclui novo registro.
 	 * É utilizada a chave primária da tabela para identificar se registro existe.<br/>
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela.
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
 	 * @param pDataModelValueOriginal DataModel com os atributos e respectivos valores originais
-	 * @param pCn Conexão com o banco
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelMerge(T pDataModel, T pDataModelValueOriginal, Connection pCn) throws DBSIOException{
+	public static <T> int executeDataModelMerge(Connection pCn, T pDataModel, T pDataModelValueOriginal) throws DBSIOException{
 		int xN=-1;
 		if (pCn!=null){
 			Savepoint xS  = DBSIO.beginTrans(pCn, "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
-			xN = executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, COMMAND.UPDATE);//Atualiza registro, se existir
+			xN = executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE);//Atualiza registro, se existir
 			if (xN==0){ //Se não foi atualiza registro algum...
-				xN = executeDataModelCommand(pDataModel, pCn, COMMAND.INSERT); //Insere novo registro
+				xN = executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT); //Insere novo registro
 			}
 			if (xN<=0){ //Se nehum registro foi alterado é pq houve erro
 				DBSIO.endTrans(pCn,false,xS); //ignora Update ou Insert em caso de erro. Rollback até EXECUTEMERGE
@@ -1712,66 +1712,66 @@ public class DBSIO{
 	 * Executa o insert dos dados contidos no DataModel. 
 	 * É utilizada a chave primária da tabela
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataModel DataModel com os atributos e respectivos valores
-	 * @param pCn Conexão com o banco
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelInsert(T pDataModel, Connection pCn) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.INSERT); //Insere novo registro
+	public static <T> int executeDataModelInsert(Connection pCn, T pDataModel) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT); //Insere novo registro
 	}
-	public static <T> int executeDataModelInsert(T pDataModel, Connection pCn, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.INSERT, pTableName); //Insere novo registro
+	public static <T> int executeDataModelInsert(Connection pCn, T pDataModel, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT, pTableName); //Insere novo registro
 	}
-	public static <T> int executeDataModelInsert(T pDataModel, Connection pCn, String pTableName, String pPK) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.INSERT, pTableName, pPK); //Insere novo registro
+	public static <T> int executeDataModelInsert(Connection pCn, T pDataModel, String pTableName, String pPK) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT, pTableName, pPK); //Insere novo registro
 	}
 	
 	/**
 	 * Executa o delete dos dados contidos no DataModel. 
 	 * É utilizada a chave primária da tabela
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
-	 * @param pDataModel DataModel com os atributos e respectivos valores
 	 * @param pCn Conexão com o banco
+	 * @param pDataModel DataModel com os atributos e respectivos valores
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelDelete(T pDataModel, Connection pCn) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.DELETE); //Insere novo registro
+	public static <T> int executeDataModelDelete(Connection pCn, T pDataModel) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.DELETE); //Insere novo registro
 	}	
-	public static <T> int executeDataModelDelete(T pDataModel, Connection pCn, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.DELETE, pTableName); //Insere novo registro
+	public static <T> int executeDataModelDelete(Connection pCn, T pDataModel, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.DELETE, pTableName); //Insere novo registro
 	}	
-	public static <T> int executeDataModelDelete(T pDataModel, Connection pCn, String pTableName, String pPK) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.DELETE, pTableName, pPK); //Insere novo registro
+	public static <T> int executeDataModelDelete(Connection pCn, T pDataModel, String pTableName, String pPK) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.DELETE, pTableName, pPK); //Insere novo registro
 	}	
 	
 	/**
 	 * Executa o update dos dados contidos no DataModel. 
 	 * É utilizada a chave primária da tabela
 	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
-	 * @param pDataModel DataModel com os atributos e respectivos valores
 	 * @param pCn Conexão com o banco
+	 * @param pDataModel DataModel com os atributos e respectivos valores
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException
 	 */
-	public static <T> int executeDataModelUpdate(T pDataModel, Connection pCn) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.UPDATE); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.UPDATE); //Insere novo registro
 	}	
-	public static <T> int executeDataModelUpdate(T pDataModel, Connection pCn, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.UPDATE, pTableName); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.UPDATE, pTableName); //Insere novo registro
 	}	
-	public static <T> int executeDataModelUpdate(T pDataModel, Connection pCn, String pTableName, String pPK) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pCn, COMMAND.UPDATE, pTableName, pPK); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, String pTableName, String pPK) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, COMMAND.UPDATE, pTableName, pPK); //Insere novo registro
 	}	
-	public static <T> int executeDataModelUpdate(T pDataModel, T pDataModelValueOriginal, Connection pCn) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, COMMAND.UPDATE); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, T pDataModelValueOriginal) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE); //Insere novo registro
 	}	
-	public static <T> int executeDataModelUpdate(T pDataModel, T pDataModelValueOriginal, Connection pCn, String pTableName) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, COMMAND.UPDATE, pTableName); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, T pDataModelValueOriginal, String pTableName) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE, pTableName); //Insere novo registro
 	}	
-	public static <T> int executeDataModelUpdate(T pDataModel, T pDataModelValueOriginal, Connection pCn, String pTableName, String pPK) throws DBSIOException{
-		return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, COMMAND.UPDATE, pTableName, pPK); //Insere novo registro
+	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, T pDataModelValueOriginal, String pTableName, String pPK) throws DBSIOException{
+		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE, pTableName, pPK); //Insere novo registro
 	}	
 	
 	
@@ -1837,7 +1837,7 @@ public class DBSIO{
 	 * @param pSQL Nome da tabela
 	 * @return DataModel 
 	 */
-	public static <T> List<T> getListDataModel(Class<T> pDataModelClass, Connection pCn, String pSQL) throws DBSIOException{
+	public static <T> List<T> getListDataModel(Connection pCn, Class<T> pDataModelClass, String pSQL) throws DBSIOException{
 		DBSDAO<T> xDAO = new DBSDAO<T>(pDataModelClass, pCn);
 		List<T> xListDataModel = new ArrayList<T>();
 		xDAO.open(pSQL); 
@@ -2510,6 +2510,7 @@ public class DBSIO{
 		
 	/**
 	 * Retorna String com comando IFF ou Decode formatado conforme o tipo de Banco de Dados
+	 * @param pConnection Conexão com o banco para itentificar qual o fabricante
 	 * @param pSeCampo Dado do Campo a ser testado;
 	 * @param pIgualA Dado a ser comparado ao campo pSeCampo;
 	 * @param pUsa Dado a ser considerado quando pSeCampo for Igual a pIgualA;
@@ -2530,7 +2531,7 @@ public class DBSIO{
 
 	/**
 	 * Retorna String com o comando Bitwise AND que executa comparação binária entre o pCampo e o pValor
-	 * @param pConnection
+	 * @param pConnection Conexão com o banco para itentificar qual o fabricante
 	 * @param pCampo
 	 * @param pValor
 	 * @return

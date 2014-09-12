@@ -285,7 +285,7 @@ public class TstDAO {
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
 			TstDAOModel xDT = new TstDAOModel();
-			xDT = DBSIO.getDadoDataModel(TstDAOModel.class, wCn, "Select * From CRUD where Crud_ID=2");
+			xDT = DBSIO.getDadoDataModel(wCn, TstDAOModel.class, "Select * From CRUD where Crud_ID=2");
 			Assert.assertEquals("TESTE 2", xDT.getCRUD());
 			System.out.println("Fim:   " + getMethodName() + " ==================================");
 		} catch (Exception e) {
