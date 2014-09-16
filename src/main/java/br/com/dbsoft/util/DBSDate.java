@@ -1542,7 +1542,7 @@ public class DBSDate{
 		Date xVencimento = pPrimeiraParcela;
 		
 	    if (DBSObject.isEmpty(xVencimento)) return xVencimento;
-	    if (pPeriodicidade.equals(PERIODICIDADE.DIARIA)) {
+	    if (PERIODICIDADE.DIARIA.equals(pPeriodicidade)) {
 	        xVencimento = DBSDate.getProximaData(pConnection, xVencimento, pPrazo * (pParcelas - 1), false, -1, pApplicationColumnName);
 	        if (pUtil) {
 	            if (!DBSDate.isDiaUtil(pConnection, xVencimento, -1)) {

@@ -48,6 +48,7 @@ public class DBSFile {
 		public static final String HTML = ".html";
 		public static final String XML = ".xml";
 		public static final String XLS = ".xls";
+		public static final String XLSX = ".xlsx";
 		public static final String JASPER= ".jasper";
 		public static final String JRXML = ".jrxml";
 		public static final String ZIP = ".zip";
@@ -117,6 +118,15 @@ public class DBSFile {
 	 */
 	public static String getFileNameXLS(String pReportFileName){
 		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.XLS);
+	}
+	
+	/**
+	 * Retorna o nome simples do arquivo com a extensão xls
+	 * @param pReportFileName
+	 * @return
+	 */
+	public static String getFileNameXLSX(String pReportFileName){
+		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.XLSX);
 	}
 
 	/**
