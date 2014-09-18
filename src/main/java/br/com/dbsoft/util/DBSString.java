@@ -341,8 +341,8 @@ public class DBSString {
 				DBSObject.isEmpty(pCasasDecimais)){
 			return null;
 		}
-		Double xN = DBSNumber.exp(10D, new Double(pCasasDecimais));
-		xN = DBSNumber.multiply(pValor, xN);
+		Double xN = DBSNumber.exp(10D, pCasasDecimais).doubleValue();
+		xN = DBSNumber.multiply(pValor, xN).doubleValue();
 		DecimalFormat xF = new DecimalFormat(repeat("0",pCasasDecimais));
 		return xF.format(xN);
 	}

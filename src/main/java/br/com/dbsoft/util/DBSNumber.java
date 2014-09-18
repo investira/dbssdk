@@ -1,8 +1,9 @@
 package br.com.dbsoft.util;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
@@ -12,200 +13,127 @@ import org.apache.log4j.Logger;
 public class DBSNumber {
 	protected static Logger			wLogger = Logger.getLogger(DBSNumber.class);
 	
+	//------------------------------------------------------------------------------------
 	/**
-	 * Subtração (pMinuendo - ppSubtraendo)
-	 * @param pMinuendo Minuendo 
-	 * @param pSubtraendo Subtraendo 
-	 * @return Resultado
+	 * Subtração.<br/>
+	 * ex: substract(1,3,5,2) = 1 - 3 - 5 - 2<br/>
+	 * Value <i>null</i> é considerado como <b>zero</b>.
+	 * @param pX Sequencia de valores
+	 * @return
 	 */
-	public static Double subtract(Double pMinuendo, Double pSubtraendo){
-		if (DBSObject.isEmpty(pMinuendo) 
-		 || DBSObject.isEmpty(pSubtraendo)){
-			return null;
+	public static BigDecimal subtract(Object... pX){
+		BigDecimal xX = BigDecimal.ZERO;
+		for (int i=0; i < pX.length; i++){
+			if (i==0){
+				xX = DBSNumber.toBigDecimal(pX[i]);
+			}else{
+				xX = xX.subtract(DBSNumber.toBigDecimal(pX[i]));
+			}
 		}
+		return DBSNumber.toBigDecimal(xX);
+	}
+	
+	//------------------------------------------------------------------------------------
 
-		BigDecimal x = new BigDecimal(pMinuendo.toString());
-		BigDecimal xY = new BigDecimal(pSubtraendo.toString());
-		return x.subtract(xY).doubleValue();
-	}
-	
 	/**
-	 * Subtração (pMinuendo - ppSubtraendo)
-	 * @param pMinuendo Minuendo 
-	 * @param pSubtraendo Subtraendo 
+	 * Adição.<br/>
+	 * ex: add(1,3,5,2) = 1 + 3 + 5 + 2<br/>
+	 * Value <i>null</i> é considerado como <b>zero</b>.
+	 * @param pX Sequencia de valores
 	 * @return Resultado
 	 */
-	public static Double subtract(Object pX, Object pY){
-		return subtract(DBSNumber.toDouble(pX), DBSNumber.toDouble(pY));
-	}
-	
-	/**
-	 * Adição (pX + pY)
-	 * @param pX 
-	 * @param pY 
-	 * @return Resultado
-	 */
-	public static Double add(Double pX, Double pY){
-		if (DBSObject.isEmpty(pX)
-		||	DBSObject.isEmpty(pY)){
-			return null;
+	public static BigDecimal add(Object... pX){
+		BigDecimal xX = BigDecimal.ZERO;
+		for (int i=0; i < pX.length; i++){
+			if (i==0){
+				xX = DBSNumber.toBigDecimal(pX[i]);
+			}else{
+				xX = xX.add(DBSNumber.toBigDecimal(pX[i]));
+			}
 		}
-		BigDecimal x = new BigDecimal(pX.toString());
-		BigDecimal xY = new BigDecimal(pY.toString());
-		return x.add(xY).doubleValue();
+		return DBSNumber.toBigDecimal(xX);
 	}
 	
+	//------------------------------------------------------------------------------------
 	/**
-	 * Adição (pX + pY)
-	 * @param pX 
-	 * @param pY 
+	 * Multiplicação.<br/>
+	 * ex: multiply(1,3,5,2) = ((1 * 3) * 5) * 2<br/>
+	 * Value <i>null</i> é considerado como <b>zero</b>.
+	 * @param pX Sequencia de valores
 	 * @return Resultado
 	 */
-	public static Double add(Object pX, Object pY){
-		return add(DBSNumber.toDouble(pX), DBSNumber.toDouble(pY));
-	}
-	
-	/**
-	 * Multiplicação (pX * pY)
-	 * @param pX 
-	 * @param pY 
-	 * @return Resultado
-	 */
-	public static Double multiply(Double pX, Double pY){
-		if (DBSObject.isEmpty(pX) ||
-			DBSObject.isEmpty(pY)){
-			return null;
+	public static BigDecimal multiply(Object... pX){
+		BigDecimal xX = BigDecimal.ZERO;
+		for (int i=0; i < pX.length; i++){
+			if (i==0){
+				xX = DBSNumber.toBigDecimal(pX[i]);
+			}else{
+				xX = xX.multiply(DBSNumber.toBigDecimal(pX[i]));
+			}
 		}
-		BigDecimal x = new BigDecimal(pX.toString());
-		BigDecimal xY = new BigDecimal(pY.toString());
-		return x.multiply(xY).doubleValue();
+		return DBSNumber.toBigDecimal(xX);
 	}	
 
-	/**
-	 * Multiplicação (pX * pY)
-	 * @param pX 
-	 * @param pY 
-	 * @return Resultado
-	 */
-	public static BigDecimal multiply(BigDecimal pX, BigDecimal pY){
-		if (DBSObject.isEmpty(pX) ||
-				DBSObject.isEmpty(pY)){
-			return null;
-		}
-		BigDecimal x = new BigDecimal(pX.toString());
-		BigDecimal xY = new BigDecimal(pY.toString());
-//		return x.multiply(xY).doubleValue();
-		return x.multiply(xY)              ;
-	}	
+	//------------------------------------------------------------------------------------
 
 	/**
-	 * Multiplicação (pX * pY).b<br/>
-	 * @param pX 
-	 * @param pY 
-	 * @return Resultado. Retorna nulo caso um dos valores seja nulo.
+	 * Divisão, com a quantidade de casas decimals limitada a 30 caracteres.<br/>
+	 * ex: divide(1,3,5,2) = ((1 / 3) / 5) / 2<br/>
+	 * Divisão por <b>zero</b> ou por <i>null</i> retornam <i>null</i>.
+	 * @param pCasas Quantidade máxima de casas decimais
+	 * @param pX Sequencia de valores
+	 * @return Resultado
 	 */
-	public static BigDecimal multiply(Object pX, Object pY){
-		if (DBSObject.isEmpty(pX) ||
-			DBSObject.isEmpty(pY)){
-			return null;
+	public static BigDecimal divide(Object... pX){
+		BigDecimal xX = BigDecimal.ZERO;
+		for (int i=0; i < pX.length; i++){
+			if (i==0){
+				xX = DBSNumber.toBigDecimal(pX[i]);
+			}else{
+				BigDecimal xD = DBSNumber.toBigDecimal(pX[i]);
+				//Teste para evitar exception di division by zero
+				if (xD.compareTo(BigDecimal.ZERO) != 0){
+					xX = xX.divide(xD, 30, RoundingMode.HALF_UP);
+				}else{
+					wLogger.error("Divisão por zero:" + xX.toString());
+					return null;
+				}
+			}
 		}
-		BigDecimal x = new BigDecimal(pX.toString());
-		BigDecimal xY = new BigDecimal(pY.toString());
-		return x.multiply(xY);
+		return DBSNumber.toBigDecimal(xX);
 	}
+
+
+	//------------------------------------------------------------------------------------
 	
-	/**
-	 * Divisão (pDividendo / pDivisor)
-	 * @param pDividendo Dividendo
-	 * @param pDivisor Divisor
-	 * @return Resultado
-	 */
-	public static Double divide(Double pDividendo, Double pDivisor){
-		BigDecimal x = divide(pDividendo, pDivisor, 30);
-		if (x != null){
-			return x.doubleValue();
-		}else{
-			return null;
-		}
-	}	
 
 	/**
-	 * Divisão (pDividendo / pDivisor)
-	 * @param pDividendo Dividendo
-	 * @param pDivisor Divisor
-	 * @return Resultado
-	 */
-	public static BigDecimal divide(BigDecimal pDividendo, BigDecimal pDivisor){
-		return divide(pDividendo, pDivisor, 30);
-	}	
-
-	/**
-	 * Divisão (pDividendo / pDivisor)
-	 * @param pDividendo Dividendo
-	 * @param pDivisor Divisor
-	 * @return Resultado
-	 */
-	public static BigDecimal divide(Object pDividendo, Object pDivisor){
-		return divide(pDividendo, pDivisor, 30);
-	}
-	
-	/**
-	 * Divisão (pDividendo / pDivisor)
-	 * @param pDividendo Dividendo
-	 * @param pDivisor Divisor
-	 * @return Resultado
-	 */
-	public static BigDecimal divide(Object pDividendo, Object pDivisor, int pCasas){
-		if (DBSObject.isEmpty(pDividendo) ||
-			DBSObject.isEmpty(pDivisor)){
-			return null;
-		}
-		BigDecimal x = new BigDecimal(pDividendo.toString());
-		BigDecimal xY = new BigDecimal(pDivisor.toString());
-		return x.divide(xY, pCasas, RoundingMode.UP);
-	}	
-
-	
-	/**
-	 * Exponenciação (pX ^ pY)
+	 * Exponenciação (pX ^ pY).<br/>
+	 * Números acima de 16 digitos poderão ter os digitos mais a direita ignorados.<br/>
+	 * Valores nulos zerão considerados como <b>zero</b>.
 	 * @param pBase Base
 	 * @param pExpoente Expoente
 	 * @return Resultado
 	 */
-	public static Double exp(Double pBase, Double pExpoente){
-		if (DBSObject.isEmpty(pBase) ||
-			DBSObject.isEmpty(pExpoente)){
-			return null;
-		}
-		Double x = Math.pow(pBase, pExpoente);
-		return x;
-	}	
-	/**
-	 * Exponenciação (pX ^ pY)
-	 * @param pBase Base
-	 * @param pExpoente Expoente
-	 * @return Resultado
-	 */
-	public static BigDecimal exp(BigDecimal pBase, BigDecimal pExpoente){
-		if (DBSObject.isEmpty(pBase) ||
-			DBSObject.isEmpty(pExpoente)){
-			return null;
-		}
-		BigDecimal x = DBSNumber.toBigDecimal(Math.pow(DBSNumber.toDouble(pBase), DBSNumber.toDouble(pExpoente)));
-		return x;
+	public static BigDecimal exp(Object pBase, Object pExpoente){
+		Double xX = DBSNumber.toDouble(pBase);
+		Double xY = DBSNumber.toDouble(pExpoente);
+		return DBSNumber.toBigDecimal(Math.pow(xX, xY));
 	}
+
+	//------------------------------------------------------------------------------------
 	
 	/**
 	 * Logaritmo
 	 * @param pX Valor que se deseja retornar o Log
 	 * @return Restorna log do pX
 	 */
-	public static Double log(Double pX){
+	public static BigDecimal log(Object pX){
 		if (DBSObject.isEmpty(pX)){
 			return null;
 		}
-		Double x = Math.log(pX);
-		return x;
+		Double xX = toDouble(pX);
+		return DBSNumber.toBigDecimal(Math.log(xX));
 	}
 	
 	/**
@@ -213,24 +141,24 @@ public class DBSNumber {
      * function, which calculates the mortgage or annuity payment / yield per
      * period.
      * 
-     * @param r - periodic interest rate represented as a decimal.
-     * @param nper - number of total payments / periods.
-     * @param pv - present value -- borrowed or invested principal.
-     * @param fv - future value of loan or annuity.
-     * @param type - when payment is made: beginning of period is 1; end, 0.
+     * @param pI - periodic interest rate represented as a decimal.
+     * @param pNPer - number of total payments / periods.
+     * @param pPV - present value -- borrowed or invested principal.
+     * @param pFV - future value of loan or annuity.
+     * @param pType - when payment is made: beginning of period is 1; end, 0.
      * @return <code>double</code> representing periodic payment amount.
      */
-    public static double pmt(double r, int nper, double pv, double fv, int type) {
-        // pmt = r / ((1 + r)^N - 1) * -(pv * (1 + r)^N + fv)
-        double pmt = r / (Math.pow(1 + r, nper) - 1) * -(pv * Math.pow(1 + r, nper) + fv);
+    public static BigDecimal pmt(double pI, int pNPer, double pPV, double pFV, int pType) {
+        // pmt = i / ((1 + i)^N - 1) * -(pv * (1 + i)^N + fv)
+    	double xPmt = pI / (Math.pow(1 + pI, pNPer) - 1) * -(pPV * Math.pow(1 + pI, pNPer) + pFV);
     
         // account for payments at beginning of period versus end.
-        if (type == 1) {
-            pmt /= (1 + r);
+        if (pType == 1) {
+            xPmt /= (1 + pI);
     	}
     
         // return results to caller.
-        return pmt;
+        return toBigDecimal(xPmt);
     }
     
     /**
@@ -238,7 +166,7 @@ public class DBSNumber {
      * 
      * @see #pmt(double, int, double, double, int)
      */
-    public static double pmt(double r, int nper, double pv, double fv) {
+    public static BigDecimal pmt(double r, int nper, double pv, double fv) {
         return pmt(r, nper, pv, fv, 0);
     }
     
@@ -247,7 +175,7 @@ public class DBSNumber {
      * 
      * @see #pmt(double, int, double, double, int)
      */
-    public static double pmt(double r, int nper, double pv) {
+    public static BigDecimal pmt(double r, int nper, double pv) {
         return pmt(r, nper, pv, 0);
     }
     
@@ -273,19 +201,19 @@ public class DBSNumber {
      * @see #pmt(double, int, double, double, int)
      * @see #fv(double, int, double, double, int)
      */
-    public static double ipmt(double r, int per, int nper, double pv, double fv, int type) {
+    public static BigDecimal ipmt(double r, int per, int nper, double pv, double fv, int type) {
     
         // Prior period (i.e., per-1) balance times periodic interest rate.
         // i.e., ipmt = fv(r, per-1, c, pv, type) * r
         // where c = pmt(r, nper, pv, fv, type)
-        double ipmt = fv(r, per - 1, pmt(r, nper, pv, fv, type), pv, type) * r;
+        double ipmt = fv(r, per - 1, pmt(r, nper, pv, fv, type).doubleValue(), pv, type).doubleValue() * r;
     
         // account for payments at beginning of period versus end.
         if (type == 1)
             ipmt /= (1 + r);
     
         // return results to caller.
-        return ipmt;
+        return toBigDecimal(ipmt);
     }
     
     /**
@@ -304,7 +232,7 @@ public class DBSNumber {
      *            - when payment is made: beginning of period is 1; end, 0.
      * @return <code>double</code> representing future principal value.
      */
-    public static double fv(double r, int nper, double c, double pv, int type) {
+    public static BigDecimal fv(double r, int nper, double c, double pv, int type) {
     
         // account for payments at beginning of period versus end.
         // since we are going in reverse, we multiply by 1 plus interest rate.
@@ -315,7 +243,7 @@ public class DBSNumber {
         double fv = -((Math.pow(1 + r, nper) - 1) / r * c + pv * Math.pow(1 + r, nper));
     
         // return results to caller.
-        return fv;
+        return toBigDecimal(fv);
     }
     
 
@@ -325,7 +253,7 @@ public class DBSNumber {
      * 
      * @see #fv(double, int, double, double, int)
      */
-    public static double fv(double r, int nper, double c, double pv) {
+    public static BigDecimal fv(double r, int nper, double c, double pv) {
         return fv(r, nper, c, pv);
     }
     
@@ -352,24 +280,24 @@ public class DBSNumber {
      * @see #pmt(double, int, double, double, int)
      * @see #ipmt(double, int, int, double, double, int)
      */
-    public static double ppmt(double r, int per, int nper, double pv, double fv, int type) {
+    public static BigDecimal ppmt(double r, int per, int nper, double pv, double fv, int type) {
     
         // Calculated payment per period minus interest portion of that period.
         // i.e., ppmt = c - i
         // where c = pmt(r, nper, pv, fv, type)
         // and i = ipmt(r, per, nper, pv, fv, type)
-        return pmt(r, nper, pv, fv, type) - ipmt(r, per, nper, pv, fv, type);
+        return subtract(pmt(r, nper, pv, fv, type), ipmt(r, per, nper, pv, fv, type));
     }
 
 	/**
-	 * Método de cálculo de TIR onde o Valor Presente Líquido (VPL)
+	 * Método de cálculo de TIR onde o Value Presente Líquido (VPL)
 	 * por padrão é zero.
 	 * 
 	 * @param pFluxo
 	 * @param pPeriodo periodo em dias para cada fluxo
 	 * @return double
 	 */
-	public static double TIR(double[] pFluxo, int[] pPeriodo) {
+	public static BigDecimal TIR(double[] pFluxo, int[] pPeriodo) {
 		return TIR(pFluxo, pPeriodo, 0.00001);
 	}
 	
@@ -382,7 +310,7 @@ public class DBSNumber {
 	 * @param pVPL
 	 * @return
 	 */
-	public static double TIR(double[] pFluxo, int[] pPeriodo, double pVPL) {
+	public static BigDecimal TIR(double[] pFluxo, int[] pPeriodo, double pVPL) {
 		int 	xIteracoesMaxima = 20; //Numero de tentativas de cálculo
         double 	xPrecisao = 1E-7;
         double	x0 = pVPL;
@@ -392,30 +320,30 @@ public class DBSNumber {
         while (xCount < xIteracoesMaxima) { //pFluxo.length
 
         	//O valor da função (VPL) e o seu derivado são calculados no mesmo loop
-            double xValor = 0;
+            double xValue = 0;
             double fDerivado = 0;
             for (int xIndice = 0; xIndice < pFluxo.length; xIndice++) {
             	if (DBSObject.isEmpty(pPeriodo)) {
-            		xValor += pFluxo[xIndice] / Math.pow(1.0 + x0, xIndice);
+            		xValue += pFluxo[xIndice] / Math.pow(1.0 + x0, xIndice);
             		fDerivado += -xIndice * pFluxo[xIndice] / Math.pow(1.0 + x0, xIndice + 1);
             	} else {
-            		xValor += pFluxo[xIndice] / Math.pow(1.0 + x0, pPeriodo[xIndice]);
+            		xValue += pFluxo[xIndice] / Math.pow(1.0 + x0, pPeriodo[xIndice]);
             		fDerivado += -(pPeriodo[xIndice] * pFluxo[xIndice]) / Math.pow(1.0 + x0, pPeriodo[xIndice] + 1);
             	}
             }
 
             //Método Newton-Raphson
-            x1 = x0 - xValor/fDerivado;
+            x1 = x0 - xValue/fDerivado;
 
             if (Math.abs(x1 - x0) <= xPrecisao) {
-                return x1;
+                return toBigDecimal(x1);
             }
 
             x0 = x1;
             ++xCount;
         }
         //Se o numero de iterações for maio que o tamanho do fluxo. 
-        return 0.0;
+        return BigDecimal.ZERO;
     }
 
 	/**
@@ -440,11 +368,11 @@ public class DBSNumber {
 		Double 		xFinAtual;
 		
 		BigDecimal 	xPuAtual = DBSNumber.toBigDecimal(pPuAtual);
-		BigDecimal 	xPuOperado = DBSNumber.toBigDecimal(pPuOperado);
+		BigDecimal	xPuOperado = DBSNumber.toBigDecimal(pPuOperado);
 		Double 		xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
 		Double 		xQuantidadeOperada = DBSNumber.toDouble(pQuantidadeOperada);
 		
-		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada);
+		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
 		
 		if (xSaldo.equals(0D)){
 			return xPuAtual;
@@ -458,7 +386,7 @@ public class DBSNumber {
 				xFinOperado = DBSNumber.multiply(pQuantidadeOperada, pPuOperado).doubleValue();
 				xFinAtual = DBSNumber.multiply(pQuantidadeAtual, pPuAtual).doubleValue();
 				
-				return DBSNumber.toBigDecimal(DBSNumber.divide(DBSNumber.add(xFinOperado, xFinAtual), xSaldo, 30));
+				return DBSNumber.divide(DBSNumber.add(xFinOperado, xFinAtual), xSaldo);
 			} else {
 				if (isPosicaoVirada(pQuantidadeAtual, pQuantidadeOperada)){
 					return xPuOperado;
@@ -489,7 +417,7 @@ public class DBSNumber {
 		Double xSaldo;
 		Double xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
 		Double xQuantidadeOperada = DBSNumber.toDouble(pQuantidadeOperada);
-		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada);
+		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
 		
 		/*
 		 * Posição é considerada virada quando:
@@ -497,9 +425,9 @@ public class DBSNumber {
 		 * Sinal de xSaldo deferente do estoque atual(pQuantidadeAtual) ou estoque atual(pQuantidadeAtual) = 0  
 	    */
 		
-		if (xSaldo != 0D && 
-		    (DBSNumber.sign(xSaldo).intValue() != DBSNumber.sign(xQuantidadeAtual).intValue() 
-		   || xQuantidadeAtual == 0)){
+		if (!xSaldo.equals(0D) 
+		  && (DBSNumber.sign(xSaldo).intValue() != DBSNumber.sign(xQuantidadeAtual).intValue() 
+		   || xQuantidadeAtual.equals(0D))){
 			return true;
 		}
 		return false;
@@ -512,153 +440,255 @@ public class DBSNumber {
 	 * @return TRUE é Operação de realização, FALSE não é operação de realização
 	 */
 	public static boolean isRealizacao(Object pQuantidadeAtual, Object pQuantidadeOperada){
-		if (pQuantidadeAtual == null || pQuantidadeOperada == null){
+		if (pQuantidadeAtual == null 
+		 || pQuantidadeOperada == null){
 			return false;
 		}
 		Double xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
 		Double xQuantidadeOperada= DBSNumber.toDouble(pQuantidadeOperada);		
 		
-		if ((xQuantidadeAtual < 0 && xQuantidadeOperada > 0) || 
-			(xQuantidadeAtual > 0 && xQuantidadeOperada < 0)){
+		if ((xQuantidadeAtual < 0 && xQuantidadeOperada > 0) 
+		 || (xQuantidadeAtual > 0 && xQuantidadeOperada < 0)){
 			return true;
 		}
 		return false;
 	}
 	/**
 	 * Sinal do valor
-	 * @param pValor Valor que se deseja conhecer o sinal
-	 * @return Retorna 0 = Zero / 1 = Positivo / 1 = Negativo
+	 * @param pValue Valor que se deseja conhecer o sinal
+	 * @return Retorna 0 = Zero / 1 = Positivo / -1 = Negativo
 	 */
-	public static Double sign(Double pValor){
-		if (DBSObject.isEmpty(pValor)){
-			return null;
-		}	
-		return Math.signum(pValor);
+	public static Integer sign(Object pValue){
+		return toBigDecimal(pValue).signum();
 	}
 
-	/**
-	 * Retornar o valor sem sinal
-	 * @param pValor Valor que se deseja retinar o sinal
-	 * @return Restorna valor sem sinal
-	 */
-	public static Double abs(Double pValor){
-		if (DBSObject.isEmpty(pValor)){
-			return null;
-		}		
-		return Math.abs(pValor);
-	}
-	
-	/**
-	 * Retornar o valor sem sinal
-	 * @param pValor Valor que se deseja retinar o sinal
-	 * @return Restorna valor sem sinal
-	 */
-	public static Double abs(Object pValor){
-		return abs(toDouble(pValor));
-	}
-	
 	/**
 	 * Retorna um número randomico 0 > 1.
 	 * @return Retorna número randômico
 	 */
-	public static Double random(){
-		return (double) Math.random();
+	public static BigDecimal random(){
+		return toBigDecimal(Math.random());
+	}
+	//---------------------------------------------------------------------------------
+
+	/**
+	 * Retornar o valor sem sinal
+	 * @param pValue Valor que se deseja retinar o sinal
+	 * @return Restorna valor sem sinal
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 */
+	public static Double abs(Double pValue) {
+		return pvAbs(pValue, Double.class);
+	}
+	
+	/**
+	 * Retornar o valor sem sinal
+	 * @param pValue Valor que se deseja retinar o sinal
+	 * @return Restorna valor sem sinal
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 */
+	public static Long abs(Long pValue) {
+		return pvAbs(pValue, Long.class);
+	}
+
+	/**
+	 * Retornar o valor sem sinal
+	 * @param pValue Valor que se deseja retinar o sinal
+	 * @return Restorna valor sem sinal
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 */
+	public static Integer abs(Integer pValue) {
+		return pvAbs(pValue, Integer.class);
+	}
+	
+	/**
+	 * Retornar o valor sem sinal
+	 * @param pValue Valor que se deseja retinar o sinal
+	 * @return Restorna valor sem sinal
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 */
+	public static BigDecimal abs(Object pValue) {
+		return pvAbs(pValue, Object.class);
+	}
+	//----------------------------------------------------------------------------------
+	/**
+	 * Retorna valor truncado.<br/>
+	 * Caso a quantidade de casas seja negativa irá truncar também parte inteira. 
+	 * @param pValue Valor que se deseja truncar
+	 * @param pDecimalPlaces Quantidade de casas decimais
+	 * @return Resultado
+	 */
+	public static Double trunc(Double pValue, Integer pDecimalPlaces) {
+		return pvTrunc(pValue, pDecimalPlaces, Double.class);
 	}
 	
 	/**
 	 * Retorna valor truncado.<br/>
-	 * Caso a quantidade de casas seja negativa irá truncar até parte inteira. 
-	 * @param pValor Valor que se deseja truncar
-	 * @param pCasasDecimais Quantidade de casas decimais
+	 * Caso a quantidade de casas seja negativa irá truncar também a parte inteira. 
+	 * @param pValue Valor que se deseja truncar
+	 * @param pDecimalPlaces Quantidade de casas decimais
 	 * @return Resultado
 	 */
-	public static Double trunc(Object pValor, Integer pCasasDecimais){ 
-		if (DBSObject.isEmpty(pValor) ||
-			DBSObject.isEmpty(pCasasDecimais)){
-			return null;
-		}	
-		BigDecimal xValor = toBigDecimal(pValor);
-		return toDouble(trunc(xValor, pCasasDecimais));
+	public static Long trunc(Long pValue, Integer pDecimalPlaces) {
+		return pvTrunc(pValue, pDecimalPlaces, Long.class);
 	}
 
 	/**
 	 * Retorna valor truncado.<br/>
-	 * Caso a quantidade de casas seja negativa irá truncar até parte inteira. 
-	 * @param pValor Valor que se deseja truncar
-	 * @param pCasasDecimais Quantidade de casas decimais
+	 * Caso a quantidade de casas seja negativa irá truncar também a parte inteira. 
+	 * @param pValue Valor que se deseja truncar
+	 * @param pDecimalPlaces Quantidade de casas decimais
 	 * @return Resultado
 	 */
-	public static BigDecimal trunc(BigDecimal pValor, Integer pCasasDecimais){
-		if (DBSObject.isEmpty(pValor) ||
-			DBSObject.isEmpty(pCasasDecimais)){
-			return null;
-		}	
-		BigDecimal xAjuste = new BigDecimal(Math.pow(10, pCasasDecimais));
-		BigDecimal xInteiro;
-		//Multiplica pela quantidade de casas a serem considerada
-		pValor = DBSNumber.multiply(pValor, xAjuste);
-		//Retorna a parte inteira;
-		xInteiro = new BigDecimal(pValor.toBigInteger().toString());
-		pValor = DBSNumber.toBigDecimal(DBSNumber.divide(xInteiro, xAjuste, pCasasDecimais));
-		return pValor;
+	public static Integer trunc(Integer pValue, Integer pDecimalPlaces) {
+		return pvTrunc(pValue, pDecimalPlaces, Integer.class);
 	}
-
 	
 	/**
-	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4).<br/>
-	 * Caso a quantidade de casas seja negativa irá arrendodar até parte inteira. 
-	 * @param pValor Valor que se deseja arredondar
-	 * @param pCasasDecimais Quantidade de casas decimais
+	 * Retorna valor truncado.<br/>
+	 * Caso a quantidade de casas seja negativa irá truncar também a parte inteira. 
+	 * @param pValue Valor que se deseja truncar
+	 * @param pDecimalPlaces Quantidade de casas decimais
 	 * @return Resultado
 	 */
-	public static Double round(Object pValor, Integer pCasasDecimais){
-		if (DBSObject.isEmpty(pValor) ||
-			DBSObject.isEmpty(pCasasDecimais)){
-			return null;
-		}	
+	public static BigDecimal trunc(Object pValue, Integer pDecimalPlaces) {
+		return pvTrunc(pValue, pDecimalPlaces, Object.class);
+	}
 
-		BigDecimal xValor = toBigDecimal(pValor);
-		return toDouble(round(xValor, pCasasDecimais));
+	//----------------------------------------------------------------------------------
+	/**
+	 * Retorna valor arredondado<br/>
+	 * Exemplo: arrendodamento com 1 casa decimal: 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar também a parte inteira. 
+	 * @param pValue Valor que se deseja arredondar
+	 * @param pDecimalPlaces Quantidade de casas decimais
+	 * @return Resultado
+	 */
+	public static Double round(Double pValue, Integer pDecimalPlaces) {
+		return pvRound(pValue, pDecimalPlaces, Double.class);
+	}
+	
+	/**
+	 * Retorna valor arredondado<br/>
+	 * Exemplo: arrendodamento com 1 casa decimal: 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar também a parte inteira. 
+	 * @param pValue Valor que se deseja arredondar
+	 * @param pDecimalPlaces Quantidade de casas decimais
+	 * @return Resultado
+	 */
+	public static Long round(Long pValue, Integer pDecimalPlaces) {
+		return pvRound(pValue, pDecimalPlaces, Long.class);
 	}
 
 	/**
-	 * Retorna valor arredondado (exemplo 1,45 = 1,5  | 1,44 = 1,4).<br/>
-	 * Caso a quantidade de casas seja negativa irá arrendodar até parte inteira. 
-	 * @param pValor Valor que se deseja arredondar
-	 * @param pCasasDecimais Quantidade de casas decimais
+	 * Retorna valor arredondado<br/>
+	 * Exemplo: arrendodamento com 1 casa decimal: 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar também a parte inteira. 
+	 * @param pValue Valor que se deseja arredondar
+	 * @param pDecimalPlaces Quantidade de casas decimais
 	 * @return Resultado
 	 */
-
-	public static BigDecimal round(BigDecimal pValor, Integer pCasasDecimais){
-		if (DBSObject.isEmpty(pValor) ||
-			DBSObject.isEmpty(pCasasDecimais)){
-			return null;
-		}	
-		BigDecimal xAjuste = new BigDecimal( Math.pow(10, pCasasDecimais));
-		BigDecimal xInteiro;
-		//Multiplica pela quantidade de casas a serem considerada
-		pValor = DBSNumber.multiply(pValor, xAjuste);
-		//Arredonda
-		pValor = new BigDecimal( Math.rint(pValor.doubleValue()));
-		//Retorna a parte inteira;
-		xInteiro = new BigDecimal(pValor.toBigInteger());
-		pValor = DBSNumber.toBigDecimal(DBSNumber.divide(xInteiro, xAjuste, pCasasDecimais));
-		return pValor;
+	public static Integer round(Integer pValue, Integer pDecimalPlaces) {
+		return pvRound(pValue, pDecimalPlaces, Integer.class);
+	}
+	
+	/**
+	 * Retorna valor arredondado<br/>
+	 * Exemplo: arrendodamento com 1 casa decimal: 1,45 = 1,5  | 1,44 = 1,4).<br/>
+	 * Caso a quantidade de casas seja negativa irá arrendodar também a parte inteira. 
+	 * @param pValue Valor que se deseja arredondar
+	 * @param pDecimalPlaces Quantidade de casas decimais
+	 * @return Resultado
+	 */
+	public static BigDecimal round(Object pValue, Integer pDecimalPlaces) {
+		return pvRound(pValue, pDecimalPlaces, Object.class);
 	}
 
+
+	//-------------------------------------------------------------------
+	/**
+	 * Retorna valor inteiro 
+	 * @param pValue Valor que se deseja a parte inteira
+	 * @return Retorna valor inteiro
+	 */
+	public static Double inte(Double pValue){
+		return trunc(pValue, 0);
+	}
 	
 	/**
 	 * Retorna valor inteiro 
-	 * @param pValor Valor que se deseja a parte inteira
+	 * @param pValue Valor que se deseja a parte inteira
 	 * @return Retorna valor inteiro
 	 */
-	public static Double inte(Double pValor){
-		if (DBSObject.isEmpty(pValor) ){
-			return null;
-		}		
-		return (double) pValor.longValue();
+	public static Long inte(Long pValue){
+		return trunc(pValue, 0);
+	}
+	
+	/**
+	 * Retorna valor inteiro 
+	 * @param pValue Valor que se deseja a parte inteira
+	 * @return Retorna valor inteiro
+	 */
+	public static Integer inte(Integer pValue){
+		return trunc(pValue, 0);
+	}
+	
+	/**
+	 * Retorna valor inteiro 
+	 * @param pValue Valor que se deseja a parte inteira
+	 * @return Retorna valor inteiro
+	 */
+	public static BigDecimal inte(Object pValue){
+		return trunc(pValue, 0);
 	}
 
+	//---------------------------------------------------------------------------------
+
+	/**
+	 * Retorna valor com o sinal informado.
+	 * @param pValue
+	 * @param pSign 1 = Positivo / -1 = Negativo
+	 * @return
+	 */
+	public static Double setSign(Double pValue, Integer pSign){
+		return pvSetSign(pValue, pSign, Double.class);
+	}
+	
+	/**
+	 * Retorna valor com o sinal informado.
+	 * @param pValue
+	 * @param pSign 1 = Positivo / -1 = Negativo
+	 * @return
+	 */
+	public static Long setSign(Long pValue, Integer pSign){
+		return pvSetSign(pValue, pSign, Long.class);
+	}
+
+	/**
+	 * Retorna valor com o sinal informado.
+	 * @param pValue
+	 * @param pSign 1 = Positivo / -1 = Negativo
+	 * @return
+	 */
+	public static Integer setSign(Integer pValue, Integer pSign){
+		return pvSetSign(pValue, pSign, Integer.class);
+	}
+	
+	/**
+	 * Retorna valor com o sinal informado.
+	 * @param pValue
+	 * @param pSign 1 = Positivo / -1 = Negativo
+	 * @return
+	 */
+	public static BigDecimal setSign(Object pValue, Integer pSign){
+		return pvSetSign(pValue, pSign, Object.class);
+	}
+
+	//-----------------------------------------------------------------------
 	/**
 	 * Retorna se a string é um valor numérico
 	 * @param pTextoNumerico Texto se será verificado 
@@ -687,7 +717,7 @@ public class DBSNumber {
 	}
 
 	/** 
-	 * Retira da string todos os dados não numéricos
+	 * Retorna string contendo somente os valores numérico que existem na string informada.
 	 * Antigo: getOnlyNumber
 	 * @param pTexto
 	 * @return String somente com valores numéricos. Caso não exista valores numéricos, retorna 0(zero)
@@ -708,24 +738,25 @@ public class DBSNumber {
 	}	
 	
 	/**
-	 * Retorna um número a partir de uma string, forçando uma determinada quantidade de casas decimais
-	 * Antigo StringToNumber
+	 * Retorna um número a partir de uma string, forçando uma determinada quantidade de casas decimais.<br/>
+	 * Utilizado para converter string contendo números sem o sinal da casa decimal<br/>
+	 * VB:Antigo StringToNumber
 	 * @param pString String com conteúdo a ser utilizado
-	 * @param pCasasDecimais Quantidade de Casas decimais a serem consideradas.
+	 * @param pDecimalPlaces Quantidade de Casas decimais a serem consideradas.
 	 * @return Valor numérico
 	 */
-	public static Double toNumber(String pString, Integer pCasasDecimais){
+	public static BigDecimal toNumber(String pString, Integer pDecimalPlaces){
 		if (DBSObject.isEmpty(pString) ||
-			DBSObject.isEmpty(pCasasDecimais)){
+			DBSObject.isEmpty(pDecimalPlaces)){
 			return null;
 		}
-		Double xD;
-		Double xE = DBSNumber.exp(10D, pCasasDecimais.doubleValue());
+		BigDecimal xD;
+		BigDecimal xE = DBSNumber.exp(10D, pDecimalPlaces.doubleValue());
 	
 		if (isNumber(pString)){
-			xD = Double.valueOf(pString);
+			xD = toBigDecimal(pString);
 			xD = DBSNumber.divide(xD, xE);
-			xD = DBSNumber.round(xD, pCasasDecimais);
+			xD = DBSNumber.round(xD, pDecimalPlaces);
 			return xD;
 		}
 		else{
@@ -734,171 +765,196 @@ public class DBSNumber {
 	}
 
 	/**
-	 * Converte para BigDecimal
+	 * Converte para BigDecimal.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal.
 	 * @return Retorna o valor convertido para BigDecimal ou 0(zero) caso o valor a ser convertido seja nulo
 	 * @return
 	 */
-	public static BigDecimal toBigDecimal(Object pValor) {
-		return toBigDecimal(pValor, BigDecimal.ZERO);
+	public static BigDecimal toBigDecimal(Object pValue) {
+		return toBigDecimal(pValue, 0);
 	}
 
 	/**
-	 * Converte para BigDecimal
+	 * Converte para BigDecimal.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal.
 	 * @param pDefaultValue
 	 * @return Retorna o valor convertido para BigDecimal ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 * @return
 	 */
-	public static BigDecimal toBigDecimal(Object pValor, Object pDefaultValue) {
-		if (DBSObject.isEmpty(pValor)) {
-			return (BigDecimal) pDefaultValue;
+	public static BigDecimal toBigDecimal(Object pValue, Object pDefaultValue) {
+		try{
+			
+		if (DBSObject.isEmpty(pValue)){
+			if (pDefaultValue == null){
+				return null;
+			}else{
+				//Obriga que defaultValue passe pela rotina para criar um BigDecimal padrão.
+				pValue = pDefaultValue;
+			}
 		}
-		if (pValor instanceof Number) {
-			//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValor for Double
-			BigDecimal x = new BigDecimal(pValor.toString());
-			return x;
-		} else if (pValor instanceof String) {	
-			return new BigDecimal(pvStringToDouble((String) pValor));
+		BigDecimal xValue;
+		if (pValue instanceof Number) {
+			//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValue for Double
+			xValue = new BigDecimal(pValue.toString(), MathContext.UNLIMITED);
+			//Força que valor retorne somente um "0" caso o valor seja zero porém esteja como "0.0"
+			if (xValue.compareTo(BigDecimal.ZERO) == 0){
+				xValue = BigDecimal.ZERO;
+			}
+		} else if (pValue instanceof String) {	
+			xValue = new BigDecimal(pvStringToNumberFormat((String) pValue).toString(), MathContext.UNLIMITED);
 		} else {
+			return null; 
+		}
+		//Força que os zeros a esquerda seja retirados antes de retornar o valor
+		return pvBigDecimalStripTrailingZeros(xValue);
+		}catch(Exception e){
+			System.out.println("stop");
 			return null;
 		}
 	}
-
+	
 	/**
-	 * Converte para Integer
-	 * @param pValor
+	 * Converte para Long.<br/>
+	 * Se for nulo, retorna Zero.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * Se for nulo, retorna Zero.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue
 	 * @return Retorna o valor convertido ou o 0(zero), caso o valor informado seja nulo.
 	 */
-	public static Long toLong(Object pValor) {
-		return toLong(pValor, 0L);
+	public static Long toLong(Object pValue) {
+		return toLong(pValue, 0L);
 	}
 
 	/**
-	 * Converte para Integer
-	 * @param pValor
+	 * Converte para Long.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue
 	 * @param pDefaultValue
 	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 */
-	public static Long toLong(Object pValor, Long pDefaultValue) {
-		if (DBSObject.isEmpty(pValor)) { 
+	public static Long toLong(Object pValue, Long pDefaultValue) {
+		if (DBSObject.isEmpty(pValue)) { 
 			return pDefaultValue;
 		}
-
-		if (pValor instanceof Integer) {
-			return new Long((Integer) pValor);
-		} else if (pValor instanceof BigDecimal) {
-			return ((BigDecimal) pValor).longValue();
-		} else if (pValor instanceof Double) {
-			return ((Double) pValor).longValue();
-		} else if (pValor instanceof Float) {
-			return ((Float) pValor).longValue();
-		} else if (pValor instanceof Long) {
-			return (Long) pValor;
-		} else if (pValor instanceof Boolean) {
-			if (!(Boolean) pValor) {
+		
+		if (pValue instanceof Integer) {
+			return new Long((Integer) pValue);
+		} else if (pValue instanceof BigDecimal) {
+			return ((BigDecimal) pValue).longValue();
+		} else if (pValue instanceof Double) {
+			return ((Double) pValue).longValue();
+		} else if (pValue instanceof Float) {
+			return ((Float) pValue).longValue();
+		} else if (pValue instanceof Long) {
+			return (Long) pValue;
+		} else if (pValue instanceof Boolean) {
+			if (!(Boolean) pValue) {
 				return 0L;
 			} else {
 				return -1L;
 			}
-		} else if (pValor instanceof String) {	
-			return pvStringToDouble((String) pValor).longValue();
+		} else if (pValue instanceof String) {	
+			return pvStringToNumberFormat((String) pValue).longValue();
 		} else {
 			return null;
 		}
 	}
 	
 	/**
-	 * Converte para Integer
-	 * @param pValor 
+	 * Converte para Integer.<br/>
+	 * Se for nulo, retorna Zero.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue 
 	 * @return Retorna o valor convertido ou o 0(zero), caso o valor informado seja nulo.
 	 */
-	public static Integer toInteger(Object pValor) {
-		return toInteger(pValor, 0);
+	public static Integer toInteger(Object pValue) {
+		return toInteger(pValue, 0);
 	}
 	
 	/**
 	 * Converte para Integer
-	 * @param pValor
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue
 	 * @param pDefaultValue
 	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 */
-	public static Integer toInteger(Object pValor, Integer pDefaultValue) {
-		if (DBSObject.isEmpty(pValor)) { 
+	public static Integer toInteger(Object pValue, Integer pDefaultValue) {
+		if (DBSObject.isEmpty(pValue)) { 
 			return pDefaultValue;
 		}
 
-		if (pValor instanceof Integer) {
-			return (Integer) pValor;
-		} else if (pValor instanceof BigDecimal) {
-			return ((BigDecimal) pValor).intValue();//Exact();
-		} else if (pValor instanceof Double) {
-			return ((Double) pValor).intValue();
-		} else if (pValor instanceof Float) {
-			return ((Float) pValor).intValue();
-		} else if (pValor instanceof Long) {
-			return ((Long) pValor).intValue();
-		} else if (pValor instanceof Boolean) {
-			if (!(Boolean) pValor) {
+		if (pValue instanceof Integer) {
+			return (Integer) pValue;
+		} else if (pValue instanceof BigDecimal) {
+			return ((BigDecimal) pValue).intValue();
+		} else if (pValue instanceof Double) {
+			return ((Double) pValue).intValue();
+		} else if (pValue instanceof Float) {
+			return ((Float) pValue).intValue();
+		} else if (pValue instanceof Long) {
+			return ((Long) pValue).intValue();
+		} else if (pValue instanceof Boolean) {
+			if (!(Boolean) pValue) {
 				return 0;
 			} else {
 				return -1;
 			}
-		} else if (pValor instanceof String) {	
-			return pvStringToDouble((String) pValor).intValue();
+		} else if (pValue instanceof String) {	
+			return pvStringToNumberFormat((String) pValue).intValue();
 		} else {
 			return null;
 		}
 	}
 	
 	/**
-	 * Converte para double. Se for nulo, retorna Zero.
-	 * @param pValor
+	 * Converte para Double.<br/> 
+	 * Se for nulo, retorna Zero.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue
 	 * @return Retorna o valor convertido ou o valor 0.0, caso o valor informado seja nulo
 	 */
-	public static Double toDouble(Object pValor) {
-		return toDouble(pValor, 0.0);
+	public static Double toDouble(Object pValue) {
+		return toDouble(pValue, 0D);
 	}
 	
 	/**
-	 * Converte para double.
-	 * @param pValor
+	 * Converte para Double.<br/>
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal
+	 * caso o valor informado seja uma String.
+	 * @param pValue
 	 * @param pDefaultValue
 	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 */
-	public static Double toDouble(Object pValor, Double pDefaultValue) {
-		if (DBSObject.isEmpty(pValor) || pValor.equals("")) {
+	public static Double toDouble(Object pValue, Double pDefaultValue) {
+		if (DBSObject.isEmpty(pValue) || pValue.equals("")) {
 			return pDefaultValue;
 		}
-//		if (DBSObject.isNull(pValor)) {
-//			return null;
-//		}
-		if (pValor instanceof Double) {
-			return (Double) pValor;
-		} else if (pValor instanceof BigDecimal) {
-			return ((BigDecimal) pValor).doubleValue();
-		} else if (pValor instanceof Integer) {
-			return ((Integer)pValor).doubleValue();
-		} else if (pValor instanceof Long) {
-			return ((Long)pValor).doubleValue();
-		} else if (pValor instanceof String) {	
-			return pvStringToDouble((String) pValor);
+		if (pValue instanceof Double) {
+			return (Double) pValue;
+		} else if (pValue instanceof BigDecimal) {
+			return ((BigDecimal) pValue).doubleValue();
+		} else if (pValue instanceof Integer) {
+			return ((Integer)pValue).doubleValue();
+		} else if (pValue instanceof Long) {
+			return ((Long)pValue).doubleValue();
+		} else if (pValue instanceof String) {	
+			return pvStringToNumberFormat((String) pValue).doubleValue();
 		} else {
 			return null;
 		}
 	}
 
-	
-	/**
-	 * Retorna o mesmo dado informado como <b>Double</b> quando este não for zero. 
-	 * Se for zero, retorna 1.
-	 * @param pDado Dado a ser verificado
-	 * @return Dado contendo o valor diferente de zero
-	 */
-	public static Double toDoubleNotZero(Double pDado){
-		return toDoubleNotZero(pDado, 1D);
-	}
 
 	/**
-	 * Retorna o mesmo dado informado como <b>Double</b> quando este não for zero. 
+	 * Retorna o mesmo valor informado quando este não for zero.<br/> 
+	 * Se for zero, retorna o conteúdo default definido pelo usuário ou <b>1</>, quando este for zero.
 	 * Se for zero, retorna 1.
 	 * @param pDado Dado a ser verificado
 	 * @return Dado contendo o valor diferente de zero
@@ -908,48 +964,159 @@ public class DBSNumber {
 	}
 
 	/**
-	 * Retorna o mesmo dado informado como <b>Double</b> quando este não for zero. 
-	 * Se for zero, retorna o conteúdo default definido pelo usuário ou zero, quando este for zero.
+	 * Retorna o mesmo valor informado quando este não for zero.<br/> 
+	 * Se for zero, retorna o conteúdo default definido pelo usuário ou <b>1</>, quando este for zero.
 	 * @param pDado Dado a ser verificado
-	 * @param pDadoDefault Conteúdo a ser considerado caso o dado seja vazio
+	 * @param pDefaultValue Conteúdo a ser considerado caso o dado seja vazio
 	 * @return Dado contendo o valor diferente de zero
 	 */
-	public static Double toDoubleNotZero(Double pDado, Double pDadoDefault){
-		if (DBSObject.isEmpty(pDadoDefault)){
-			pDadoDefault = 1D; //Reseta valor default para 1 se não for informado na chamada deste função
+	public static Double toDoubleNotZero(Object pDado, Double pDefaultValue){
+		if (DBSObject.isEmpty(pDefaultValue)){
+			pDefaultValue = 1D; //Reseta valor default para 1 se não for informado na chamada deste função
 		}
-		if(DBSObject.isEmpty(pDado) || pDado==0){
-			return pDadoDefault;
+		Double xValue = toDouble(pDado, pDefaultValue);
+		if(DBSObject.isEmpty(xValue) 
+		|| xValue.equals(0D)){
+			xValue = pDefaultValue;
 		}
-		else{
-			return pDado;
-		}
+		return xValue;
 	}
 
 	/**
-	 * Retorna o mesmo dado informado como <b>Double</b> quando este não for zero. 
-	 * Se for zero, retorna o conteúdo default definido pelo usuário ou zero, quando este for zero.
+	 * Retorna o mesmo valor informado quando este não for zero.<br/> 
+	 * Se for zero, retorna o conteúdo default definido pelo usuário ou <b>1</>, quando este for zero.
 	 * @param pDado Dado a ser verificado
-	 * @param pDadoDefault Conteúdo a ser considerado caso o dado seja vazio
 	 * @return Dado contendo o valor diferente de zero
 	 */
-	public static Double toDoubleNotZero(Object pDado, Object pDadoDefault){
-		Double xDado = DBSNumber.toDouble(pDado);
-		Double xDadoDefault = DBSNumber.toDouble(pDadoDefault);
-		return toDoubleNotZero(xDado, xDadoDefault);
+	public static BigDecimal toBigDecimalNotZero(Object pDado){
+		return toBigDecimalNotZero(pDado, BigDecimal.ONE);
 	}
 
-	/** 
-	 * Converte string para double, considerando a especificidades do ponto decimal para casa localidade 
-	 * O comando parseDouble só aceita ponto decimal como "."
+	/**
+	 * Retorna o mesmo valor informado quando este não for zero.<br/> 
+	 * Se for zero, retorna o conteúdo default definido pelo usuário ou <b>1</>, quando este for zero.
+	 * @param pDado Dado a ser verificado
+	 * @param pDefaultValue Conteúdo a ser considerado caso o dado seja vazio
+	 * @return Dado contendo o valor diferente de zero
+	 */
+	public static BigDecimal toBigDecimalNotZero(Object pDado, BigDecimal pDefaultValue){
+		if (DBSObject.isEmpty(pDefaultValue)){
+			pDefaultValue = BigDecimal.ONE; //Reseta valor default para 1 se não for informado na chamada deste função
+		}
+		BigDecimal xValue = toBigDecimal(pDado, pDefaultValue);
+		if(DBSObject.isEmpty(xValue) 
+		|| xValue.equals(BigDecimal.ZERO)){
+			xValue = pDefaultValue;
+		}
+		return pvBigDecimalStripTrailingZeros(xValue);
+	}
+
+	//===========================================================================================================
+	// PRIVATE
+	//===========================================================================================================
+
+	
+	/**
+	 * Rertorna valor absoluto
 	 * @param pValue
 	 * @return
 	 */
-	private static Double pvStringToDouble(String pValue){
-		NumberFormat xNF = NumberFormat.getInstance(new Locale("pt","BR"));
+	private static <T extends Number> T pvAbs(Object pValue, Class<?> pClass){
+		BigDecimal xValue = toBigDecimal(pValue);
+	
+		xValue = xValue.abs();
+		return pvConvertToClass(xValue, pClass);
+	}
+
+	/**
+	 * Rertorna valor truncado
+	 * @param pValue
+	 * @return
+	 */
+	private static <T extends Number> T pvTrunc(Object pValue, Integer pDecimalPlaces, Class<?> pClass){
+		BigDecimal xValue;
+	
+		if (pDecimalPlaces==null){
+			pDecimalPlaces = 0;
+		}
+		xValue = toBigDecimal(pValue).setScale(pDecimalPlaces, RoundingMode.FLOOR);
+		xValue = toBigDecimal(xValue);
+		return pvConvertToClass(xValue, pClass);
+	}
+
+	/**
+	 * Rertorna valor truncado
+	 * @param pValue
+	 * @return
+	 */
+	private static <T extends Number> T pvRound(Object pValue, Integer pDecimalPlaces, Class<?> pClass){
+		BigDecimal xValue;
+
+		if (pDecimalPlaces==null){
+			pDecimalPlaces = 0;
+		}
+		xValue = toBigDecimal(pValue).setScale(pDecimalPlaces, RoundingMode.HALF_UP);
+		xValue = toBigDecimal(xValue);
+		return pvConvertToClass(xValue, pClass);
+	}
+
+	/**
+	 * Rertorna valor absoluto
+	 * @param pValue
+	 * @return
+	 */
+	private static <T extends Number> T pvSetSign(Object pValue, Integer pSign, Class<?> pClass){
+		BigDecimal xValue = toBigDecimal(pValue);
+	
+		if (pSign != null
+		 &&	(pSign == 1
+		  || pSign == -1)){
+			xValue = multiply(abs(xValue), pSign);
+		}
+		return pvConvertToClass(xValue, pClass);
+	}
+	/**
+	 * Converte para o valor recebido para o tipo informado
+	 * @param pValue
+	 * @param pClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private static <T extends Number> T pvConvertToClass(BigDecimal pValue, Class<?> pClass){
+		BigDecimal xValue = pvBigDecimalStripTrailingZeros(pValue);
+		if (DBSObject.isEmpty(pValue)){
+			return null;
+		}		
+		if (Double.class.isAssignableFrom(pClass)){
+			return (T) toDouble(xValue);
+		}else if (Long.class.isAssignableFrom(pClass)){
+			return (T) toLong(xValue);
+		}else if (Integer.class.isAssignableFrom(pClass)){
+			return (T) toInteger(xValue);
+		}else{
+			return (T) xValue;
+		}
+	}
+
+	private static BigDecimal pvBigDecimalStripTrailingZeros(BigDecimal pValue){
+		return new BigDecimal(pValue.stripTrailingZeros().toPlainString(), MathContext.UNLIMITED);
+	}
+
+	/** 
+	 * Converte string para double, considerando a localidade BR(",") para o sinal decimal.<br/>  
+	 * @param pValue
+	 * @return
+	 */
+	private static Number pvStringToNumberFormat(String pValue){
+		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(new Locale("pt","BR"));
+//		NumberFormat xNF = DecimalFormat.geti
+		xNF.setParseBigDecimal(true);
+		xNF.setMaximumFractionDigits(30);
+		xNF.setRoundingMode(RoundingMode.HALF_UP);
+		xNF.setDecimalSeparatorAlwaysShown(false);
 		try {
 			if (pValue!=null){
-				return xNF.parse(pValue).doubleValue();
+				return xNF.parse(pValue);
 			}else{
 				return null;
 			}

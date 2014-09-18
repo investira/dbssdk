@@ -266,8 +266,11 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	}
 	
 	/**
-	 * Indica se efetuará o insert ou update utilizando todos os valores das colunas da tabela ou somente os que foram alterados pelo usuário via setValue.<br/>
-	 * Isto permite que se aproveite o registro corrente como fonte de dados para a inclusão ou alteração de um outro registro, sem precisar preencher todas as colunas.	 * @return
+	 * Indica se efetuará o insert ou update utilizando todos os valores das colunas da tabela ou
+	 * somente os que foram alterados pelo usuário via setValue.<br/>
+	 * Isto permite que se aproveite o registro corrente como fonte de dados 
+	 * para a inclusão ou alteração de um outro registro, sem precisar preencher todas as colunas.	 
+	 * @return 
 	 */
 	public boolean getExecuteOnlyChangedValues() {
 		return wExecuteOnlyChangedValues;
@@ -275,8 +278,10 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 
 	
 	/**
-	 * Indica se efetuará o insert ou update utilizando todos os valores das colunas da tabela ou somente os que foram alterados pelo usuário via setValue.<br/>
-	 * Isto permite que se aproveite o registro corrente como fonte de dados para a inclusão ou alteração de um outro registro, sem precisar preencher todas as colunas.
+	 * Indica se efetuará o insert ou update utilizando todos os valores das colunas da tabela ou
+	 * somente os que foram alterados pelo usuário via setValue.<br/>
+	 * Isto permite que se aproveite o registro corrente como fonte de dados 
+	 * para a inclusão ou alteração de um outro registro, sem precisar preencher todas as colunas.	 
 	 * @param pExecuteOnlyChangedValues
 	 */
 	public void setExecuteOnlyChangedValues(boolean pExecuteOnlyChangedValues) {

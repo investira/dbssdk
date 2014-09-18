@@ -22,7 +22,7 @@ public class TstEvent implements Serializable, TstIDBSEventListener {
 		String xS[] = pMessageText.split("\\s+"); 
 		String xMessageText = "";
 		Double xLarguraMax = (double) pMessageText.length();
-		xLarguraMax = DBSNumber.exp(xLarguraMax, 0.70);
+		xLarguraMax = DBSNumber.exp(xLarguraMax, 0.70).doubleValue();
 		xLarguraMax = DBSNumber.round(xLarguraMax, 0);
 		int xI = 0;
 		for (String xPalavra :xS){

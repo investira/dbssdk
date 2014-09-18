@@ -145,7 +145,7 @@ public class DBSApproval {
 			return APPROVAL_STAGE.REGISTERED;
 		}
 		//Calcula próximo estágio
-		Double xOrdinal = DBSNumber.exp(2D,  DBSNumber.toDouble(pCurrentStage.ordinal() - 1));
+		Double xOrdinal = DBSNumber.exp(2D,  DBSNumber.toDouble(pCurrentStage.ordinal() - 1)).doubleValue();
 		APPROVAL_STAGE xNext = APPROVAL_STAGE.get(xOrdinal);
 		if (xNext == null){
 			return APPROVAL_STAGE.APPROVED;
@@ -163,7 +163,7 @@ public class DBSApproval {
 		if (pCurrentStage == null){
 			return APPROVAL_STAGE.REGISTERED;
 		}
-		Double xOrdinal = DBSNumber.exp(2D,  DBSNumber.toDouble(pCurrentStage.ordinal() + 1));
+		Double xOrdinal = DBSNumber.exp(2D,  DBSNumber.toDouble(pCurrentStage.ordinal() + 1)).doubleValue();
 		APPROVAL_STAGE xNext = APPROVAL_STAGE.get(xOrdinal);
 		if (xNext == null){
 			return APPROVAL_STAGE.REGISTERED;

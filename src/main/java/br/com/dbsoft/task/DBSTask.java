@@ -855,7 +855,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					wPercentageCompleted = 0.001; //Envia valor mínimo somente para indicar que foi dado inicio ao processamento
 				}else{
 					//Calcula percentual com relação a etapa principal
-					double xP = DBSNumber.divide(xCurrentStep, (double) wSteps);
+					double xP = DBSNumber.divide(xCurrentStep, wSteps).doubleValue();
 					//Calcula percentual com relação a subetapa(proporcional a quantidade de etapas) e adiciona a etapa principal
 					xP += ((1 / (double) wSteps) * xCurrentSubStep / wSubSteps);
 					wPercentageCompleted =  xP * 100;

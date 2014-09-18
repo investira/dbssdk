@@ -501,12 +501,12 @@ public class TstDAOTxt {
 				String 		xCodigo1 = wDAOTxt.getValue("NOMIND");
 				String		xSeuId = xCodigo1;
 				Integer		xQuantidade = wDAOTxt.getValue("QTDIND");
-				Double		xAbertura = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCABE")), 100.0);
-				Double		xMinima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMIN")), 100.0);
-				Double		xMaxima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMAX")), 100.0);
-				Double		xMedia = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMED")), 100.0);
-				Double		xFechamento = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCFEC")), 100.0);
-				Double		xVolume = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("VOLIND")), 100.0);
+				Double		xAbertura = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCABE")), 100.0).doubleValue();
+				Double		xMinima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMIN")), 100.0).doubleValue();
+				Double		xMaxima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMAX")), 100.0).doubleValue();
+				Double		xMedia = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCMED")), 100.0).doubleValue();
+				Double		xFechamento = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("IDCFEC")), 100.0).doubleValue();
+				Double		xVolume = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("VOLIND")), 100.0).doubleValue();
 				Integer		xNegocios = DBSNumber.toInteger(wDAOTxt.getValue("NNGIND"));
 				
 				System.out.println("Tipo: " + wDAOTxt.getValue("TIPO"));
@@ -530,13 +530,13 @@ public class TstDAOTxt {
 	            String		xCodigo1 = wDAOTxt.getValue("CODNEG");
 	            String		xCodigo2 = DBSString.getSubString(DBSString.toString(wDAOTxt.getValue("CODNEG")), 4, 8);
             	Date		xVencimento = DBSDate.toDateYYYYMMDD(DBSString.toString(wDAOTxt.getValue("DATVEN")));
-            	Double		xPu = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREEXE")), 100.0);
-            	Double		xAbertura = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREABE")), 100.0);
-            	Double		xMedia = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREMED")), 100.0);
-            	Double		xFechamento = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREULT")), 100.0);
-            	Double		xMaxima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREMAX")), 100.0);
-            	Double		xMinima = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PREMIN")), 100.0);
-            	Double		xVolume = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("VOLTOT")), 100.0);
+            	Double		xPu = DBSNumber.divide(wDAOTxt.getValue("PREEXE"), 100.0).doubleValue();
+            	Double		xAbertura = DBSNumber.divide(wDAOTxt.getValue("PREABE"), 100.0).doubleValue();
+            	Double		xMedia = DBSNumber.divide(wDAOTxt.getValue("PREMED"), 100.0).doubleValue();
+            	Double		xFechamento = DBSNumber.divide(wDAOTxt.getValue("PREULT"), 100.0).doubleValue();
+            	Double		xMaxima = DBSNumber.divide(wDAOTxt.getValue("PREMAX"), 100.0).doubleValue();
+            	Double		xMinima = DBSNumber.divide(wDAOTxt.getValue("PREMIN"), 100.0).doubleValue();
+            	Double		xVolume = DBSNumber.divide(wDAOTxt.getValue("VOLTOT"), 100.0).doubleValue();
             	Integer		xNegocios = DBSNumber.toInteger(wDAOTxt.getValue("TOTNEG"));
             	Integer		xQuantidade = DBSNumber.toInteger(wDAOTxt.getValue("QUATOT"));
 				
@@ -793,9 +793,9 @@ public class TstDAOTxt {
 			} else if (xTipo.equals(1)) {
 				Date xVencimento = DBSDate.toDateYYYYMMDD(DBSString.toString(wDAOTxt.getValue("VENCIMENTO")));
 				Boolean xNegociacao = DBSBoolean.toBoolean(DBSString.toString(wDAOTxt.getValue("NEGOCIACAO")));
-				Double xResgate = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("RESGATE")), 100000000.0);
-				Double xPuLastro = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("PULASTRO")), 100000000.0);
-				Double xTaxaJuros = DBSNumber.divide(DBSNumber.toDouble(wDAOTxt.getValue("TAXAJUROS")), 100.0);
+				Double xResgate = DBSNumber.divide(wDAOTxt.getValue("RESGATE"), 100000000.0).doubleValue();
+				Double xPuLastro = DBSNumber.divide(wDAOTxt.getValue("PULASTRO"), 100000000.0).doubleValue();
+				Double xTaxaJuros = DBSNumber.divide(wDAOTxt.getValue("TAXAJUROS"), 100.0).doubleValue();
 				
 				System.out.println("Tipo: " + wDAOTxt.getValue("TIPO"));
 				System.out.println("Código: " + wDAOTxt.getValue("CODIGO"));

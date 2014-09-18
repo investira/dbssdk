@@ -1345,6 +1345,14 @@ public class DBSIO{
 			xSQL += xSQLColumns;
 			xOk = !(xSQLColumns.equals(""));
 		}
+		/* Se no update do MERGE não houver nenhum campo para ser alterado,
+		 * retorna comando de SELECT para verificar se o registro realmente existe,
+		 * evitando que seja tentado efetuar um INSERT desnecessário.*/
+		if (pCommand ==COMMAND.UPDATE 
+		 && pDAO.isMerging()
+		 && !xOk){
+			return getDAOSQLCommand(pDAO, COMMAND.SELECT); 
+		}
 		
 		//FROM
 		//SELECT E LOCK
@@ -1399,8 +1407,12 @@ public class DBSIO{
 		Statement xST = null;
 		try {
 			xST = pConnection.createStatement(); 
-			xST.execute(pSQL);
+			xST.execute(pSQL); 
 			xCount = xST.getUpdateCount();
+			//Se foi um Select, recupera a quantidade de registros lidos
+			if (xCount==-1){
+				xCount = DBSIO.getResultSetRowsCount(xST.getResultSet());
+			}
 			xST.close(); //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
 			return xCount;
@@ -1571,7 +1583,12 @@ public class DBSIO{
 						xI = xDAO.executeInsert(pDataModel);
 					}else if(pDAOCommand == COMMAND.UPDATE){
 						//Seta os valores originais para posteriormente poder comparar quais valores foram alterados
-						xDAO.setDataModelValueOriginal(pDataModelValueOriginal);
+						if (pDataModelValueOriginal==null){
+							//Como não existe valores anteriores para comparar, forçar para considerar todos os campos, independentemente se forão ou não informados
+							xDAO.setExecuteOnlyChangedValues(false);
+						}else{
+							xDAO.setDataModelValueOriginal(pDataModelValueOriginal);
+						}
 						xI = xDAO.executeUpdate(pDataModel);
 						//Se houve alteração
 						if (xI > 0){
@@ -1696,13 +1713,19 @@ public class DBSIO{
 	public static <T> int executeDataModelMerge(Connection pCn, T pDataModel, T pDataModelValueOriginal) throws DBSIOException{
 		int xN=-1;
 		if (pCn!=null){
-			Savepoint xS  = DBSIO.beginTrans(pCn, "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
-			xN = executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE);//Atualiza registro, se existir
-			if (xN==0){ //Se não foi atualiza registro algum...
-				xN = executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT); //Insere novo registro
-			}
-			if (xN<=0){ //Se nehum registro foi alterado é pq houve erro
-				DBSIO.endTrans(pCn,false,xS); //ignora Update ou Insert em caso de erro. Rollback até EXECUTEMERGE
+			try{
+				Savepoint xS  = DBSIO.beginTrans(pCn, "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
+				xN = executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE);//Atualiza registro, se existir
+				if (xN==0){ //Se não foi atualiza registro algum...
+					xN = executeDataModelCommand(pCn, pDataModel, COMMAND.INSERT); //Insere novo registro
+				}
+				if (xN<=0){ //Se nehum registro foi alterado é pq houve erro
+					DBSIO.endTrans(pCn,false,xS); //ignora Update ou Insert em caso de erro. Rollback até EXECUTEMERGE
+				}
+			}catch(DBSIOException e){
+				throw e;
+			}finally{
+				
 			}
 		}
 		return xN;
@@ -2834,7 +2857,7 @@ public class DBSIO{
 	}
 
 	/**
-	 * Construi string com os valores das colunas para o INSERT, UPDATE ou SELECT
+	 * Construi string com os valores das colunas para o INSERT, UPDATE ou SELECT.<br/>
 	 * @param pDAO
 	 * @param pCommand
 	 * @return

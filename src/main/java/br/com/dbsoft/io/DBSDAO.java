@@ -59,6 +59,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	private boolean				wAutoIncrementPK = true;			//Efetua o insert e recuperar o valores do campos com autoincrement;
 	private DBSResultDataModel	wResultDataModel;
 	private int					wCurrentRowIndex = -1;
+	private boolean				wIsMerging = false;
 
 	private DataModelListener 	wDataModelListener = new DataModelListener(){
 		@Override
@@ -338,6 +339,14 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return false;
 	}
 	
+	public boolean isMerging() {
+		return wIsMerging;
+	}
+
+	public void setMerging(boolean pMerging) {
+		wIsMerging = pMerging;
+	}
+
 	/**
 	 * Nome da coluna na tabela ou alias(as) atribuido no select.
 	 * @param pColumnIndex númeroda coluna que se deseja saber o nome
@@ -1005,7 +1014,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (wCommandColumns.size() == 0){
 			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
 			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeUpdate: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
 			return 0;
 		}
 		int xCount = 0;
@@ -1048,13 +1056,20 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (this.wConnection!=null){
 			pvCopyDataModelFieldsValueToCommandValue(wDataModel);
 			if (pvFireEventBeforeMerge()){
-				//Savepoint xS  = DBSIO.beginTrans(this.getConnection(), "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
-				xN = executeUpdate(pAdditionalSQLWhereCondition);//Atualiza registro, se existir
-				if (xN==0){ //Se não foi atualiza registro algum...
-					xN = executeInsert(); //Insere novo registro
-				}
-				if (xN<=0){ //Se nehum registro foi alterado é pq houve erro
-					//DBSIO.endTrans(this.getConnection(),false,xS); //ignora Update ou Insert em caso de erro. Rollback até EXECUTEMERGE
+					//Savepoint xS  = DBSIO.beginTrans(this.getConnection(), "EXECUTEMERGE"); //Cria savepoint interno para retornar em caso de erro já que o update pode funcionar mais o insert não
+				try{
+					setMerging(true);
+					xN = executeUpdate(pAdditionalSQLWhereCondition);//Atualiza registro, se existir
+					if (xN==0){ //Se não foi atualiza registro algum...
+						xN = executeInsert(); //Insere novo registro
+					}
+					if (xN<=0){ //Se nehum registro foi alterado é pq houve erro
+						//DBSIO.endTrans(this.getConnection(),false,xS); //ignora Update ou Insert em caso de erro. Rollback até EXECUTEMERGE
+					}
+				}catch(DBSIOException e){
+					throw e;
+				}finally{
+					setMerging(false);
 				}
 				pvFireEventAfterMerge(true);
 				return xN;

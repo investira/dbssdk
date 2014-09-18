@@ -112,9 +112,9 @@ public  class DBSObject {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T toClass(T pValue, Class<?> pClass){
+	public static <T, V> T toClass(V pValue, Class<?> pClass){
 		if (pClass==null){
-			return pValue;
+			return (T) pValue;
 		}
 		if (pClass.isAssignableFrom(Boolean.class)){
 			return (T) DBSBoolean.toBoolean(pValue);
@@ -123,21 +123,23 @@ public  class DBSObject {
 			return null;
 		}
 		if (pClass.isAssignableFrom(Integer.class)){
-			pValue = (T) DBSNumber.toInteger(pValue);
+			return (T) DBSNumber.toInteger(pValue);
 		}else if (pClass.isAssignableFrom(BigDecimal.class)){
-			pValue = (T) DBSNumber.toBigDecimal(pValue);
+			return (T) DBSNumber.toBigDecimal(pValue);
 		}else if (pClass.isAssignableFrom(Double.class)){
-			pValue = (T) DBSNumber.toDouble(pValue);
+			return (T) DBSNumber.toDouble(pValue);
+		}else if (pClass.isAssignableFrom(Long.class)){
+			return (T) DBSNumber.toLong(pValue);
 		}else if (pClass.isAssignableFrom(String.class)){
-			pValue = (T) pValue.toString();
+			return (T) pValue.toString();
 		}else if (pClass.isAssignableFrom(Date.class)){
-			pValue = (T) DBSDate.toDate(pValue);
+			return (T) DBSDate.toDate(pValue);
 		}else if (pClass.isAssignableFrom(Timestamp.class)){
-			pValue = (T) DBSDate.toTimestamp(pValue);
+			return (T) DBSDate.toTimestamp(pValue);
 		}else if (pClass.isAssignableFrom(Time.class)){
-			pValue = (T) DBSDate.toTime(pValue);
+			return (T) DBSDate.toTime(pValue);
 		}
-		return pValue;
+		return (T) pValue;
 	}
 
 	/**
