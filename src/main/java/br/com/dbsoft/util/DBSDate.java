@@ -994,8 +994,8 @@ public class DBSDate{
 				xDao.moveBeforeFirstRow();
 				while (xDao.moveNextRow()) {
 					if (DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SATURDAY
-							&& DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SUNDAY) {
-			            xDias = xDias + 1;
+					 && DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SUNDAY) {
+			            xDias += 1;
 					}
 				}
 				xDao.close();
