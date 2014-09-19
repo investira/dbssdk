@@ -21,10 +21,8 @@ public class TrocaNomes {
 //	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
-	String user="root";
-	String password="dbs0ft";
-//	String user="dbsoft";
-//	String password="dbs0ft";	
+	String user="usuario";
+	String password="senha";
 	Connection wConexao;
 
 	@Before
@@ -40,7 +38,7 @@ public class TrocaNomes {
 		wConexao.close();
 	}
 	
-	@Test
+//	@Test
 	public void trocaAtivoTipo(){
 		try {
 			@SuppressWarnings("rawtypes")

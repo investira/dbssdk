@@ -99,7 +99,7 @@ public class DBSIO{
 	//ABRINDO conexão - DIRETA		
 	//	try {
 	//		Class.forName("com.mysql.jdbc.Driver").newInstance(); 
-	//		wsCn = DBSIO.getConnection("jdbc:mysql://localhost:3306/dbsweb", "root","dbs0ft");
+	//		wsCn = DBSIO.getConnection("jdbc:mysql://localhost:3306/dbsweb", "usuario","senha");
 	//	} catch (Exception e) {
 	//		throw new RuntimeException (e);
 	//	}		

@@ -63,7 +63,7 @@ public class TstFile {
 	@Ignore
 	public void testaUpload() {
 		assertTrue(DBSFile.upload(
-				"ftp://dbsoft1:dbs0ft@www.dbsoft.com.br:21/tmp/BDIN;type=i",
+				"ftp://usuario:senha@www.dbsoft.com.br:21/tmp/BDIN;type=i",
 				"/home/jose_addario/TesteCopia/BDIN"));
 	}
 

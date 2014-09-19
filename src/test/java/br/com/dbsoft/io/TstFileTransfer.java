@@ -23,7 +23,7 @@ public class TstFileTransfer {
 		Path xPath;
 		//xPath = Paths.get("/Users/ricardovillar/downloads/cvm");
 		//xPath = Paths.get("/Users/ricardovillar/downloads/cvm/empresas.txt");
-		xPath = Paths.get("ftp://dbsoft1:dbs0ft@www.dbsoft.com.br:21/tmp");
+		xPath = Paths.get("ftp://usuario:senha@www.dbsoft.com.br:21/tmp");
 		
 		System.out.println("toAbsolutePath:\t" +  xPath.toAbsolutePath().toString());
 		System.out.println("getNameCount:\t" +  xPath.getNameCount());
@@ -37,7 +37,7 @@ public class TstFileTransfer {
 		System.out.println("toFile().length\t" +  xPath.toFile().length());
 		System.out.println("toUri()\t" +  xPath.toUri().toString());
 		
-//ftp://dbsoft1:dbs0ft@www.dbsoft.com.br:21/tmp;type=i
+		//ftp://usuario:senha@www.dbsoft.com.br:21/tmp;type=i
 		
 	}
 	

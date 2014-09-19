@@ -24,19 +24,10 @@ public class TstDate extends TestCase {
 
 	//IFEED
 	String wUrl="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-	String wUser="root";
-	String wPassword="dbs0ft";
-	
-	//DBSFND MYSQL
-//	String wUrl="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-//	String wUser="root";
-//	String wPassword="dbs0ft";
 
-	//DBSFND ORACLE
-//	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
-//	String wUser="dbsoft";
-//	String wPassword="dbs0ft";
-	
+	String wUser="usuario";
+	String wPassword="senha";
+
 	Connection wConexao;
 	
 	@Override
