@@ -22,14 +22,26 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
  */
 public class TstDate extends TestCase {
 
-	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
-	String wUser="dbsoft";
+	//IFEED
+	String wUrl="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+	String wUser="root";
 	String wPassword="dbs0ft";
+	
+	//DBSFND MYSQL
+//	String wUrl="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String wUser="root";
+//	String wPassword="dbs0ft";
+
+	//DBSFND ORACLE
+//	String wUrl="jdbc:oracle:thin:@192.168.0.20:1521:XE";
+//	String wUser="dbsoft";
+//	String wPassword="dbs0ft";
+	
 	Connection wConexao;
 	
 	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws ClassNotFoundException {
 //		Class.forName(DBSSDK.JDBC_DRIVER.MYSQL); 
 //		wwConexao = DriverManager.getConnection(url, user, password);
 //		wwConexao.setAutoCommit(false);
@@ -51,9 +63,9 @@ public class TstDate extends TestCase {
 		wConexao.close();
 	}
 	
+	
 	@Test
 	public void test_isDate() {
-
 		assertFalse("TESTE ESPERAVA FALSE", DBSDate.isDate(""));
 		assertFalse("TESTE ESPERAVA FALSE", DBSDate.isDate("//"));
 		assertFalse("TESTE ESPERAVA FALSE", DBSDate.isDate("000000"));

@@ -688,7 +688,9 @@ public class DBSDate{
 		int xDias;
 		int xSinal=1;
 		
-		if (DBSObject.isEmpty(pDataInicio) || DBSObject.isEmpty(pDataFim) || pDataInicio.equals(pDataFim)) {
+		if (DBSObject.isEmpty(pDataInicio) 
+		 || DBSObject.isEmpty(pDataFim) 
+		 || pDataInicio.equals(pDataFim)) {
 			return 0;
 		} else {
 			if (pUtil){
@@ -983,7 +985,7 @@ public class DBSDate{
 		if (DBSObject.isIdValid(pCidade)) {
 			xFiltroCidade = " OR CIDADE_ID = " + pCidade;
 		}
-		xSql = xSql + " AND (CIDADE_ID = -1 or CIDADE_ID IS NULL" + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
+		xSql = xSql + " AND (CIDADE_ID = -1 or " + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
 		//ALBERTO
 		//Trecho para retirar os feriados que caem no sábado e domingo
 		if (!DBSObject.isEmpty(pApplicationColumnName)) {
@@ -993,6 +995,7 @@ public class DBSDate{
 			if (xDao.open(xSql)) {
 				xDao.moveBeforeFirstRow();
 				while (xDao.moveNextRow()) {
+					//Se feriado for final de semana, ignora
 					if (DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SATURDAY
 					 && DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SUNDAY) {
 			            xDias += 1;
