@@ -561,6 +561,16 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return null;
 	}
 	
+	/**
+	 * Retorna o valor da coluna convertida para a classe do tipo informado
+	 * @param pColumnName Nome da coluna
+	 * @param pValueClass Classe para a qual será convertido o valor recebido
+	 * @return
+	 */	@SuppressWarnings("unchecked")
+	public final <A> A getValue(String pColumnName, Class<?> pValueClass){
+		return (A) DBSObject.toClass(getValue(pColumnName), pValueClass);
+	}
+
 	@Override
 	public final <A> void setValue(String pColumnName, A pValue){
 		this.setValue(pColumnName, pValue, false);
@@ -588,16 +598,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (!xAchou){
 			wLogger.error("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
-	}
-	
-	/**
-	 * Retorna o valor da coluna convertida para a classe do tipo informado
-	 * @param pColumnName Nome da coluna
-	 * @param pValueClass Classe para a qual será convertido o valor recebido
-	 * @return
-	 */	@SuppressWarnings("unchecked")
-	public final <A> A getValue(String pColumnName, Class<?> pValueClass){
-		return (A) DBSObject.toClass(getValue(pColumnName), pValueClass);
 	}
 	
 	/**
