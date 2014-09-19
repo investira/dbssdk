@@ -1,6 +1,8 @@
 package br.com.dbsoft.tmp;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 
 import org.junit.After;
@@ -10,25 +12,27 @@ import org.junit.Test;
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSDAO;
+import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSIO;
+import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSString;
 
 public class TrocaNomes {
 //	String url = "jdbc:mysql://ifeed.com.br:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url = "jdbc:mysql://ifeed.com.br:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-//	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
-	String user="usuario";
-	String password="senha";
+	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
+	String user="dbsoft";
+	String password="dbs0ft";
 	Connection wConexao;
 
 	@Before
 	public void setup() throws Exception {
 		Class.forName(DBSSDK.JDBC_DRIVER.MYSQL);
-		//Class.forName(DBSSDK.JDBC_DRIVER.ORACLE);
+		Class.forName(DBSSDK.JDBC_DRIVER.ORACLE);
 		wConexao = DriverManager.getConnection(url, user, password);
 		wConexao.setAutoCommit(false);
 	}
@@ -38,25 +42,55 @@ public class TrocaNomes {
 		wConexao.close();
 	}
 	
-//	@Test
+	@Test
 	public void trocaAtivoTipo(){
 		try {
 			@SuppressWarnings("rawtypes")
-			DBSDAO xDAO = new DBSDAO(wConexao, "COR_ATIVIDADE_CLASSE");
-			xDAO.open("Select * from COR_ATIVIDADE_CLASSE");
-			xDAO.moveBeforeFirstRow();
-			while(xDAO.moveNextRow()){
-//				System.out.println(xDAO.getValue("ATIVO_TIPO") + ":" + DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVO_TIPO"))));
-				xDAO.setValue("ATIVIDADE_CLASSE", DBSString.corretorOrtografico(DBSString.toProper((String) xDAO.getValue("ATIVIDADE_CLASSE"))));
-				xDAO.executeUpdate();
-
+			DBSDAO xDAO = new DBSDAO(wConexao, "GR_COTACAO");
+			Double 		xDouble = DBSNumber.toDouble(200D);
+			BigDecimal 	xBigDecimal = DBSNumber.toBigDecimal("1000");
+			Integer 	xInteger = DBSNumber.toInteger("1");
+			Date 		xData = DBSDate.toDate(19,9,2014);
+			xDAO.open("Select * from GR_COTACAO WHERE DATA = " + DBSIO.toSQLDate(wConexao, xData));
+			if (xDAO.getRowsCount()==1){
+				xDAO.moveFirstRow();
+//				xDouble = xDAO.getValue("ABERTURA");
+//				xDouble = xDAO.<Double>getValueX("ABERTURA");
+				System.out.println(xDouble);
 			}
+//				xDAO.moveBeforeFirstRow();
+//				while(xDAO.moveNextRow()){
+//					System.out.println(xDAO.getValue("DATA"));
+//				}
+//			}else{
+				xDAO.setValue("DATA", xData);
+				xDAO.setValue("POSID_ID", 2);
+
+				xDAO.setValue("ABERTURA", xInteger);
+				xDAO.setValue("media", xDouble);
+				xDAO.setValue("FECHAMENTO", xBigDecimal);
+				xDAO.setValue("MINIMA", null);
+				xDAO.setValue("MAXIMA", "6");
+				xDAO.setValue("AJUSTE", 7);
+				xDAO.setValue("DELTA", 8D);
+				xDAO.setValue("VOLUME", "123.456");
+				xDAO.setValue("NEGOCIOS", "78,9");
+				xDAO.setValue("REPETIDA", true);
+//				xDAO.executeInsert();
+				xDAO.executeMerge();
+				
+//			}
 			DBSIO.endTrans(wConexao, true);
 			xDAO.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}	
+	
+	private <A> A getValor(){
+		Integer xD = 23;
+		return (A) xD;
+	}
 	
 //	@Test
 	public void trocaProdutoTipo(){
@@ -146,7 +180,7 @@ public class TrocaNomes {
 		System.out.println("FIM====================================");
 	}	
 
-	@Test
+//	@Test
 	public void troca_nomes_centrus_usuario() throws DBSIOException {
 		DBSDAO<Object> xDAO = new DBSDAO<Object>(wConexao, "AC_USUARIO");
 		System.out.println(Runtime.getRuntime().maxMemory() + "====================================") ;   

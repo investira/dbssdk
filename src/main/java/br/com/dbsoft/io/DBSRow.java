@@ -165,7 +165,7 @@ public class DBSRow implements Serializable {
 			wLogger.error("ERRO: Coluna '" + pColumnName + "' inexistente");
 			return null;
 		}
-		return xC.getValueOriginal();
+		return xC.<T>getValueOriginal();
 	}
 	
 	/**
@@ -173,21 +173,20 @@ public class DBSRow implements Serializable {
 	 * @param pColumnName Nome da Coluna. Caso coluna não exista, retorna null.
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T> T getValue(String pColumnName){
 		DBSColumn xC = this.getColumn(pColumnName);
 		if (xC == null){
 			wLogger.error("ERRO: Coluna '" + pColumnName + "' inexistente");
 			return null;
 		}
-		return (T) xC.getValue();
+		return xC.<T>getValue();
 	}
 	
-	public final <T> void setValue(String pColumnName, T pValue){
+	public final void setValue(String pColumnName, Object pValue){
 		this.setValue(pColumnName, pValue, false);
 	}
 
-	public final <T> void setValue(String pColumnName, T pValue, boolean pOriginalValue) {
+	public final void setValue(String pColumnName, Object pValue, boolean pOriginalValue) {
 		this.getColumn(pColumnName).setValue(pValue, pOriginalValue);
 	}
 	

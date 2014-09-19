@@ -231,12 +231,14 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		return wListLinesWithError;
 	}
 	
-	public <A> void setValue(int pColumnIndex, A pValue){
+	//-------------------------------------------------------------------------------
+	
+	public void setValue(int pColumnIndex, Object pValue){
 		 this.setValue(this.getColumnName(pColumnIndex), pValue);
 	}
 
 	@Override
-	public <A> void setValue(String pColumnName, A pValue, boolean pOriginalValue) {
+	public void setValue(String pColumnName, Object pValue, boolean pOriginalValue) {
 		wListRow.get(wCurrentRow).setValue(pColumnName, pValue);
 		
 		this.pvSetLocalDataModelValue(pColumnName, pValue);
@@ -249,7 +251,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 * @return
 	 */
 	public <A> A getValue(int pColumnIndex){
-		return this.getValue(this.getColumnName(pColumnIndex));
+		return this.<A>getValue(this.getColumnName(pColumnIndex));
 	}
 
 	/**
@@ -266,13 +268,13 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 			if (xC==null){
 				return null;
 			}else{
-				return xC.getValue();
+				return xC.<A>getValue();
 			}
 		}
 	}
 	
 	@Override
-	public <A> void setValue(String pColumnName, A pValue){
+	public void setValue(String pColumnName, Object pValue){
 		 wListRow.get(wCurrentRow).setValue(pColumnName, pValue);
 	}
 

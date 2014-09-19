@@ -312,88 +312,6 @@ public class DBSIO{
 		throw new DBSIOException(pException);
 	}
 	/**
-	 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
-	 * @param pCN conexão a ser utilizada para executa a Query
-	 * @param pQuerySQL Query a ser executada
-	 * @return ResultSet com os registros
-	 * @throws DBSIOException 
-	 */
-	public static ResultSet openResultSet(Connection pConnection, String pQuerySQL) throws DBSIOException{
-		ResultSet xResultSet = null;
-		pQuerySQL = pQuerySQL.trim();
-		Statement xST = null;
-		try{
-//			PreparedStatement xPS = pConnection.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-//			xPS.execute();
-//			xResultSet = xPS.getResultSet();
-			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); //ResultSet.CONCUR_UPDATABLE
-			xResultSet = xST.executeQuery(pQuerySQL);
-		}catch(SQLException e){
-			throwIOException(pQuerySQL, e, pConnection);
-			try {
-				xST.close();
-			} catch (SQLException e1) {
-				e1.addSuppressed(e);
-				wLogger.error("openResultSet2", e1);
-			}
-		}
-		return xResultSet;
-	}
-	
-	/**
-	 * Fecha resultset
-	 * @param pResultSet
-	 */
-	public static void closeResultSet(ResultSet pResultSet){
-		if (pResultSet != null){
-			Statement xST = null;
-			try {
-				xST = pResultSet.getStatement();
-				if (xST != null){
-					xST.close();
-				}
-			} catch (SQLException e) {
-				wLogger.error("closeResultSet:statement", e);
-			}
-
-			try {
-//				if (!pResultSet.isClosed()){
-					pResultSet.close();
-//				}
-			} catch (SQLException e) {
-				wLogger.error("closeResultSet:resultset", e);
-			}
-			xST = null;
-			pResultSet = null;
-		}
-	}
-
-	/**
-	 * Retorna os registros conforme a QuerySQL informada.<br/>
-	 * As colunas poderão ser acessadas como atributos de uma classe diretamente. 
-	 * Os nomes dos atributos são os próprios nomes definidos as colunas da QuerySQL.
-	 * Exemplo de código xhtlm <b>#{table.campo}</b><br/>
-	 * Não existe close para o ResultDataModel.
-	 * @param pConnection
-	 * @param pQuerySQL
-	 * @return
-	 * @throws DBSIOException
-	 */
-	@SuppressWarnings("unchecked")
-	public static DBSResultDataModel openResultDataModel(Connection pConnection, String pQuerySQL) throws DBSIOException{
-		ResultSet 			xResultSet;
-		Result				xResult;
-		DBSResultDataModel	xResultDataModel;
-		xResultSet = DBSIO.openResultSet(pConnection, pQuerySQL);
-		xResult = ResultSupport.toResult(xResultSet);
-		//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
-		xResultDataModel = new DBSResultDataModel(xResult.getRows());
-		xResult = null;
-		DBSIO.closeResultSet(xResultSet);
-		return xResultDataModel;
-	}
-	
-	/**
 	 * Retorna Resulset com o MetaData da Tabela
 	 * Nomes válidos das colunas 
 	 * TABLE_SCHEM
@@ -1382,6 +1300,85 @@ public class DBSIO{
 	}
 
 	/**
+	 * Retorna os registros conforme a QuerySQL informada.<br/>
+	 * As colunas poderão ser acessadas como atributos de uma classe diretamente. 
+	 * Os nomes dos atributos são os próprios nomes definidos as colunas da QuerySQL.
+	 * Exemplo de código xhtlm <b>#{table.campo}</b><br/>
+	 * Não existe close para o ResultDataModel.
+	 * @param pConnection
+	 * @param pQuerySQL
+	 * @return
+	 * @throws DBSIOException
+	 */
+	@SuppressWarnings("unchecked")
+	public static DBSResultDataModel openResultDataModel(Connection pConnection, String pQuerySQL) throws DBSIOException{
+		ResultSet 			xResultSet;
+		Result				xResult;
+		DBSResultDataModel	xResultDataModel;
+		xResultSet = openResultSet(pConnection, pQuerySQL);
+		xResult = ResultSupport.toResult(xResultSet);
+		//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
+		xResultDataModel = new DBSResultDataModel(xResult.getRows());
+		xResult = null;
+		closeResultSet(xResultSet);
+		return xResultDataModel;
+	}
+
+	/**
+		 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
+		 * @param pCN conexão a ser utilizada para executa a Query
+		 * @param pQuerySQL Query a ser executada
+		 * @return ResultSet com os registros
+		 * @throws DBSIOException 
+		 */
+		public static ResultSet openResultSet(Connection pConnection, String pQuerySQL) throws DBSIOException{
+			ResultSet xResultSet = null;
+			pQuerySQL = pQuerySQL.trim();
+			Statement xST = null;
+			try{
+	//			PreparedStatement xPS = pConnection.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+	//			xPS.execute();
+	//			xResultSet = xPS.getResultSet();
+				xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				xResultSet = xST.executeQuery(pQuerySQL);
+			}catch(SQLException e){
+				throwIOException(pQuerySQL, e, pConnection);
+				try {
+					xST.close();
+				} catch (SQLException e1) {
+					e1.addSuppressed(e);
+					wLogger.error("openResultSet", e1);
+				}
+			}
+			return xResultSet;
+		}
+		
+		/**
+		 * Fecha resultset
+		 * @param pResultSet
+		 */
+		public static void closeResultSet(ResultSet pResultSet){
+			if (pResultSet != null){
+				Statement xST = null;
+				try {
+					xST = pResultSet.getStatement();
+					if (xST != null){
+						xST.close();
+					}
+				} catch (SQLException e) {
+					wLogger.error("closeResultSet:statement", e);
+				}
+	
+				try {
+					pResultSet.close();
+				} catch (SQLException e) {
+					wLogger.error("closeResultSet:resultset", e);
+				}
+				xST = null;
+				pResultSet = null;
+			}
+		}
+	/**
 	 * Executa um comando sql diretamente no banco de dados
 	 * @param pConnection Conexão com o banco de dados
 	 * @param pSQL Comando SQL
@@ -1406,7 +1403,8 @@ public class DBSIO{
 		int xCount=0;
 		Statement xST = null;
 		try {
-			xST = pConnection.createStatement(); 
+			// + ResultSet.HOLD_CURSORS_OVER_COMMIT
+			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
 			xST.execute(pSQL); 
 			xCount = xST.getUpdateCount();
 			//Se foi um Select, recupera a quantidade de registros lidos
@@ -1537,12 +1535,14 @@ public class DBSIO{
 		if (DBSObject.isEmpty(xSQLCommand)){
 			return 0;
 		}else{
+			int xCount = 0;
 			if (pDAOCommand == COMMAND.INSERT  
 			 && pAutoIncrementValueRetrieve){
-				return executeSQLInsertAutoIncremented(pDAO.getConnection(), xSQLCommand, pDAO);
+				xCount = executeSQLInsertAutoIncremented(pDAO.getConnection(), xSQLCommand, pDAO);
 			}else{
-				return executeSQL(pDAO.getConnection(), xSQLCommand);
+				xCount = executeSQL(pDAO.getConnection(), xSQLCommand);
 			}
+			return xCount;
 		}
 	}
 
@@ -1953,7 +1953,12 @@ public class DBSIO{
 			return null;
 		}
 	}
-	
+
+//	@SuppressWarnings("unchecked")
+//	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
+//		return (T) pValue;
+//	}
+//	
 	/**
 	 * Retorna o valor convertido conforme o DataType
 	 * @param pDataType
@@ -1962,9 +1967,10 @@ public class DBSIO{
 	 * @throws DBSIOException 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, T pValue) {
-		if (pValue == null){
-			return pValue;
+	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
+		if (pDataType == null
+		 || pDataType == null){
+			return null;
 		}
 		//Como alguns Bancos de dados o boolean é definido como numérico
 		//converte o valor para 0(false) ou -1(true)
@@ -1972,7 +1978,7 @@ public class DBSIO{
 			if (pDataType == DATATYPE.INT || 
 				pDataType == DATATYPE.DECIMAL || 
 				pDataType == DATATYPE.DOUBLE){
-				pValue = (T) DBSIO.toSQLBoolean(pValue);
+				pValue = DBSIO.toSQLBoolean(pValue);
 			}
 		}
 		switch (pDataType){
@@ -1981,7 +1987,7 @@ public class DBSIO{
 		case BOOLEAN:
 			return (T) DBSBoolean.toBoolean(pValue);
 		case COMMAND:
-			return pValue;
+			return (T) pValue;
 		case DATE:
 			return (T) DBSDate.toDate(pValue);
 		case DATETIME:
@@ -1993,15 +1999,15 @@ public class DBSIO{
 		case ID:
 			return (T) DBSNumber.toInteger(pValue);
 		case NONE:
-			return pValue;
+			return (T) pValue;
 		case PICTURE:
-			return pValue;
+			return (T) pValue;
 		case STRING:
-			return pValue;
+			return (T) pValue;
 		case TIME:
 			return (T) DBSDate.toTime((String) pValue);
 		default:
-			return pValue;
+			return (T) pValue;
 		}
 	}	
 	/**

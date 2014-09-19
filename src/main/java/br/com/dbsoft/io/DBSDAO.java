@@ -29,6 +29,11 @@ import br.com.dbsoft.util.DBSString;
  * @param <DataModelClass> Classe Model da tabela do banco de dados ou classe com atributos homônimos as colunas com as quais se deseje trabalhar no DAO.<br/>
  * É necessário também passar esta classe no construtor.  
  */
+/**
+ * @author ricardo.villar
+ *
+ * @param <DataModelClass>
+ */
 public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	private static final long serialVersionUID = -3273102169619413848L;
@@ -518,14 +523,20 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		String xColumnName = pvGetColumnName(pColumnName);
 		
 		if (wCommandColumns.containsKey(xColumnName)){
-			return wCommandColumns.getValueOriginal(xColumnName);
+			return wCommandColumns.<A>getValueOriginal(xColumnName);
 		}else if (wQueryColumns.containsKey(xColumnName)){
-			return wQueryColumns.getValueOriginal(xColumnName);
+			return wQueryColumns.<A>getValueOriginal(xColumnName);
 		}
 		wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		return null;
 	}
 	
+	
+//	public static <A> A getValueX(String pColumnName){
+//		Double x = 0D;
+//		return (A) x;
+//	}
+//	
 	/**
 	 * Retorna valor da coluna
 	 * @param pColumnName Nome da coluna
@@ -552,10 +563,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 		//Retorna valor a parti do controle local das colunas de comando
 		if (wCommandColumns.containsKey(xColumnName)){
-			return wCommandColumns.getValue(xColumnName);
+			return wCommandColumns.<A>getValue(xColumnName);
 			//Retorna valor a parti do controle local das colunas de pesquisa
 		}else if (wQueryColumns.containsKey(xColumnName)){
-			return wQueryColumns.getValue(xColumnName);
+			return wQueryColumns.<A>getValue(xColumnName);
 		}
 		wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		return null;
@@ -566,18 +577,19 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @param pColumnName Nome da coluna
 	 * @param pValueClass Classe para a qual será convertido o valor recebido
 	 * @return
-	 */	@SuppressWarnings("unchecked")
-	public final <A> A getValue(String pColumnName, Class<?> pValueClass){
-		return (A) DBSObject.toClass(getValue(pColumnName), pValueClass);
+	 */	
+	public final <A> A getValue(String pColumnName, Class<A> pValueClass){
+		return DBSObject.<A>toClass(getValue(pColumnName), pValueClass);
 	}
 
 	@Override
-	public final <A> void setValue(String pColumnName, A pValue){
-		this.setValue(pColumnName, pValue, false);
+	public final void setValue(String pColumnName, Object pValue){
+		this.setValue(pColumnName, pValue, false); 
 	}
 	
+
 	@Override
-	public final <A> void setValue(String pColumnName, A pValue, boolean pOriginalValue){
+	public final void setValue(String pColumnName, Object pValue, boolean pOriginalValue){
 		if (pColumnName==null){return;}
 		boolean xAchou = false;
 		String xColumnName = pvGetColumnName(pColumnName);
@@ -623,9 +635,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @param pValueClass Classe para a qual será convertido o valor recebido
 	 * @return
 	 */	
-	@SuppressWarnings("unchecked")
-	public final <A> A getListValue(String pColumnName, Class<?> pValueClass){
-		return (A) DBSObject.toClass(getListValue(pColumnName), pValueClass);
+	public final <A> A getListValue(String pColumnName, Class<A> pValueClass){
+		return DBSObject.<A>toClass(getListValue(pColumnName), pValueClass);
 	}
 	
 	/**
@@ -1079,10 +1090,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		return xN;
 	}
 
-	
 
 	/**
-	 * Restaura os valores originais, quando da leitura do registro
+	 * Força que os valores atuais sejam os valores lidos originalmente
 	 */
 	public final void restoreValuesOriginal(){
 		wQueryColumns.restoreValuesOriginal();
@@ -1090,13 +1100,20 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	/**
-	 * Restaura os valores default.
+	 * Força que os valores atuais seja o default
 	 */
 	public final void restoreValuesDefault(){
 		wQueryColumns.restoreValuesDefault();
 		wCommandColumns.restoreValuesDefault();
 	}
 
+	/**
+	 * Força que o valor original seja igual ao atual
+	 */
+	public final void copyValueToValueOriginal(){
+		wQueryColumns.copyValueToValueOriginal();
+		wCommandColumns.copyValueToValueOriginal();
+	}
 	
 	/**
 	 * Seta o registro corrente como tendo os valores iquais aos indice informado e
@@ -1263,7 +1280,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			//Atualiza valores atuais e reseta valor original
 			pvFireEventBeforeRead();
 			if (!wResultDataModel.isRowAvailable()){
-				pvRestoreColumnsValuesDefault(); 
+				restoreValuesDefault(); 
 			}else{
 				for (DBSColumn xColumn: wQueryColumns.getColumns()){
 					this.setValue(xColumn.getColumnName(), pvGetResultDataModelValueConvertedToDataType(xColumn.getColumnName(), xColumn.getDataType()), true);
@@ -1276,18 +1293,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	//*****************************************************************************************************
 	// PRIVATE
 	//*****************************************************************************************************
-	/**
-	 * Reinicializa os valores das colunas da linha corrente; 
-	 */
-	protected void pvRestoreColumnsValuesOriginal(){
-		wQueryColumns.restoreValuesOriginal();
-		wCommandColumns.restoreValuesOriginal();
-	}
 
-	protected void pvRestoreColumnsValuesDefault(){
-		wQueryColumns.restoreValuesDefault();
-		wCommandColumns.restoreValuesDefault();
-	}
 	
 	/**
 	 * Retorna valor do resultset convertido para o tipo informado em <b>pDataType</b>
@@ -1310,7 +1316,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			int xRowIndex = 0;
 			if (xB){
 				if (pDirection == MOVE_DIRECTION.BEFORE_FIRST){
-					pvRestoreColumnsValuesDefault();
+					restoreValuesDefault();
 				}
 				xRowIndex = DBSIO.getIndexAfterMove(getCurrentRowIndex(), getRowsCount(), pDirection);
 				if (DBSIO.getIndexAfterMoveIsOk(getCurrentRowIndex(), xRowIndex, getRowsCount(), pDirection)){

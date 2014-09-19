@@ -106,13 +106,13 @@ public  class DBSObject {
 	
 	
 	/**
-	 * Converte o valor recebido para o tipo de class informado
+	 * Converte o valor recebido para o tipo de class informada.
 	 * @param pValue
 	 * @param pClass
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, V> T toClass(V pValue, Class<?> pClass){
+	public static <T> T toClass(Object pValue, Class<T> pClass){
 		if (pClass==null){
 			return (T) pValue;
 		}

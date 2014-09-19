@@ -208,17 +208,16 @@ public class DBSColumn implements Serializable{
 	 * @return
 	 */
 
-	@SuppressWarnings("unchecked")
 	public final <T> T getValue() {
-		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValue);
+		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValue);
 	}
 
-	public final <T> void setValue(T pValue) {
-		wValue = pValue;
+	public final void setValue(Object pValue) {
+		wValue = DBSIO.getDataTypeConvertedValue(getDataType(), pValue);
 		this.setChanged(true);//Indica que valor foi alterado pelo usuário
 	}
 	
-	public final <T> void setValue(T pValue, boolean pOriginalValue) {
+	public final void setValue(Object pValue, boolean pOriginalValue) {
 		this.setValue(pValue);
 		if (pOriginalValue) {
 			this.setValueOriginal(pValue);
@@ -231,13 +230,12 @@ public class DBSColumn implements Serializable{
 	 * Valor da coluna antes da alteração
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T> T getValueOriginal() {
-		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueOriginal);
+		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValueOriginal);
 	}
 
-	public final <T> void setValueOriginal(T pValueOriginal) {
-		wValueOriginal = pValueOriginal;
+	public final void setValueOriginal(Object pValueOriginal) {
+		wValueOriginal = DBSIO.getDataTypeConvertedValue(getDataType(), pValueOriginal);
 		this.setChanged(false);//Indica que valor resetado ao estado inicial
 	}
 
@@ -247,13 +245,12 @@ public class DBSColumn implements Serializable{
 	 * O valor default será utilizado quando o valor da coluna for resetado em reserValue
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public final <T> T getValueDefault() {
-		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueDefault);
+		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValueDefault);
 	}
 
-	public final <T> void setValueDefault(T pValueDefault) {
-		wValueDefault = pValueDefault;
+	public final void setValueDefault(Object pValueDefault) {
+		wValueDefault = DBSIO.getDataTypeConvertedValue(getDataType(), pValueDefault);
 	}
 
 	//--------------------------------------------------------------------------------------------------------

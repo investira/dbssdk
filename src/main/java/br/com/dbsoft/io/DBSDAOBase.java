@@ -465,18 +465,18 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 
 	
 	/**
-	 * Seta o valor da coluna informada
-	 * @param <A>
-	 * @param pColumnName
+	 * Seta o valor da coluna informada.
+	 * @param pColumnName Nome da Coluna
+	 * @param pValue Valor
 	 */
-	public abstract <A> void setValue(String pColumnName, A pValue);
+	public abstract void setValue(String pColumnName, Object pValue);
 	
 	/**
-	 * Aeta o valor da coluna informada
-	 * @param <A>
-	 * @param pColumnName
+	 * Seta o valor da coluna informada.
+	 * @param pColumnName Nome da Coluna
+	 * @param pValue Valor
 	 */
-	public abstract <A> void setValue(String pColumnName, A pValue, boolean pOriginalValue);
+	public abstract void setValue(String pColumnName, Object pValue, boolean pOriginalValue);
 
 
 	/**

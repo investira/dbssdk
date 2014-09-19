@@ -143,7 +143,7 @@ public class TstDAO {
 				xDAO.setValue("CRUD", "TESTE " + xX);
 				xDAO.executeInsert();
 				System.out.println(xDAO.getValue("CRUD_ID"));
-				xDAO.pvRestoreColumnsValuesOriginal();
+				xDAO.restoreValuesOriginal();
 			}
 			DBSIO.endTrans(wCn, true);
 			Assert.assertEquals(5, xDAO.getRowsCount());
@@ -181,7 +181,7 @@ public class TstDAO {
 				xDAO.getDataModel().setCRUD("TESTE " + xX);
 				xDAO.executeInsert();
 				System.out.println(xDAO.getValue("CRUD_ID"));
-				xDAO.pvRestoreColumnsValuesOriginal();
+				xDAO.restoreValuesOriginal();
 			}
 			DBSIO.endTrans(wCn, true);
 			Assert.assertEquals(5, xDAO.getRowsCount());
