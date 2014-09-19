@@ -1969,7 +1969,7 @@ public class DBSIO{
 	@SuppressWarnings("unchecked")
 	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
 		if (pDataType == null
-		 || pDataType == null){
+		 || pValue == null){
 			return null;
 		}
 		//Como alguns Bancos de dados o boolean é definido como numérico
