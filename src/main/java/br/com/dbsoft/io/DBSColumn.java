@@ -250,7 +250,10 @@ public class DBSColumn implements Serializable{
 	}
 
 	public final void setValueDefault(Object pValueDefault) {
-		wValueDefault = DBSIO.getDataTypeConvertedValue(getDataType(), pValueDefault);
+		//Não é efetuada a conversão, pois o valor default pode ser um comando SQL informado
+		//diretamente da definição da coluna do banco de dados como por exemplo:CURRENT_TIMESTAMP
+		//		wValueDefault = DBSIO.getDataTypeConvertedValue(getDataType(), pValueDefault);
+		wValueDefault = pValueDefault;
 	}
 
 	//--------------------------------------------------------------------------------------------------------
