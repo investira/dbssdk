@@ -245,8 +245,10 @@ public class DBSColumn implements Serializable{
 	 * O valor default será utilizado quando o valor da coluna for resetado em reserValue
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public final <T> T getValueDefault() {
-		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValueDefault);
+//		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueDefault);
+		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueDefault);
 	}
 
 	public final void setValueDefault(Object pValueDefault) {
