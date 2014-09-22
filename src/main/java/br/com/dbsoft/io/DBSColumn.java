@@ -83,11 +83,12 @@ public class DBSColumn implements Serializable{
     /**
      * Copia o valor default como sendo o valor corrente.
      */
-	public final <T> void restoreValueDefault(){
+	public final void restoreValueDefault(){
         wChanged = false;
         //T xValueDefault = getValueDefault();
+        System.out.println("AdSC");
         try {
-            wValue = getValueDefault(); //xValueDefault;
+            wValue = this.getValueDefault(); //xValueDefault;
             wValueOriginal = wValue;
 		} catch (Exception xE) {
 			wLogger.error(xE);
@@ -97,10 +98,10 @@ public class DBSColumn implements Serializable{
 	/**
      * Restaura os valores originais para o valor atual.
      */
-	public final <T> void restoreValueOriginal(){
+	public final void restoreValueOriginal(){
         wChanged = false;
         try {
-            wValue = getValueOriginal();
+            wValue = this.getValueOriginal();
             wValueOriginal = wValue;
 		} catch (Exception xE) {
 			wLogger.error(xE);
@@ -248,7 +249,7 @@ public class DBSColumn implements Serializable{
 	@SuppressWarnings("unchecked")
 	public final <T> T getValueDefault() {
 //		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueDefault);
-		return (T) DBSIO.getDataTypeConvertedValue(getDataType(), wValueDefault);
+		return (T) wValueDefault;
 	}
 
 	public final void setValueDefault(Object pValueDefault) {
