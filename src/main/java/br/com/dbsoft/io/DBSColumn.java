@@ -86,7 +86,6 @@ public class DBSColumn implements Serializable{
 	public final void restoreValueDefault(){
         wChanged = false;
         //T xValueDefault = getValueDefault();
-        System.out.println("AdSC");
         try {
             wValue = this.getValueDefault(); //xValueDefault;
             wValueOriginal = wValue;
