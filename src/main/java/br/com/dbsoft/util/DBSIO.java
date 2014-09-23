@@ -1981,33 +1981,59 @@ public class DBSIO{
 				pValue = DBSIO.toSQLBoolean(pValue);
 			}
 		}
-		switch (pDataType){
-		case INT:
-			return (T) DBSNumber.toInteger(pValue);
-		case BOOLEAN:
-			return (T) DBSBoolean.toBoolean(pValue);
-		case COMMAND:
-			return (T) pValue;
-		case DATE:
-			return (T) DBSDate.toDate(pValue);
-		case DATETIME:
-			return (T) DBSDate.toTimestamp(pValue);
-		case DECIMAL:
-			return (T) DBSNumber.toBigDecimal(pValue);
-		case DOUBLE:
-			return (T) DBSNumber.toDouble(pValue);
-		case ID:
-			return (T) DBSNumber.toInteger(pValue);
-		case NONE:
-			return (T) pValue;
-		case PICTURE:
-			return (T) pValue;
-		case STRING:
-			return (T) pValue;
-		case TIME:
-			return (T) DBSDate.toTime((String) pValue);
-		default:
-			return (T) pValue;
+
+		T xValue = null; 
+		 
+		try{
+			switch (pDataType){
+			case INT:
+				xValue = (T) DBSNumber.toInteger(pValue);
+				break;
+			case BOOLEAN:
+				xValue = (T) DBSBoolean.toBoolean(pValue);
+				break;
+			case COMMAND:
+				xValue = (T) pValue;
+				break;
+			case DATE:
+				xValue = (T) DBSDate.toDate(pValue);
+				break;
+			case DATETIME:
+				xValue = (T) DBSDate.toTimestamp(pValue);
+				break;
+			case DECIMAL:
+				xValue = (T) DBSNumber.toBigDecimal(pValue);
+				break;
+			case DOUBLE:
+				xValue = (T) DBSNumber.toDouble(pValue);
+				break;
+			case ID:
+				xValue = (T) DBSNumber.toInteger(pValue);
+				break;
+			case NONE:
+				xValue = (T) pValue;
+				break;
+			case PICTURE:
+				xValue = (T) pValue;
+				break;
+			case STRING:
+				xValue = (T) pValue;
+				break;
+			case TIME:
+				xValue = (T) DBSDate.toTime((String) pValue);
+				break;
+			default:
+				xValue = (T) pValue;
+			}
+			return xValue;
+		}catch(Exception e){
+			wLogger.error(e);
+			return xValue;
+		}finally{
+			if (!DBSObject.isEmpty(pValue)
+			  && xValue == null){
+				wLogger.error("Conversão não foi possível: Valor[" + pValue + "] não pode ser convertido para [" + pDataType.toString() + "]");
+			}
 		}
 	}	
 	/**
