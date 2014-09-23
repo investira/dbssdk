@@ -801,7 +801,12 @@ public class DBSNumber {
 				xValue = BigDecimal.ZERO;
 			}
 		} else if (pValue instanceof String) {	
-			xValue = new BigDecimal(pvStringToNumberFormat((String) pValue).toString(), MathContext.UNLIMITED);
+			Number xN = pvStringToNumberFormat((String) pValue);
+			if (xN != null){
+				xValue = new BigDecimal(xN.toString(), MathContext.UNLIMITED);
+			}else{
+				xValue = null;
+			}
 		} else {
 			return null; 
 		}
@@ -858,10 +863,12 @@ public class DBSNumber {
 				return -1L;
 			}
 		} else if (pValue instanceof String) {	
-			return pvStringToNumberFormat((String) pValue).longValue();
-		} else {
-			return null;
+			Number xN = pvStringToNumberFormat((String) pValue);
+			if (xN != null){
+				return xN.longValue();
+			}
 		}
+		return null;
 	}
 	
 	/**
@@ -906,10 +913,12 @@ public class DBSNumber {
 				return -1;
 			}
 		} else if (pValue instanceof String) {	
-			return pvStringToNumberFormat((String) pValue).intValue();
-		} else {
-			return null;
+			Number xN = pvStringToNumberFormat((String) pValue);
+			if (xN != null){
+				return xN.intValue();
+			}
 		}
+		return null;
 	}
 	
 	/**
@@ -945,10 +954,12 @@ public class DBSNumber {
 		} else if (pValue instanceof Long) {
 			return ((Long)pValue).doubleValue();
 		} else if (pValue instanceof String) {	
-			return pvStringToNumberFormat((String) pValue).doubleValue();
-		} else {
-			return null;
-		}
+			Number xN = pvStringToNumberFormat((String) pValue);
+			if (xN != null){
+				return xN.doubleValue();
+			}
+		} 
+		return null;
 	}
 
 
