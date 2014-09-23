@@ -245,12 +245,10 @@ public class DBSRow implements Serializable {
 		}
 		Iterator<DBSColumn> xColumns = wColumns.values().iterator();
 		int xI = 1;
-//		String xIniciais = "";
 		DBSColumn xColumn; 
 		try {
-			while (xColumns.hasNext()){
+			while (xColumns.hasNext()){ 
 				xColumn = xColumns.next();
-//				xIniciais = xIniciais + "[" + xColumn.getColumnName() + "," + xI + "] - ";
 				//Move valor para a coluna
 				if (xI<pString.length()){
 					xColumn.setValue(DBSString.getSubString(pString, xI, xColumn.getSize()));
@@ -259,11 +257,9 @@ public class DBSRow implements Serializable {
 				}
 				xI += xColumn.getSize(); //Incrementa para a posição na linha
 			}
-//			System.out.println(xIniciais);
 			return true;
 		} catch (StringIndexOutOfBoundsException e) {
 			throw new StringIndexOutOfBoundsException("Tamanho da string é menor que a soma dos tamanhos das colunas.");
-//			throw new IllegalArgumentException(e.getMessage());
 		} catch (Exception e) {
 			return false;
 		}
