@@ -953,7 +953,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 
 	/**
-	 * Executa o insert da tabela definida como CommandTable.
+	 * Executa o insert da tabela definida como CommandTable.<br/>
+	 * Consulte o atributo <b>executeOnlyChangedValues</b> para outras considerações relacionadas ao insert.
 	 * @returnQuantidade de linhas afetadas
 	 * @throws SQLException
 	 */
@@ -962,7 +963,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (wCommandColumns.size() == 0){
 			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
 			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeInsert: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
 			return 0;
 		}
 		int xCount = 0;
@@ -980,7 +980,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
-		 * Exclui e retorna a quantidade de registros excluidos
+		 * Exclui e retorna a quantidade de registros excluidos.<br/>
 		 * @return Quantidade de linhas afetadas
 		 * @throws SQLException
 		 */
@@ -1006,7 +1006,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 
 	/**
-	 * Atualiza registro 
+	 * Atualiza registro.<br/>
+	 * Consulte o atributo <b>executeOnlyChangedValues</b> para outras considerações relacionadas ao update.
 	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException 
 	 */
