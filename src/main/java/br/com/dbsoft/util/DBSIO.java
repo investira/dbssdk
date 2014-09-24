@@ -2937,17 +2937,22 @@ public class DBSIO{
 				if (!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
 					//Verifica se a coluna é PK para evitar que seja alterada
 					if (!xColumn.getPK()){
-						//Verifica se houve alteração de valor indepententemente do valor ter sido informado pelo usuário.
-						if (!pDAO.getExecuteOnlyChangedValues() 
-						 || !DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))){
+						
+						//Atualiza a coolna quando...
+						if ((pDAO.getCurrentRowIndex() == -1 && xColumn.getChanged()) //Não ha registro corrente e valor foi informado via setValue
+					      || (pDAO.getCurrentRowIndex() != -1 //Ja existe um registro corrente o valor é diferente do anterior, ou se deseja atualizar todas as colunas
+					      	&& (!DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))
+					      	 || !pDAO.getExecuteOnlyChangedValues()))){ 
 							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
 							xVirgula = ",";
-							/*
-							 * Comentado: ver comentário acima
-							 */
-//						}else{
-//							xSQLColumnNecessaria = pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + xColumn.getColumnName();
 						}
+						
+						//Verifica se houve alteração de valor indepententemente do valor ter sido informado pelo usuário.
+//						if (!pDAO.getExecuteOnlyChangedValues() 
+//						 || !DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))){
+//							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
+//							xVirgula = ",";
+//						}
 					}
 				}
 			}
