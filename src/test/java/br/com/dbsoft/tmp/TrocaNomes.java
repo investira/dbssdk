@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.error.DBSIOException;
@@ -21,12 +21,12 @@ public class TrocaNomes {
 //	String url = "jdbc:mysql://ifeed.com.br:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url = "jdbc:mysql://ifeed.com.br:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-//	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
-	String user="dbsoft";
-	String password="dbs0ft";
+//	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
+	String user="usuario";
+	String password="senha";
 	Connection wConexao;
 
 	@Before
@@ -41,8 +41,23 @@ public class TrocaNomes {
 	public void tearDown() throws Exception {
 		wConexao.close();
 	}
-	
-	@Test
+
+//	@Test
+	public void testaUpdate() throws DBSIOException{
+
+		@SuppressWarnings("rawtypes")
+		DBSDAO xDAO = new DBSDAO(wConexao, "SEG_GRUPO");
+		xDAO.open("SELECT * FROM SEG_GRUPO WHERE GRUPO_ID=2");
+//		xDAO.setValue("GRUPO_ID", 2);
+//		xDAO.setValue("GRUPO", DBSDate.getNowTime().toString());
+		xDAO.setValue("GRUPO_ID", null);
+		xDAO.setValue("GRUPO", "ttt");
+		xDAO.setExecuteOnlyChangedValues(false);
+		xDAO.executeInsert();
+		DBSIO.endTrans(wConexao, true);
+	}
+		
+//	@Test
 	public void trocaAtivoTipo(){
 		try {
 			@SuppressWarnings("rawtypes")
@@ -86,11 +101,7 @@ public class TrocaNomes {
 			e.printStackTrace();
 		}
 	}	
-	
-	private <A> A getValor(){
-		Integer xD = 23;
-		return (A) xD;
-	}
+
 	
 //	@Test
 	public void trocaProdutoTipo(){
