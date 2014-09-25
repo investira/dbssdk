@@ -954,13 +954,13 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 				//Se o conteúdo da coluna recupedado do array não for vazio
 				String xValue = xColumns.get(xX);
 				//Retira as aspas caso existam no inicio e no fim do valor.
+				if (xValue.endsWith("\"")
+				 || xValue.startsWith("\"")){;
+				 	xValue = DBSString.changeStr(xValue, "\"", "");
+				}
 				if (!DBSObject.isEmpty(xValue)){
-					if (xValue.endsWith("\"")
-					 && xValue.startsWith("\"")){;
-					 	xValue = DBSString.changeStr(xValue, "\"", "");
-					}
 					//Adiciona nova coluna a linha com o conteúdo da array contendo a linha lida
-					xRow.MergeColumn(this.getColumnName(xX), xValue);
+					xRow.MergeColumn(this.getColumnName(xX), xValue); 
 				}else{
 					//Se o conteúdo da coluna recupado do array for vázio..
 					//Se existir um delimitador definido
