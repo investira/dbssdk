@@ -20,13 +20,13 @@ import br.com.dbsoft.util.DBSString;
 public class TrocaNomes {
 //	String url = "jdbc:mysql://ifeed.com.br:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url = "jdbc:mysql://ifeed.com.br:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-//	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+	String url="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+//	String url="jdbc:mysql://localhost:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:mysql://192.168.0.106:3306/ifeed?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 //	String url="jdbc:oracle:thin:@192.168.0.20:1521:xe";
-	String user="usuario";
-	String password="senha";
+	String user="root";
+	String password="dbs0ft";
 	Connection wConexao;
 
 	@Before
@@ -45,16 +45,12 @@ public class TrocaNomes {
 //	@Test
 	public void testaUpdate() throws DBSIOException{
 
-		@SuppressWarnings("rawtypes")
-		DBSDAO xDAO = new DBSDAO(wConexao, "SEG_GRUPO");
-		xDAO.open("SELECT * FROM SEG_GRUPO WHERE GRUPO_ID=2");
-//		xDAO.setValue("GRUPO_ID", 2);
-//		xDAO.setValue("GRUPO", DBSDate.getNowTime().toString());
-		xDAO.setValue("GRUPO_ID", null);
-		xDAO.setValue("GRUPO", "ttt");
-		xDAO.setExecuteOnlyChangedValues(false);
-		xDAO.executeInsert();
-		DBSIO.endTrans(wConexao, true);
+		
+		DBSDAO<Object> 	xDAO = new DBSDAO<Object>(wConexao, "CA_POSDIA");
+		xDAO.open("SELECT * FROM CA_POSDIA_GERENCIAL WHERE DATA = '2014-09-11'");
+		xDAO.moveFirstRow();
+		Double xPU = xDAO.getValue("PU_Custo_ABR");
+		xDAO.close();
 	}
 		
 //	@Test
