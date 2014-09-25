@@ -174,7 +174,7 @@ public class DBSString {
 				DBSObject.isNull(pTextoAntigo)){
 				return pTextoBase;
 			}
-			String xTextoAntigo = pTextoAntigo.toLowerCase(); //utiliza caixa alta para normalizar e evitar que se tenha que testar todas as variácoes de caixa
+			String xTextoAntigo = pTextoAntigo.toLowerCase(); //utiliza caixa alta para normalizar e evitar que se tenha que testar todas as variações de caixa
 			String xTextoBase = pTextoBase.toLowerCase();
 			int xP= xTextoBase.indexOf(xTextoAntigo); //Busca posição da primeira ocorrencia da string a ser trocada
 			int xA = 0;
@@ -727,7 +727,8 @@ public class DBSString {
 	//*******************************************************************************************************
 	
 	/**
-	 * Corrige erros ortográficos a partir do dicionário interno.
+	 * Corrige erros ortográficos a partir do dicionário interno.<br/>
+	 * Além de corrigir, formata coo nome próprio
 	 * Para inclur novas palavras, deve-se editar os arquivs: dicionario_acento e dicionario_palavra.
 	 * dicionario_acento: correções de acentuação assumindo que a palavra esta correta
 	 * dicionario_palavra: troca uma palavra pela outra, considerando inclusive a caixa da letra
@@ -738,7 +739,7 @@ public class DBSString {
 		if (pTexto==null){
 			return null;
 		}
-		String xTexto =  pTexto;
+		String xTexto = toProper(pTexto);
 		if(wDicionarioSilaba.isEmpty()){
 			pvDicionarioInit();
 		}
@@ -784,6 +785,7 @@ public class DBSString {
 			xKey = (String) xDicionarioSilabaEnum.nextElement();
 			xTexto = DBSString.changeStr(xTexto, xKey, wDicionarioSilaba.getProperty(xKey),true);
 		}
+		xTexto = toProper(xTexto);
 		return xTexto;
 	}
 	/**
@@ -796,10 +798,10 @@ public class DBSString {
 		List<String> 	xPalavras = new ArrayList<String>();
 		String 		 	xTexto = "";
 		String 			xPalavraErrada = ""; 
-	
+
 		xPalavras = DBSString.toArray(pTexto, " ", false);
 		for (String xPalavra: xPalavras){
-			Enumeration<Object> xDicionarioPalavraEnum;
+			Enumeration<Object> xDicionarioPalavraEnum; 
 			xDicionarioPalavraEnum = wDicionarioPalavra.keys();
 			while (xDicionarioPalavraEnum.hasMoreElements()){
 				xPalavraErrada = (String) xDicionarioPalavraEnum.nextElement();
@@ -811,7 +813,7 @@ public class DBSString {
 			if (xTexto.equals("")){
 				xTexto = xPalavra; 
 			}else{
-				xTexto = xTexto + " " + xPalavra;
+				xTexto += " " + xPalavra;
 			}
 		}
 		return xTexto;
@@ -825,7 +827,7 @@ public class DBSString {
 	private static String pvCorretorOrtograficoFrase(String pTexto){
 		String 	xTexto = pTexto;
 		String xKey = ""; 
-	
+		
 		Enumeration<Object> xDicionarioFraseEnum;
 		xDicionarioFraseEnum = wDicionarioFrase.keys();
 	
