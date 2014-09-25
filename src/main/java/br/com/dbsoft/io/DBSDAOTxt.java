@@ -150,7 +150,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 *  Delimitador que separa as colunas 
+	 * Delimitador que separa as colunas 
 	 * @return
 	 */
 	public String getColumnsDelimiter() {
@@ -158,7 +158,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 *  Delimitador que separa as colunas 
+	 * Delimitador que separa as colunas 
 	 * @return
 	 */
 	public void setColumnsDelimiter(String wColumnsDelimiter) {
@@ -193,8 +193,9 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Indica se mantém todos os dados lindo na memória
-	 * Caso contrário, somente a última linha lida é mantida.
+	 * Indica se mantém todos os dados lindo na memória.
+	 * Caso contrário, somente a última linha lida é mantida.<br/>
+	 * O default é true.
 	 * @return
 	 */
 	public void setKeepData(boolean wKeepData) {
@@ -238,6 +239,11 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	@Override
+	public void setValue(String pColumnName, Object pValue){
+		 wListRow.get(wCurrentRow).setValue(pColumnName, pValue);
+	}
+
+	@Override
 	public void setValue(String pColumnName, Object pValue, boolean pOriginalValue) {
 		wListRow.get(wCurrentRow).setValue(pColumnName, pValue);
 		
@@ -245,7 +251,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Seta o valor da coluna infomada, considerando a linha corrente
+	 * Valor da coluna infomada, considerando a linha corrente
 	 * @param <A>
 	 * @param pColumnIndex
 	 * @return
@@ -255,7 +261,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 
 	/**
-	 * Seta o valor da coluna infomada, considerando a linha corrente
+	 * Valor da coluna infomada, considerando a linha corrente
 	 * @param pColumnName Nome da Coluna
 	 * @return
 	 */
@@ -273,11 +279,6 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		}
 	}
 	
-	@Override
-	public void setValue(String pColumnName, Object pValue){
-		 wListRow.get(wCurrentRow).setValue(pColumnName, pValue);
-	}
-
 	/** 
 	 * Indica se exclui os espaços no ínicio é no final do dos valores lidos do arquivo
 	 * @return
@@ -951,16 +952,20 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 			//Loop em todos os itens do array
 			for (int xX=0; xX<=xColumns.size()-1;xX++){
 				//Se o conteúdo da coluna recupedado do array não for vazio
-				if (!DBSObject.isEmpty(xColumns.get(xX))){
+				String xValue = xColumns.get(xX);
+				//Retira as aspas caso existam no inicio e no fim do valor.
+				if (!DBSObject.isEmpty(xValue)){
+					if (xValue.endsWith("\"")
+					 && xValue.startsWith("\"")){;
+					 	xValue = DBSString.changeStr(xValue, "\"", "");
+					}
 					//Adiciona nova coluna a linha com o conteúdo da array contendo a linha lida
-					//pvMergeColumn(xRow, getColumnName(xX), xColumns.get(xX));
-					xRow.MergeColumn(this.getColumnName(xX), xColumns.get(xX));
+					xRow.MergeColumn(this.getColumnName(xX), xValue);
 				}else{
 					//Se o conteúdo da coluna recupado do array for vázio..
 					//Se existir um delimitador definido
 					if (!DBSObject.isNull(wColumnsDelimiter)){
 						//Inclui uma coluna vázio
-						//pvMergeColumn(xRow, getColumnName(xX), "");
 						xRow.MergeColumn(this.getColumnName(xX), "");
 					}
 				}
