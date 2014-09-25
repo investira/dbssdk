@@ -783,37 +783,36 @@ public class DBSNumber {
 	 */
 	public static BigDecimal toBigDecimal(Object pValue, Object pDefaultValue) {
 		try{
-			
-		if (DBSObject.isEmpty(pValue)){
-			if (pDefaultValue == null){
-				return null;
-			}else{
-				//Obriga que defaultValue passe pela rotina para criar um BigDecimal padrão.
-				pValue = pDefaultValue;
+			if (DBSObject.isEmpty(pValue)){
+				if (pDefaultValue == null){
+					return null;
+				}else{
+					//Obriga que defaultValue passe pela rotina para criar um BigDecimal padrão.
+					pValue = pDefaultValue;
+				}
 			}
-		}
-		BigDecimal xValue;
-		if (pValue instanceof Number) {
-			//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValue for Double
-			xValue = new BigDecimal(pValue.toString(), MathContext.UNLIMITED);
-			//Força que valor retorne somente um "0" caso o valor seja zero porém esteja como "0.0"
-			if (xValue.compareTo(BigDecimal.ZERO) == 0){
-				xValue = BigDecimal.ZERO;
+			BigDecimal xValue;
+			if (pValue instanceof Number) {
+				//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValue for Double
+				xValue = new BigDecimal(pValue.toString(), MathContext.UNLIMITED);
+				//Força que valor retorne somente um "0" caso o valor seja zero porém esteja como "0.0"
+				if (xValue.compareTo(BigDecimal.ZERO) == 0){
+					xValue = BigDecimal.ZERO;
+				}
+			} else if (pValue instanceof String) {	
+				Number xN = pvStringToNumberFormat((String) pValue);
+				if (xN != null){
+					xValue = new BigDecimal(xN.toString(), MathContext.UNLIMITED);
+				}else{
+					xValue = null;
+				}
+			} else {
+				return null; 
 			}
-		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue);
-			if (xN != null){
-				xValue = new BigDecimal(xN.toString(), MathContext.UNLIMITED);
-			}else{
-				xValue = null;
-			}
-		} else {
-			return null; 
-		}
-		//Força que os zeros a esquerda seja retirados antes de retornar o valor
-		return pvBigDecimalStripTrailingZeros(xValue);
+			//Força que os zeros a esquerda seja retirados antes de retornar o valor
+			return pvBigDecimalStripTrailingZeros(xValue);
 		}catch(Exception e){
-			System.out.println("stop");
+			wLogger.error(e);
 			return null;
 		}
 	}
