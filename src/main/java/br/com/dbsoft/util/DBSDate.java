@@ -32,12 +32,12 @@ import br.com.dbsoft.io.DBSDAO;
 public class DBSDate{
 
 	public enum PERIODICIDADE{
-		DIARIA		("Diária", 1),
-		MENSAL 		("Mensal", 2),
-		ANUAL 		("Anual", 3),
-		IRREGULAR 	("Irregular",4),
-		EMISSAO 	("Emissão", 5),
-		VENCIMENTO 	("Vencimento", 6);
+		DIARIA		("Dia(s)","Diária", 1),
+		MENSAL 		("Mês(es)", "Mensal", 2),
+		ANUAL 		("Ano(s)", "Anual", 3),
+		IRREGULAR 	("Irregular", "Irregular", 4),
+		EMISSAO 	("Emissão", "Emissão", 5),
+		VENCIMENTO 	("Vencimento", "Vencimento", 6);
 		
 		public static PERIODICIDADE get(Object pCode) {
 			Integer xI = DBSNumber.toInteger(pCode, null);
@@ -66,15 +66,21 @@ public class DBSDate{
 		}	
 		
 		private String 	wName;
+		private String	wName2;
 		private int 	wCode;
 		
-		private PERIODICIDADE(String pName, int pCode) {
+		private PERIODICIDADE(String pName, String pName2, int pCode) {
 			this.wName = pName;
+			this.wName2 = pName2;
 			this.wCode = pCode;
 		}
 	
 		public String getName() {
 			return wName;
+		}
+
+		public String getName2() {
+			return wName2;
 		}
 	
 		public int getCode() {
