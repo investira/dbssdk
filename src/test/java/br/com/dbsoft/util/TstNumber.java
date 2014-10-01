@@ -145,6 +145,28 @@ public class TstNumber {
 		assertEquals("2.0000000000000000000002", DBSNumber.multiply(2D, "1,0000000000000000000001D").toString());
     }
 
+//	@Test
+//	public void m2(){
+//		BigDecimal xD1 = DBSNumber.toBigDecimal("1234567890,1234567890123456789");
+//		BigDecimal xD2 = DBSNumber.toBigDecimal("1,12345678");
+//		for (int xI=0; xI<2600; xI++){
+//			xD1 =  xD1.multiply(xD2);
+////			System.out.println(xD1);
+//		}
+//	}
+//	
+//	@Test
+//	public void m1(){
+//		BigDecimal xD1 = DBSNumber.toBigDecimal("1234567890,1234567890123456789");
+//		BigDecimal xD2 = DBSNumber.toBigDecimal("1,12345678");
+//		for (int xI=0; xI<2600; xI++){
+//			xD1 = DBSNumber.multiply(xD1, xD2);
+////			System.out.println(xD1);
+//		}
+//	}
+
+
+
     @Test
 	public void test_divide() {
     	assertEquals("0.333333333333333333333333333333", DBSNumber.divide(1D, 3D).toString());

@@ -766,7 +766,8 @@ public class DBSNumber {
 
 	/**
 	 * Converte para BigDecimal.<br/>
-	 * Utiliza a localidade para identificar qual o sinal da casa decimal.
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal.<br/>
+	 * Valor será limitado a 90 digitos significativos a esquerda para a direita.<br/>
 	 * @return Retorna o valor convertido para BigDecimal ou 0(zero) caso o valor a ser convertido seja nulo
 	 * @return
 	 */
@@ -776,7 +777,8 @@ public class DBSNumber {
 
 	/**
 	 * Converte para BigDecimal.<br/>
-	 * Utiliza a localidade para identificar qual o sinal da casa decimal.
+	 * Utiliza a localidade para identificar qual o sinal da casa decimal.<br/>
+	 * Valor será limitado a 90 digitos significativos a esquerda para a direita.<br/>
 	 * @param pDefaultValue
 	 * @return Retorna o valor convertido para BigDecimal ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 * @return
@@ -794,7 +796,7 @@ public class DBSNumber {
 			BigDecimal xValue;
 			if (pValue instanceof Number) {
 				//Usa contrutor passando string para evitar conversão errada que ocorre quando o pValue for Double
-				xValue = new BigDecimal(pValue.toString(), MathContext.UNLIMITED);
+				xValue = new BigDecimal(DBSString.getSubString(pValue.toString(), 1, 90), MathContext.UNLIMITED);
 				//Força que valor retorne somente um "0" caso o valor seja zero porém esteja como "0.0"
 				if (xValue.compareTo(BigDecimal.ZERO) == 0){
 					xValue = BigDecimal.ZERO;
@@ -802,7 +804,7 @@ public class DBSNumber {
 			} else if (pValue instanceof String) {	
 				Number xN = pvStringToNumberFormat((String) pValue);
 				if (xN != null){
-					xValue = new BigDecimal(xN.toString(), MathContext.UNLIMITED);
+					xValue = new BigDecimal(DBSString.getSubString(xN.toString(), 1, 90), MathContext.UNLIMITED);
 				}else{
 					xValue = null;
 				}
