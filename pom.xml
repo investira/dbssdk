@@ -54,17 +54,17 @@
 		</repository>		
 	</repositories>
 	<!-- JUNIT -->
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jboss.arquillian</groupId>
-				<artifactId>arquillian-bom</artifactId>
-				<version>${arquillian.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+<!-- 	<dependencyManagement> -->
+<!-- 		<dependencies> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.jboss.arquillian</groupId> -->
+<!-- 				<artifactId>arquillian-bom</artifactId> -->
+<!-- 				<version>${arquillian.version}</version> -->
+<!-- 				<scope>import</scope> -->
+<!-- 				<type>pom</type> -->
+<!-- 			</dependency> -->
+<!-- 		</dependencies> -->
+<!-- 	</dependencyManagement> -->
 
 	<dependencies>
 <!-- 		<dependency> -->
@@ -177,11 +177,11 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.jboss.arquillian.junit</groupId> -->
+<!-- 			<artifactId>arquillian-junit-container</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.github.github</groupId>
 			<artifactId>site-maven-plugin</artifactId>
