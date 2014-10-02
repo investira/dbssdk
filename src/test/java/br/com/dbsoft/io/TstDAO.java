@@ -5,53 +5,44 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSString;
 
 //O SERVIDOR(JBOSS) PRECISA ESTÁ RODANDO 
-@RunWith(Arquillian.class)
+//@RunWith(Arquillian.class)
 public class TstDAO {
 	
 	//É necessário adicionar as classes que serão utilizadas com "addClass" conforme exemplo abaixo 
-	@Deployment
-    public static WebArchive createDeployment() {
-		
-		MavenDependencyResolver xResolver = DependencyResolvers.use(MavenDependencyResolver.class).loadMetadataFromPom("pom.xml").goOffline();
-		
-		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-			.addPackage("br.com.dbsoft.event")
-			.addPackage("br.com.dbsoft.annotation")
-			.addPackage("br.com.dbsoft.message")
-			.addPackage("br.com.dbsoft.core")
-			.addPackage("br.com.dbsoft.error")
-			.addPackage("br.com.dbsoft.factory")
-			.addPackage("br.com.dbsoft.io")
-			.addPackage("br.com.dbsoft.util")
-			.addPackage("br.com.dbsoft.dao")
-			.addAsLibraries(xResolver.artifact("joda-time:joda-time:2.1").resolveAsFiles()) // groupId:artifactId:version conforme definido no pom
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-		return war;
-    }
+//	@Deployment
+//    public static WebArchive createDeployment() {
+//		
+//		MavenDependencyResolver xResolver = DependencyResolvers.use(MavenDependencyResolver.class).loadMetadataFromPom("pom.xml").goOffline();
+//		
+//		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
+//			.addPackage("br.com.dbsoft.event")
+//			.addPackage("br.com.dbsoft.annotation")
+//			.addPackage("br.com.dbsoft.message")
+//			.addPackage("br.com.dbsoft.core")
+//			.addPackage("br.com.dbsoft.error")
+//			.addPackage("br.com.dbsoft.factory")
+//			.addPackage("br.com.dbsoft.io")
+//			.addPackage("br.com.dbsoft.util")
+//			.addPackage("br.com.dbsoft.dao")
+//			.addAsLibraries(xResolver.artifact("joda-time:joda-time:2.1").resolveAsFiles()) // groupId:artifactId:version conforme definido no pom
+//            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+//		return war;
+//    }
 
 
-	@Resource(mappedName="junit")
+//	@Resource(mappedName="junit")
 	//@Resource(mappedName="ifeed")
 	private DataSource wDS;
 
@@ -129,7 +120,7 @@ public class TstDAO {
 		
 	//Insert diretamente da tabela. Sem necessidade de pesquisa via 'select'
 	//Utilizando o nome das colunas
-	@Test
+//	@Test
 	public void insertLoop(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -154,7 +145,7 @@ public class TstDAO {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void deleteAll(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -168,7 +159,7 @@ public class TstDAO {
 	}	
 	//Insert diretamente da tabela. Sem necessidade de pesquisa via 'select'
 	//Utilizando o DataModel
-	@Test
+//	@Test
 	public void insertLoopDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -192,7 +183,7 @@ public class TstDAO {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void readLoop(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -210,7 +201,7 @@ public class TstDAO {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void readDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -224,7 +215,7 @@ public class TstDAO {
 		}
 	}
 
-	@Test
+//	@Test
 	public void updateDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -244,7 +235,7 @@ public class TstDAO {
 		}
 	}
 
-	@Test
+//	@Test
 	public void mergeDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -280,7 +271,7 @@ public class TstDAO {
 		}
 	}
 
-	@Test
+//	@Test
 	public void getDadoDataModel(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -293,7 +284,7 @@ public class TstDAO {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void getDadoDataModelList(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
@@ -313,7 +304,7 @@ public class TstDAO {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void getCopy(){
 		try {
 			System.out.println("Inicio: " + getMethodName() + " ==================================");
