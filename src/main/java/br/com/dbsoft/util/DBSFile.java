@@ -62,6 +62,7 @@ public class DBSFile {
 		public static final String PDF = "application/pdf";
 		public static final String XML = "application/xml";
 		public static final String XLS = "application/excel";
+		public static final String XLSX = "application/excel";
 	}
 	
 	public static enum SORT_BY{
