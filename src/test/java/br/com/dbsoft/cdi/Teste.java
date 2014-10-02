@@ -5,10 +5,6 @@ import java.sql.Connection;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 
 
@@ -18,17 +14,17 @@ public class Teste {
 	
 	//É necessário adicionar as classes que serão utilizadas com "addClass" conforme exemplo abaixo 
 	//@Deployment
-    public static JavaArchive createDeployment() {
-		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
-            .addClass(DBObjeto.class)  
-            .addClass(DBObjeto2.class)  
-            .addClass(DBObjetoFactory.class)
-            .addClass(DBObjetoFactory2.class)
-            .addClass(TstConnectionDBSoftFactory.class)
-            .addClass(TstDataSourceFactory.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-		return jar;
-    }
+//    public static JavaArchive createDeployment() {
+//		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
+//            .addClass(DBObjeto.class)  
+//            .addClass(DBObjeto2.class)  
+//            .addClass(DBObjetoFactory.class)
+//            .addClass(DBObjetoFactory2.class)
+//            .addClass(TstConnectionDBSoftFactory.class)
+//            .addClass(TstDataSourceFactory.class)
+//            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+//		return jar;
+//    }
 
 	@Inject @Named("A")  
 	DBObjeto xA;
