@@ -334,7 +334,7 @@ public class DBSFile {
 		}
 		try (FileSystem xZipFileSystem = pvCreateZipFileSystem(pZipFileName,
 				true)) {
-			final Path xRoot = xZipFileSystem.getPath("/");
+			final Path xRoot = xZipFileSystem.getPath("/"); //TODO TESTAR ISTO NO WINDOWS.
 
 			for (String xFilename : pFileNames) {
 				final Path xSourcePath = Paths.get(xFilename);
@@ -710,7 +710,7 @@ public class DBSFile {
 	 */
 	public static String getFileNameFromPath(String pPath){
 		if (pPath == null){return "";}
-		int xI = pPath.lastIndexOf("/");
+		int xI = pPath.lastIndexOf(File.separator);
 		if (xI == -1){
 			return pPath;
 		}else{
@@ -851,19 +851,19 @@ public class DBSFile {
 				}
 				//Inclui barra inicial
 				if (xURI.getHost()==null
-				&& !xPath.startsWith("/")){
-					xPath = "/" + xPath; 
+				&& !xPath.startsWith(File.separator)){
+					xPath = File.separator + xPath; 
 				}
 				//Encontra diretório pai, se houver.
 				if (pHasFile){
-					if (!xPath.endsWith("/")){
+					if (!xPath.endsWith(File.separator)){
 						File xFile = new File(xPath);
 						xPath = DBSObject.getNotNull(xFile.getParent(),""); 
 					}
 				}
 				//Inclui barra final
-				if (!xPath.endsWith("/")){
-					xPath += "/";
+				if (!xPath.endsWith(File.separator)){
+					xPath += File.separator;
 				}
 				return xHost + xPath;
 			} catch (URISyntaxException e) {
