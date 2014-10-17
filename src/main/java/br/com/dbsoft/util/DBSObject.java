@@ -143,6 +143,33 @@ public  class DBSObject {
 	}
 
 	/**
+	 * Retorna se os dois objetos informados são iquais, considerando também como verdadeiro(<i>true</i>) se ambos forem nulos.<br/>
+	 * Objetos de classes diferentes serão considerados diferentes, mesmo que contenham os 'mesmos' valores.
+	 * @param pA 
+	 * @param pB
+	 * @return true = iquais <br/>
+	 * 		   false = diferentes
+	 */
+	public static boolean isEqual(Object pA, Object pB){
+		//Se ambos os itens forem nulos
+		if (pA == null
+		 && pB == null){
+			return true;
+		}
+		//Se somente um dos itens for nulo
+		if (pA == null
+		 || pB == null){
+			return false;
+		}
+		
+		//Se forem de classes diferentes
+		if (!pA.getClass().equals(pB.getClass())){
+			return false;
+		}
+		return pA.equals(pB);
+	}
+
+	/**
 	 * Retorna a class esperada pelo método que chamou o metodo sendo executado.
 	 * @param pParentIndex
 	 * @return
