@@ -1054,7 +1054,7 @@ public class DBSDate{
 		return xDias;
 	}
 	/**
-	 * Calcula a quantidade de dias corridos/úteis no ano informado
+	 * Calcula a quantidade de dias corridos/úteis no ano informado.
 	 * @param pConexao Conexão com banco de dados
 	 * @param pAno Ano 
 	 * @param pUtil indicativo se é dia útil(True) ou não(False)
@@ -1092,11 +1092,13 @@ public class DBSDate{
 	}
 
 	/**
-	 * Chama o metodo getProximaData(), considerando cidade_id = -1 e pApplicationColumnName = null
+	 * Retorna uma Data a partir de uma data base e um prazo.
+	 * Chama o metodo getProximaData(), considerando cidade_id = -1 e pApplicationColumnName = null.
 	 * @param pConexao Conexao do banco de dados
-	 * @param pDataBase Data a partir do qual serÃ¡ efetuado o cÃ¡lculo da prÃ³xima data
-	 * @param pPrazo Prazo em dias que serÃ£o somados a data atual (pDataAtual)
-	 * @param pUtil Indica se o cÃ¡lculo serÃ¡ em dia Ãºtil(True) ou dia Corrido(False)
+	 * @param pDataBase Data a partir do qual será efetuado o cálculo da próxima data
+	 * @param pPrazo Prazo em dias que serão somados a data atual (pDataAtual). 
+	 * 			     Quando for para retornar dia útil e o prazo for 0, retornará a própria data se esta for dia útil, ou a próxima data útil.
+	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @return Próxima data
 	 */
 	public static Date getProximaData(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil){
@@ -1104,10 +1106,12 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Chama o getProximaData() considerando ApplicationColumnName = null
+	 * Retorna uma Data a partir de uma data base e um prazo.
+	 * Chama o getProximaData() considerando ApplicationColumnName = null.
 	 * @param pConexao Conexao do banco de dados
 	 * @param pDataBase Data a partir do qual será efetuado o cálculo da próxima data
-	 * @param pPrazo Prazo em dias que serão somados a data atual (pDataAtual)
+	 * @param pPrazo Prazo em dias que serão somados a data atual (pDataAtual).
+	 * 			     Quando for para retornar dia útil e o prazo for 0, retornará a própria data se esta for dia útil, ou a próxima data útil.
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @param pCidade Código da cidade que será utilizada para considerar os dias úteis
 	 *                Código da cidade como -1, indica que o serão considerados somente feriados nacionais
@@ -1118,10 +1122,11 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna uma Data a partir de uma data base e um prazo
+	 * Retorna uma Data a partir de uma data base e um prazo.
 	 * @param pConexao Conexao do banco de dados
 	 * @param pDataBase Data a partir do qual será efetuado o cálculo da próxima data
 	 * @param pPrazo Prazo em dias que serão somados a data atual (pDataAtual)
+	 * 			     Quando for para retornar dia útil e o prazo for 0, retornará a própria data se esta for dia útil, ou a próxima data útil.
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @param pCidade Código da cidade que será utilizada para considerar os dias úteis
 	 *                Código da cidade como -1, indica que o serão considerados somente feriados nacionais
