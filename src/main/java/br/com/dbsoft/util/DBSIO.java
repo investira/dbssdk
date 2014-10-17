@@ -148,31 +148,29 @@ public class DBSIO{
 		}
 	}
 	
+	/**
+	 * Faz conexão com o banco de dados através do DataSource informado.
+	 * @param pDS
+	 * @return true = Sem erro ; false = Com erro
+	 * @throws DBSIOException 
+	 */	
 	public static Connection getConnection(DataSource pDS) throws DBSIOException{
-		return getConnection(pDS, 0);
+		return getConnection(pDS, 0, null, null);
 	}
 
+	/**
+	 * Faz conexão com o banco de dados através do DataSource informado.
+	 * @param pDS
+	 * @param pTimeout
+	 * @return true = Sem erro ; false = Com erro
+	 * @throws DBSIOException 
+	 */
 	public static Connection getConnection(DataSource pDS, int pTimeout) throws DBSIOException{
-		boolean xOk = false;
-		int xI = 0;
-		Connection xCn = null;
-		while (!xOk){
-			xI ++;
-			try {
-				pDS.setLoginTimeout(0); // 0 = Usa timeout do servidor
-				xCn = pDS.getConnection();
-				xCn.setAutoCommit(false);
-				return xCn;
-			} catch (Throwable e) {
-				wLogger.error("Error getConnection1:" + e.getLocalizedMessage());
-				pvGetConnectionTimeout(xCn, e, pTimeout, xI);
-			}
-		}
-		return null;
+		return getConnection(pDS, pTimeout, null, null);
 	}
 	
 	/**
-	 * Faz conexão direta com o banco de dados
+	 * Faz conexão com o banco de dados através do DataSource informado.
 	 * @param pDS
 	 * @param pTimeout
 	 * @param pUserName Nome do usuário
@@ -188,7 +186,13 @@ public class DBSIO{
 			xI ++;
 			try {
 				pDS.setLoginTimeout(0);// 0 = Usa timeout do servidor
-				xCn = pDS.getConnection(pUserName, pUserPassword);  
+				if (pUserName != null
+				 && pUserPassword != null){
+					xCn = pDS.getConnection(pUserName, pUserPassword);
+				}else{
+					xCn = pDS.getConnection();
+				} 
+				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 				xCn.setAutoCommit(false);
 				return xCn;
 			} catch (Throwable e) {
@@ -1325,59 +1329,60 @@ public class DBSIO{
 	}
 
 	/**
-		 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
-		 * @param pCN conexão a ser utilizada para executa a Query
-		 * @param pQuerySQL Query a ser executada
-		 * @return ResultSet com os registros
-		 * @throws DBSIOException 
-		 */
-		public static ResultSet openResultSet(Connection pConnection, String pQuerySQL) throws DBSIOException{
-			ResultSet xResultSet = null;
-			pQuerySQL = pQuerySQL.trim();
-			Statement xST = null;
-			try{
-	//			PreparedStatement xPS = pConnection.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-	//			xPS.execute();
-	//			xResultSet = xPS.getResultSet();
-				xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-				xResultSet = xST.executeQuery(pQuerySQL);
-			}catch(SQLException e){
-				throwIOException(pQuerySQL, e, pConnection);
-				try {
-					xST.close();
-				} catch (SQLException e1) {
-					e1.addSuppressed(e);
-					wLogger.error("openResultSet", e1);
-				}
+	 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
+	 * @param pCN conexão a ser utilizada para executa a Query
+	 * @param pQuerySQL Query a ser executada
+	 * @return ResultSet com os registros
+	 * @throws DBSIOException 
+	 */
+	public static ResultSet openResultSet(Connection pConnection, String pQuerySQL) throws DBSIOException{
+		ResultSet xResultSet = null;
+		pQuerySQL = pQuerySQL.trim();
+		Statement xST = null;
+		try{
+//			PreparedStatement xPS = pConnection.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+//			xPS.execute();
+//			xResultSet = xPS.getResultSet();
+			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			xResultSet = xST.executeQuery(pQuerySQL);
+		}catch(SQLException e){
+			throwIOException(pQuerySQL, e, pConnection);
+			try {
+				xST.close();
+			} catch (SQLException e1) {
+				e1.addSuppressed(e);
+				wLogger.error("openResultSet", e1);
 			}
-			return xResultSet;
 		}
-		
-		/**
-		 * Fecha resultset
-		 * @param pResultSet
-		 */
-		public static void closeResultSet(ResultSet pResultSet){
-			if (pResultSet != null){
-				Statement xST = null;
-				try {
-					xST = pResultSet.getStatement();
-					if (xST != null){
-						xST.close();
-					}
-				} catch (SQLException e) {
-					wLogger.error("closeResultSet:statement", e);
-				}
+		return xResultSet;
+	}
 	
-				try {
-					pResultSet.close();
-				} catch (SQLException e) {
-					wLogger.error("closeResultSet:resultset", e);
+	/**
+	 * Fecha resultset
+	 * @param pResultSet
+	 */
+	public static void closeResultSet(ResultSet pResultSet){
+		if (pResultSet != null){
+			Statement xST = null;
+			try {
+				xST = pResultSet.getStatement();
+				if (xST != null){
+					xST.close();
 				}
-				xST = null;
-				pResultSet = null;
+			} catch (SQLException e) {
+				wLogger.error("closeResultSet:statement", e);
 			}
+
+			try {
+				pResultSet.close();
+			} catch (SQLException e) {
+				wLogger.error("closeResultSet:resultset", e);
+			}
+			xST = null;
+			pResultSet = null;
 		}
+	}
+	
 	/**
 	 * Executa um comando sql diretamente no banco de dados
 	 * @param pConnection Conexão com o banco de dados
