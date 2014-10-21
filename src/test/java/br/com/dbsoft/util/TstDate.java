@@ -25,8 +25,8 @@ public class TstDate extends TestCase {
 	//IFEED
 	String wUrl="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
 
-	String wUser="usuario";
-	String wPassword="senha";
+	String wUser="root";
+	String wPassword="dbs0ft";
 
 	Connection wConexao;
 	

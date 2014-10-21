@@ -663,6 +663,26 @@ public class DBSDate{
 		return xData.get(Calendar.DAY_OF_MONTH);
 	}
 		
+	/**
+	 * Retorna o mes a partir de uma date(date)
+	 * @param pData
+	 * @return mes
+	 */
+	public static Integer getMes(Date pData){
+		Calendar xData = toCalendar(pData);
+		return xData.get(Calendar.MONTH) + 1;
+	}
+
+	/**
+	 * Retorna o ano a partir de uma date(date)
+	 * @param pData
+	 * @return Ano
+	 */
+	public static Integer getAno(Date pData){
+		Calendar xData = toCalendar(pData);
+		return xData.get(Calendar.YEAR);
+	}
+
 	//Métodos de Cálculo de datas=========================================================================
 	/**
 	 * Chama getDias(), considerando pApplicationColumnName = null
@@ -725,16 +745,6 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna o mes a partir de uma date(date)
-	 * @param pData
-	 * @return mes
-	 */
-	public static Integer getMes(Date pData){
-		Calendar xData = toCalendar(pData);
-		return xData.get(Calendar.MONTH) + 1;
-	}
-	
-	/**
 	 * Calcula a quantidade de meses entre duas datas
 	 * @param pDataInicio Data inicio
 	 * @param pDataFim Data fim
@@ -746,16 +756,6 @@ public class DBSDate{
 		return (xAnos * 12) + xMeses;  
 	}
 
-	/**
-	 * Retorna o ano a partir de uma date(date)
-	 * @param pData
-	 * @return Ano
-	 */
-	public static Integer getAno(Date pData){
-		Calendar xData = toCalendar(pData);
-		return xData.get(Calendar.YEAR);
-	}
-	
 	/**
 	 * Retorna a hora(sem minutos ou segundos) a partir de um timestamp
 	 * @param pData
@@ -903,6 +903,7 @@ public class DBSDate{
 		Calendar xData = Calendar.getInstance();
 		
 		xData.setTime(pData);
+		//Dia anterior
 		xData.add(Calendar.DAY_OF_MONTH, -1);
 		
 		//Verifica se é um feriado, sábado ou domingo
@@ -936,6 +937,8 @@ public class DBSDate{
 	}
 	
 	/**
+	 * Retorna a quantidade de feriados entre duas datas.<br/>
+	 * Feriados cadastrados em finais de semana serão ignorados.<br/>
 	 * Chama o metodo getFeriados(), considerando <b>pCidade = -1</b>
 	 * @param pConexao Conexão com banco de dados
 	 * @param pDataInicio Data Inicial
@@ -947,6 +950,8 @@ public class DBSDate{
 	}
 	
 	/**
+	 * Retorna a quantidade de feriados entre duas datas.<br/>
+	 * Feriados cadastrados em finais de semana serão ignorados.<br/>
 	 * Chama o metodo getFeriados(), considerando <b>pApplicationColumnName = null</b>
 	 * @param pConexao Conexão com banco de dados
 	 * @param pDataInicio Data Inicial
@@ -960,7 +965,8 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Retorna a quantidade de feriados entre duas datas.
+	 * Retorna a quantidade de feriados entre duas datas.<br/>
+	 * Feriados cadastrados em finais de semana serão ignorados.
 	 * @param pConexao Conexão com banco de dados
 	 * @param pDataInicio Data Inicial
 	 * @param pDataFim Data Final
@@ -971,6 +977,41 @@ public class DBSDate{
 	 * @return Quantidade de dias cadastrados como feriados
 	 */
 	public static int getFeriados(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
+		if (pConexao == null
+		 || pDataInicio == null
+		 || pDataFim == null){
+			wLogger.error("getFeriados: Valores nulos");
+			return 0;
+		}
+		Integer xDias = 0;
+		Date 	xDataInicio;
+		Date	xDataFim;
+		
+		//Recupera feriados nacionais(onde o ano é 1000)
+		xDataInicio =  toDate(getDia(pDataInicio), getMes(pDataInicio), 1000);
+		xDataFim =  toDate(getDia(pDataFim), getMes(pDataFim), 1000);
+		
+		//Recupera feriados nacionais
+		xDias = pvGetFeriados(pConexao, xDataInicio, xDataFim, pCidade, pApplicationColumnName);
+		
+		xDias += pvGetFeriados(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName);
+		return xDias;
+
+	}
+	
+	/**
+	 * Retorna a quantidade de feriados entre duas datas.<br/>
+	 * Feriados cadastrados em finais de semana serão ignorados.
+	 * @param pConexao Conexão com banco de dados
+	 * @param pDataInicio Data Inicial
+	 * @param pDataFim Data Final
+	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
+	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
+	 * @param pApplicationColumnName ex:Renda Fixa - RF
+	 * 								 ex:Renda Variavel - RV
+	 * @return Quantidade de dias cadastrados como feriados
+	 */
+	private static int pvGetFeriados(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
 		if (DBSSDK.TABLE.FERIADO.equals("")){
 			wLogger.error("DBSSDK.TABLE.FERIADO em branco, Favor informar o tarefa que contém o cadastro de feriados.");
 			return 0;
@@ -979,7 +1020,7 @@ public class DBSDate{
 		String 			xFiltroCidade= "";
 		Integer 		xDias = 0;
 		DBSDAO<Object> 	xDao = new DBSDAO<Object>(pConexao);
-		xSql = "SELECT * From " + DBSSDK.TABLE.FERIADO + " ";
+		xSql = "SELECT * FROM " + DBSSDK.TABLE.FERIADO + " ";
 		
 		if (pDataInicio.after(pDataFim)) {
 			xSql = xSql + "WHERE DATA >=" + DBSIO.toSQLDate(pConexao, pDataFim) + 
@@ -993,7 +1034,7 @@ public class DBSDate{
 		}
 		xSql = xSql + " AND (CIDADE_ID = -1 or " + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
 		//ALBERTO
-		//Trecho para retirar os feriados que caem no sábado e domingo
+		//Trecho para retirar os feriados que caem no sábado ou domingo
 		if (!DBSObject.isEmpty(pApplicationColumnName)) {
 			xSql = xSql + " AND "+ pApplicationColumnName + " = -1";
 		}
