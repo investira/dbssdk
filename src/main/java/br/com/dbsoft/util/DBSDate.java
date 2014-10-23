@@ -685,6 +685,33 @@ public class DBSDate{
 
 	//Métodos de Cálculo de datas=========================================================================
 	/**
+	 * Retornar a quantidade de dias(úteis ou corridos) entre duas datas.<br/>
+	 * Chama getDias(), considerando pApplicationColumnName = null
+	 * @param pConexao Conexão do banco de dados
+	 * @param pDataInicio Data inicio
+	 * @param pDataFim Data fim
+	 * @param pUtil Indica se é dia útil ou não (True = Dia útil / False = Dia corrido)
+	 * @return Quantidade de dias
+	 */
+	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil) {
+		return getDias(pConexao, pDataInicio, pDataFim, pUtil, -1, null);
+	}
+
+	/**
+	 * Retornar a quantidade de dias(úteis ou corridos) entre duas datas.<br/>
+	 * Chama getDias(), considerando pApplicationColumnName = null
+	 * @param pConexao Conexão do banco de dados
+	 * @param pDataInicio Data inicio
+	 * @param pDataFim Data fim
+	 * @param pUtil Indica se é dia útil ou não (True = Dia útil / False = Dia corrido)
+	 * @return Quantidade de dias
+	 */
+	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, String pApplicationColumnName) {
+		return getDias(pConexao, pDataInicio, pDataFim, pUtil, -1, pApplicationColumnName);
+	}
+	
+	/**
+	 * Retornar a quantidade de dias(úteis ou corridos) entre duas datas.<br/>
 	 * Chama getDias(), considerando pApplicationColumnName = null
 	 * @param pConexao Conexão do banco de dados
 	 * @param pDataInicio Data inicio
@@ -698,16 +725,17 @@ public class DBSDate{
 		return getDias(pConexao, pDataInicio, pDataFim, pUtil, pCidade, null);
 	}
 	
+	
 	/**
-	 * Retornar a quantidade de dias(úteis ou corridos) entre duas datas
+	 * Retornar a quantidade de dias(úteis ou corridos) entre duas datas.<br/>
 	 * @param pConexao Conexão do banco de dados
 	 * @param pDataInicio Data inicio
 	 * @param pDataFim Data fim
 	 * @param pUtil Indica se é dia útil ou não (True = Dia útil / False = Dia corrido)
 	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado.
 	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
-	 * @param pApplicationColumnName Renda Fixa - RF
-	 * 								 Renda Variavel - RV
+	 * @param pApplicationColumnName ex:Renda Fixa - RF
+	 * 								 ex:Renda Variavel - RV
 	 * @return Quantidade de dias
 	 */
 	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, int pCidade, String pApplicationColumnName) {
@@ -1023,20 +1051,21 @@ public class DBSDate{
 		xSql = "SELECT * FROM " + DBSSDK.TABLE.FERIADO + " ";
 		
 		if (pDataInicio.after(pDataFim)) {
-			xSql = xSql + "WHERE DATA >=" + DBSIO.toSQLDate(pConexao, pDataFim) + 
-					       " AND DATA <" + DBSIO.toSQLDate(pConexao, pDataInicio) ;
+			xSql += "WHERE DATA >=" + DBSIO.toSQLDate(pConexao, pDataFim) + 
+					 " AND DATA <" + DBSIO.toSQLDate(pConexao, pDataInicio) ;
 		} else {
-			xSql = xSql + "WHERE DATA >" + DBSIO.toSQLDate(pConexao, pDataInicio) + 
-					       " AND DATA <=" + DBSIO.toSQLDate(pConexao, pDataFim) ;
+			xSql += "WHERE DATA >" + DBSIO.toSQLDate(pConexao, pDataInicio) + 
+					 " AND DATA <=" + DBSIO.toSQLDate(pConexao, pDataFim) ;
 		}
 		if (DBSObject.isIdValid(pCidade)) {
 			xFiltroCidade = " OR CIDADE_ID = " + pCidade;
 		}
-		xSql = xSql + " AND (CIDADE_ID = -1 or " + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
+		xSql += " AND (" + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + " OR CIDADE_ID = -1 " + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
+
 		//ALBERTO
 		//Trecho para retirar os feriados que caem no sábado ou domingo
 		if (!DBSObject.isEmpty(pApplicationColumnName)) {
-			xSql = xSql + " AND "+ pApplicationColumnName + " = -1";
+			xSql += " AND "+ pApplicationColumnName + " = -1";
 		}
 		try {
 			if (xDao.open(xSql)) {
