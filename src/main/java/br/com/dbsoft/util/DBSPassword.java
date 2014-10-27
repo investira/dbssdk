@@ -21,7 +21,7 @@ public class DBSPassword {
 
 	public static String 	Algorithm = "PBKDF2WithHmacSHA1";
 	public static String	Salt = "dbs";
-	public static int		SaltLenghtInBytes = 16;
+	public static int		SaltLenghtInBytes = 15;
 	public static int		PasswordLenght = SaltLenghtInBytes * 2;
 	public static int		Iterations = 9000;
 	
