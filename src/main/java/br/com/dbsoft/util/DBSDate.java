@@ -1604,6 +1604,14 @@ public class DBSDate{
 		return getProximoAniversario(pConexao, pData, pPrazo, pPeriodicidade, pUtil, -1);		
 	}	
 	
+//	public static Date getVencimento(Connection pConexao, int pParcela, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, int pPrazo, boolean pUtil, String pApplicationColumnName){
+//		if (pPrimeiraParcela == null || pPeriodicidade == null){
+//			return null;
+//		}
+//		return getProximoAniversario(pConexao, pPrimeiraParcela, pPrazo * DBSNumber.toInteger(pParcela-1), pPeriodicidade, pUtil, -1, pApplicationColumnName);
+//	}
+//	
+//	//MOVIDO DE DBSFND - era usado em CALCULAPUBEAN
 	/**
 	 * Retorna data do próximo vencimento considerando diferentes tipos de vigências/periodicidade
 	 * @param pParcela Quantidade de parcelas que serão somados a data base
@@ -1614,14 +1622,6 @@ public class DBSDate{
 	 * @param pConexao Conexão do banco de dados
 	 * @return
 	 */
-//	public static Date getVencimento(Connection pConexao, int pParcela, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, int pPrazo, boolean pUtil, String pApplicationColumnName){
-//		if (pPrimeiraParcela == null || pPeriodicidade == null){
-//			return null;
-//		}
-//		return getProximoAniversario(pConexao, pPrimeiraParcela, pPrazo * DBSNumber.toInteger(pParcela-1), pPeriodicidade, pUtil, -1, pApplicationColumnName);
-//	}
-//	
-//	//MOVIDO DE DBSFND - era usado em CALCULAPUBEAN
 	public static Date getVencimento(Connection pConnection, Integer pParcelas, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, Integer pPrazo, boolean pUtil, String pApplicationColumnName) {
 		Date xVencimento = pPrimeiraParcela;
 		
