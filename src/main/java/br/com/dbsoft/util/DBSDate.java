@@ -1259,8 +1259,8 @@ public class DBSDate{
 	 * @return
 	 */
 	public static String[] getNomeDosMeses(){
-//		DateFormatSymbols xDF= new DateFormatSymbols(new Locale("pt", "BR"));
-		DateFormatSymbols xDF = new DateFormatSymbols();
+		DateFormatSymbols xDF= new DateFormatSymbols(new Locale("pt", "BR"));
+//		DateFormatSymbols xDF = new DateFormatSymbols();
     	return xDF.getMonths();
 
 	}
