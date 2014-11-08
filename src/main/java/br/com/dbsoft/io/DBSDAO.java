@@ -274,15 +274,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
-	 * Inserir linha em branco ao resultaDataModel do DAO.<br/>
-	 * Linha é criada somente na memória.
-	 * @throws DBSIOException 
-	 */
-	public final void insertEmptyRow() throws DBSIOException{
-		DBSIO.insertEmptyRow(this);
-	}
-	
-	/**
 	 * Retorna a indice do registro corrente.
 	 * Caso não haja registro, retorna -1.
 	 * @return
@@ -980,34 +971,35 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
-		 * Exclui e retorna a quantidade de registros excluidos.<br/>
-		 * @return Quantidade de linhas afetadas
-		 * @throws SQLException
-		 */
-		@Override
-		public synchronized final int executeDelete() throws DBSIOException{
-			if (wCommandColumns.size() == 0){
-				//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-				wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-	//			wLogger.error("DBSDAO:executeDelete: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
-				return 0;
-			}
-			int xCount = 0;
-			if (this.wConnection!=null){
-				if(pvFireEventBeforeDelete()){
-					pvCopyDataModelFieldsValueToCommandValue(wDataModel);
-					xCount = DBSIO.executeDAOCommand(this, DBSDAO.COMMAND.DELETE);
-					pvFireEventAfterDelete(true);
-					return xCount; 
-				}
-			}
-			pvFireEventAfterDelete(false);
-			return xCount;
+	 * Exclui e retorna a quantidade de registros excluidos.<br/>
+	 * @return Quantidade de linhas afetadas
+	 * @throws SQLException
+	 */
+	@Override
+	public synchronized final int executeDelete() throws DBSIOException{
+		if (wCommandColumns.size() == 0){
+			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
+			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
+//			wLogger.error("DBSDAO:executeDelete: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
+			return 0;
 		}
+		int xCount = 0;
+		if (this.wConnection!=null){
+			if(pvFireEventBeforeDelete()){
+				pvCopyDataModelFieldsValueToCommandValue(wDataModel);
+				xCount = DBSIO.executeDAOCommand(this, DBSDAO.COMMAND.DELETE);
+				pvFireEventAfterDelete(true);
+				return xCount; 
+			}
+		}
+		pvFireEventAfterDelete(false);
+		return xCount;
+	}
 
 	/**
 	 * Atualiza registro.<br/>
-	 * Consulte o atributo <b>executeOnlyChangedValues</b> para outras considerações relacionadas ao update.
+	 * Consulte o atributo <b>executeOnlyChangedValues</b> para outras considerações relacionadas ao update.<br/>
+	 * Colunas definidas como PK não serão atualizadas.
 	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException 
 	 */
@@ -1019,6 +1011,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	/**
 	 * Atualiza registros  
 	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' que já será gerada automaticamente. <br/>
+	 * Colunas definidas como PK não serão atualizadas.
 	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException 
 	 */
@@ -1045,6 +1038,14 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	@Override
+	/**
+	 * Efetua o <b>UPDATE</b> considerando a PK, e caso não tenha sido encontrado registro algum, efetua o <b>INSERT</b>.<br/>
+	 * Isto otimiza a utilização do espaço do banco de dados em comparação um <b>DELETE</b> seguido de <b>INSERT</b>.<br/>
+	 * Porém aumenta o tempo de processamento, já que será efetuada a tentativa de <b>UPDATE</b> antes do <b>INSERT</b>.<br/>
+	 * Colunas definidas como PK não serão atualizadas.
+	 * @return Quantidade de linhas afetadas
+	 * @throws SQLException 
+	 */
 	public synchronized final int executeMerge() throws DBSIOException{
 		return executeMerge("");
 	}
@@ -1053,6 +1054,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * Efetua o <b>UPDATE</b> considerando a PK, e caso não tenha sido encontrado registro algum, efetua o <b>INSERT</b>.<br/>
 	 * Isto otimiza a utilização do espaço do banco de dados em comparação um <b>DELETE</b> seguido de <b>INSERT</b>.<br/>
 	 * Porém aumenta o tempo de processamento, já que será efetuada a tentativa de <b>UPDATE</b> antes do <b>INSERT</b>.<br/>
+	 * Colunas definidas como PK não serão atualizadas.
 	 * @param pAdditionalSQLWhereCondition Texto da condição(sem 'WHERE') a ser adicionada a cláusula 'WHERE' que já será gerada automaticamente no caso do <b>UPDATE</b>.<br/>
 	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException 
@@ -1142,6 +1144,15 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		setCurrentRowIndex(getCurrentRowIndex());
 		wQueryColumns.setChanged();
 		wCommandColumns.setChanged();
+	}
+
+	/**
+	 * Inserir linha em branco ao resultaDataModel do DAO.<br/>
+	 * Linha é criada somente na memória.
+	 * @throws DBSIOException 
+	 */
+	public final void insertEmptyRow() throws DBSIOException{
+		DBSIO.insertEmptyRow(this);
 	}
 
 	/**
