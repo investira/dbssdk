@@ -274,15 +274,6 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 
 	
 	/**
-	 * Inserir linha em branco ao resultaDataModel do DAO.<br/>
-	 * Linha é criada somente na memória.
-	 * @throws DBSIOException 
-	 */
-	public final void insertEmptyRow() throws DBSIOException{
-		DBSIO.insertEmptyRow(this);
-	}
-	
-	/**
 	 * Retorna a indice do registro corrente.
 	 * Caso não haja registro, retorna -1.
 	 * @return
@@ -1142,6 +1133,15 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		setCurrentRowIndex(getCurrentRowIndex());
 		wQueryColumns.setChanged();
 		wCommandColumns.setChanged();
+	}
+
+	/**
+	 * Inserir linha em branco ao resultaDataModel do DAO.<br/>
+	 * Linha é criada somente na memória.
+	 * @throws DBSIOException 
+	 */
+	public final void insertEmptyRow() throws DBSIOException{
+		DBSIO.insertEmptyRow(this);
 	}
 
 	/**
