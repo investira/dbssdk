@@ -297,17 +297,17 @@ public class DBSFormat {
 	 * @param pCNPJ
 	 * @return String
 	 */
-	public static String getCNPJ(String pCNPJ) {
+	public static String getCNPJ(Object pCNPJ) {
 		return getFormattedMask(pCNPJ, "99.999.999/9999-99", " ");
 	}
-	
+
 	/**
 	 * Retorna o CPF com sua máscara
 	 * 
 	 * @param pCPF
 	 * @return String
 	 */
-	public static String getCPF(String pCPF) {
+	public static String getCPF(Object pCPF) {
 		return getFormattedMask(pCPF, "999.999.9999-99", " ");
 	}
 
@@ -317,7 +317,7 @@ public class DBSFormat {
 	 * @param pCEP
 	 * @return String
 	 */
-	public static String getCEP(String pCEP) {
+	public static String getCEP(Object pCEP) {
 		return getFormattedMask(pCEP, "99999-999", " ");
 	}
 
@@ -338,6 +338,8 @@ public class DBSFormat {
 		return Character.toString(xDecimalPoint); 
 	}
 
+
+	
 	/**
 	 * Retorna uma string com o valor formatado conforme a máscara
 	 * Serão ignorados os caracteres não numericos ou alfabéticos da valor informado
@@ -347,14 +349,16 @@ public class DBSFormat {
 	 * @param pEmptyChr Caracter que será utilizado quando o tamanho da valor for menor que o tamanho da máscara
 	 * @return
 	 */
-	public static String getFormattedMask(String pValue, String pMask, String pEmptyChr){
+	public static String getFormattedMask(Object pValue, String pMask, String pEmptyChr){
 		if (pValue ==null ||
 			pMask == null ||
 			pEmptyChr == null){
 			return "";
 		}
+		
 		//9=Numeric; a=Alpha; x=AlphaNumeric
 		String xFV = "";
+		String xValue = pValue.toString();
 		int 	xVI = 0;
 		boolean xAchou;
 		for (int xMI =0 ; xMI < pMask.length(); xMI++){
@@ -363,8 +367,8 @@ public class DBSFormat {
 				xMC.equals("A")){
 				//Busca próximo caracter válido dentro do valor informado, para preencher a respectivo campo na máscara
 				xAchou = false;
-				while (xVI < pValue.length()){
-					 char xVC = pValue.charAt(xVI);
+				while (xVI < xValue.length()){
+					 char xVC = xValue.charAt(xVI);
 					 xVI++;
 					 if(Character.isLetterOrDigit(xVC)){
 						 xFV = xFV + xVC;
