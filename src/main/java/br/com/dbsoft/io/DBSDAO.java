@@ -1170,7 +1170,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 				wCommandColumns.clear(); 
 				//TODO inplementar controle de versão
 				//this.wHasVersionControl = false; //reseta a informação se há controle de versão durante o comando update
-				xMetaData = DBSIO.getTableColumnsMetaData(this.getConnection(), wCommandTableName.toUpperCase());
+				xMetaData = DBSIO.getTableColumnsMetaData(this.getConnection(), wCommandTableName);
 				//Inclui todas as colunas da tabela de comando no controle de colunas local
 				while (DBSIO.moveNext(xMetaData)){
 					xEmpty = false;
