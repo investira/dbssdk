@@ -2536,6 +2536,32 @@ public class DBSIO{
 	}
 
 	/**
+	 * Retorna String com comando SQL formatado para dados nulos ou iqual ao valor informado.<br/>
+	 * O valor informado deverá já estar convertido com o commando toSQL.<br/>
+	 * ex:toSQLNullOrValue(Conexao, "NOMEDACOLUNA", toSQLBoolean(Conexao, "NOMEDACOLUNA", valor));
+	 * @param pConnection
+	 * @param pColumnName
+	 * @param pValue String com o comando apropriado de conversão. 
+	 * @return
+	 */
+	public static String getWhereNullOrValue(Connection pConnection, String pColumnName, String pValue){
+		return getSQLWhereNullOrValue(pConnection, pColumnName, pValue, "=");
+	}
+	
+	/**
+	 * Retorna String com comando SQL formatado para dados nulos ou dentro da condição com o valor informado.<br/>
+	 * O valor informado deverá já estar convertido com o commando toSQL.<br/>
+	 * ex:toSQLNullOrValue(Conexao, "NOMEDACOLUNA", toSQLBoolean(Conexao, "NOMEDACOLUNA", valor), ">=");
+	 * @param pConnection
+	 * @param pColumnName
+	 * @param pValue String com o comando apropriado de conversão. 
+	 * @return
+	 */
+	public static String getSQLWhereNullOrValue(Connection pConnection, String pColumnName, String pValue, String pCondition){
+		return "(" + toSQLNull(pConnection, pColumnName) + "OR " + pColumnName.trim() + " " + pCondition.trim() + " " + pValue.trim() + ")";
+	}
+	
+	/**
 		 * Retorna o valor convertido conforme o DataType
 		 * @param pDataType
 		 * @param pValue
