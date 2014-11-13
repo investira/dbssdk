@@ -141,6 +141,25 @@ public  class DBSObject {
 		}
 		return (T) pValue;
 	}
+	
+	/**
+  	 * Converte o valor recebido para o tipo de class informada<br/>
+  	 * Caso o valor informado seja nulo, retorna o valor informado em <b>pNullValue</b>.
+	 * @param pValue
+	 * @param pClass
+	 * @param pNullValue
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T toClass(Object pValue, Class<T> pClass, T pNullValue){
+		if (pValue==null){
+			return pNullValue;
+		}
+		if (pClass==null){
+			return (T) pValue;
+		}
+		return toClass(pValue, pClass);
+	}
 
 	/**
 	 * Retorna se os dois objetos informados são iquais, considerando também como verdadeiro(<i>true</i>) se ambos forem nulos.<br/>
