@@ -1328,35 +1328,6 @@ public class DBSIO{
 	}
 
 	/**
-	 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
-	 * @param pCN conexão a ser utilizada para executa a Query
-	 * @param pQuerySQL Query a ser executada
-	 * @return ResultSet com os registros
-	 * @throws DBSIOException 
-	 */
-	public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws DBSIOException{
-		ResultSet xResultSet = null;
-		pQuerySQL = pQuerySQL.trim();
-		Statement xST = null;
-		try{
-//			PreparedStatement xPS = pCn.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-//			xPS.execute();
-//			xResultSet = xPS.getResultSet();
-			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			xResultSet = xST.executeQuery(pQuerySQL);
-		}catch(SQLException e){
-			throwIOException(pQuerySQL, e, pCn);
-			try {
-				xST.close();
-			} catch (SQLException e1) {
-				e1.addSuppressed(e);
-				wLogger.error("openResultSet", e1);
-			}
-		}
-		return xResultSet;
-	}
-	
-	/**
 	 * Fecha resultset
 	 * @param pResultSet
 	 */
@@ -1382,6 +1353,34 @@ public class DBSIO{
 		}
 	}
 	
+	/**
+	 * Recupera os registros a partir de uma Query SQL, utilizando a conexão JDBC com o banco
+	 * @param pCN conexão a ser utilizada para executa a Query
+	 * @param pQuerySQL Query a ser executada
+	 * @return ResultSet com os registros
+	 * @throws DBSIOException 
+	 */
+public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws DBSIOException{
+		ResultSet xResultSet = null;
+		pQuerySQL = pQuerySQL.trim();
+		Statement xST = null;
+		try{
+//			PreparedStatement xPS = pCn.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+//			xPS.execute();
+//			xResultSet = xPS.getResultSet();
+			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			xResultSet = xST.executeQuery(pQuerySQL);
+		}catch(SQLException e){
+			throwIOException(pQuerySQL, e, pCn);
+			try {
+				xST.close();
+			} catch (SQLException e1) {
+				e1.addSuppressed(e);
+				wLogger.error("openResultSet", e1);
+			}
+		}
+		return xResultSet;
+	}
 	/**
 	 * Executa um comando sql diretamente no banco de dados
 	 * @param pCn Conexão com o banco de dados
