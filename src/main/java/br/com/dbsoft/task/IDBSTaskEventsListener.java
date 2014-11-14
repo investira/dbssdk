@@ -27,16 +27,24 @@ public interface IDBSTaskEventsListener {
 	 * Evento disparado após finalizada a execução.<br/>
 	 * Evento <b>não</b> é disparado em caso de interrupção do usuário. 
 	 * Utilize o evento <b>interrupted</b> neste caso.<br/>
-	 * Para identificar qual o status da execução deve-se perquisar getRunStatus().<br/>
+	 * Para identificar qual o status da execução deve-se perquisar <b>getObject().getRunStatus()</b>.<br/>
 	 * Conexão com o banco encontra-se aberta.
 	 */
 	public void afterRun(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
-	 * Evento disparado quando a terafa é interrompida por erro ou pelo usuário.<br/>
-	 * Para identificar qual o status da interrupção, deve-se perquisar getRunStatus().
+	 * Evento disparado quando a terafa é interrompida pelo usuário ou por erro.<br/>
+	 * No caso de erro o evento <b>error<b/> é disparado antes.<br/>
+	 * Para identificar qual o status da interrupção, deve-se perquisar <b>getObject().getRunStatus()</b>.
 	 */
 	public void interrupted(DBSTaskEvent pEvent) throws DBSIOException;
+
+	/**
+	 * Evento disparado quando a terafa é interrompida por erro.<br/>
+	 * Evento <b>interrupted</b> também é disparado em seguida.<br/>
+	 * Para identificar qual o status da interrupção, deve-se perquisar <b>getObject().getRunStatus()</b>.
+	 */
+	public void error(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
 	 * Evento disparado a cada etapa.<br/>

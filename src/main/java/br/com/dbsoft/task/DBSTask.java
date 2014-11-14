@@ -513,6 +513,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		int xNextSubStep = wCurrentSubStep+1;
 		if (xNextSubStep > wSubSteps){
 			wLogger.error(getName() + ":Quantidade de SubsSteps total de " +  wSubSteps + " é inferior a " + xNextSubStep);
+			error();
 		}else{
 			pvSetCurrentSubStep(xNextSubStep);
 			//Calcula percentual atual e dispara evento que percentual mudou
@@ -621,6 +622,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			pvRunTask();
 		} catch (Exception e) {
 			wLogger.error(e);
+			error();
 			DBSIO.throwIOException(e.getMessage());
 		}
 	}
@@ -657,6 +659,18 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	/**
+	 * Troca o RunStatus para interrompido com erro. 
+	 * A interrupção não acaba com o thread da tarefa, 
+	 * somente seta a variável local indicando que a tarefa foi interrompida por erro.
+	 * Cabe ao usuário testar se a tarefa foi interrompida dentro da etapa 
+	 * que estiver em execução.
+	 * @throws DBSIOException 
+	 */	
+	public final void error() throws DBSIOException{
+		pvInterrupt(RunStatus.ERROR);
+	}
+
+	/**
 	 * Configura tarefa para valores antes da execução.
 	 * @throws DBSIOException 
 	 */	
@@ -665,505 +679,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		pvSetRunStatus(RunStatus.EMPTY);
 		setSteps(getSteps());
 		wPercentageCompleted = 0D;
-	}
-
-	/**
-	 * Inicia execução da tarefa
-	 * @throws Exception
-	 */
-	private void pvRunTask() throws DBSIOException{
-		if (!isRunning()){
-			try{
-				if (wMultiTask){
-					//Cria multitarefa e inicia. A Thread chamará o pvRunMain
-					if (wRunThread == null || !wRunThread.isAlive()){
-						wRunThread = new RunByThread();
-						wRunThread.setName(wName);
-					}
-					wRunThread.start();
-				}else{
-					//Executa sem multitarefa
-					pvRunTaskSteps();
-				}
-			}catch(Exception e){
-				wRunningScheduled = false;
-				wLogger.error(getName(), e);
-				pvInterrupt(RunStatus.ERROR);
-				throw new DBSIOException(e);
-			}
-		}else{
-			wRunningScheduled = false;
-			wLogger.warn("Tarefa já em execução. Nova solicitação de execução foi ignorada.");
-		}
-	}
-
-	/**
-	 * Loop para execução de todas as etapas da tarefas conforme 
-	 * o número de estapada definidas em <b>steps</b>.  
-	 * @throws DBSIOException 
-	 */
-	private synchronized void pvRunTaskSteps() throws DBSIOException{
-		wTimeStarted = System.currentTimeMillis();
-		wTimeEnded = wTimeStarted;
-		while (wReRun){
-			wReRun = false;
-			//Verifica se está em execução antes de iniciar
-			try{
-				if (!isRunning()){
-					pvSetTaskState(TaskState.RUNNING);
-					//Reseta para a etapa inicial
-					reset(); 
-					//Dispara evento e verifica se pode iniciar
-					if (pvFireEventBeforeRun()){
-						//Loop até atingir a quantidade de tarefas informadas
-						for (int xStep = 1; xStep < wSteps + 1; xStep++){
-							//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
-							Thread.yield();
-							
-							pvSetCurrentStep(xStep); 
-
-							pvCalcPercentageCompleted();
-
-							/* Dispara evento de step e verifica se houve erro.
-							 * A o statu de interrupção é priopritário.  
-							 */
-							if (!pvFireEventStep()
-							  && getRunStatus() != RunStatus.INTERRUPTED){
-								pvInterrupt(RunStatus.ERROR);
-								break;
-							}
-
-							//Finaliza se foi interrompido
-							if (getRunStatus() == RunStatus.INTERRUPTED){
-								break;
-							}
-						}
-						//Configura
-						if (getRunStatus() == RunStatus.EMPTY){
-							pvSetRunStatus(RunStatus.SUCCESS);
-						}
-						setLastRunStatus(getRunStatus());
-						wTimeEnded = System.currentTimeMillis();
-						if (getRunStatus() != RunStatus.INTERRUPTED){
-							pvFireEventAfterRun();
-						}
-					}
-				}else{
-					wLogger.error("pvRunTaskSteps:Tarefa já se contra em execução:" + wRunThread.getName() + ":" +  wRunThread.getId());
-				}
-			}catch(Exception e){
-				wLogger.error(getName(), e);
-				pvInterrupt(RunStatus.ERROR);
-				setLastRunStatus(getRunStatus());
-				throw new DBSIOException(e);
-			}finally{
-				pvSetTaskStateToNotRunnig();
-				//Se foi configurado a quantidade de segundos para uma nova tentativa...
-				if (wRetryOnErrorSeconds > 0 
-				 && wRetryOnErrorTimes > 0){
-					//Se a execução terminou com erro...
-					if (getRunStatus() == RunStatus.ERROR){
-						//Desativa ReRun, caso tenha sido ativado pelo usuário, pois a prioridade é agendar a nova tentativa
-						wReRun = false;
-						//Incrementa contador de erro
-						wRetryOnErrorCount++; 
-						//Ignora nova tentariva se houver controle de quantidade de tentaticas em caso de erro e esta tiver sido ultrapassada.
-						if (wRetryOnErrorTimes != 0 
-						 && wRetryOnErrorCount > wRetryOnErrorTimes){
-							wLogger.warn(getName() + ":Ultrapassada a quantidade máxima de " + wRetryOnErrorTimes + " tentativas de execução.");
-							//Zera qualquer agendamente anterior
-							setScheduleDate(null);
-						}else{
-							//Faz agendamento para nova tentativa
-							pvRetrySchedule();
-						}
-					}else{
-						//Zera contador de erro
-						wRetryOnErrorCount = 0; 
-					}
-				}
-			}
-		}
-		wRunningScheduled = false;
-		wReRun = true;
-	}
-
-	/**
-	 * Zera controle de tentativas por erro
-	 */	
-	private final void pvRetryReset(){
-		wRetryOnErrorCount = 0;
-	}
-
-	/**
-	 * Agenda a tarefa no timer caso a tarefa e busca pelo próximo agendamento estajam habilitados
-	 * @throws DBSIOException 
-	 */
-	private void pvAtivaAgendamento() throws DBSIOException{
-		//Cancela último timer se houver;
-		pvKillTimer();
-		//Cria novo agendamento
-		if (wScheduleDate != null){
-			Timestamp xNow = DBSDate.getNowTimestamp();
-			if (!wScheduleDate.before(xNow)){
-				//Cria timer
-				wTimer = new Timer("Timer - " + getName());
-				wTimer.schedule(new RunByTimer(), wScheduleDate);
-				//COnfigura como agendado.
-				pvSetTaskState(TaskState.SCHEDULED);
-				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
-			}else{
-				wLogger.error("Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
-						" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
-			}
-		}
-	}
-	
-	/**
-	 * Desativa o agendamento e cancela o timer se estiver ativo
-	 */
-	private void pvDesativaAgendamento(){
-		//Cancela último timer se houver;
-		wScheduleDate = null;
-		pvKillTimer();
-	}
-	
-	/**
-	 * Cancela o timer se estiver ativo
-	 */
-	private void pvKillTimer(){
-		//Cancela último timer se houver;
-		if (wTimer != null) {
-			wTimer.cancel();
-			wTimer.purge();
-		}
-	}
-
-	/**
-	 * Calcula percentual total de conclusão das etapas.
-	 * @throws DBSIOException 
-	 */
-	private void pvCalcPercentageCompleted() throws DBSIOException{
-		if (wSteps != 0){
-			Double xCurrentStep = (double) (wCurrentStep -1);
-			Double xCurrentSubStep = (double) wCurrentSubStep;
-			//Se estiver iniciado o processamento
-			if (getTaskState() == TaskState.RUNNING){
-				//Se for inicio
-				if (xCurrentStep==0 && 
-					xCurrentSubStep==0){
-					wPercentageCompleted = 0.001; //Envia valor mínimo somente para indicar que foi dado inicio ao processamento
-				}else{
-					//Calcula percentual com relação a etapa principal
-					double xP = DBSNumber.divide(xCurrentStep, wSteps).doubleValue();
-					//Calcula percentual com relação a subetapa(proporcional a quantidade de etapas) e adiciona a etapa principal
-					xP += ((1 / (double) wSteps) * xCurrentSubStep / wSubSteps);
-					wPercentageCompleted =  xP * 100;
-				}
-			//Se processamento estiver parado
-			}else{
-				//Se finalizado com sucesso
-				if (wCurrentStep == wSteps &&
-					getRunStatus() == RunStatus.SUCCESS){
-					wPercentageCompleted = 100D;
-				//Se for inicio ou não foi finalizado com sucesso
-				}else{
-					wPercentageCompleted =  0D;
-				}
-			}
-		//Se quantida de estapas for 0.
-		}else{
-			wPercentageCompleted = 100D;
-		}
-		wPercentageCompleted = DBSNumber.round(wPercentageCompleted, 3);
-		pvFireEventTaskUpdated();
-	}
-
-	/**
-	 * Seta o número da etapa atual
-	 * @param pCurrentStep
-	 */
-	private final void pvSetCurrentStep(Integer pCurrentStep) {
-		wCurrentStep = pCurrentStep;
-		setSubSteps(1);//Reseta a quantidade de substeps sempre que o step for trocado. O substep deve ser definido dinamicamente dentro do evento step
-	}
-
-	/**
-	 * Seta o número da subetapa.
-	 * @param pCurrentSubStep
-	 */
-	private final void pvSetCurrentSubStep(int pCurrentSubStep) {
-		wCurrentSubStep = pCurrentSubStep;
-	}
-
-
-	/**
-	 * Configura a situação da execução (Método PRIVADO) e 
-	 * calcula percentual de execução atual.
-	 * @param pRunState
-	 * @throws DBSIOException 
-	 */
-	private final void pvSetTaskState(TaskState pRunState) throws DBSIOException {
-		if (wTaskState != pRunState){
-			wTaskState = pRunState;
-			pvFireEventTaskStateChanged();
-			//Calcula a finalização da terafa
-			pvCalcPercentageCompleted();
-
-		}
-	}
-
-	/**
-	 * Configura o status da execução atual 
-	 * @param pRunStatus
-	 * @throws DBSIOException 
-	 */
-	private final void pvSetRunStatus(RunStatus pRunStatus) throws DBSIOException {
-		if (wRunStatus != pRunStatus){
-			wRunStatus = pRunStatus;
-			pvFireEventRunStatusChanged();
-			pvFireEventTaskUpdated();
-		}
-	}
-
-	//============ PRIVATES ==========================================================================
-	/**
-	 * Interrompe execução.
-	 * @param pInterrupt
-	 * @throws DBSIOException 
-	 */
-	private final void pvInterrupt(RunStatus pRunStatus) throws DBSIOException{
-		if (isRunning()){
-			pvSetRunStatus(pRunStatus);
-			//Eventos ----------------------------
-			pvFireEventInterrupted();
-		}
-	}
-	
-	@PreDestroy
-	private void pvFinalize() {
-		pvFireEventFinalizeTask();
-		kill();
-		try {
-			super.finalize();
-		} catch (Throwable ignore) {}
-	}
-
-
-	/**
-	 * Programa um novo agendamento a partir da quantidade de segundos definida em getSecondsToRetry, 
-	 * caso a seja uma tarefa agendada e houve erro.
-	 * @throws DBSIOException 
-	 */
-	private void pvRetrySchedule() throws DBSIOException{
-		if (wRetryOnErrorSeconds > 0
-		 && wRetryOnErrorTimes > 0){
-			Date xData = DBSDate.getNowDate();
-			xData = DBSDate.getDateAddSeconds(xData, wRetryOnErrorSeconds);
-			wLogger.warn(getName() + ":Tentativa " + wRetryOnErrorCount + " de " + wRetryOnErrorTimes + " será executada em: " + DBSFormat.getFormattedDateCustom(xData, "dd/MM/yyyy HH:mm:ss"));
-			pvScheduleDate(xData);
-		}
-	}
-	
-	/**
-	 * Ativa agendamento
-	 * @param pScheduleDate
-	 * @throws DBSIOException 
-	 */
-	private final void pvScheduleDate(Date pScheduleDate) throws DBSIOException {
-		wScheduleDate = pScheduleDate;
-		pvAtivaAgendamento();
-	}
-
-	/**
-	 * Seta a situação do Status considerando as tarefas agendadas estarão como "aguardando". Tarefas sem agendamento estão "Paradas".
-	 * @return
-	 * @throws DBSIOException 
-	 */
-	private void pvSetTaskStateToNotRunnig() throws DBSIOException{
-		if (wScheduleDate != null
-		 && wScheduleDate.after(DBSDate.getNowTimestamp())){
-			pvSetTaskState(TaskState.SCHEDULED);
-		}else{
-			pvSetTaskState(TaskState.STOPPED);
-		}
-	}
-	
-	//=== EVENTOS =====================================================================================
-	/**
-	 * Evento disparado quando é iniciada a execução
-	 * @throws DBSIOException 
-	 */
-	private boolean pvFireEventInitializeTask() {
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		initializeTask(xE);
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).initializeTask(xE);
-        }
-		return xE.isOk();
-	}
-	
-	private void pvFireEventFinalizeTask(){
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		finalizeTask(xE);
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).finalizeTask(xE);
-        }
-	}
-	
-	private boolean pvFireEventBeforeRun() throws DBSIOException{
-//		System.out.println("Tarefa " + getName() + ":BEFORE RUN:" + wRunThread.getId());
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		try{
-//			wLogger.info("BeforeRun----------------------");
-			openConnection();
-			
-			//Chame o metodo(evento) local para quando esta classe for extendida
-			beforeRun(xE);
-			if (xE.isOk()){
-				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-				for (int xX=0; xX<wEventListeners.size(); xX++){
-					wEventListeners.get(xX).beforeRun(xE);
-					//Sai em caso de erro
-					if (!xE.isOk()){break;}
-		        }
-			}
-			return xE.isOk();
-		}catch(Exception e){
-			wLogger.error("BeforeRun:", e);
-			throw e;
-		}finally{
-			closeConnection();
-		}
-	}	
-
-	/**
-	 * Dispara evento informando a execução terminou.<br/>
-	 * Situação do termino pode ser verificada com getLastRunStatus().
-	 * @throws DBSIOException 
-	 */
-	private void pvFireEventAfterRun() throws DBSIOException{
-//		System.out.println("Tarefa " + getName() + ":AFTER RUN:" + wRunThread.getId());
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		try{
-//			wLogger.info("AfterRun---------------------" + ":" + getLastRunStatus().getName());
-			openConnection();
-			//Chame o metodo(evento) local para quando esta classe for extendida
-			afterRun(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).afterRun(xE); 
-	        }
-		}catch(Exception e){
-			wLogger.error("AfterRun", e);
-			throw e;
-		}finally{
-			closeConnection();
-		}
-	}
-	
-	/**
-	 * Dispara evento a cada nova etapa da tarefa
-	 * @return
-	 * @throws DBSIOException 
-	 */
-	private boolean pvFireEventStep() throws DBSIOException{
-//		System.out.println("STEP + " + wRunThread.getId());
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		Boolean xOk = true;
-		try{
-			openConnection();
-			if (getTransationEnabled()){
-				DBSIO.beginTrans(wConnection);
-			}
-			//Chame o metodo(evento) local para quando esta classe for extendida
-			step(xE);
-			xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
-//			wLogger.info("Step:" + getCurrentStep() + ":" + getCurrentStepName() + ":" + getRunStatus().getName());
-			if (xOk){
-				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-				for (int xX=0; xX<wEventListeners.size(); xX++){
-					wEventListeners.get(xX).step(xE);
-					xOk = (xE.isOk() && getRunStatus() == RunStatus.EMPTY);
-					if (!xOk){break;} //Em caso de solicitação de interrupção(interrupt() ou error()), sai do loop.
-					//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
-					Thread.yield();
-		        }
-			}
-			if (getTransationEnabled()){
-				DBSIO.endTrans(wConnection, xOk);
-			}
-			return xE.isOk();
-		}catch(Exception e){
-			wLogger.error("Step:" + getCurrentStep() + ":" + getCurrentStepName(), e);
-			DBSIO.endTrans(wConnection, false);
-			throw e;
-		}finally{
-			closeConnection();
-		}
-	}
-	
-	/**
-	 *Dispara evento informando que a execução mudou de situação(Executando, Parado ou Agendada)
-	 * @throws DBSIOException 
-	 */
-	private void pvFireEventTaskStateChanged() throws DBSIOException{
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		taskStateChanged(xE);
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).taskStateChanged(xE);
-        }		
-	}
-
-	/**
-	 * Dispara evento informando que o atributo 'status' foi alterado.
-	 * Local onde deverá se implementada a conversão do valor deste atributo para 
-	 * o valor correspondente no datamodel, se for o caso.(Exemplo enum)
-	 * @throws DBSIOException 
-	 */
-	private void pvFireEventRunStatusChanged() throws DBSIOException{
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		runStatusChanged(xE);
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).runStatusChanged(xE);
-        }
-	}
-	
-	/**
-	 * Dispara evento informando que foi interrompida execução 
-	 * @throws DBSIOException 
-	 */
-	private void pvFireEventInterrupted() throws DBSIOException {
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		interrupted(xE);
-		wLogger.warn("Interrupt:Step:" + getCurrentStep() + ":" + getCurrentStepName());
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).interrupted(xE);
-        }
-	}
-
-	/**
-	 * Diapara evendo quando houver alguma evolução no percentual ou alguma modificação no nome da etapa.
-	 * @throws DBSIOException 
-	 */
-	private void pvFireEventTaskUpdated() throws DBSIOException{
-		DBSTaskEvent xE = new DBSTaskEvent(this);
-		//Chame o metodo(evento) local para quando esta classe for extendida
-		taskUpdated(xE);
-		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).taskUpdated(xE);
-        }
 	}
 
 	//Objeto somente para acordar a tarefa após o wait
@@ -1219,6 +734,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					}
 				} catch (InterruptedException | DBSIOException e) {
 					wLogger.error(e);
+					try {
+						error();
+					} catch (DBSIOException e1) {
+						wLogger.error(e);
+					}
 				}
 			}
 		}
@@ -1267,6 +787,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 
 	@Override
 	public void interrupted(DBSTaskEvent pEvent) {
+		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
+	}
+
+	@Override
+	public void error(DBSTaskEvent pEvent) {
 		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
 	}
 
@@ -1483,7 +1008,517 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		return isMessageValidated(pMessage.getMessageText());
 	}
 
+	/**
+	 * Inicia execução da tarefa
+	 * @throws Exception
+	 */
+	private void pvRunTask() throws DBSIOException{
+		if (!isRunning()){
+			try{
+				if (wMultiTask){
+					//Cria multitarefa e inicia. A Thread chamará o pvRunMain
+					if (wRunThread == null || !wRunThread.isAlive()){
+						wRunThread = new RunByThread();
+						wRunThread.setName(wName);
+					}
+					wRunThread.start();
+				}else{
+					//Executa sem multitarefa
+					pvRunTaskSteps();
+				}
+			}catch(Exception e){
+				wRunningScheduled = false;
+				wLogger.error(getName(), e);
+				error();
+				throw new DBSIOException(e);
+			}
+		}else{
+			wRunningScheduled = false;
+			wLogger.warn("Tarefa já em execução. Nova solicitação de execução foi ignorada.");
+		}
+	}
 
+	/**
+	 * Loop para execução de todas as etapas da tarefas conforme 
+	 * o número de estapada definidas em <b>steps</b>.  
+	 * @throws DBSIOException 
+	 */
+	private synchronized void pvRunTaskSteps() throws DBSIOException{
+		wTimeStarted = System.currentTimeMillis();
+		wTimeEnded = wTimeStarted;
+		while (wReRun){
+			wReRun = false;
+			//Verifica se está em execução antes de iniciar
+			try{
+				if (!isRunning()){
+					pvSetTaskState(TaskState.RUNNING);
+					//Reseta para a etapa inicial
+					reset(); 
+					//Dispara evento e verifica se pode iniciar
+					if (pvFireEventBeforeRun()){
+						//Loop até atingir a quantidade de tarefas informadas
+						for (int xStep = 1; xStep < wSteps + 1; xStep++){
+							//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
+							Thread.yield();
+							
+							pvSetCurrentStep(xStep); 
+	
+							pvCalcPercentageCompleted();
+	
+							/* Dispara evento de step e verifica se houve erro.
+							 * A o statu de interrupção é priopritário.  
+							 */
+							if (!pvFireEventStep()
+							  && getRunStatus() != RunStatus.INTERRUPTED){
+								error();
+								break;
+							}
+	
+							//Finaliza se foi interrompido
+							if (getRunStatus() == RunStatus.INTERRUPTED){
+								break;
+							}
+						}
+						//Configura
+						if (getRunStatus() == RunStatus.EMPTY){
+							pvSetRunStatus(RunStatus.SUCCESS);
+						}
+						setLastRunStatus(getRunStatus());
+						wTimeEnded = System.currentTimeMillis();
+						if (getRunStatus() != RunStatus.INTERRUPTED){
+							pvFireEventAfterRun();
+						}
+					}
+				}else{
+					wLogger.error("pvRunTaskSteps:Tarefa já se contra em execução:" + wRunThread.getName() + ":" +  wRunThread.getId());
+				}
+			}catch(Exception e){
+				wLogger.error(getName(), e);
+				error();
+				setLastRunStatus(getRunStatus());
+				throw new DBSIOException(e);
+			}finally{
+				pvSetTaskStateToNotRunnig();
+				//Se foi configurado a quantidade de segundos para uma nova tentativa...
+				if (wRetryOnErrorSeconds > 0 
+				 && wRetryOnErrorTimes > 0){
+					//Se a execução terminou com erro...
+					if (getRunStatus() == RunStatus.ERROR){
+						//Desativa ReRun, caso tenha sido ativado pelo usuário, pois a prioridade é agendar a nova tentativa
+						wReRun = false;
+						//Incrementa contador de erro
+						wRetryOnErrorCount++; 
+						//Ignora nova tentariva se houver controle de quantidade de tentaticas em caso de erro e esta tiver sido ultrapassada.
+						if (wRetryOnErrorTimes != 0 
+						 && wRetryOnErrorCount > wRetryOnErrorTimes){
+							wLogger.warn(getName() + ":Ultrapassada a quantidade máxima de " + wRetryOnErrorTimes + " tentativas de execução.");
+							//Zera qualquer agendamente anterior
+							setScheduleDate(null);
+						}else{
+							//Faz agendamento para nova tentativa
+							pvRetrySchedule();
+						}
+					}else{
+						//Zera contador de erro
+						wRetryOnErrorCount = 0; 
+					}
+				}
+			}
+		}
+		wRunningScheduled = false;
+		wReRun = true;
+	}
 
+	/**
+	 * Zera controle de tentativas por erro
+	 */	
+	private final void pvRetryReset(){
+		wRetryOnErrorCount = 0;
+	}
+
+	/**
+	 * Agenda a tarefa no timer caso a tarefa e busca pelo próximo agendamento estajam habilitados
+	 * @throws DBSIOException 
+	 */
+	private void pvAtivaAgendamento() throws DBSIOException{
+		//Cancela último timer se houver;
+		pvKillTimer();
+		//Cria novo agendamento
+		if (wScheduleDate != null){
+			Timestamp xNow = DBSDate.getNowTimestamp();
+			if (!wScheduleDate.before(xNow)){
+				//Cria timer
+				wTimer = new Timer("Timer - " + getName());
+				wTimer.schedule(new RunByTimer(), wScheduleDate);
+				//COnfigura como agendado.
+				pvSetTaskState(TaskState.SCHEDULED);
+				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
+			}else{
+				wLogger.error("Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
+						" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
+			}
+		}
+	}
+
+	/**
+	 * Desativa o agendamento e cancela o timer se estiver ativo
+	 */
+	private void pvDesativaAgendamento(){
+		//Cancela último timer se houver;
+		wScheduleDate = null;
+		pvKillTimer();
+	}
+
+	/**
+	 * Cancela o timer se estiver ativo
+	 */
+	private void pvKillTimer(){
+		//Cancela último timer se houver;
+		if (wTimer != null) {
+			wTimer.cancel();
+			wTimer.purge();
+		}
+	}
+
+	/**
+	 * Calcula percentual total de conclusão das etapas.
+	 * @throws DBSIOException 
+	 */
+	private void pvCalcPercentageCompleted() throws DBSIOException{
+		if (wSteps != 0){
+			Double xCurrentStep = (double) (wCurrentStep -1);
+			Double xCurrentSubStep = (double) wCurrentSubStep;
+			//Se estiver iniciado o processamento
+			if (getTaskState() == TaskState.RUNNING){
+				//Se for inicio
+				if (xCurrentStep==0 && 
+					xCurrentSubStep==0){
+					wPercentageCompleted = 0.001; //Envia valor mínimo somente para indicar que foi dado inicio ao processamento
+				}else{
+					//Calcula percentual com relação a etapa principal
+					double xP = DBSNumber.divide(xCurrentStep, wSteps).doubleValue();
+					//Calcula percentual com relação a subetapa(proporcional a quantidade de etapas) e adiciona a etapa principal
+					xP += ((1 / (double) wSteps) * xCurrentSubStep / wSubSteps);
+					wPercentageCompleted =  xP * 100;
+				}
+			//Se processamento estiver parado
+			}else{
+				//Se finalizado com sucesso
+				if (wCurrentStep == wSteps &&
+					getRunStatus() == RunStatus.SUCCESS){
+					wPercentageCompleted = 100D;
+				//Se for inicio ou não foi finalizado com sucesso
+				}else{
+					wPercentageCompleted =  0D;
+				}
+			}
+		//Se quantida de estapas for 0.
+		}else{
+			wPercentageCompleted = 100D;
+		}
+		wPercentageCompleted = DBSNumber.round(wPercentageCompleted, 3);
+		pvFireEventTaskUpdated();
+	}
+
+	/**
+	 * Seta o número da etapa atual
+	 * @param pCurrentStep
+	 */
+	private final void pvSetCurrentStep(Integer pCurrentStep) {
+		wCurrentStep = pCurrentStep;
+		setSubSteps(1);//Reseta a quantidade de substeps sempre que o step for trocado. O substep deve ser definido dinamicamente dentro do evento step
+	}
+
+	/**
+	 * Seta o número da subetapa.
+	 * @param pCurrentSubStep
+	 */
+	private final void pvSetCurrentSubStep(int pCurrentSubStep) {
+		wCurrentSubStep = pCurrentSubStep;
+	}
+
+	/**
+	 * Configura a situação da execução (Método PRIVADO) e 
+	 * calcula percentual de execução atual.
+	 * @param pRunState
+	 * @throws DBSIOException 
+	 */
+	private final void pvSetTaskState(TaskState pRunState) throws DBSIOException {
+		if (wTaskState != pRunState){
+			wTaskState = pRunState;
+			pvFireEventTaskStateChanged();
+			//Calcula a finalização da terafa
+			pvCalcPercentageCompleted();
+	
+		}
+	}
+
+	/**
+	 * Configura o status da execução atual 
+	 * @param pRunStatus
+	 * @throws DBSIOException 
+	 */
+	private final void pvSetRunStatus(RunStatus pRunStatus) throws DBSIOException {
+		if (wRunStatus != pRunStatus){
+			wRunStatus = pRunStatus;
+			pvFireEventRunStatusChanged();
+			pvFireEventTaskUpdated();
+		}
+	}
+
+	//============ PRIVATES ==========================================================================
+	/**
+	 * Interrompe execução.
+	 * @param pInterrupt
+	 * @throws DBSIOException 
+	 */
+	private final void pvInterrupt(RunStatus pRunStatus) throws DBSIOException{
+		if (isRunning()){
+			pvSetRunStatus(pRunStatus);
+			//Eventos ----------------------------
+			if (pRunStatus == RunStatus.ERROR){
+				pvFireEventError();
+			}
+			pvFireEventInterrupted();
+		}
+	}
+
+	@PreDestroy
+	private void pvFinalize() {
+		pvFireEventFinalizeTask();
+		kill();
+		try {
+			super.finalize();
+		} catch (Throwable ignore) {}
+	}
+
+	/**
+	 * Programa um novo agendamento a partir da quantidade de segundos definida em getSecondsToRetry, 
+	 * caso a seja uma tarefa agendada e houve erro.
+	 * @throws DBSIOException 
+	 */
+	private void pvRetrySchedule() throws DBSIOException{
+		if (wRetryOnErrorSeconds > 0
+		 && wRetryOnErrorTimes > 0){
+			Date xData = DBSDate.getNowDate();
+			xData = DBSDate.getDateAddSeconds(xData, wRetryOnErrorSeconds);
+			wLogger.warn(getName() + ":Tentativa " + wRetryOnErrorCount + " de " + wRetryOnErrorTimes + " será executada em: " + DBSFormat.getFormattedDateCustom(xData, "dd/MM/yyyy HH:mm:ss"));
+			pvScheduleDate(xData);
+		}
+	}
+
+	/**
+	 * Ativa agendamento
+	 * @param pScheduleDate
+	 * @throws DBSIOException 
+	 */
+	private final void pvScheduleDate(Date pScheduleDate) throws DBSIOException {
+		wScheduleDate = pScheduleDate;
+		pvAtivaAgendamento();
+	}
+
+	/**
+	 * Seta a situação do Status considerando as tarefas agendadas estarão como "aguardando". Tarefas sem agendamento estão "Paradas".
+	 * @return
+	 * @throws DBSIOException 
+	 */
+	private void pvSetTaskStateToNotRunnig() throws DBSIOException{
+		if (wScheduleDate != null
+		 && wScheduleDate.after(DBSDate.getNowTimestamp())){
+			pvSetTaskState(TaskState.SCHEDULED);
+		}else{
+			pvSetTaskState(TaskState.STOPPED);
+		}
+	}
+
+	//=== EVENTOS =====================================================================================
+	/**
+	 * Evento disparado quando é iniciada a execução
+	 * @throws DBSIOException 
+	 */
+	private boolean pvFireEventInitializeTask() {
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		initializeTask(xE);
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).initializeTask(xE);
+	    }
+		return xE.isOk();
+	}
+
+	private void pvFireEventFinalizeTask(){
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		finalizeTask(xE);
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).finalizeTask(xE);
+	    }
+	}
+
+	private boolean pvFireEventBeforeRun() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		try{
+			openConnection();
+			
+			//Chame o metodo(evento) local para quando esta classe for extendida
+			beforeRun(xE);
+			if (xE.isOk()){
+				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+				for (int xX=0; xX<wEventListeners.size(); xX++){
+					wEventListeners.get(xX).beforeRun(xE);
+					//Sai em caso de erro
+					if (!xE.isOk()){break;}
+		        }
+			}
+			return xE.isOk();
+		}catch(Exception e){
+			wLogger.error("BeforeRun:", e);
+			error();
+			throw e;
+		}finally{
+			closeConnection();
+		}
+	}
+
+	/**
+	 * Dispara evento informando a execução terminou.<br/>
+	 * Situação do termino pode ser verificada com getLastRunStatus().
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventAfterRun() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		try{
+			openConnection();
+			//Chame o metodo(evento) local para quando esta classe for extendida
+			afterRun(xE);
+			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+			for (int xX=0; xX<wEventListeners.size(); xX++){
+				wEventListeners.get(xX).afterRun(xE); 
+	        }
+		}catch(Exception e){
+			wLogger.error("AfterRun", e);
+			error();
+			throw e;
+		}finally{
+			closeConnection();
+		}
+	}
+
+	/**
+	 * Dispara evento a cada nova etapa da tarefa
+	 * @return
+	 * @throws DBSIOException 
+	 */
+	private boolean pvFireEventStep() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		Boolean xOk = true;
+		try{
+			openConnection();
+			if (getTransationEnabled()){
+				DBSIO.beginTrans(wConnection);
+			}
+			//Chame o metodo(evento) local para quando esta classe for extendida
+			step(xE);
+			xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
+//			wLogger.info("Step:" + getCurrentStep() + ":" + getCurrentStepName() + ":" + getRunStatus().getName());
+			if (xOk){
+				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+				for (int xX=0; xX<wEventListeners.size(); xX++){
+					wEventListeners.get(xX).step(xE);
+					xOk = (xE.isOk() && getRunStatus() == RunStatus.EMPTY);
+					if (!xOk){break;} //Em caso de solicitação de interrupção(interrupt() ou error()), sai do loop.
+					//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
+					Thread.yield();
+		        }
+			}
+			if (getTransationEnabled()){
+				DBSIO.endTrans(wConnection, xOk);
+			}
+			return xE.isOk();
+		}catch(Exception e){
+			wLogger.error("Step:" + getCurrentStep() + ":" + getCurrentStepName(), e);
+			DBSIO.endTrans(wConnection, false);
+			error();
+			throw e;
+		}finally{
+			closeConnection();
+		}
+	}
+
+	/**
+	 *Dispara evento informando que a execução mudou de situação(Executando, Parado ou Agendada)
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventTaskStateChanged() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		taskStateChanged(xE);
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).taskStateChanged(xE);
+	    }		
+	}
+
+	/**
+	 * Dispara evento informando que o atributo 'status' foi alterado.
+	 * Local onde deverá se implementada a conversão do valor deste atributo para 
+	 * o valor correspondente no datamodel, se for o caso.(Exemplo enum)
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventRunStatusChanged() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		runStatusChanged(xE);
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).runStatusChanged(xE);
+	    }
+	}
+
+	/**
+	 * Dispara evento informando que foi interrompida execução 
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventInterrupted() throws DBSIOException {
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		interrupted(xE);
+		wLogger.warn("Interrupt:Step:" + getCurrentStep() + ":" + getCurrentStepName());
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).interrupted(xE);
+	    }
+	}
+
+	/**
+	 * Dispara evento informando que foi interrompida execução 
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventError() throws DBSIOException {
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		error(xE);
+		wLogger.warn("Interrupt with error:Step:" + getCurrentStep() + ":" + getCurrentStepName());
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).error(xE);
+	    }
+	}
+
+	/**
+	 * Diapara evendo quando houver alguma evolução no percentual ou alguma modificação no nome da etapa.
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventTaskUpdated() throws DBSIOException{
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		taskUpdated(xE);
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).taskUpdated(xE);
+	    }
+	}
 
 }
