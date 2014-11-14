@@ -786,12 +786,12 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	@Override
-	public void interrupted(DBSTaskEvent pEvent) {
+	public void interrupted(DBSTaskEvent pEvent) throws DBSIOException{
 		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
 	}
 
 	@Override
-	public void error(DBSTaskEvent pEvent) {
+	public void error(DBSTaskEvent pEvent) throws DBSIOException{
 		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
 	}
 
