@@ -951,9 +951,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	@Override
 	public synchronized int executeInsert() throws DBSIOException{
-		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
+		if (!pvCheckColumnSize("executeInsert")){
 			return 0;
 		}
 		int xCount = 0;
@@ -977,10 +975,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	@Override
 	public synchronized final int executeDelete() throws DBSIOException{
-		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeDelete: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
+		if (!pvCheckColumnSize("executeDelete")){
 			return 0;
 		}
 		int xCount = 0;
@@ -1016,9 +1011,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @throws SQLException 
 	 */
 	public synchronized int executeUpdate(String pAdditionalSQLWhereCondition) throws DBSIOException{
-		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
+		if (!pvCheckColumnSize("executeUpdate")){
 			return 0;
 		}
 		int xCount = 0;
@@ -1060,10 +1053,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @throws SQLException 
 	 */
 	public synchronized final int executeMerge(String pAdditionalSQLWhereCondition) throws DBSIOException{
-		if (wCommandColumns.size() == 0){
-			//Mensagem alterada pois deveria ser de Colunas não encontradas e não de tabela
-			wLogger.error("DBSDAO:executeUpdate: Não foram encontradas colunas alteradas para efetuar o comando de UPDATE.");
-//			wLogger.error("DBSDAO:executeMerge: Não foi informada a tabela para efetuar os comandos. Utilize setCommandTableName ou informe no construtor.");
+		if (!pvCheckColumnSize("executeMerge")){
 			return 0;
 		}
 		int xN=-1;
@@ -1541,6 +1531,23 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 	}
 
+	
+	/**
+	 * Verifica se foi definida a tabela para edição e respectivas colunas
+	 * @param pMethodName
+	 * @return
+	 */
+	private boolean pvCheckColumnSize(String pMethodName){
+		if (wCommandColumns.size() == 0){ 
+			if (DBSObject.isEmpty(getCommandTableName())){
+				wLogger.error("DBSDAO:" + pMethodName + ": Não foi informada a tabela que sofrerá a edição.");
+			}else{
+				wLogger.error("DBSDAO:" + pMethodName + ": Não foram encontradas colunas para efetuar a edição.[" + getCommandTableName() + "]");
+			}
+			return false;
+		}
+		return true;
+	}
 
 	//=========================================================================================================
 	//Overrides
