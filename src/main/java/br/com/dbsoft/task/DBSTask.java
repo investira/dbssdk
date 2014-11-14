@@ -1416,24 +1416,25 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		Boolean xOk = true;
 		try{
 			openConnection();
-			if (getTransationEnabled()){
+			//Salva valor do transationEnabled para evitar erro caso o atributo seja alterado antes de finalizada a execução da etapa
+			Boolean xTransationEnabled = getTransationEnabled();
+			if (xTransationEnabled){
 				DBSIO.beginTrans(wConnection);
 			}
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			step(xE);
 			xOk = xE.isOk() && getRunStatus() == RunStatus.EMPTY;
-//			wLogger.info("Step:" + getCurrentStep() + ":" + getCurrentStepName() + ":" + getRunStatus().getName());
 			if (xOk){
 				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 				for (int xX=0; xX<wEventListeners.size(); xX++){
 					wEventListeners.get(xX).step(xE);
 					xOk = (xE.isOk() && getRunStatus() == RunStatus.EMPTY);
 					if (!xOk){break;} //Em caso de solicitação de interrupção(interrupt() ou error()), sai do loop.
-					//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
-					Thread.yield();
 		        }
 			}
-			if (getTransationEnabled()){
+			//Para dar oportunidade de processar algum método que tenha sido chamado durante o processamento desta thread
+			Thread.yield();
+			if (xTransationEnabled){
 				DBSIO.endTrans(wConnection, xOk);
 			}
 			return xE.isOk();
