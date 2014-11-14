@@ -69,33 +69,7 @@ public class DBSIO{
     	LAST;
     } 
 	
-	/**
-	 * Retorna o banco de dados utilizado
-	 * @param pConnection conexão a partir do qual serãoverificado o fabricante do bando de dados
-	 * @return Fabricante a partir de enDataBaseProduct
-	 * @throws DBSIOException 
-	 */
-	public static DB_SERVER getDataBaseProduct(Connection pConnection) {
-		if (pConnection == null){
-			return null;
-		}
-		String xDBPN;
-		try {
-			xDBPN = pConnection.getMetaData().getDatabaseProductName().toUpperCase(); 
-		} catch (SQLException e) {
-			wLogger.error("Fabrincante do banco de dados não encontrado", e);
-			return null;
-		}
-		if (xDBPN.equals("ORACLE")){
-			return DB_SERVER.ORACLE;
-		}else if (xDBPN.equals("SQLSERVER")){
-			return DB_SERVER.SQLSERVER;
-		}else if (xDBPN.equals("MYSQL")){
-			return DB_SERVER.MYSQL;
-		}else{
-			return null;
-		}
-	}
+	
 	//ABRINDO conexão - DIRETA		
 	//	try {
 	//		Class.forName("com.mysql.jdbc.Driver").newInstance(); 
@@ -119,35 +93,33 @@ public class DBSIO{
 	//private DBSDAO wsDao;
 	//wsCn = wsDS.getConnection();
 	//wsDao = new DBSDAO(wsCn);
-	
 	/**
-	 * Faz conexão direta com o banco de dados
-	 * @param pConnectionString String de conexão
-	 * @param pUserName Nome do usuário
-	 * @param pUserPassword Senha do usuário
-	 * @return true = Sem erro ; false = Com erro
+	 * Retorna o banco de dados utilizado
+	 * @param pCn conexão a partir do qual serãoverificado o fabricante do bando de dados
+	 * @return Fabricante a partir de enDataBaseProduct
 	 * @throws DBSIOException 
 	 */
-	public static Connection getConnection(String pConnectionString, String pUserName, String pUserPassword) throws DBSIOException{
-	    // Força o load dos JDBC drivers.
-	    Enumeration<Driver> xD = java.sql.DriverManager.getDrivers();
-	    while (xD.hasMoreElements()) {
-	    	@SuppressWarnings("unused")
-			Object driverAsObject = xD.nextElement();
-	      //System.out.println("JDBC Driver=" + driverAsObject);
-	    }
-	
-		Connection xConnection = null;
+	public static DB_SERVER getDataBaseProduct(Connection pCn) {
+		if (pCn == null){
+			return null;
+		}
+		String xDBPN;
 		try {
-			xConnection = DriverManager.getConnection(pConnectionString, pUserName, pUserPassword);
-			xConnection.setAutoCommit(false);
-			return xConnection; 
+			xDBPN = pCn.getMetaData().getDatabaseProductName().toUpperCase(); 
 		} catch (SQLException e) {
-			throwIOException(e);
+			wLogger.error("Fabrincante do banco de dados não encontrado", e);
+			return null;
+		}
+		if (xDBPN.equals("ORACLE")){
+			return DB_SERVER.ORACLE;
+		}else if (xDBPN.equals("SQLSERVER")){
+			return DB_SERVER.SQLSERVER;
+		}else if (xDBPN.equals("MYSQL")){
+			return DB_SERVER.MYSQL;
+		}else{
 			return null;
 		}
 	}
-	
 	/**
 	 * Faz conexão com o banco de dados através do DataSource informado.
 	 * @param pDS
@@ -203,28 +175,55 @@ public class DBSIO{
 		return null;
 	}
 
+	/**
+	 * Faz conexão direta com o banco de dados
+	 * @param pConnectionString String de conexão
+	 * @param pUserName Nome do usuário
+	 * @param pUserPassword Senha do usuário
+	 * @return true = Sem erro ; false = Com erro
+	 * @throws DBSIOException 
+	 */
+	public static Connection getConnection(String pConnectionString, String pUserName, String pUserPassword) throws DBSIOException{
+	    // Força o load dos JDBC drivers.
+	    Enumeration<Driver> xD = java.sql.DriverManager.getDrivers();
+	    while (xD.hasMoreElements()) {
+	    	@SuppressWarnings("unused")
+			Object driverAsObject = xD.nextElement();
+	      //System.out.println("JDBC Driver=" + driverAsObject);
+	    }
 	
+		Connection xCn = null;
+		try {
+			xCn = DriverManager.getConnection(pConnectionString, pUserName, pUserPassword);
+			xCn.setAutoCommit(false);
+			xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			return xCn; 
+		} catch (SQLException e) {
+			throwIOException(e);
+			return null;
+		}
+	}
 	/**
 	 * Fecha a conexão com o banco de dados.<br/>
 	 * Ignora se conexão estiver fechada.
-	 * @param pConnection conexão a ser fechada.
+	 * @param pCn conexão a ser fechada.
 	 * @return true = Sem erro / false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static boolean closeConnection(Connection pConnection){
+	public static boolean closeConnection(Connection pCn){
 //		System.out.println("CLOSE CONNECTION ************************ FIM");
 		try{
-			if (pConnection != null){
-				if (!pConnection.isClosed()){
+			if (pCn != null){
+				if (!pCn.isClosed()){
 					try {
-						if (!pConnection.getAutoCommit()){ //Se não for autocommit, força o rollback. O close connection é efetuado em entro try pois o getAutocommit pode dar exception e acabar não efetuado o close. Interrupted attempting lock.
-							pConnection.rollback(); //Força rollback, pois normalmente é efetuado o commit automático quando é fechada a conexão com o banco
+						if (!pCn.getAutoCommit()){ //Se não for autocommit, força o rollback. O close connection é efetuado em entro try pois o getAutocommit pode dar exception e acabar não efetuado o close. Interrupted attempting lock.
+							pCn.rollback(); //Força rollback, pois normalmente é efetuado o commit automático quando é fechada a conexão com o banco
 						}
 					} catch (SQLException e) {
 						return false;
 					}finally{
-						if (!pConnection.isClosed()){
-							pConnection.close();
+						if (!pCn.isClosed()){
+							pCn.close();
 						}
 					}
 				}
@@ -238,13 +237,13 @@ public class DBSIO{
 	
 	/**
 	 * Retorna se conexão está aberta.
-	 * @param pConnection
+	 * @param pCn
 	 * @return
 	 */
-	public static boolean isConnectionOpened(Connection pConnection){
+	public static boolean isConnectionOpened(Connection pCn){
 		try{
-			if (pConnection != null){
-				if (!pConnection.isClosed()){
+			if (pCn != null){
+				if (!pCn.isClosed()){
 					return true;
 				}
 			}
@@ -258,34 +257,34 @@ public class DBSIO{
 	 * Dispara novo DBSIOException, criado a partir da Exception informada
 	 * @param pMessage
 	 * @param pException
-	 * @param pConnection
+	 * @param pCn
 	 * @throws DBSIOException
 	 */
-	public static void throwIOException(String pMessage, SQLException pException, Connection pConnection) throws DBSIOException{
+	public static void throwIOException(String pMessage, SQLException pException, Connection pCn) throws DBSIOException{
 		SQLException xE = DBSError.getFirstSQLException(pException, pException);
-		throw new DBSIOException(pMessage, xE, pConnection);
+		throw new DBSIOException(pMessage, xE, pCn);
 	}
 
 	/**
 	 * Dispara novo DBSIOException, criado a partir da Exception informada
 	 * @param pException
-	 * @param pConnection
+	 * @param pCn
 	 * @throws DBSIOException
 	 */
-	public static void throwIOException(SQLException pException, Connection pConnection) throws DBSIOException{
+	public static void throwIOException(SQLException pException, Connection pCn) throws DBSIOException{
 		SQLException xE = DBSError.getFirstSQLException(pException, pException);
-		throw new DBSIOException(xE, pConnection);
+		throw new DBSIOException(xE, pCn);
 	}
 	
 	/**
 	 * Dispara novo DBSIOException, criado a partir da Exception informada
 	 * @param pException
-	 * @param pConnection
+	 * @param pCn
 	 * @throws DBSIOException
 	 */
-	public static void throwIOException(Throwable pException, Connection pConnection) throws DBSIOException{
+	public static void throwIOException(Throwable pException, Connection pCn) throws DBSIOException{
 		SQLException xE = DBSError.getFirstSQLException(pException, pException);
-		throw new DBSIOException(xE, pConnection);
+		throw new DBSIOException(xE, pCn);
 	}
 
 	/**
@@ -330,18 +329,18 @@ public class DBSIO{
 	 * CHAR_OCTET_LENGTH
 	 * ORDINAL_POSITION
 	 * NULLABLE
-	 * @param pConnection conexão com o banco de dados
+	 * @param pCn conexão com o banco de dados
 	 * @param pTableName Nome da tabela que se deseja saber o MetaData
 	 * @return ResultSet com o MetaData da tabela
 	 * @throws DBSIOException 
 	 */
-	public static ResultSet getTableColumnsMetaData(Connection pConnection, String pTableName) throws DBSIOException{
+	public static ResultSet getTableColumnsMetaData(Connection pCn, String pTableName) throws DBSIOException{
 		pTableName = pTableName.trim();
 		try {
-			DatabaseMetaData xDMD = pConnection.getMetaData();
+			DatabaseMetaData xDMD = pCn.getMetaData();
 			return  xDMD.getColumns(null, null, pTableName, null);
 		} catch (SQLException e) {
-			throwIOException(e, pConnection);
+			throwIOException(e, pCn);
 			return null;
 		}
 	}
@@ -386,18 +385,18 @@ public class DBSIO{
 
 	/**
 	 * Retorna nomes da PK de uma tabela
-	 * @param pConnection conexão com o banco de dados
+	 * @param pCn conexão com o banco de dados
 	 * @param pTableName Nome da tabela que se deseja saber as PKs
 	 * @return String com nos nomes das PKs, separadas por vírgula
 	 * @throws DBSIOException 
 	 */
-	public static List<String> getPrimaryKeys(Connection pConnection, String pTableName) throws DBSIOException{
+	public static List<String> getPrimaryKeys(Connection pCn, String pTableName) throws DBSIOException{
 		pTableName = pTableName.trim();
 		DatabaseMetaData xDMD = null;
 		ResultSet xRS = null;
 		List<String> xPKs = null;
 		try {
-			xDMD = pConnection.getMetaData();
+			xDMD = pCn.getMetaData();
 			xRS = xDMD.getPrimaryKeys(null, null, pTableName);
 			xPKs = new ArrayList<String>();
 			while (xRS.next()) {
@@ -417,18 +416,18 @@ public class DBSIO{
 
 	/**
 	 * Recupera e 'locka' os registros a partir de uma Query SQL, utilizando a conexão com o banco
-	 * @param pConnection conexão a ser utilizada para executa a Query
+	 * @param pCn conexão a ser utilizada para executa a Query
 	 * @param pQuerySQL Query a ser executada
 	 * @return ResultSet com os registros
 	 * @throws DBSIOException 
 	 */	
-	public static boolean lockRecord(Connection pConnection, String pQuerySQL) throws DBSIOException{
+	public static boolean lockRecord(Connection pCn, String pQuerySQL) throws DBSIOException{
 		//Remove comandos 'For update' e 'Nowait' caso já tenha sido incluido
 		pQuerySQL = DBSString.changeStr(pQuerySQL, " FOR UPDATE", "", false);
 		pQuerySQL = DBSString.changeStr(pQuerySQL, " NOWAIT", "", false);
 
 		//Inclui os comandos de lock
-		executeSQL(pConnection, pQuerySQL + LOCK_FOR_UPDATE + " NOWAIT");
+		executeSQL(pCn, pQuerySQL + LOCK_FOR_UPDATE + " NOWAIT");
 		return true;
 	}
 	
@@ -809,41 +808,41 @@ public class DBSIO{
 	
 	/**
 	 * Objetivo: Indica ao Banco de Dados o inicio do processo de transação.
-	 * @param pConnection conexão com o Banco de dados;
+	 * @param pCn conexão com o Banco de dados;
 	 * @param pSavePoint Quando informado, nome do Savepoint que se deseja criar;
 	 * @return Valor de pSavePoint se não ocorrer erro e nulo ser ocorrer.
 	 * @throws DBSIOException 
 	 */
-	public static Savepoint beginTrans(Connection pConnection, String pSavePoint) throws DBSIOException{
-		if (pConnection == null){
+	public static Savepoint beginTrans(Connection pCn, String pSavePoint) throws DBSIOException{
+		if (pCn == null){
 			return null;
 		}
 		try {
-			if (pConnection.isClosed()){
+			if (pCn.isClosed()){
 				wLogger.error("DBSIO:beginTrans:Conexão fechada");
 				return null;
 			}else{
-				pConnection.setAutoCommit(false);
+				pCn.setAutoCommit(false);
 				if (pSavePoint == null){
-					return pConnection.setSavepoint();
+					return pCn.setSavepoint();
 				}else{
-					return pConnection.setSavepoint(pSavePoint);
+					return pCn.setSavepoint(pSavePoint);
 				}
 			}
 		} catch (SQLException e) {
-			throwIOException(e, pConnection);
+			throwIOException(e, pCn);
 			return null;
 		}
 	}
 
 	/**
 	 * Objetivo: Indica ao Banco de Dados o inicio do processo de transação
-	 * @param pConnection conexão com o Banco de dados;
+	 * @param pCn conexão com o Banco de dados;
 	 * @return true - Sem erro; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static boolean beginTrans(Connection pConnection) throws DBSIOException{
-		if (beginTrans(pConnection, null) == null){
+	public static boolean beginTrans(Connection pCn) throws DBSIOException{
+		if (beginTrans(pCn, null) == null){
 			return false;
 		}else{
 			return true;
@@ -852,35 +851,35 @@ public class DBSIO{
 	
 	/**
 	 * Executa o Commit ou Rollback no Banco de Dados dependendo dos erros informados
-	 * @param pConnection conexão com o Banco de dados;
+	 * @param pCn conexão com o Banco de dados;
 	 * @param pOk Indicador se houve erro no processo anterior a chamada;
 	 * @param pSavePoint Quando informado, nome do Savepoint que se deseja efetuar rollback;
 	 * @return true - Sem erro; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static boolean endTrans(Connection pConnection, boolean pOk, Savepoint pSavePoint) throws DBSIOException{
-		if (pConnection == null){
+	public static boolean endTrans(Connection pCn, boolean pOk, Savepoint pSavePoint) throws DBSIOException{
+		if (pCn == null){
 			return false;
 		}
 		if (pOk ==true){
 			//Ignora commit se for houver savepoint
 			//O commit só pode ser dado na transação inteira
 			if (DBSObject.isEmpty(pSavePoint)){
-				endTrans(pConnection, pOk);
+				endTrans(pCn, pOk);
 			}
 		}else{
-			pvRollbackTrans(pConnection, pSavePoint);
+			pvRollbackTrans(pCn, pSavePoint);
 		}
 		return true;
 	}
-	public static boolean endTrans(Connection pConnection, boolean pOk) throws DBSIOException{
-		if (pConnection == null){
+	public static boolean endTrans(Connection pCn, boolean pOk) throws DBSIOException{
+		if (pCn == null){
 			return false;
 		}
 		if (pOk ==true){
-			pvCommitTrans(pConnection);
+			pvCommitTrans(pCn);
 		}else{
-			pvRollbackTrans(pConnection);
+			pvRollbackTrans(pCn);
 		}
 		return true;
 	}
@@ -1309,17 +1308,17 @@ public class DBSIO{
 	 * Os nomes dos atributos são os próprios nomes definidos as colunas da QuerySQL.
 	 * Exemplo de código xhtlm <b>#{table.campo}</b><br/>
 	 * Não existe close para o ResultDataModel.
-	 * @param pConnection
+	 * @param pCn
 	 * @param pQuerySQL
 	 * @return
 	 * @throws DBSIOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static DBSResultDataModel openResultDataModel(Connection pConnection, String pQuerySQL) throws DBSIOException{
+	public static DBSResultDataModel openResultDataModel(Connection pCn, String pQuerySQL) throws DBSIOException{
 		ResultSet 			xResultSet;
 		Result				xResult;
 		DBSResultDataModel	xResultDataModel;
-		xResultSet = openResultSet(pConnection, pQuerySQL);
+		xResultSet = openResultSet(pCn, pQuerySQL);
 		xResult = ResultSupport.toResult(xResultSet);
 		//wResultDataModel é necessário para consulta com html pois possibilita o acesso as colunas do registro
 		xResultDataModel = new DBSResultDataModel(xResult.getRows());
@@ -1335,18 +1334,18 @@ public class DBSIO{
 	 * @return ResultSet com os registros
 	 * @throws DBSIOException 
 	 */
-	public static ResultSet openResultSet(Connection pConnection, String pQuerySQL) throws DBSIOException{
+	public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws DBSIOException{
 		ResultSet xResultSet = null;
 		pQuerySQL = pQuerySQL.trim();
 		Statement xST = null;
 		try{
-//			PreparedStatement xPS = pConnection.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+//			PreparedStatement xPS = pCn.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 //			xPS.execute();
 //			xResultSet = xPS.getResultSet();
-			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			xResultSet = xST.executeQuery(pQuerySQL);
 		}catch(SQLException e){
-			throwIOException(pQuerySQL, e, pConnection);
+			throwIOException(pQuerySQL, e, pCn);
 			try {
 				xST.close();
 			} catch (SQLException e1) {
@@ -1385,15 +1384,15 @@ public class DBSIO{
 	
 	/**
 	 * Executa um comando sql diretamente no banco de dados
-	 * @param pConnection Conexão com o banco de dados
+	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Comando SQL
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException 
 	 * @throws Throwable 
 	 * @throws Exception 
 	 */
-	public static int executeSQL(Connection pConnection, String pSQL) throws DBSIOException {
-		if (pConnection==null){
+	public static int executeSQL(Connection pCn, String pSQL) throws DBSIOException {
+		if (pCn==null){
 			wLogger.error("executeSQL:Conexão nula.");
 			return 0;
 		}
@@ -1409,7 +1408,7 @@ public class DBSIO{
 		Statement xST = null;
 		try {
 			// + ResultSet.HOLD_CURSORS_OVER_COMMIT
-			xST = pConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
+			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
 			xST.execute(pSQL); 
 			xCount = xST.getUpdateCount();
 			//Se foi um Select, recupera a quantidade de registros lidos
@@ -1421,9 +1420,9 @@ public class DBSIO{
 			return xCount;
 		} catch (SQLException e) {
 			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
-			DBSIO.endTrans(pConnection, false);
+			DBSIO.endTrans(pCn, false);
 			
-			throwIOException(pSQL, e, pConnection);
+			throwIOException(pSQL, e, pCn);
 
 			return 0;
 		}
@@ -1432,15 +1431,15 @@ public class DBSIO{
 	/**
 	 * Executa um comando sql diretamente no banco de dados e recupera os valores do autoincremento efetuados pelo banco
 	 * @param <T>
-	 * @param pConnection Conexão com o banco de dados
+	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Comando SQL
 	 * @return Quantidade de registros afetados
 	 * @throws DBSIOException 
 	 * @throws Throwable 
 	 * @throws Exception 
 	 */
-	public static <T> int executeSQLInsertAutoIncremented(Connection pConnection, String pSQL, DBSDAO<T> pDAO) throws DBSIOException {
-		if (pConnection == null || pSQL == null || pDAO == null){
+	public static <T> int executeSQLInsertAutoIncremented(Connection pCn, String pSQL, DBSDAO<T> pDAO) throws DBSIOException {
+		if (pCn == null || pSQL == null || pDAO == null){
 			return 0;
 		}
 		int xCount=0;
@@ -1452,19 +1451,19 @@ public class DBSIO{
 				 || xDT == DATATYPE.INT
 				 || xDT == DATATYPE.DOUBLE
 				 ||	xDT == DATATYPE.ID){
-					DB_SERVER xDBP = getDataBaseProduct(pConnection);
+					DB_SERVER xDBP = getDataBaseProduct(pCn);
 					//Se for Oracle, o autoincrement é implementado via sequence.
 					if (xDBP == DB_SERVER.ORACLE){ 
 						//Executa comando no banco
-						xCount = executeSQL(pConnection, pSQL);
+						xCount = executeSQL(pCn, pSQL);
 						BigDecimal xId;
-						xId = pvGetOracleSequenceValue(pConnection, pSQL, pDAO.getColumn(pDAO.getPK()).getColumnName());
+						xId = pvGetOracleSequenceValue(pCn, pSQL, pDAO.getColumn(pDAO.getPK()).getColumnName());
 						pDAO.setValue(pDAO.getPK(), xId);
 					}else{
 						PreparedStatement xPS;
 						ResultSet xRS;
-						//pConnection.prepareStatement
-						xPS = pConnection.prepareStatement(pSQL, PreparedStatement.RETURN_GENERATED_KEYS);
+						//pCn.prepareStatement
+						xPS = pCn.prepareStatement(pSQL, PreparedStatement.RETURN_GENERATED_KEYS);
 						//Executa o INSERT
 						xPS.executeUpdate();
 						//Recupera Recordset contendo os valores gerados para as columnas como autoincrement ou sequences 
@@ -1490,9 +1489,9 @@ public class DBSIO{
 			}
 		} catch (SQLException e) {
 			//Verifica se o erro é tratado
-			DBSIO.endTrans(pConnection, false);
+			DBSIO.endTrans(pCn, false);
 
-			throwIOException(pSQL, e, pConnection);
+			throwIOException(pSQL, e, pCn);
 			return 0;
 		}
 		return 1;
@@ -1930,28 +1929,28 @@ public class DBSIO{
 	}
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pConnection conexão com o banco de dados
+	 * @param pCn conexão com o banco de dados
 	 * @param pDataType Tipo de dado do valor informado no objeto pValue
 	 * @param pValue Objecto contendo o valor a ser utilizado
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String getValueSQLFormated(Connection pConnection, DATATYPE pDataType, Object pValue){
+	public static String getValueSQLFormated(Connection pCn, DATATYPE pDataType, Object pValue){
 		if (pDataType == DATATYPE.STRING){
-			return toSQLString(pConnection, pValue);
+			return toSQLString(pCn, pValue);
 		}else if (pDataType == DATATYPE.BOOLEAN){
-			return toSQLBoolean(pConnection, pValue);
+			return toSQLBoolean(pCn, pValue);
 		}else if (pDataType == DATATYPE.DATE){
-			return toSQLDate(pConnection, pValue);
+			return toSQLDate(pCn, pValue);
 		}else if (pDataType == DATATYPE.TIME){
-			return toSQLTime(pConnection, pValue);
+			return toSQLTime(pCn, pValue);
 		}else if (pDataType == DATATYPE.DATETIME){
-			return toSQLDateTime(pConnection, pValue);
+			return toSQLDateTime(pCn, pValue);
 		}else if (pDataType == DATATYPE.DECIMAL || 
 				  pDataType == DATATYPE.DOUBLE ||
 				  pDataType == DATATYPE.INT ||
 				  pDataType == DATATYPE.ID) {
-			return toSQLNumber(pConnection, pValue);
+			return toSQLNumber(pCn, pValue);
 		}else if (pDataType == DATATYPE.COMMAND){
 			return DBSString.toString(pValue);
 		}else{
@@ -2123,43 +2122,43 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a coluna e o valor formatado com a sintaxe adaptada ao padrão do banco da dados 
-	 * @param pConnection Conexão com o banco de dados
+	 * @param pCn Conexão com o banco de dados
 	 * @param pDataType Tipo de dado do valor informado no objeto pValue
 	 * @param pValue Objeto contendo o valor a ser utilizado
 	 * @param pFieldName Nome da coluna do sql
 	 * @return String concatenando a coluna com valor adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException
 	 */
-	public static String getFieldValueSql(Connection pConnection, DATATYPE pDataType, Object pValue, String pFieldName) throws DBSIOException{
-		if (pConnection == null){
+	public static String getFieldValueSql(Connection pCn, DATATYPE pDataType, Object pValue, String pFieldName) throws DBSIOException{
+		if (pCn == null){
 			return null;
 		}
 		String xValueSQLFormated;
 		
-		xValueSQLFormated = getValueSQLFormated(pConnection, pDataType, pValue);
+		xValueSQLFormated = getValueSQLFormated(pCn, pDataType, pValue);
 		if (xValueSQLFormated == null
 		 || xValueSQLFormated.toLowerCase().contains("null")){
-			return toSQLNull(pConnection, pFieldName);
+			return toSQLNull(pCn, pFieldName);
 		}
 		return pFieldName + " = " + xValueSQLFormated;
 	}
 
 	/**
 	 * Retorna a data atual segundo o banco de dados.
-	 * @param pConnection
+	 * @param pCn
 	 * @return
 	 */
-	public static Date getServerDate(Connection pConnection) {
+	public static Date getServerDate(Connection pCn) {
 		Date xData = null;
-		if (getDataBaseProduct(pConnection) == DB_SERVER.ORACLE) {
+		if (getDataBaseProduct(pCn) == DB_SERVER.ORACLE) {
 	        try {
-				xData = DBSDate.toDate(getDado(pConnection, "dual", "", "SYSDATE"));
+				xData = DBSDate.toDate(getDado(pCn, "dual", "", "SYSDATE"));
 			} catch (DBSIOException e) {
 				wLogger.error("getServerDate", e);
 			}
-		} else if (getDataBaseProduct(pConnection) == DB_SERVER.MYSQL){
+		} else if (getDataBaseProduct(pCn) == DB_SERVER.MYSQL){
 			try {
-				xData = DBSDate.toDate(getDado(pConnection, "", "", "SYSDATE()"));
+				xData = DBSDate.toDate(getDado(pCn, "", "", "SYSDATE()"));
 			} catch (DBSIOException e) {
 				wLogger.error("getServerDate", e);
 			}
@@ -2169,14 +2168,14 @@ public class DBSIO{
 
 	/**
 	 * Retorna o tipo de dado DBSoft que corresponde ao tipo de dado original do banco de dados
-	 * @param pConnection conexão a partir do qual serãoverificado o fabricante do bando de dados
+	 * @param pCn conexão a partir do qual serãoverificado o fabricante do bando de dados
 	 * @param pDataTypeOriginal Tipo de dado original recuperado diretamente da coluna do banco de dados 
 	 * @return Tipo de dado DBSoft que corresponde ao tipo de dado original
 	 * @throws DBSIOException 
 	 */
-	public static DATATYPE toDataType(Connection pConnection, int pDataTypeOriginal, int pPrecision){
+	public static DATATYPE toDataType(Connection pCn, int pDataTypeOriginal, int pPrecision){
 		DB_SERVER xDBP;
-		xDBP = getDataBaseProduct(pConnection);
+		xDBP = getDataBaseProduct(pCn);
 		if (xDBP != null){
 			if (xDBP == DB_SERVER.ORACLE){
 				if (pDataTypeOriginal == 2 || //NUMBER 
@@ -2232,11 +2231,11 @@ public class DBSIO{
 
 	/**
 		 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-		 * @param pConnection conexão com o banco da dados
+		 * @param pCn conexão com o banco da dados
 		 * @param pValue Valor a ser utilizado  
 		 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 		 */
-		public static String toSQLString(Connection pConnection, Object pValue){
+		public static String toSQLString(Connection pCn, Object pValue){
 			String xValue = DBSString.toString(pValue);
 			if (xValue==null){
 				return "NULL";
@@ -2252,16 +2251,16 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String toSQLDate(Connection pConnection, Object pValue){
+	public static String toSQLDate(Connection pCn, Object pValue){
 		if (pValue==null){
 			return "NULL";
 		}
-		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if(xDBP!=null){ 
 			if (xDBP == DB_SERVER.ORACLE){
 	//			if (pValue==null){
@@ -2307,16 +2306,16 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String toSQLDateTime(Connection pConnection, Object pValue){
+	public static String toSQLDateTime(Connection pCn, Object pValue){
 		if (pValue==null){
 			return "NULL";
 		}
-		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if(xDBP!=null){ 
 			if (xDBP == DB_SERVER.ORACLE){
 	//			if (pValue==null){
@@ -2362,16 +2361,16 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String toSQLTime(Connection pConnection, Object pValue) {
+	public static String toSQLTime(Connection pCn, Object pValue) {
 		if (pValue==null){
 			return "NULL";
 		}
-		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if(xDBP!=null){ 
 			if (xDBP == DB_SERVER.ORACLE){
 	//			if (pValue==null){
@@ -2416,12 +2415,12 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String toSQLNumber(Connection pConnection, Object pValue) {
+	public static String toSQLNumber(Connection pCn, Object pValue) {
 		if (pValue==null){
 			return "NULL";
 		}
@@ -2440,7 +2439,7 @@ public class DBSIO{
 		xValue = "'" + xValue + "'";
 
 		DB_SERVER xDBP;
-		xDBP = getDataBaseProduct(pConnection);
+		xDBP = getDataBaseProduct(pCn);
 		if (xDBP != null){
 			if (xDBP == DB_SERVER.ORACLE){
 				String xNLS = ".,"; //Decimal e separador de grupo
@@ -2474,23 +2473,23 @@ public class DBSIO{
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada para -1(true) e 0(false). 
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 */
-	public static String toSQLBoolean(Connection pConnection, Object pValue){
-		return toSQLBoolean(pConnection, pValue, false);
+	public static String toSQLBoolean(Connection pCn, Object pValue){
+		return toSQLBoolean(pCn, pValue, false);
 	}
 	
 
 	/**
 	 * Retorna string com a sintaxe formatada com o valor adaptada para -1(true) e 0(false). 
-	 * @param pConnection
+	 * @param pCn
 	 * @param pValue
 	 * @param pDefaultValue
 	 * @return
 	 */
-	public static String toSQLBoolean(Connection pConnection, Object pValue, Boolean pDefaultValue){
+	public static String toSQLBoolean(Connection pCn, Object pValue, Boolean pDefaultValue){
 		Boolean xB = DBSBoolean.toBoolean(pValue, pDefaultValue);
 		if (xB){
 			return "-1";
@@ -2527,11 +2526,11 @@ public class DBSIO{
 
 	/**
 	 * Retorna String com comando SQL formatado para dados Nulos conforme o tipo de Banco de Dados
-	 * @param pConnection conexão com o banco da dados
+	 * @param pCn conexão com o banco da dados
 	 * @param pValue Valor a ser utilizado  
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 */
-	public static String toSQLNull(Connection pConnection, String pColumnName){
+	public static String toSQLNull(Connection pCn, String pColumnName){
 		return pColumnName + " IS NULL ";
 	}
 
@@ -2539,26 +2538,26 @@ public class DBSIO{
 	 * Retorna String com comando SQL formatado para dados nulos ou iqual ao valor informado.<br/>
 	 * O valor informado deverá já estar convertido com o commando toSQL.<br/>
 	 * ex:toSQLNullOrValue(Conexao, "NOMEDACOLUNA", toSQLBoolean(Conexao, "NOMEDACOLUNA", valor));
-	 * @param pConnection
+	 * @param pCn
 	 * @param pColumnName
 	 * @param pValue String com o comando apropriado de conversão. 
 	 * @return
 	 */
-	public static String getWhereNullOrValue(Connection pConnection, String pColumnName, String pValue){
-		return getSQLWhereNullOrValue(pConnection, pColumnName, pValue, "=");
+	public static String getWhereNullOrValue(Connection pCn, String pColumnName, String pValue){
+		return getSQLWhereNullOrValue(pCn, pColumnName, pValue, "=");
 	}
 	
 	/**
 	 * Retorna String com comando SQL formatado para dados nulos ou dentro da condição com o valor informado.<br/>
 	 * O valor informado deverá já estar convertido com o commando toSQL.<br/>
 	 * ex:toSQLNullOrValue(Conexao, "NOMEDACOLUNA", toSQLBoolean(Conexao, "NOMEDACOLUNA", valor), ">=");
-	 * @param pConnection
+	 * @param pCn
 	 * @param pColumnName
 	 * @param pValue String com o comando apropriado de conversão. 
 	 * @return
 	 */
-	public static String getSQLWhereNullOrValue(Connection pConnection, String pColumnName, String pValue, String pCondition){
-		return "(" + toSQLNull(pConnection, pColumnName) + "OR " + pColumnName.trim() + " " + pCondition.trim() + " " + pValue.trim() + ")";
+	public static String getSQLWhereNullOrValue(Connection pCn, String pColumnName, String pValue, String pCondition){
+		return "(" + toSQLNull(pCn, pColumnName) + "OR " + pColumnName.trim() + " " + pCondition.trim() + " " + pValue.trim() + ")";
 	}
 	
 	/**
@@ -2596,16 +2595,16 @@ public class DBSIO{
 		
 	/**
 	 * Retorna String com comando IFF ou Decode formatado conforme o tipo de Banco de Dados
-	 * @param pConnection Conexão com o banco para itentificar qual o fabricante
+	 * @param pCn Conexão com o banco para itentificar qual o fabricante
 	 * @param pSeCampo Dado do Campo a ser testado;
 	 * @param pIgualA Dado a ser comparado ao campo pSeCampo;
 	 * @param pUsa Dado a ser considerado quando pSeCampo for Igual a pIgualA;
 	 * @param pSenao Dado a ser considerado quando pSeCampo for Diferente a pIgualA.
 	 * @return String com comando formatado.
 	 */
-	public static String toSQLIf(Connection pConnection, String pSeCampo, int pIgualA, String pUsa, String pSenao) {
+	public static String toSQLIf(Connection pCn, String pSeCampo, int pIgualA, String pUsa, String pSenao) {
 //        return "(CASE WHEN " + pSeCampo + "=" + pIgualA + " THEN " + pUsa + " ELSE " + pSenao + " END)";
-		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if (xDBP == DB_SERVER.ORACLE) {
 	        return "Decode(" + pSeCampo + "," + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    } else if (xDBP == DB_SERVER.MYSQL) {
@@ -2617,13 +2616,13 @@ public class DBSIO{
 
 	/**
 	 * Retorna String com o comando Bitwise AND que executa comparação binária entre o pCampo e o pValor
-	 * @param pConnection Conexão com o banco para itentificar qual o fabricante
+	 * @param pCn Conexão com o banco para itentificar qual o fabricante
 	 * @param pCampo
 	 * @param pValor
 	 * @return
 	 */
-	public static String toSQLBitAnd(Connection pConnection, String pCampo, int pValor) {
-		DB_SERVER xDBP = getDataBaseProduct(pConnection);
+	public static String toSQLBitAnd(Connection pCn, String pCampo, int pValor) {
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if (xDBP == DB_SERVER.ORACLE) {
 	        return " BITAND(" + pCampo + "," + pValor + ") = " + pValor;
 	    } else if (xDBP == DB_SERVER.MYSQL) {
@@ -2752,25 +2751,25 @@ public class DBSIO{
 
 	/**
 	 * Retorna sequence do registro recem incluído
-	 * @param pConnection
+	 * @param pCn
 	 * @param pSQL
 	 * @param pSequenceName
 	 * @return
 	 * @throws DBSIOException
 	 */
-	private static BigDecimal pvGetOracleSequenceValue(Connection pConnection, String pSQL, String pSequenceName) throws DBSIOException {
-		if (pConnection == null || pSQL == null || pSequenceName == null){
+	private static BigDecimal pvGetOracleSequenceValue(Connection pCn, String pSQL, String pSequenceName) throws DBSIOException {
+		if (pCn == null || pSQL == null || pSequenceName == null){
 			return DBSNumber.toBigDecimal(0D);
 		}
 		BigDecimal xId;
-		xId = DBSNumber.toBigDecimal(getDado(pConnection, "DUAL", "", pSequenceName.trim().toUpperCase() + ".CURRVAL"));
+		xId = DBSNumber.toBigDecimal(getDado(pCn, "DUAL", "", pSequenceName.trim().toUpperCase() + ".CURRVAL"));
 		xId = DBSNumber.toBigDecimal(DBSObject.getNotNull(xId, -1));
 		return xId;
 	}
 
-	private static void pvGetConnectionTimeout(Connection pConnection, Throwable e, int pTimeout, int pTimes) throws DBSIOException{
+	private static void pvGetConnectionTimeout(Connection pCn, Throwable e, int pTimeout, int pTimes) throws DBSIOException{
 		if (pTimeout == 0) {
-			throwIOException(e, pConnection);
+			throwIOException(e, pCn);
 		}else{
 			wLogger.error("Sem conexão. Fazendo nova tentativa em seguida.");
 			try {
@@ -2788,17 +2787,17 @@ public class DBSIO{
 	
 	/**
 	 * Executa o comando Commit no Banco de Dados
-	 * @param pConnection conexão com o Banco de dados
+	 * @param pCn conexão com o Banco de dados
 	 * @return true = Sem erro; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	private static boolean pvCommitTrans(Connection pConnection) throws DBSIOException{
+	private static boolean pvCommitTrans(Connection pCn) throws DBSIOException{
 		try {
-			if (pConnection.isClosed()){
+			if (pCn.isClosed()){
 				wLogger.error("DBSIO:pvCommitTrans:Conexão fechada");
 				return false;
 			}else{
-				pConnection.commit();
+				pCn.commit();
 				return true;
 			}
 		} catch (SQLException e) {
@@ -2809,39 +2808,39 @@ public class DBSIO{
 
 	/**
 	 * Desfaz as modificações no banco de dados, efetuada desde o Savepoint informado
-	 * @param pConnection conexão com o banco de dados
+	 * @param pCn conexão com o banco de dados
 	 * @param pSavePoint Savepoint a partir do qual serão desfeitas as modificações
 	 * @return true = Sem erro; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	private static boolean pvRollbackTrans(Connection pConnection, Savepoint pSavePoint) throws DBSIOException{
+	private static boolean pvRollbackTrans(Connection pCn, Savepoint pSavePoint) throws DBSIOException{
 		try {
-			if (pConnection.isClosed()){
+			if (pCn.isClosed()){
 				wLogger.error("DBSIO:pvRollbackTrans:Conexão fechada");
 				return false;
 			}else{
 				if (DBSObject.isEmpty(pSavePoint)){ 
-					pConnection.rollback();
+					pCn.rollback();
 					return true;
 				}else{
-					pConnection.rollback(pSavePoint);
+					pCn.rollback(pSavePoint);
 					return true;
 				}
 			}
 		} catch (SQLException e) {
-			throwIOException(e, pConnection);
+			throwIOException(e, pCn);
 			return false;
 		}
 	}
 	
 	/**
 	 * Desfaz as modificações no banco de dados
-	 * @param pConnection conexão com o banco de dados
+	 * @param pCn conexão com o banco de dados
 	 * @return true = Sem erro; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	private static boolean pvRollbackTrans(Connection pConnection) throws DBSIOException{
-		return pvRollbackTrans(pConnection, null);
+	private static boolean pvRollbackTrans(Connection pCn) throws DBSIOException{
+		return pvRollbackTrans(pCn, null);
 	}
 
 	/**
