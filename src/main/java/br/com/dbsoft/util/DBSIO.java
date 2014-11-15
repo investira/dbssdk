@@ -728,17 +728,37 @@ public class DBSIO{
 	
 	/**
 	 * Copia os valores das colunas de um DAO para outro.
-	 * @param pDaoSource DAO Origem
-	 * @param pDaoTarget DAO Destino
+	 * @param pDaoSource Origem dos dados
+	 * @param pDaoTarget Destino dos dados
 	 */
 	public static void copyDAOFieldsValues(DBSDAO<Object> pDaoSource, DBSDAO<Object> pDaoTarget) {
+		copyDAOFieldsValues(pDaoSource, pDaoTarget, true);
+	}
+		
+	/**
+	 * Copia os valores das colunas de um DAO para outro.
+	 * @param pDaoSource Origem dos dados
+	 * @param pDaoTarget Destino dos dados
+	 * @param pShowColumnNameNotFoundMessage Indica se exibe mensagem de erro caso não exista o nome da coluna na tabela.
+	 */
+	public static void copyDAOFieldsValues(DBSDAO<Object> pDaoSource, DBSDAO<Object> pDaoTarget, boolean pShowColumnNameNotFoundMessage) {
 		if (pDaoSource==null
 		 || pDaoTarget==null){return;}
+		//Salva configuração atual
+		boolean xShowColumnNameNotFoundMessageSource = pDaoSource.getShowColumnNameNotFoundMessage();
+		boolean xShowColumnNameNotFoundMessageTarget = pDaoTarget.getShowColumnNameNotFoundMessage();
+		//Altera para configuração informada
+		pDaoSource.setShowColumnNameNotFoundMessage(pShowColumnNameNotFoundMessage);
+		pDaoTarget.setShowColumnNameNotFoundMessage(pShowColumnNameNotFoundMessage);
+		//Copia valores colunas
 		for (DBSColumn xColumn : pDaoSource.getColumns()) {
 			pDaoTarget.setValue(xColumn.getColumnName(), xColumn.getValue());
 		}
+		//Restaura configuração
+		pDaoSource.setShowColumnNameNotFoundMessage(xShowColumnNameNotFoundMessageSource);
+		pDaoTarget.setShowColumnNameNotFoundMessage(xShowColumnNameNotFoundMessageTarget);
 	}
-		
+
 	/**
 	 * Retorna campo a partir no nome do propriedade existente no datamodel 
 	 * @param pDataModel
