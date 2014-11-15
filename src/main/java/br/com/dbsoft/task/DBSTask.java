@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,6 +30,11 @@ import br.com.dbsoft.util.DBSNumber;
  * É importante implementar o método createConnection e ter uma conexão factory declarada na classe que extend esta, para que a variável local de conexão <b>wConnection</b> possar ser setada no openConnection e closeConnection.
  * @param <DataModelClass> Armazenamento auxiliar de dados vinculados a tarefa. 
  * Os respectivos atributos da classe DataModel deverão ser preenchidos pelo usuário oportunamente nas chamadas dos eventos
+ */
+/**
+ * @author ricardo.villar
+ *
+ * @param <DataModelClass>
  */
 /**
  * @author ricardo.villar
@@ -146,6 +152,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private int						wRetryOnErrorCount = 0;
 	private	boolean					wTransactionEnabled = true;
 	private boolean					wRunningScheduled = false; 
+	private Integer					wTaskUpdateMilliseconds = 500;
+	private Long					wTaskUpdateLastTime = 0L;
 
 
 	public DBSTask(){
@@ -536,6 +544,31 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		return wPercentageCompleted;
 	}
 	
+	/**
+	 * Inibe disparos do evento <b>taskUpdated</b> em tempo 
+	 * inferior ao informado durante a execução das etapas.<br/>
+	 * Isto evita disparos constantes quando a execução da etapa for muita rápida.<br/>
+	 * O padrão são 500 milisegundos(0,5 segundo).
+	 * O valor <b>0<b/> desabilita a inibição.
+	 * @return
+	 */
+	public Integer getTaskUpdateMilliseconds() {
+		return wTaskUpdateMilliseconds;
+	}
+
+	/**
+	 * Inibe disparos do evento <b>taskUpdated</b> em tempo 
+	 * inferior ao informado durante a execução das etapas.<br/>
+	 * Isto evita disparos constantes quando a execução da etapa for muita rápida.<br/>
+	 * O padrão são 500 milisegundos(0,5 segundo).
+	 * O valor <b>0<b/> desabilita a inibição.
+	 * @return
+	 */
+	public void setTaskUpdateMilliseconds(Integer pTaskUpdateMilliseconds) {
+		wTaskUpdateMilliseconds = pTaskUpdateMilliseconds;
+	}
+
+
 	/**
 	 * Normalmente as etapas de uma tarefa são executadas uma única vez.<br/>
 	 * Este indicador possiblita executar as etapas mais uma vez, desde o ínicio, logo após a finalização da última etapa.<br/>
@@ -1085,9 +1118,12 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 						}
 						setLastRunStatus(getRunStatus());
 						wTimeEnded = System.currentTimeMillis();
-						if (getRunStatus() != RunStatus.INTERRUPTED){
+						if (getRunStatus() != RunStatus.INTERRUPTED
+						 && getRunStatus() != RunStatus.ERROR){
 							pvFireEventAfterRun();
 						}
+					}else{
+						pvFireEventInterrupted();
 					}
 				}else{
 					wLogger.error("pvRunTaskSteps:Tarefa já se contra em execução:" + wRunThread.getName() + ":" +  wRunThread.getId());
@@ -1262,6 +1298,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		if (wRunStatus != pRunStatus){
 			wRunStatus = pRunStatus;
 			pvFireEventRunStatusChanged();
+			pvTaskUpdateLastTimeReset();
 			pvFireEventTaskUpdated();
 		}
 	}
@@ -1305,6 +1342,14 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			wLogger.warn(getName() + ":Tentativa " + wRetryOnErrorCount + " de " + wRetryOnErrorTimes + " será executada em: " + DBSFormat.getFormattedDateCustom(xData, "dd/MM/yyyy HH:mm:ss"));
 			pvScheduleDate(xData);
 		}
+	}
+	
+	/**
+	 * Reseta o hora da última chamada para não inibir 
+	 * a próxima chamada do evento taskUpdate, se e quando houver.
+	 */
+	private void pvTaskUpdateLastTimeReset(){
+		wTaskUpdateLastTime = 0L;
 	}
 
 	/**
@@ -1513,6 +1558,14 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @throws DBSIOException 
 	 */
 	private void pvFireEventTaskUpdated() throws DBSIOException{
+		Long xCurrentTime = Calendar.getInstance().getTimeInMillis();
+		if (wTaskUpdateMilliseconds != 0){
+			if (xCurrentTime - wTaskUpdateLastTime > wTaskUpdateMilliseconds){
+				wTaskUpdateLastTime = xCurrentTime;
+			}else{
+				return;
+			}
+		}
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		//Chame o metodo(evento) local para quando esta classe for extendida
 		taskUpdated(xE);
