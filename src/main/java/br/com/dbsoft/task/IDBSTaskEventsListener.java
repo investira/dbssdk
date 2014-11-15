@@ -18,15 +18,16 @@ public interface IDBSTaskEventsListener {
 
 	/**
 	 * Evento disparado antes de iniciar execução.<br/>
-	 * Podendo-se inibir a execução informando setOk(false) no evento.<br/>
+	 * Podendo-se inibir a execução informando setOk(false) no evento. 
+	 * Neste caso o evento <b>interrupted</b> será disparado em seguida.<br/>
 	 * Conexão com o banco encontra-se aberta.
 	 */
 	public void beforeRun(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
 	 * Evento disparado após finalizada a execução.<br/>
-	 * Evento <b>não</b> é disparado em caso de interrupção do usuário. 
-	 * Utilize o evento <b>interrupted</b> neste caso.<br/>
+	 * Evento <b>não</b> é disparado em caso de interrupção do usuário ou erro. 
+	 * Utilize os eventos <b>interrupted</b> e/ou <b>error</b> nestes casos.<br/>
 	 * Para identificar qual o status da execução deve-se perquisar <b>getObject().getRunStatus()</b>.<br/>
 	 * Conexão com o banco encontra-se aberta.
 	 */
