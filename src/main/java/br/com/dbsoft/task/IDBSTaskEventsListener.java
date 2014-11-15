@@ -66,14 +66,14 @@ public interface IDBSTaskEventsListener {
 	/**
 	 * Evento disparado quando houver alguma evolução no percentual, modificação no nome da etapa ou status da tarefa <b>RunStatus</b>.<br/>
 	 * Evento normalmente utilizado para informar ao usuário a situação da tarefa.<br/>
-	 * Se precisar utiliza a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
+	 * Se precisar utilizar a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
 	 * Se ela não estiver aberta, <b>abra e fecha</b> após a utilização.
 	 */
 	public void taskUpdated(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
 	 * Evento disparado quando a execução mudou de situação(Executando, Parado ou Agendada).<br/>
-	 * Se precisar utiliza a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
+	 * Se precisar utilizar a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
 	 * Se ela não estiver aberta, <b>abra e fecha</b> após a utilização.<br/>
 	 * Local onde poderá ser implementado a atualização deste dado no banco de dados, se for o caso.
 	 */
@@ -81,7 +81,7 @@ public interface IDBSTaskEventsListener {
 
 //	/**
 //	 * Evento disparado quando o atributo 'Agendada' foi alterado.<br/>
-//	 * Se precisar utiliza a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
+//	 * Se precisar utilizar a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
 //	 * Se ela não estiver aberta, <b>abra e fecha</b> após a utilização.<br/>
 //	 * Local onde poderá ser implementado a atualização deste dado no banco de dados, se for o caso.
 //	 */
@@ -89,7 +89,7 @@ public interface IDBSTaskEventsListener {
 
 	/**
 	 * Evento disparado quando o atributo 'status' foi alterado.<br/>
-	 * Se precisar utiliza a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
+	 * Se precisar utilizar a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
 	 * Se ela não estiver aberta, <b>abra e fecha</b> após a utilização.<br/>
 	 * Local onde poderá ser implementado a atualização deste dado no banco de dados, se for o caso.
 	 */
