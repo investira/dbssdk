@@ -654,7 +654,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			pvRetryReset();
 			pvRunTask();
 		} catch (Exception e) {
-			wLogger.error(e);
+			wLogger.error(getName(),e);
 			error();
 			DBSIO.throwIOException(e.getMessage());
 		}
@@ -766,11 +766,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 						wNO.wait();
 					}
 				} catch (InterruptedException | DBSIOException e) {
-					wLogger.error(e);
+					wLogger.error(getName(), e);
 					try {
 						error();
 					} catch (DBSIOException e1) {
-						wLogger.error(e);
+						wLogger.error(getName(), e);
 					}
 				}
 			}
@@ -788,11 +788,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		@Override
 		public void run() {
 			try{
-				wLogger.info("Inicio:Timer");
+				wLogger.info(getName() + ":Inicio:Timer");
 				wRunningScheduled = true;
 				pvRunTask();
 			} catch (Exception e) {
-				wLogger.error(e);
+				wLogger.error(getName(),e);
 			}
 		}
 		
@@ -1067,7 +1067,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}
 		}else{
 			wRunningScheduled = false;
-			wLogger.warn("Tarefa já em execução. Nova solicitação de execução foi ignorada.");
+			wLogger.warn(getName() + ":Tarefa já em execução. Nova solicitação de execução foi ignorada.");
 		}
 	}
 
@@ -1126,7 +1126,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 						pvFireEventInterrupted();
 					}
 				}else{
-					wLogger.error("pvRunTaskSteps:Tarefa já se contra em execução:" + wRunThread.getName() + ":" +  wRunThread.getId());
+					wLogger.error(getName() + ":Tarefa já se contra em execução:" + wRunThread.getId());
 				}
 			}catch(Exception e){
 				wLogger.error(getName(), e);
@@ -1190,8 +1190,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				pvSetTaskState(TaskState.SCHEDULED);
 				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
 			}else{
-				wLogger.error("Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
-						" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
+				wLogger.error(getName() + ":Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
+											" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
 			}
 		}
 	}
@@ -1419,7 +1419,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}
 			return xE.isOk();
 		}catch(Exception e){
-			wLogger.error("BeforeRun:", e);
+			wLogger.error(getName() + ":BeforeRun:", e);
 			error();
 			throw e;
 		}finally{
@@ -1443,7 +1443,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				wEventListeners.get(xX).afterRun(xE); 
 	        }
 		}catch(Exception e){
-			wLogger.error("AfterRun", e);
+			wLogger.error(getName() + ":AfterRun", e);
 			error();
 			throw e;
 		}finally{
@@ -1484,7 +1484,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			}
 			return xE.isOk();
 		}catch(Exception e){
-			wLogger.error("Step:" + getCurrentStep() + ":" + getCurrentStepName(), e);
+			wLogger.error(getName() + ":Error Step:" + getCurrentStep() + ":" + getCurrentStepName(), e);
 			DBSIO.endTrans(wConnection, false);
 			error();
 			throw e;
@@ -1531,7 +1531,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		//Chame o metodo(evento) local para quando esta classe for extendida
 		interrupted(xE);
-		wLogger.warn("Interrupt:Step:" + getCurrentStep() + ":" + getCurrentStepName());
+		wLogger.warn(getName() + ":Interrupt:Step:" + getCurrentStep() + ":" + getCurrentStepName());
 		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).interrupted(xE);
@@ -1546,7 +1546,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		DBSTaskEvent xE = new DBSTaskEvent(this);
 		//Chame o metodo(evento) local para quando esta classe for extendida
 		error(xE);
-		wLogger.warn("Interrupt with error:Step:" + getCurrentStep() + ":" + getCurrentStepName());
+		wLogger.error(getName() + ":Interrupt with error:Step:" + getCurrentStep() + ":" + getCurrentStepName());
 		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
 		for (int xX=0; xX<wEventListeners.size(); xX++){
 			wEventListeners.get(xX).error(xE);
