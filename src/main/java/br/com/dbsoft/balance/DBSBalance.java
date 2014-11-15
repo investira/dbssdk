@@ -160,7 +160,7 @@ public abstract class DBSBalance<OperationDataClass> {
 	}
 
 	/**
-	 * Recalculando o saldo considerando que o registro do lançamento já exsite, porém não está sendo considerado no saldo.<br/>
+	 * Recalculando o saldo considerando que o registro do lançamento já existe, porém não está sendo considerado no saldo.<br/>
 	 * @return Quantidade de registros efetados.
 	 * @throws DBSIOException
 	 */
