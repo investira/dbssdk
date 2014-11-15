@@ -40,7 +40,7 @@ public abstract class DBSPushServlet extends HttpServlet {
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		System.out.println("DESTROY");
+		//System.out.println("DBSPushServlet: DESTRO");
 		if (getDBSPushBean().getOnGoingRequests()!=null){
 			getDBSPushBean().finalizeClass(); 
 		}
