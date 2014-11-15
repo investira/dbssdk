@@ -604,7 +604,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @param pScheduleDate
 	 * @throws DBSIOException 
 	 */
-	public synchronized final void setScheduleDate(Date pScheduleDate) throws DBSIOException {
+	public final void setScheduleDate(Date pScheduleDate) throws DBSIOException {
 		pvRetryReset();
 		pvScheduleDate(pScheduleDate);
 	}
@@ -649,7 +649,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Caso não sejá multifarefa, este metodo só terminará ao final da execução da tarefa. 
 	 * @throws Exception 
 	 */
-	public synchronized final void run() throws DBSIOException{
+	public final void run() throws DBSIOException{
 		try {
 			pvRetryReset();
 			pvRunTask();
@@ -665,7 +665,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Destativa o agendamento(se houver) e exclui os listeners.
 	 * Para ativar novamente esta tarefa, será necessário criar uma nova instancia.
 	 */
-	public synchronized final void kill() {
+	public final void kill() {
 		try{
 			if (wRunThread != null){
 				wRunThread.kill();
@@ -870,7 +870,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Método para setar a wConnection local com uma conexão válida
 	 * @throws SQLException 
 	 */
-	public synchronized boolean openConnection() {
+	public boolean openConnection() {
 		try {
 			//Cria nova conexão se a conexão local for nula ou se estiver fechada.
 			if ((wConnection!=null && wConnection.isClosed()) ||
@@ -893,7 +893,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Método para fechar a wConnection local
 	 */
-	public synchronized void closeConnection(){
+	public void closeConnection(){
 		if (wConnection != null){
 			try {
 				if (!wConnection.isClosed()){
