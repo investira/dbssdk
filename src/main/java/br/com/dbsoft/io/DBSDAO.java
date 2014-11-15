@@ -518,7 +518,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}else if (wQueryColumns.containsKey(xColumnName)){
 			return wQueryColumns.<A>getValueOriginal(xColumnName);
 		}
-		wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+		if (getShowColumnNameNotFoundMessage()){
+			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+		}
 		return null;
 	}
 	
@@ -559,7 +561,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}else if (wQueryColumns.containsKey(xColumnName)){
 			return wQueryColumns.<A>getValue(xColumnName);
 		}
-		wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+		if (getShowColumnNameNotFoundMessage()){
+			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+		}
 		return null;
 	}
 	
@@ -598,10 +602,12 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		if (this.pvSetLocalDataModelValue(xColumnName, pValue)){
 			xAchou = true;
 		}
-		if (!xAchou){
+		if (!xAchou
+		 && getShowColumnNameNotFoundMessage()){
 			wLogger.error("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 	}
+	
 	
 	/**
 	 * Retorna valor da coluna diretamente do ResultDataModel.<br/>

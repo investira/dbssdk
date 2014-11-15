@@ -33,10 +33,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	protected DataModelClass                wDataModel;
 	private boolean							wCallMoveEvent = true;
 	private int								wRowsCountAfterRefresh = 0;
-	
-	//wDataModelPropertiesNames=Armazena o nome das propriedades da classe generica informada em <T>, 
-	//para ser utilizado para pesquisa, evitando teste por exception
-	//protected Map<String, String> 	wDataModelPropertiesNames = new HashMap<String, String>(); 
+	private boolean							wShowColumnNameNotFoundMessage = true;
 	
 	protected static final String UKName = "DBSUK";
 
@@ -71,31 +68,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	public final void setDataModelClass(Class<DataModelClass> pDataModelClass) {
 		this.wDataModelClass = pDataModelClass;
 		wDataModel = createDataModel();
-		//pvSaveDataModelPropertiesNames();
 	}
-	
-
-	//=== PROTECTED =================================================================================
-	
-//	/**
-//	 * Armazena o nome das propriedades da classe genérica informada em <T>,
-//	 * para serem utilizadas para pesquisa quando for necessário verificar se o nome informado é uma propriedade da classe, 
-//	 * evitando teste por exception
-//	 */
-//	private final void pvSaveDataModelPropertiesNames(){
-//		//Verifica se o DataModel ou a Linha estão nulos ou o ResultSet
-//		wDataModelPropertiesNames.clear();
-//		if (wDataModelClass == null	||
-//			wDataModelClass.getDeclaredFields().length == 0){ 
-//			return;
-//		}
-//		//Obtem os atributos do DataModel passado
-//		Field xFields[] = wDataModelClass.getDeclaredFields();
-//		//Loop para percorrer os atributos do Objeto passado
-//		for (Field xField : xFields) {
-//			wDataModelPropertiesNames.put(xField.getName().toUpperCase().trim(), xField.getName());
-//		}		
-//	}
 	
 	/**
 	 * Atualizada a propriedade/coluna do wDataModel local com o valor informado
@@ -151,6 +124,29 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 		wDataModel = createDataModel();
 
 	}
+	
+
+	/**
+	 * Indicador se exibe mensagem de alerta quando pesquisar 
+	 * o valor de uma coluna que não exista na query.<br/>
+	 * O padrão é true.
+	 * @return
+	 */
+	public boolean getShowColumnNameNotFoundMessage() {
+		return wShowColumnNameNotFoundMessage;
+	}
+
+	/**
+	 * Indicador se exibe mensagem de alerta quando pesquisar 
+	 * o valor de uma coluna que não exista na query.<br/>
+	 * O padrão é true.
+	 * @return
+	 */
+	public void setShowColumnNameNotFoundMessage(
+			boolean pShowColumnNameNotFoundMessage) {
+		wShowColumnNameNotFoundMessage = pShowColumnNameNotFoundMessage;
+	}
+	
 
 	/**
 	 * Retorna o valor do atributo/coluna da classe genérica 
@@ -705,7 +701,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	        }
 		}
 	}
-	
+
 	
 
 	
