@@ -11,14 +11,14 @@ public abstract class DBSEvent<SourceObjectClass>{
 	
 	private boolean 				wOk = true;
 	private DBSMessages<DBSMessage> wMessages = new DBSMessages<DBSMessage>(DBSMessage.class);
-	private SourceObjectClass 		wObject;
+	private SourceObjectClass 		wSourceObject;
 
 	/**
 	 * Quando esta classe for extendida, deve-se alterar o tipo SourceObjectClass pelo objeto que será o padrão.
-	 * @param pObject
+	 * @param pSourceObject
 	 */
-	public DBSEvent(SourceObjectClass pObject){
-		wObject = pObject;
+	public DBSEvent(SourceObjectClass pSourceObject){
+		wSourceObject = pSourceObject;
 	}
 	
 	/**
@@ -38,11 +38,11 @@ public abstract class DBSEvent<SourceObjectClass>{
 	}
 
 	/**
-	 * Objeto que disparou o evento
+	 * Objeto origem que disparou o evento
 	 * @return
 	 */
-	public final SourceObjectClass getObject() {
-		return wObject;
+	public final SourceObjectClass getSource() {
+		return wSourceObject;
 	}
 
 	public DBSMessages<DBSMessage> getMessages() {

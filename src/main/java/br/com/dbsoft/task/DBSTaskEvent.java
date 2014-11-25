@@ -4,8 +4,8 @@ import br.com.dbsoft.event.DBSEvent;
 
 public class DBSTaskEvent extends DBSEvent<DBSTask<?>> {
 
-	public DBSTaskEvent(DBSTask<?> pObject) {
-		super(pObject);
+	public DBSTaskEvent(DBSTask<?> pSourceObject) {
+		super(pSourceObject);
 	}
 
 }
