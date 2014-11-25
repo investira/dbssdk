@@ -2204,7 +2204,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 						pPrecision > 14){
 						return DATATYPE.DECIMAL;
 					}
-					if (pPrecision < 9){
+					if (pPrecision < 10){
 						return DATATYPE.INT;
 					}else{
 						return DATATYPE.DOUBLE;
