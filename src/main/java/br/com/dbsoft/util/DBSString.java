@@ -700,7 +700,7 @@ public class DBSString {
 	}
 	
 	/**
-	 * Retorna uma String com os itens contidos em list, separados por vírgula
+	 * Retorna uma String com os itens contidos no list, separados por vírgula.
 	 * @param pList
 	 * @return
 	 */
