@@ -15,9 +15,10 @@ public final class DBSSDK {
 			FORM				("fr"),
 			TABLE				("tb"),
 			BUTTON				("bt"),
-			FIELD_INPUT			("fl"),
+			FIELD_CRUD			("fl"),
 			FIELD_FILTER		("ft"),
-			FIELD_AUX			("fx");
+			FIELD_AUX			("fx"),
+			DEAD_END			("de");
 			
 			private String 	wName;
 			
@@ -41,12 +42,14 @@ public final class DBSSDK {
 					return TABLE;
 				}else if (xString.equals(BUTTON.getName())){
 					return BUTTON;
-				}else if (xString.equals(FIELD_INPUT.getName())){
-					return FIELD_INPUT;
+				}else if (xString.equals(FIELD_CRUD.getName())){
+					return FIELD_CRUD;
 				}else if (xString.equals(FIELD_FILTER.getName())){
 					return FIELD_FILTER;
 				}else if (xString.equals(FIELD_AUX.getName())){
 					return FIELD_AUX;
+				}else if (xString.equals(DEAD_END.getName())){
+					return DEAD_END;
 				}
 				return null;
 			}
