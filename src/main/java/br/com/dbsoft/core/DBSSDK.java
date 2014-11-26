@@ -9,12 +9,47 @@ public final class DBSSDK {
 	
 	public final static class UI
 	{
-		public final static class PREFIX{
-			public static final String CRUD = "fl";
-			public static final String FILTER = "ft";
-			public static final String AUX = "fx";
-			public static final String MENU = "mn";
-			public static final String BUTTON = "bt";
+		public static enum ID_PREFIX{
+			APPLICATION 		("ap"),					
+			MENU				("mn"),
+			FORM				("fr"),
+			TABLE				("tb"),
+			BUTTON				("bt"),
+			FIELD_INPUT			("fl"),
+			FIELD_FILTER		("ft"),
+			FIELD_AUX			("fx");
+			
+			private String 	wName;
+			
+			private ID_PREFIX(String pName) {
+				this.wName = pName;
+			}
+
+			public String getName() {
+				return wName;
+			}
+
+			public static ID_PREFIX get(String pPrefixo) {
+				String xString = pPrefixo.trim().toLowerCase();
+				if (xString.equals(APPLICATION.getName())){
+					return APPLICATION;
+				}else if (xString.equals(MENU.getName())){
+					return MENU;
+				}else if (xString.equals(FORM.getName())){
+					return FORM;
+				}else if (xString.equals(TABLE.getName())){
+					return TABLE;
+				}else if (xString.equals(BUTTON.getName())){
+					return BUTTON;
+				}else if (xString.equals(FIELD_INPUT.getName())){
+					return FIELD_INPUT;
+				}else if (xString.equals(FIELD_FILTER.getName())){
+					return FIELD_FILTER;
+				}else if (xString.equals(FIELD_AUX.getName())){
+					return FIELD_AUX;
+				}
+				return null;
+			}
 		}
 		
 		public final static class COMBOBOX{
