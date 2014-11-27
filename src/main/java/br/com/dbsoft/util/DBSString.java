@@ -381,6 +381,54 @@ public class DBSString {
 	}
 
 	/**
+	 * Retorna uma String com os itens contidos no list, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static <T> String listToCSV(List<T> pList){
+		if (pList == null ||
+			pList.size() == 0){
+			return "";
+		}
+		String xString = "";
+		String xTest;
+		for (Object xO:pList){
+			xTest = DBSString.toString(xO,null);
+			if (xTest!=null){
+				if (!xString.equals("")){
+					xString += ",";
+				}
+				xString += xTest;
+			}
+		}
+		return xString;
+	}
+
+	/**
+	 * Retorna uma String com os itens contidos no Arraylist, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static <T> String arrayToCSV(ArrayList<T> pList){
+		if (pList == null ||
+			pList.size() == 0){
+			return "";
+		}
+		String xString = "";
+		String xTest;
+		for (Object xO:pList){
+			xTest = DBSString.toString(xO,null);
+			if (xTest!=null){
+				if (!xString.equals("")){
+					xString += ",";
+				}
+				xString += xTest;
+			}
+		}
+		return xString;
+	}
+
+	/**
 	 * Separa um Array a patir de uma String, separado por um delimitador informado.
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)<br/>
 	 * Maiúscula e minúsculo serão consderados nomes diferentes.
@@ -698,33 +746,6 @@ public class DBSString {
 		}
 		return -1;
 	}
-	
-	/**
-	 * Retorna uma String com os itens contidos no list, separados por vírgula.
-	 * @param pList
-	 * @return
-	 */
-	public static <T> String listToString(List<T> pList){
-		if (pList == null ||
-			pList.size() == 0){
-			return "";
-		}
-		String xString = "";
-		String xTest;
-		for (Object xO:pList){
-			xTest = DBSString.toString(xO,null);
-			if (xTest!=null){
-				if (!xString.equals("")){
-					xString += ",";
-				}
-				xString += xTest;
-			}
-		}
-		return xString;
-	}
-	//*******************************************************************************************************
-	// Private
-	//*******************************************************************************************************
 	
 	/**
 	 * Corrige erros ortográficos a partir do dicionário interno.<br/>
