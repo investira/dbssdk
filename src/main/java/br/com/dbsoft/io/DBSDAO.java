@@ -1213,8 +1213,8 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 					}
 					pvSetPK(xPK);
 				} 
-				//Se a PK foi definida e possui mais de uma coluna, considera que a tabela não possui auto-incremento.	
-				if (wPKs.length > 1) {
+				//Se a PK foi definida e possui mais de uma coluna ou não possui pk, considera que a tabela não possui auto-incremento.	
+				if (wPKs.length != 1) {
 					this.setAutoIncrementPK(false);
 				}
 			}
