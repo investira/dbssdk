@@ -400,7 +400,9 @@ public class DBSIO{
 			xRS = xDMD.getPrimaryKeys(null, null, pTableName);
 			xPKs = new ArrayList<String>();
 			while (xRS.next()) {
-				xPKs.add(xRS.getString("COLUMN_NAME"));
+				if (!xPKs.contains(xRS.getString("COLUMN_NAME"))){
+					xPKs.add(xRS.getString("COLUMN_NAME"));
+				}
 			}
 			return xPKs;
 		} catch (SQLException e) {
