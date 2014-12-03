@@ -18,6 +18,7 @@ public final class DBSSDK {
 			FIELD_CRUD			("fl"),
 			FIELD_FILTER		("ft"),
 			FIELD_AUX			("fx"),
+			OBJECT				("ob"),
 			DEAD_END			("de");
 			
 			private String 	wName;
