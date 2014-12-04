@@ -17,7 +17,7 @@ public class Tmp {
 	private static Integer Ctvm= 4;
 	private static Integer Fundo = 8;
 	
-	@Test
+//	@Test
 	public void teste_bit(){
 		Integer xImport = 0;
 		
@@ -34,8 +34,29 @@ public class Tmp {
 		System.out.println(xImport);
 		
 		int xAtual = Banco & Fundo;
-	 
-	
+	}	
+
+	@Test
+	public void teste_bit2(){
+		Integer xImport = 0;
+		
+		xImport |= 1;
+		System.out.println(xImport);
+		
+		xImport |= 2;
+		System.out.println(xImport);
+		
+		xImport |= 4;
+		System.out.println(xImport);
+
+		xImport |= 8;
+		System.out.println(xImport);
+
+		xImport |= 8;
+		System.out.println(xImport);
+
+		xImport |= 4;
+		System.out.println(xImport);
 	}	
 
 //	@Test
