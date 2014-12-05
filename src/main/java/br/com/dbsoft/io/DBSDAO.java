@@ -1171,7 +1171,9 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 				while (DBSIO.moveNext(xMetaData)){
 					xEmpty = false;
 					xColumnName = xMetaData.getString("COLUMN_NAME").toUpperCase().trim();
-					if (!DBSIO.isColumnsIgnored(xColumnName)){
+					//Verificar se é uma coluna para ser ignorada e se nome de coluna já exista na lista.
+					if (!DBSIO.isColumnsIgnored(xColumnName)
+					&& !wCommandColumns.containsKey(xColumnName)){
 						wCommandColumns.MergeColumn(xColumnName,
 												    DBSIO.toDataType(this.getConnection(), xMetaData.getInt("DATA_TYPE"), xMetaData.getInt("COLUMN_SIZE")),
 												    xMetaData.getInt("COLUMN_SIZE"), 
