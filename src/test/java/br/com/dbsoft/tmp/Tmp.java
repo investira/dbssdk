@@ -17,6 +17,12 @@ public class Tmp {
 	private static Integer Ctvm= 4;
 	private static Integer Fundo = 8;
 	
+	@Test
+	public void teste_x(){
+		System.out.println(org.joda.time.LocalTime.now());
+		System.out.println(DBSDate.getNowTime());
+	}	
+	
 //	@Test
 	public void teste_bit(){
 		Integer xImport = 0;
@@ -36,7 +42,7 @@ public class Tmp {
 		int xAtual = Banco & Fundo;
 	}	
 
-	@Test
+//	@Test
 	public void teste_bit2(){
 		Integer xImport = 0;
 		

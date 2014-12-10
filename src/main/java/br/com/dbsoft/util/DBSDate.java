@@ -112,7 +112,8 @@ public class DBSDate{
 	 * @return Hora de Hoje
 	 */
 	public static DateTime getNowDateTime() {
-		return new org.joda.time.DateTime();
+//		return new org.joda.time.DateTime();
+		return org.joda.time.LocalDateTime.now().toDateTime();
     }	
 
 	/**
@@ -120,13 +121,14 @@ public class DBSDate{
 	 * @return Data de Hoje
 	 */
 	public static Date getNowDate() {
-		try{
-			Calendar xCurrentTime = Calendar.getInstance();
-			return new Date((xCurrentTime.getTime()).getTime());
-		}catch(Exception e){
-			//DBSError.showException(e);
-			return null;
-		}
+		return toDate(org.joda.time.LocalDate.now().toDate());
+//		try{
+//			Calendar xCurrentTime = Calendar.getInstance();
+//			return new Date((xCurrentTime.getTime()).getTime());
+//		}catch(Exception e){
+//			//DBSError.showException(e);
+//			return null;
+//		}
     }
 
 	/**
@@ -287,6 +289,19 @@ public class DBSDate{
     	}
 		return toDate(pData.getTime());
 	}
+	
+    /**
+	 * Retorna uma Data do tipo Date, a partir de uma data do tipo java.util.Date.
+	 * @param pData
+	 * @return Data no tipo Date
+	 */
+	public static Date toDate(java.util.Date pData) {
+		if (DBSObject.isNull(pData)) {
+    		return null;
+    	}
+		return toDate(pData.getTime());
+	}
+	
 	
     /**
 	 * Retorna uma Data do tipo Date, a partir de uma data do tipo Timestamp.
