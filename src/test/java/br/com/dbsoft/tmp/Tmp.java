@@ -19,8 +19,6 @@ public class Tmp {
 	
 	@Test
 	public void teste_x(){
-		System.out.println(org.joda.time.LocalTime.now());
-		System.out.println(DBSDate.getNowTime());
 	}	
 	
 //	@Test

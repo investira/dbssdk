@@ -108,7 +108,7 @@ public class DBSDate{
 
 	//Métodos de Retorno de data atual=========================================================================
 	/**
-	 * Retorna a hora de hoje 
+	 * Retorna a data e hora de hoje. 
 	 * @return Hora de Hoje
 	 */
 	public static DateTime getNowDateTime() {
@@ -117,22 +117,34 @@ public class DBSDate{
     }	
 
 	/**
-	 * Retorna a data de hoje 
+	 * Retorna a somente data de hoje.<br/>
+	 * Caso queira receber também a hora, utilize outros métodos como <b>getNowDate(true)</b>, <b>getNowTimestamp()</b> ou  <b>getNowDateTime</b>.
 	 * @return Data de Hoje
 	 */
 	public static Date getNowDate() {
-		return toDate(org.joda.time.LocalDate.now().toDate());
-//		try{
-//			Calendar xCurrentTime = Calendar.getInstance();
-//			return new Date((xCurrentTime.getTime()).getTime());
-//		}catch(Exception e){
-//			//DBSError.showException(e);
-//			return null;
-//		}
+		return getNowDate(false);
     }
 
 	/**
-	 * Retorna a hora de hoje 
+	 * Retorna a data de hoje podendo conter também a hora, conforme parametro <b>pIncludeTime</b>.
+	 * @param pIncludeTime
+	 * @return Data de Hoje
+	 */
+	public static Date getNowDate(boolean pIncludeTime) {
+		if (pIncludeTime){
+			try{
+				Calendar xCurrentTime = Calendar.getInstance();
+				return new Date((xCurrentTime.getTime()).getTime());
+			}catch(Exception e){
+				return null;
+			}
+		}else{
+			return toDate(org.joda.time.LocalDate.now().toDate());
+		}
+    }
+
+	/**
+	 * Retorna a hora de hoje. 
 	 * @return Hora de Hoje
 	 */
 	public static Time getNowTime() {
