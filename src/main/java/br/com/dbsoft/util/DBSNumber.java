@@ -649,43 +649,43 @@ public class DBSNumber {
 	//---------------------------------------------------------------------------------
 
 	/**
-	 * Retorna valor com o sinal informado.
+	 * Retorna valor negativo ou positivo conforme paremeto <b>pPositive<b/> independetemente do sinal do valor recebido.
 	 * @param pValue
 	 * @param pSign 1 = Positivo / -1 = Negativo
 	 * @return
 	 */
-	public static Double setSign(Double pValue, Integer pSign){
-		return pvSetSign(pValue, pSign, Double.class);
+	public static Double toPositive(Double pValue, Boolean pPositive){
+		return pvToPositive(pValue, pPositive, Double.class);
 	}
 	
 	/**
-	 * Retorna valor com o sinal informado.
+	 * Retorna valor negativo ou positivo conforme paremeto <b>pPositive<b/> independetemente do sinal do valor recebido.
 	 * @param pValue
 	 * @param pSign 1 = Positivo / -1 = Negativo
 	 * @return
 	 */
-	public static Long setSign(Long pValue, Integer pSign){
-		return pvSetSign(pValue, pSign, Long.class);
+	public static Long toPositive(Long pValue, Boolean pPositive){
+		return pvToPositive(pValue, pPositive, Long.class);
 	}
 
 	/**
-	 * Retorna valor com o sinal informado.
+	 * Retorna valor negativo ou positivo conforme paremeto <b>pPositive<b/> independetemente do sinal do valor recebido.
 	 * @param pValue
 	 * @param pSign 1 = Positivo / -1 = Negativo
 	 * @return
 	 */
-	public static Integer setSign(Integer pValue, Integer pSign){
-		return pvSetSign(pValue, pSign, Integer.class);
+	public static Integer toPositive(Integer pValue, Boolean pPositive){
+		return pvToPositive(pValue, pPositive, Integer.class);
 	}
 	
 	/**
-	 * Retorna valor com o sinal informado.
+	 * Retorna valor negativo ou positivo conforme paremeto <b>pPositive<b/> independetemente do sinal do valor recebido.
 	 * @param pValue
 	 * @param pSign 1 = Positivo / -1 = Negativo
 	 * @return
 	 */
-	public static BigDecimal setSign(Object pValue, Integer pSign){
-		return pvSetSign(pValue, pSign, Object.class);
+	public static BigDecimal toPositive(Object pValue, Boolean pPositive){
+		return pvToPositive(pValue, pPositive, Object.class);
 	}
 
 	//-----------------------------------------------------------------------
@@ -1073,17 +1073,24 @@ public class DBSNumber {
 	}
 
 	/**
-	 * Rertorna valor absoluto
+	 * Retorna valor negativo ou positivo conforme paremeto <b>pPositive<b/> independetemente do sinal do valor recebido.
 	 * @param pValue
+	 * @param pPositive
+	 * @param pClass Para para a qual o valor será convertido.
 	 * @return
 	 */
-	private static <T extends Number> T pvSetSign(Object pValue, Integer pSign, Class<?> pClass){
+	private static <T extends Number> T pvToPositive(Object pValue, Boolean pPositive, Class<?> pClass){
+		if (pClass==null
+		 || pValue== null){
+			return null;
+		}
 		BigDecimal xValue = toBigDecimal(pValue);
-	
-		if (pSign != null
-		 &&	(pSign == 1
-		  || pSign == -1)){
-			xValue = multiply(abs(xValue), pSign);
+		if (pPositive != null){
+			if (pPositive){
+				xValue = abs(xValue);
+			}else{
+				xValue = multiply(abs(xValue), -1);
+			}
 		}
 		return pvConvertToClass(xValue, pClass);
 	}

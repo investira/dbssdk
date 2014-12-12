@@ -397,9 +397,9 @@ public class TstNumber {
 	}
 	@Test
 	public void test_setSign() {
-		assertEquals("-123.45678910123", DBSNumber.setSign("123,45678910123", -1).toString());
-		assertEquals("-123.45678910123", DBSNumber.setSign("-123,45678910123", -1).toString());
-		assertEquals("123.45678910123", DBSNumber.setSign("123,45678910123", 1).toString());
-		assertEquals("123.45678910123", DBSNumber.setSign("-123,45678910123", 1).toString());
+		assertEquals("-123.45678910123", DBSNumber.toPositive("123,45678910123", false).toString());
+		assertEquals("-123.45678910123", DBSNumber.toPositive("-123,45678910123", false).toString());
+		assertEquals("123.45678910123", DBSNumber.toPositive("123,45678910123", true).toString());
+		assertEquals("123.45678910123", DBSNumber.toPositive("-123,45678910123", true).toString());
 	}
 }
