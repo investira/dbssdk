@@ -2623,7 +2623,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	 * @param pSenao Dado a ser considerado quando pSeCampo for Diferente a pIgualA.
 	 * @return String com comando formatado.
 	 */
-	public static String toSQLIf(Connection pCn, String pSeCampo, int pIgualA, String pUsa, String pSenao) {
+	public static String toSQLIf(Connection pCn, String pSeCampo, String pIgualA, String pUsa, String pSenao) {
 //        return "(CASE WHEN " + pSeCampo + "=" + pIgualA + " THEN " + pUsa + " ELSE " + pSenao + " END)";
 		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if (xDBP == DB_SERVER.ORACLE) {
