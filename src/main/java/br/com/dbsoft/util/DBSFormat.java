@@ -150,48 +150,82 @@ public class DBSFormat {
 	public static String getFormattedNumberUnsigned(Double pValue, Object pDecimalPlaces){
 		return getFormattedNumber(pValue, NUMBER_SIGN.NONE, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
 	}
+	/**
+	 * Formata número sem sinal.
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
 	public static String getFormattedNumberUnsigned(Object pValue, Object pDecimalPlaces){
 		return getFormattedNumber(DBSNumber.toDouble(pValue), NUMBER_SIGN.NONE, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
 	}
+
+	/**
+	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
 	public static String getFormattedNumber(Object pValue, Object pDecimalPlaces){
 		return getFormattedNumber(DBSNumber.toDouble(pValue), NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
 	}
+
+	/**
+	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
 	public static String getFormattedNumber(Double pValue, Object pDecimalPlaces){
 		return getFormattedNumber(pValue, NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
 	}
+
+	/**
+	 * Formata número com sinal de negativo no prefixo(caso seja número negativo).
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
 	public static String getFormattedNumber(BigDecimal pValue, Object pDecimalPlaces){
 		return getFormattedNumber(DBSNumber.toDouble(pValue), pDecimalPlaces);
 	}
 	
 	/**
-	 * Retorna string contendo valor da quantidade(somente parte inteira) formatado
-	 * @param pValor Valor a ser formatado
-	 * @return número(String) formatado
+	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValor
+	 * @return
 	 */
-	public static String getFormattedFinanceiro(Double pValor){
-		return getFormattedNumber(pValor, MASK.FINANCEIRO);
+	public static String getFormattedCurrency(Double pValor){
+		return getFormattedCurrency(pValor, NUMBER_SIGN.MINUS_PREFIX);
 	}
-	
-	public static String getFormattedFinanceiro(Object pValor){
-		return getFormattedFinanceiro(DBSNumber.toDouble(pValor));
-	}
-	
+
 	/**
-	 * Retorna string contendo valor formatado conforme máscara informada
-	 * @param pValor Valor a ser formatado
-	 * @param pNumberMask máscara para a formatação do número
-	 * @return número(String) formatado
+	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValor
+	 * @return
 	 */
-	public static String getFormattedNumber(Double pValor, String pNumberMask){
-		if (DBSObject.isEmpty(pValor)) {
-			return null;
-		}
-		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols();
-		xOtherSymbols.setDecimalSeparator(',');
-		xOtherSymbols.setGroupingSeparator('.');
-		DecimalFormat xDF = new DecimalFormat(pNumberMask, xOtherSymbols);
-		return xDF.format(pValor);
+	public static String getFormattedCurrency(Object pValor){
+		return getFormattedCurrency(DBSNumber.toDouble(pValor));
 	}
+
+	/**
+	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValor
+	 * @return
+	 */
+	public static String getFormattedCurrency(Object pValor, NUMBER_SIGN pSign){
+		return getFormattedCurrency(DBSNumber.toDouble(pValor), pSign);
+	}
+
+	/**
+	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValor
+	 * @return
+	 */
+	public static String getFormattedCurrency(Double pValor, NUMBER_SIGN pSign){
+		return getFormattedNumber(pValor, pSign, MASK.FINANCEIRO);
+	}
+
 
 	public static String getFormattedNumber(Double pValor, NUMBER_SIGN pSign, String pNumberMask){
 		if (DBSObject.isEmpty(pValor)) {
