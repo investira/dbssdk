@@ -5,8 +5,10 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -290,43 +292,6 @@ public class DBSString {
 			return null;
 		}
 	}
-	
-//	/**
-//	 * Retorna string concatenando de duas a cinco string recebidas
-//	 * @param pDado1 Primeira String
-//	 * @param pDado2 Segunda String
-//	 * @return String contatenada
-//	 */
-//	public static String joinString(String pDado1, String pDado2){
-//		if (!DBSObject.isEmpty(pDado1) &&
-//			!DBSObject.isEmpty(pDado2)){
-//			return new StringBuffer(pDado1.trim()).append(", ").append(pDado2.trim()).toString();
-//			//return pDado1.trim() + ", " + pDado2.trim(); StringBuffer é ais rápido que string
-//		}
-//		else{
-//			if(DBSObject.isEmpty(pDado1)){
-//				return pDado2;
-//			}
-//			else{
-//				return pDado1;
-//			}
-//		}
-//	}
-//	public static String joinString(String pDado1, String pDado2, String pDado3){
-//		String xS = joinString(pDado1, pDado2);
-//		xS = joinString(xS, pDado3);
-//		return xS;
-//	}
-//	public static String joinString(String pDado1, String pDado2, String pDado3, String pDado4){
-//		String xS = joinString(pDado1, pDado2, pDado3);
-//		xS = joinString(xS, pDado4);
-//		return xS;
-//	}
-//	public static String joinString(String pDado1, String pDado2, String pDado3, String pDado4, String pDado5){
-//		String xS = joinString(pDado1, pDado2, pDado3, pDado4);
-//		xS = joinString(xS, pDado5);
-//		return xS;
-//	}
 
 	/**
 	 * Converte um valor numérico para string, excluido a separação decimal e fixando o tamanho das casas decimais
@@ -381,7 +346,26 @@ public class DBSString {
 	}
 
 	/**
-	 * Retorna uma String com os itens contidos no list, separados por vírgula.
+	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static String setToCSV(Set<Object> pList){
+		return arrayToCSV(pList.toArray());
+	}
+
+	/**
+	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static String arrayToCSV(Object[] pList){
+		return listToCSV(Arrays.asList(pList));
+
+	}
+
+	/**
+	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
 	 * @param pList
 	 * @return
 	 */
@@ -394,7 +378,7 @@ public class DBSString {
 		String xTest;
 		for (Object xO:pList){
 			xTest = DBSString.toString(xO,null);
-			if (xTest!=null){
+			if (!DBSObject.isEmpty(xTest)){
 				if (!xString.equals("")){
 					xString += ",";
 				}
@@ -404,29 +388,6 @@ public class DBSString {
 		return xString;
 	}
 
-	/**
-	 * Retorna uma String com os itens contidos no Arraylist, separados por vírgula.
-	 * @param pList
-	 * @return
-	 */
-	public static <T> String arrayToCSV(ArrayList<T> pList){
-		if (pList == null ||
-			pList.size() == 0){
-			return "";
-		}
-		String xString = "";
-		String xTest;
-		for (Object xO:pList){
-			xTest = DBSString.toString(xO,null);
-			if (xTest!=null){
-				if (!xString.equals("")){
-					xString += ",";
-				}
-				xString += xTest;
-			}
-		}
-		return xString;
-	}
 
 	/**
 	 * Separa um Array a patir de uma String, separado por um delimitador informado.
