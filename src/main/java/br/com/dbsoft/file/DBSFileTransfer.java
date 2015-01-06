@@ -1,14 +1,18 @@
 package br.com.dbsoft.file;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -150,6 +154,8 @@ public class DBSFileTransfer{
 	private LocalFileNameOrigin				wLocalFileNameOrigin = LocalFileNameOrigin.USER;
 	private String							wRemoteServer;
 	private String	 						wMsgErro;
+	private String	 						wMethod;
+	private List<String>					wRequestPropertys;
 
 	/**
 	 * Construtor que configura os parametros para efetuar a transferencia.<br/>
@@ -158,10 +164,19 @@ public class DBSFileTransfer{
 	 * @param pLocalFileName
 	 * @param pVersion
 	 */
+	public DBSFileTransfer(String pURL, String pLocalFileName, Timestamp pVersion, String pMethod, List<String> pRequestPropertys) {
+		this.wLocalFileName = pLocalFileName;
+		this.wURL = pURL;
+		this.wVersion = pVersion;
+		this.wMethod = pMethod;
+		this.wRequestPropertys = pRequestPropertys;
+	}
+	
 	public DBSFileTransfer(String pURL, String pLocalFileName, Timestamp pVersion) {
 		this.wLocalFileName = pLocalFileName;
 		this.wURL = pURL;
 		this.wVersion = pVersion;
+		this.wMethod = "GET";
 	}
 
 	public DBSFileTransfer(String pURL, Timestamp pVersion) {
@@ -448,10 +463,33 @@ public class DBSFileTransfer{
 		setTransferState(TransferState.TRANSFERING);
 		
 		HttpURLConnection xConnection = (HttpURLConnection) pURL.openConnection();
-		xConnection.setRequestMethod("GET");
-		xConnection.setAllowUserInteraction(false);
+		xConnection.setRequestMethod(wMethod);
+//		xConnection.setAllowUserInteraction(false);
 		xConnection.setDoInput(true);
-		xConnection.setDoOutput(false);
+		xConnection.setDoOutput(true);
+		if (!DBSObject.isNull(wRequestPropertys) && !wRequestPropertys.isEmpty()) {
+			StringBuilder xParams = new StringBuilder();
+			boolean first = true;
+			for (String xProperty : wRequestPropertys) {
+				String xKey = DBSString.getSubString(xProperty, 1, xProperty.indexOf("="));
+				String xValue = DBSString.getSubString(xProperty, xProperty.indexOf("=")+2, xProperty.length());
+
+		        if (first) {
+		            first = false;
+		        } else {
+		            xParams.append("&");
+		        }
+		        xParams.append(URLEncoder.encode(xKey, "UTF-8"));
+		        xParams.append("=");
+		        xParams.append(URLEncoder.encode(xValue, "UTF-8"));
+			}
+			OutputStream xOs = xConnection.getOutputStream();
+			BufferedWriter xWriter = new BufferedWriter(new OutputStreamWriter(xOs, "UTF-8"));
+			xWriter.write(xParams.toString());
+			xWriter.flush();
+			xWriter.close();
+			xOs.close();
+		}
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
 		setMsgErro(null);
@@ -651,6 +689,5 @@ public class DBSFileTransfer{
 			wEventListeners.get(xX).transferStateChanged(this);
         }		
 	}
-
 
 }
