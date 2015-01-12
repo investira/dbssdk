@@ -235,7 +235,7 @@ public class DBSFormat {
 		xOtherSymbols.setDecimalSeparator(',');
 		xOtherSymbols.setGroupingSeparator('.');
 		DecimalFormat xDF = new DecimalFormat(pNumberMask, xOtherSymbols);
-		xDF.setRoundingMode(RoundingMode.DOWN);
+		xDF.setRoundingMode(RoundingMode.HALF_UP);
 		switch (pSign) {
 			case NONE:
 				xDF.setNegativePrefix("");
