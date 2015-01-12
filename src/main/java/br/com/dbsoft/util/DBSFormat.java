@@ -373,6 +373,17 @@ public class DBSFormat {
 	}
 
 
+	/**
+	 * Retorna uma string com o valor formatado conforme a máscara
+	 * Serão ignorados os caracteres não numericos ou alfabéticos da valor informado
+	 * serão ignorados os caracteres que ultrapassatem o tamanho da máscara  
+	 * @param pValue Valor que será utilizado para preencher a máscara
+	 * @param pMask Máscara sendo 9=Numeric; a=Alpha; x=AlphaNumeric
+	 * @return
+	 */
+	public static String getFormattedMask(Object pValue, String pMask){
+		return getFormattedMask(pValue, pMask, "");
+	}
 	
 	/**
 	 * Retorna uma string com o valor formatado conforme a máscara
@@ -385,9 +396,12 @@ public class DBSFormat {
 	 */
 	public static String getFormattedMask(Object pValue, String pMask, String pEmptyChr){
 		if (pValue ==null ||
-			pMask == null ||
 			pEmptyChr == null){
 			return "";
+		}
+		
+		if (pMask.equals("")){
+			return pValue.toString();
 		}
 		
 		//9=Numeric; a=Alpha; x=AlphaNumeric
