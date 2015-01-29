@@ -308,7 +308,7 @@ public class DBSString {
 		}
 		Double xN = DBSNumber.exp(10D, pCasasDecimais).doubleValue();
 		xN = DBSNumber.multiply(pValor, xN).doubleValue();
-		DecimalFormat xF = new DecimalFormat(repeat("0",pCasasDecimais));
+		DecimalFormat xF = new DecimalFormat(repeat("0",pTamanhoMinimoDaString));
 		return xF.format(xN);
 	}
 	
