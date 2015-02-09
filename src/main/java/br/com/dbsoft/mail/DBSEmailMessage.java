@@ -5,26 +5,34 @@ import java.util.List;
 
 public class DBSEmailMessage {
 	
-	private String wFrom;
-	private String wFromName;
-	private String wTo;
-	private String wToName;
-	private String wSubject;
-	private String wText;
-	private List<String> wAttachments = new ArrayList<String>();
+	private DBSEmailAddress 		wFrom = new DBSEmailAddress();
+	private List<DBSEmailAddress> 	wTo = new ArrayList<DBSEmailAddress>();
+	private List<DBSEmailAddress> 	wCC = new ArrayList<DBSEmailAddress>();
+	private List<DBSEmailAddress> 	wBCC = new ArrayList<DBSEmailAddress>();
+	private String 					wSubject;
+	private String 					wText;
+	private List<String> 			wAttachments = new ArrayList<String>();
 	
-	public String getFrom() {return wFrom;}
-	public void setFrom(String pFrom) {wFrom = pFrom;}
-	
-	public String getFromName() {return wFromName;}
-	public void setFromName(String pFromName) {wFromName = pFromName;}
+	public DBSEmailAddress getFrom() {return wFrom;}
 
-	public String getTo() {return wTo;}
-	public void setTo(String pTo) {wTo = pTo;}
+	/**
+	 * Lista principal de endereço
+	 * @return
+	 */
+	public List<DBSEmailAddress> getTo() {return wTo;}
 
-	public String getToName() {return wToName;}
-	public void setToName(String pToName) {wToName = pToName;}
+	/**
+	 * Lista de endereço em cópia
+	 * @return
+	 */
+	public List<DBSEmailAddress> getCC() {return wCC;}
 	
+	/**
+	 * Lista de endereço em cópia oculta
+	 * @return
+	 */
+	public List<DBSEmailAddress> getBCC() {return wBCC;}
+
 	public String getSubject() {return wSubject;}
 	public void setSubject(String pSubject) {wSubject = pSubject;}
 	

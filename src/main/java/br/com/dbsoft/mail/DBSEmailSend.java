@@ -77,7 +77,6 @@ public class DBSEmailSend {
 		Session 		xMailSession = Session.getInstance(xProps, new SMTPAuthenticator());
 	    Message 		xMessage = new MimeMessage(xMailSession);
 		InternetAddress xFromAddress = null;
-		InternetAddress xToAddress = null;
 		Transport 		xTransport;
 		BodyPart 		xMessageBodyPart = new MimeBodyPart();
 		Multipart 		xMultipart;
@@ -97,17 +96,26 @@ public class DBSEmailSend {
 		}
 	    
 		try {
-			xFromAddress = new InternetAddress(pMessage.getFrom());
-			xFromAddress.setPersonal(pMessage.getFromName());
-			xToAddress = new InternetAddress(pMessage.getTo());
-			xToAddress.setPersonal(pMessage.getToName());
-			
+			//FROM
+			xFromAddress = new InternetAddress(pMessage.getFrom().getAddress());
+			xFromAddress.setPersonal(pMessage.getFrom().getName());
 			xMessage.setFrom(xFromAddress);
-			xMessage.setRecipient(RecipientType.TO, xToAddress);
-			xMessage.setSubject(pMessage.getSubject());
-//			xMessage.setText(pMessage.getText());
+			
+			//TO ---------------------
+			for (DBSEmailAddress xEmailAddress:pMessage.getTo()){
+				pvAddRecipient(xMessage, RecipientType.TO, xEmailAddress);
+			}
+			//CC ---------------------
+			for (DBSEmailAddress xEmailAddress:pMessage.getCC()){
+				pvAddRecipient(xMessage, RecipientType.CC, xEmailAddress);
+			}
+			//BCC ---------------------
+			for (DBSEmailAddress xEmailAddress:pMessage.getBCC()){
+				pvAddRecipient(xMessage, RecipientType.BCC, xEmailAddress);
+			}
 			
 			//Texto da mensagem----------
+			xMessage.setSubject(pMessage.getSubject());
 			xMessageBodyPart.setText(pMessage.getText());
 			xMultipart = new MimeMultipart();
 			xMultipart.addBodyPart(xMessageBodyPart);
@@ -142,6 +150,12 @@ public class DBSEmailSend {
 		}
 		return false;
 		
+	}
+	
+	private void pvAddRecipient(Message pMessage, RecipientType pRecipientType, DBSEmailAddress pEmailAddress) throws MessagingException, UnsupportedEncodingException{
+		InternetAddress xToAddress = new InternetAddress(pEmailAddress.getAddress());
+		xToAddress.setPersonal(pEmailAddress.getName());
+		pMessage.addRecipient(pRecipientType, xToAddress);
 	}
 	
     private class SMTPAuthenticator extends Authenticator {
