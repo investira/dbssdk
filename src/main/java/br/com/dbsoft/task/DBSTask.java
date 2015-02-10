@@ -1103,6 +1103,12 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 							 */
 							if (!pvFireEventStep()
 							  && getRunStatus() != RunStatus.INTERRUPTED){
+								/* ALBERTO EM 10/02/2015: condição altera o estado de ReRun antecipadamente 
+								 * para que esta condição possa verificada no método de interrupção.
+								 */
+								if (wRetryOnErrorTimes != 0 && wRetryOnErrorCount < wRetryOnErrorTimes){
+									wReRun = true;
+								}
 								error();
 								break;
 							}
