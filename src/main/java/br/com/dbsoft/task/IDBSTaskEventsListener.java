@@ -34,6 +34,12 @@ public interface IDBSTaskEventsListener {
 	public void afterRun(DBSTaskEvent pEvent) throws DBSIOException;
 
 	/**
+	 * Evento disparado ao final da tarefa após efetuado todas as tentativas em caso de erro.<br/>
+	 * Para identificar qual o status da interrupção, deve-se perquisar <b>getObject().getRunStatus()</b>.
+	 */
+	public void ended(DBSTaskEvent pEvent) throws DBSIOException;
+
+	/**
 	 * Evento disparado quando a terafa é interrompida pelo usuário ou por erro.<br/>
 	 * No caso de erro o evento <b>error<b/> é disparado antes.<br/>
 	 * Para identificar qual o status da interrupção, deve-se perquisar <b>getObject().getRunStatus()</b>.

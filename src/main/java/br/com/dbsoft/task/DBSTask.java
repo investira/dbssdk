@@ -368,33 +368,43 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	/**
 	 * Quantidade de segundos para efetuar nova tentativa em caso de erro.<br/>
 	 * Valor <b>0</b> indica que <b>não</b> será efetuada nova tentativa.
-	 * O padrão é <b>0</b>.
+	 * O padrão é <b>0</b>.<br/>
+	 * É necessário que a tarefa seja multitarefa, para isso deve-se setar <b>setMultiTask(true)</b>.
 	 * @return
 	 */
 	public final int getRetryOnErrorSeconds() {return wRetryOnErrorSeconds;}
 	/**
 	 * Quantidade de segundos para efetuar nova tentativa em caso de erro.<br/>
-	 * Valor <b>0</b> indica que <b>não</b> será efetuada nova tentativa.
-	 * O padrão é <b>0</b>.
+	 * Valor <b>0</b> indica que <b>não</b> será efetuada nova tentativa.<br/>
+	 * O padrão é <b>0</b>.<br/>
+	 * É necessário que a tarefa seja multitarefa, para isso deve-se setar <b>setMultiTask(true)</b>.
 	 * @return
 	 */
 	public final void setRetryOnErrorSeconds(int pRetryOnErrorSeconds) {wRetryOnErrorSeconds = pRetryOnErrorSeconds;}
 
 	/**
 	 * Número máximo de tentativas em caso de erros sucessivos.<br/>
-	 * Valor <b>0</b> indica que não há limite de tentativas.  
-	 * O padrão é 0.
+	 * Valor <b>0</b> indica que não há limite de tentativas.<br/>
+	 * O padrão é 0.<br/>
+	 * É necessário que a tarefa seja multitarefa, para isso deve-se setar <b>setMultiTask(true)</b>.
 	 * @return
 	 */
 	public final int getRetryOnErrorTimes() {return wRetryOnErrorTimes;}
 
 	/**
 	 * Número máximo de tentativas em caso de erros sucessivos.<br/>
-	 * Valor <b>0</b> indica que não há limite de tentativas.  
-	 * O padrão é 0.
+	 * Valor <b>0</b> indica que não há limite de tentativas.<br/>  
+	 * O padrão é 0.<br/>
+	 * É necessário que a tarefa seja multitarefa, para isso deve-se setar <b>setMultiTask(true)</b>.
 	 * @return
 	 */
-	public final void setRetryOnErrorTimes(int pRetryOnErrorTimes) {wRetryOnErrorTimes = pRetryOnErrorTimes;}
+	public final void setRetryOnErrorTimes(int pRetryOnErrorTimes) {
+		wRetryOnErrorTimes = pRetryOnErrorTimes;
+		//For tempo mínimo de 1 segundo, caso ainda não tenha sido configurado
+		if (wRetryOnErrorSeconds == 0){
+			wRetryOnErrorSeconds = 1;
+		}
+	}
 
 
 	
@@ -819,6 +829,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	@Override
+	public void ended(DBSTaskEvent pEvent) throws DBSIOException{
+		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
+	}
+
+	@Override
 	public void interrupted(DBSTaskEvent pEvent) throws DBSIOException{
 		// Manter vazio. Quem extender esta classe fica responável de sobreescrever este métodos, caso precise
 	}
@@ -1103,12 +1118,6 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 							 */
 							if (!pvFireEventStep()
 							  && getRunStatus() != RunStatus.INTERRUPTED){
-								/* ALBERTO EM 10/02/2015: condição altera o estado de ReRun antecipadamente 
-								 * para que esta condição possa verificada no método de interrupção.
-								 */
-								if (wRetryOnErrorTimes != 0 && wRetryOnErrorCount < wRetryOnErrorTimes){
-									wReRun = true;
-								}
 								error();
 								break;
 							}
@@ -1146,27 +1155,35 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				 && wRetryOnErrorTimes > 0){
 					//Se a execução terminou com erro...
 					if (getRunStatus() == RunStatus.ERROR){
-						//Desativa ReRun, caso tenha sido ativado pelo usuário, pois a prioridade é agendar a nova tentativa
-						wReRun = false;
 						//Incrementa contador de erro
 						wRetryOnErrorCount++; 
-						//Ignora nova tentariva se houver controle de quantidade de tentaticas em caso de erro e esta tiver sido ultrapassada.
+						//Desativa ReRun, caso tenha sido ativado pelo usuário, pois a prioridade é agendar a nova tentativa
+						wReRun = false;
 						if (wRetryOnErrorTimes != 0 
 						 && wRetryOnErrorCount > wRetryOnErrorTimes){
-							wLogger.warn(getName() + ":Ultrapassada a quantidade máxima de " + wRetryOnErrorTimes + " tentativas de execução.");
+							wLogger.warn(getName() + ":Ultrapassada a quantidade adicional de " + wRetryOnErrorTimes + " tentativas de execução.");
 							//Zera qualquer agendamente anterior
 							setScheduleDate(null);
 						}else{
-							//Faz agendamento para nova tentativa
-							pvRetrySchedule();
+							if (wMultiTask){
+								pvRetrySchedule();
+							}else{
+								wReRun = true;
+							}
 						}
 					}else{
 						//Zera contador de erro
 						wRetryOnErrorCount = 0; 
 					}
 				}
+				//dispara evento 'ended' se não houver uma nova tentativa
+				if (getScheduleDate() == null
+				 && wReRun == false){
+					pvFireEventEnded();
+				}
 			}
 		}
+		//Reseta para os valores inicias
 		wRunningScheduled = false;
 		wReRun = true;
 	}
@@ -1529,6 +1546,21 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	    }
 	}
 
+	/**
+	 * Dispara evento quando tarefa for finalizada. 
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventEnded() throws DBSIOException {
+		DBSTaskEvent xE = new DBSTaskEvent(this);
+		//Chame o metodo(evento) local para quando esta classe for extendida
+		ended(xE);
+		wLogger.info(getName() + ":Ended:Step:" + getCurrentStep() + ":" + getCurrentStepName());
+		//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).ended(xE);
+	    }
+	}
+	
 	/**
 	 * Dispara evento informando que foi interrompida execução 
 	 * @throws DBSIOException 
