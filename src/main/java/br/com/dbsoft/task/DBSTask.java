@@ -1161,7 +1161,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 						wReRun = false;
 						if (wRetryOnErrorTimes != 0 
 						 && wRetryOnErrorCount > wRetryOnErrorTimes){
-							wLogger.warn(getName() + ":Ultrapassada a quantidade adicional de " + wRetryOnErrorTimes + " tentativas de execução.");
+							wLogger.warn(getName() + ":Erro permaneceu após " + (wRetryOnErrorTimes + 1) + " tentativas de execução.");
 							//Zera qualquer agendamente anterior
 							setScheduleDate(null);
 						}else{
