@@ -95,6 +95,13 @@ public class DBSEmailSend {
 			if (wProtocol == PROTOCOL.SSL){
 				xProps.put("mail." + wProtocolString + ".ssl.enable", "true");
 				xProps.put("mail." + wProtocolString + ".ssl.required", "true");
+			} else if (wProtocol == PROTOCOL.STARTTLS){
+				xProps.put("mail.smtp.starttls.enable", "true");    
+		        xProps.put("mail.smtp.socketFactory.port", wHostPort);    
+		        xProps.put("mail.smtp.socketFactory.fallback", "false");    
+		        xProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			} else if (wProtocol == PROTOCOL.TLS){
+				xProps.put("mail.smtp.starttls.enable", "true");
 			}
 		}
 	    

@@ -82,31 +82,31 @@ public final class DBSSDK {
 	
 				@Override
 				public String toString() {
-				switch (this) {
-					case NAO_EXIBIR:
-						return "";
-					case NENHUM:
-						return "(Nenhum)";
-					case NENHUMA:
-						return "(Nenhuma)";
-					case DEFAULT:
-						return "(Default)";
-					case PADRAO:
-						return "(Padrão)";
-					case TODOS:
-						return "(Todos)";
-					case TODAS:
-						return "(Todas)";
-					case BRANCO:
-						return ""; 
-					case INEXISTENTE:
-						return "(Inexistente)";
-					case NAO_SELECIONADO:
-						return "(Não selecionado)";
-					case NAO_SELECIONADA:
-						return "(Não selecionada)";
-					default:
-						return "";
+					switch (this) {
+						case NAO_EXIBIR:
+							return "";
+						case NENHUM:
+							return "(Nenhum)";
+						case NENHUMA:
+							return "(Nenhuma)";
+						case DEFAULT:
+							return "(Default)";
+						case PADRAO:
+							return "(Padrão)";
+						case TODOS:
+							return "(Todos)";
+						case TODAS:
+							return "(Todas)";
+						case BRANCO:
+							return "";
+						case INEXISTENTE:
+							return "(Inexistente)";
+						case NAO_SELECIONADO:
+							return "(Não selecionado)";
+						case NAO_SELECIONADA:
+							return "(Não selecionada)";
+						default:
+							return "";
 					}
 				}
 			}
@@ -142,17 +142,52 @@ public final class DBSSDK {
 	
 	public final static class NETWORK{
 		public static enum PROTOCOL {
-			HTTP,
-			HTTPS,
-			SSH,
-			SFTP,
-			FTP,
-			FTPS,
-			UDP,
-			SSL,
-			TLS,
-			STARTTLS;
-		}	
+			HTTP		("HTTP"),
+			HTTPS		("HTTPS"),
+			SSH			("SSH"),
+			SFTP		("SFTP"),
+			FTP			("FTP"),
+			FTPS		("FTPS"),
+			UDP			("UDP"),
+			SSL			("SSL"),
+			TLS			("TLS"),
+			STARTTLS	("STARTTLS");
+		
+			private String 	wName;
+			public String getName() {return wName;}
+			
+			private PROTOCOL(String pName) {
+				wName = pName;
+			}
+
+			public static PROTOCOL get(String pName) {
+				switch (pName) {
+				case "HTTP":
+					return HTTP;
+				case "HTTPS":
+					return HTTPS;
+				case "SSH":
+					return SSH;
+				case "SFTP":
+					return SFTP;
+				case "FTP":
+					return FTP;
+				case "FTPS":
+					return FTPS;
+				case "UDP":
+					return UDP;
+				case "SSL":
+					return SSL;
+				case "TLS":
+					return TLS;
+				case "STARTTLS":
+					return STARTTLS;
+				default:
+					return null;
+				}
+			}
+			
+		}
 	}
 	
 	public final static class TABLE {
