@@ -22,6 +22,7 @@ import javax.mail.Message.RecipientType;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.core.DBSSDK.NETWORK.PROTOCOL;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSObject;
 
@@ -34,11 +35,11 @@ public class DBSEmailSend {
 	private String 		wHostPassword;
 	private String 		wHost;
 	private String 		wHostPort = "587";
-	private Boolean 	wSSL;
-	private String		wProtocol;
+	private PROTOCOL 	wProtocol;
+	private String		wProtocolString;
 
 	public DBSEmailSend(){
-		setSSL(false);
+		setProtocol(null);
 	}
 	
 	//================================================================================================================
@@ -54,17 +55,17 @@ public class DBSEmailSend {
 	public String getHostPort() {return wHostPort;}
 	public void setHostPort(String pHostPort) {wHostPort = pHostPort;}
 
-	public Boolean getSSL() {return wSSL;}
-	public void setSSL(Boolean pSSL) {
-		wSSL = pSSL;
-		if (wSSL){
-			wProtocol = "smtps";
-		}else{
-			wProtocol = "smtp";
+	public PROTOCOL getProtocol() {return wProtocol;}
+	public void setProtocol(PROTOCOL pProtocol) {
+		wProtocol = pProtocol;
+		if (pProtocol == null){
+			wProtocolString = "smtp";
+		}else if (pProtocol == PROTOCOL.SSL){
+			wProtocolString = "smtps";
 		}
 	}
 
-	public String getProtocol() {return wProtocol;}
+	public String getProtocolString() {return wProtocolString;}
 	
 	//================================================================================================================
 	public boolean send(DBSEmailMessage pMessage){
@@ -81,18 +82,20 @@ public class DBSEmailSend {
 		BodyPart 		xMessageBodyPart = new MimeBodyPart();
 		Multipart 		xMultipart;
 
-		xProps.put("mail.transport.protocol", wProtocol);
-		xProps.put("mail." + wProtocol + ".host", wHost); 
-		xProps.put("mail." + wProtocol + ".port", wHostPort); 
+		xProps.put("mail.transport.protocol", wProtocolString);
+		xProps.put("mail." + wProtocolString + ".host", wHost); 
+		xProps.put("mail." + wProtocolString + ".port", wHostPort); 
 		
 		if (!DBSObject.isEmpty(wHostUserName)
 		 && !DBSObject.isEmpty(wHostPassword)){
-			xProps.put("mail." + wProtocol + ".auth", "true");   
+			xProps.put("mail." + wProtocolString + ".auth", "true");   
 		}
 		
-		if (wSSL){
-			xProps.put("mail." + wProtocol + ".ssl.enable", "true");
-			xProps.put("mail." + wProtocol + ".ssl.required", "true");
+		if (wProtocol != null){
+			if (wProtocol == PROTOCOL.SSL){
+				xProps.put("mail." + wProtocolString + ".ssl.enable", "true");
+				xProps.put("mail." + wProtocolString + ".ssl.required", "true");
+			}
 		}
 	    
 		try {
@@ -133,7 +136,7 @@ public class DBSEmailSend {
 	        //Envio-----------------------------------
 	        xMessage.setContent(xMultipart);
 
-			xTransport = xMailSession.getTransport(wProtocol.toString());
+			xTransport = xMailSession.getTransport(wProtocolString.toString());
 			xTransport.connect();
 			xMessage.saveChanges(); 
 			xTransport.sendMessage(xMessage, xMessage.getAllRecipients());

@@ -122,15 +122,6 @@ public final class DBSSDK {
 			public static final String ISO_8859_6 = "ISO-8859-6";
 		}
 		
-		public enum PROTOCOL {
-			HTTP,
-			HTTPS,
-			SSH,
-			SFTP,
-			FTP,
-			FTPS,
-			UDP;
-		}	
 		
 		public enum TYPE{
 			HTML,
@@ -147,6 +138,21 @@ public final class DBSSDK {
 			GENERAL;
 		}
 	
+	}
+	
+	public final static class NETWORK{
+		public static enum PROTOCOL {
+			HTTP,
+			HTTPS,
+			SSH,
+			SFTP,
+			FTP,
+			FTPS,
+			UDP,
+			SSL,
+			TLS,
+			STARTTLS;
+		}	
 	}
 	
 	public final static class TABLE {
