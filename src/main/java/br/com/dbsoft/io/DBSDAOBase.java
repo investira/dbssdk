@@ -67,7 +67,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 
 	public final void setDataModelClass(Class<DataModelClass> pDataModelClass) {
 		this.wDataModelClass = pDataModelClass;
-		wDataModel = createDataModel();
+		pvCreateDataModel();
 	}
 	
 	/**
@@ -120,9 +120,11 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 		DBSIO.setDataModelFieldsValue(pDataModel, pColumnIndex, pValue);
 	}	
 	
+	/**
+	 Cria dataModel em branco conforme a class informada no construtor. 
+	 */
 	protected final void pvCreateDataModel(){
 		wDataModel = createDataModel();
-
 	}
 	
 
@@ -227,7 +229,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	}
 
 	/**
-	 * Cria instancia do objeto conforme a class informada no construtor.
+	 * Cria instancia do dataModel conforme a class informada no construtor.
 	 * @return Classe criada
 	 */
 	public final DataModelClass createDataModel(){
