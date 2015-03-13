@@ -29,6 +29,7 @@ import br.com.dbsoft.util.DBSString;
  * @param <DataModelClass> Classe Model da tabela do banco de dados ou classe com atributos homônimos as colunas com as quais se deseje trabalhar no DAO.<br/>
  * É necessário também passar esta classe no construtor.  
  */
+
 /**
  * @author ricardo.villar
  *
@@ -1327,6 +1328,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			if (xB){
 				if (pDirection == MOVE_DIRECTION.BEFORE_FIRST){
 					restoreValuesDefault();
+					pvCreateDataModel();
 				}
 				xRowIndex = DBSIO.getIndexAfterMove(getCurrentRowIndex(), getRowsCount(), pDirection);
 				if (DBSIO.getIndexAfterMoveIsOk(getCurrentRowIndex(), xRowIndex, getRowsCount(), pDirection)){
