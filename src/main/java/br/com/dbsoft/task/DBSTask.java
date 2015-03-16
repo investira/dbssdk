@@ -1179,6 +1179,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				//dispara evento 'ended' se não houver uma nova tentativa
 				if (getScheduleDate() == null
 				 && wReRun == false){
+					pvFireEventTaskUpdated();
 					pvFireEventEnded();
 				}
 			}
