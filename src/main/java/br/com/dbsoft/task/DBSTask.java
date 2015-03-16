@@ -343,7 +343,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public final void setCurrentStepName(String pCurrentStepName) throws DBSIOException {
 		if (wCurrentStepName != pCurrentStepName){
 			wCurrentStepName = pCurrentStepName;
-			pvFireEventTaskUpdated();
+			pvFireEventTaskUpdated(true);
 		}
 	}
 
@@ -1179,7 +1179,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				//dispara evento 'ended' se não houver uma nova tentativa
 				if (getScheduleDate() == null
 				 && wReRun == false){
-					pvFireEventTaskUpdated();
+					pvFireEventTaskUpdated(true);
 					pvFireEventEnded();
 				}
 			}
@@ -1323,7 +1323,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 			wRunStatus = pRunStatus;
 			pvFireEventRunStatusChanged();
 			pvTaskUpdateLastTimeReset();
-			pvFireEventTaskUpdated();
+			pvFireEventTaskUpdated(true);
 		}
 	}
 
@@ -1597,11 +1597,22 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @throws DBSIOException 
 	 */
 	private void pvFireEventTaskUpdated() throws DBSIOException{
+		pvFireEventTaskUpdated(false);
+	}
+	
+	/**
+	 * Diapara evendo quando houver alguma evolução no percentual ou alguma modificação no nome da etapa.
+	 * @throws DBSIOException 
+	 */
+	private void pvFireEventTaskUpdated(Boolean pIgnoreTaskUpdateMillisecondsLimit) throws DBSIOException{
 		Long xCurrentTime = Calendar.getInstance().getTimeInMillis();
 		if (wTaskUpdateMilliseconds != 0){
-			if (xCurrentTime - wTaskUpdateLastTime > wTaskUpdateMilliseconds){
+			//De intervalor entre o evento o disparo do evento anterior for maior que o definido, salva o tempo e dispara o evento em seguida
+			if (pIgnoreTaskUpdateMillisecondsLimit 
+			 || (xCurrentTime - wTaskUpdateLastTime > wTaskUpdateMilliseconds)){
 				wTaskUpdateLastTime = xCurrentTime;
 			}else{
+				//Não dispara evento
 				return;
 			}
 		}
