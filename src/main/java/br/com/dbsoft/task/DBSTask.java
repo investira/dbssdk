@@ -152,7 +152,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private int						wRetryOnErrorCount = 0;
 	private	boolean					wTransactionEnabled = true;
 	private boolean					wRunningScheduled = false; 
-	private Integer					wTaskUpdateMilliseconds = 500;
+	private Integer					wTaskUpdateMilliseconds = 2000;
 	private Long					wTaskUpdateLastTime = 0L;
 
 
@@ -558,7 +558,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Inibe disparos do evento <b>taskUpdated</b> em tempo 
 	 * inferior ao informado durante a execução das etapas.<br/>
 	 * Isto evita disparos constantes quando a execução da etapa for muita rápida.<br/>
-	 * O padrão são 500 milisegundos(0,5 segundo).
+	 * O padrão são 2000 milisegundos(2 segundos).
 	 * O valor <b>0<b/> desabilita a inibição.
 	 * @return
 	 */
