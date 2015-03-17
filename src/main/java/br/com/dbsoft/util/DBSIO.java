@@ -733,7 +733,7 @@ public class DBSIO{
 	 * @param pDaoSource Origem dos dados
 	 * @param pDaoTarget Destino dos dados
 	 */
-	public static void copyDAOFieldsValues(DBSDAO<Object> pDaoSource, DBSDAO<Object> pDaoTarget) {
+	public static void copyDAOFieldsValues(DBSDAO<?> pDaoSource, DBSDAO<?> pDaoTarget) {
 		copyDAOFieldsValues(pDaoSource, pDaoTarget, true);
 	}
 		
@@ -743,7 +743,7 @@ public class DBSIO{
 	 * @param pDaoTarget Destino dos dados
 	 * @param pShowColumnNameNotFoundMessage Indica se exibe mensagem de erro caso não exista o nome da coluna na tabela.
 	 */
-	public static void copyDAOFieldsValues(DBSDAO<Object> pDaoSource, DBSDAO<Object> pDaoTarget, boolean pShowColumnNameNotFoundMessage) {
+	public static void copyDAOFieldsValues(DBSDAO<?> pDaoSource, DBSDAO<?> pDaoTarget, boolean pShowColumnNameNotFoundMessage) {
 		if (pDaoSource==null
 		 || pDaoTarget==null){return;}
 		//Salva configuração atual
