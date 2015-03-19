@@ -619,9 +619,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	@SuppressWarnings("unchecked")
 	public final <A> A getListValue(String pColumnName){
-		if (wResultDataModel != null){
+		if (wResultDataModel != null
+		 && wResultDataModel.getRowIndex() != -1){ //Incluido em 19/mar/2015 - Ricardo
 			String xColumnName = pvGetColumnName(pColumnName);
-			return (A) wResultDataModel.getRowData().get(xColumnName); 
+			return (A) wResultDataModel.getRowData().get(xColumnName);  
 		}else{
 			return null;
 		}
