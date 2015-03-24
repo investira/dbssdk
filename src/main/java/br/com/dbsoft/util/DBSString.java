@@ -331,40 +331,6 @@ public class DBSString {
 	}
 	
 	/**
-	 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
-	 * @param pTextoBase
-	 * @return
-	 */
-	public static String[] CSVtoArray(String pTextoBase){
-		String[] xArray;
-		pTextoBase = DBSString.changeStr(pTextoBase, ",", " ");
-		xArray = pTextoBase.split("\\s+");
-//		for (int xI = 0; xI < xArray.length; xI++){
-//			xPKs[xI] = xPKs[xI].substring(xN+1).trim();
-//		}
-		return xArray;
-	}
-
-	/**
-	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
-	 * @param pList
-	 * @return
-	 */
-	public static String setToCSV(Set<Object> pList){
-		return arrayToCSV(pList.toArray());
-	}
-
-	/**
-	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
-	 * @param pList
-	 * @return
-	 */
-	public static String arrayToCSV(Object[] pList){
-		return listToCSV(Arrays.asList(pList));
-
-	}
-
-	/**
 	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
 	 * @param pList
 	 * @return
@@ -390,31 +356,31 @@ public class DBSString {
 
 
 	/**
-	 * Separa um Array a patir de uma String, separado por um delimitador informado.
+	 * Retorna um Array a patir de uma String, separado por um delimitador informado.
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)<br/>
 	 * Maiúscula e minúsculo serão consderados nomes diferentes.
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
 	 * @return Array com o conteúdo em cada linha 
 	 */
-	public static ArrayList<String> toArray(String pTextoBase, String pDelimitador){
-		return toArray(pTextoBase, pDelimitador, true, true);
+	public static ArrayList<String> toArrayList(String pTextoBase, String pDelimitador){
+		return toArrayList(pTextoBase, pDelimitador, true, true);
 	}
 		
 	/**
-	 * Separa um Array a patir de uma String, separado por um delimitador informado
+	 * Retorna um Array a patir de uma String, separado por um delimitador informado
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos
 	 * @param pCaseMatch indica se o delimitador considerará a caixa 
 	 * @return Array com o conteúdo em cada linha 
 	 */
-	public static ArrayList<String> toArray(String pTextoBase, String pDelimitador, boolean pCaseMatch){
-		return toArray(pTextoBase, pDelimitador, pCaseMatch, true);
+	public static ArrayList<String> toArrayList(String pTextoBase, String pDelimitador, boolean pCaseMatch){
+		return toArrayList(pTextoBase, pDelimitador, pCaseMatch, true);
 	}
 	
 	/**
-	 * Separa um Array a patir de uma String, separado por um delimitador informado
+	 * Retorna um Array a patir de uma String, separado por um delimitador informado
 	 * Antigo: BreakStringIntoArray(ByVal pString As String, pArray() As String, ByVal pDelimitador As String)
 	 * @param pTextoBase String com o texto que se deseja separar
 	 * @param pDelimitador String que será utilizado para separar os campos. Não faz a delimitação dos campos se delimitador for nulo ou vázio
@@ -422,7 +388,7 @@ public class DBSString {
 	 * @param pTrim Indicador se exclui espaços no inicio e fim da string antes de inclui-lá no array
 	 * @return Array com o conteúdo em cada linha 
 	 */
-	public static ArrayList<String> toArray(String pTextoBase, String pDelimitador, boolean pCaseMatch, boolean pTrim){
+	public static ArrayList<String> toArrayList(String pTextoBase, String pDelimitador, boolean pCaseMatch, boolean pTrim){
 		int xF = 1; //Inicio da string
 		int xI = 1; //Fim da String
 		String xS;
@@ -454,6 +420,68 @@ public class DBSString {
 		return xA; 
 	}
 
+//	/**
+//	 * Retorna um array a partir das strings informadas
+//	 * @param pStrings
+//	 * @return
+//	 */
+//	public static String[] toArray(String... pStrings){
+//		return toArray(pStrings);
+//	}
+//	
+//	/**
+//	 * Retorna um array a partir das strings informadas
+//	 * @param pStrings
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static <T> T[] toArray(T... pStrings){
+//		if (pStrings==null){
+//			return null;
+//		}
+//		List<T> xItens = new ArrayList<T>();
+//		//Loop entre todas as strings recebidas
+//		for (int xX=0; xX < pStrings.length; xX++){
+//			//Se não for a primeira
+//			if (!DBSObject.isEmpty(pStrings[xX])){
+//				xItens.add(pStrings[xX]);
+//			}
+//		}
+//		return (T[]) xItens.toArray();
+//	}
+
+
+	/**
+		 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
+		 * @param pTextoBase
+		 * @return
+		 */
+		public static String[] CSVtoArray(String pTextoBase){
+			String[] xArray;
+			pTextoBase = DBSString.changeStr(pTextoBase, ",", " ");
+			xArray = pTextoBase.split("\\s+");
+	//		for (int xI = 0; xI < xArray.length; xI++){
+	//			xPKs[xI] = xPKs[xI].substring(xN+1).trim();
+	//		}
+			return xArray;
+		}
+	/**
+	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static String setToCSV(Set<Object> pList){
+		return arrayToCSV(pList.toArray());
+	}
+	/**
+	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
+	 * @param pList
+	 * @return
+	 */
+	public static String arrayToCSV(Object[] pList){
+		return listToCSV(Arrays.asList(pList));
+	
+	}
 	/**
 	 * Retorna a string com formatação de nome próprio. 
 	 * @param pString original
@@ -781,7 +809,7 @@ public class DBSString {
 		String 		 	xTexto = "";
 		String 			xPalavraErrada = ""; 
 
-		xPalavras = DBSString.toArray(pTexto, " ", false);
+		xPalavras = DBSString.toArrayList(pTexto, " ", false);
 		for (String xPalavra: xPalavras){
 			Enumeration<Object> xDicionarioPalavraEnum; 
 			xDicionarioPalavraEnum = wDicionarioPalavra.keys();

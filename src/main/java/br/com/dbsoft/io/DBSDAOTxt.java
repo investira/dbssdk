@@ -878,7 +878,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	private void pvCreateColumns(){
 		wColumnsHeader.clear();
-		wColumnsHeader = DBSString.toArray(pvReadLine(), wColumnsDelimiter, false);
+		wColumnsHeader = DBSString.toArrayList(pvReadLine(), wColumnsDelimiter, false);
 	}
 
 	/**
@@ -940,7 +940,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	 */
 	private DBSRow pvGetRowVariableColumn(String pLine) {
 		//Move os dados da linha para a um array, onde cada item do array é uma das colunas, utilizando o delimitador informado
-		ArrayList<String> 	xColumns = DBSString.toArray(pLine, wColumnsDelimiter, false, wTrimValues);
+		ArrayList<String> 	xColumns = DBSString.toArrayList(pLine, wColumnsDelimiter, false, wTrimValues);
 		DBSRow 				xRow = null;
 		//Se quantidade de colunas encontrada na leitura da linha for superior a quantidade de colunas definidar no cabeçalho....
 		if (wHeaderDefinesColumnsNames && xColumns.size() > wColumnsHeader.size()){

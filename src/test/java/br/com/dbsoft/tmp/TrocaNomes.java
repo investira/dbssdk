@@ -160,14 +160,14 @@ public class TrocaNomes {
 		String xNovaSigla;
 		xDAO.moveBeforeFirstRow();
 		while(xDAO.moveNextRow()){
-			if (!DBSString.toArray(xDAO.getValue("no_pessoa").toString(), " ").get(0).equals(xNomeProprioAtual)){
+			if (!DBSString.toArrayList(xDAO.getValue("no_pessoa").toString(), " ").get(0).equals(xNomeProprioAtual)){
 				xNomeProprioAnterior = xNomeProprioAtual;
 				xSobrenomeAnterior = xSobrenomeAtual;
 				xSiglaAnterior = xSiglaAtual;
 			}
-			xNomeProprioAtual = DBSString.toArray(xDAO.getValue("no_pessoa").toString(), " ").get(0);
-			if (DBSString.toArray(xDAO.getValue("no_pessoa").toString(), " ").size()>1){
-				xSobrenomeAtual = DBSString.toArray(xDAO.getValue("no_pessoa").toString(), " ").get(1);
+			xNomeProprioAtual = DBSString.toArrayList(xDAO.getValue("no_pessoa").toString(), " ").get(0);
+			if (DBSString.toArrayList(xDAO.getValue("no_pessoa").toString(), " ").size()>1){
+				xSobrenomeAtual = DBSString.toArrayList(xDAO.getValue("no_pessoa").toString(), " ").get(1);
 			}
 			xNovoNome = DBSString.changeStr(xDAO.getValue("no_pessoa").toString(), xNomeProprioAtual, xNomeProprioAnterior);
 			xNovoNome = DBSString.changeStr(xNovoNome, xSobrenomeAtual, xSobrenomeAnterior);
@@ -175,7 +175,7 @@ public class TrocaNomes {
 			xDAO.setValue("no_pessoa",  DBSString.getSubString(xNovoNome, 1, 50));
 			System.out.println("NEW:" + xDAO.getValue("no_pessoa"));
 			if(xDAO.getValue("sg_pessoa")!=null){
-				xSiglaAtual = DBSString.toArray(xDAO.getValue("sg_pessoa").toString(), " ").get(0);
+				xSiglaAtual = DBSString.toArrayList(xDAO.getValue("sg_pessoa").toString(), " ").get(0);
 				xNovaSigla = DBSString.changeStr(xDAO.getValue("sg_pessoa").toString(), xSiglaAtual, xSiglaAnterior);
 				xDAO.setValue("sg_pessoa", DBSString.getSubString(xNovaSigla,1,15));
 			}
@@ -200,13 +200,13 @@ public class TrocaNomes {
 		String xNovoNome;
 		xDAO.moveBeforeFirstRow();
 		while(xDAO.moveNextRow()){
-			if (!DBSString.toArray(xDAO.getValue(xNomeDaColuna).toString(), " ").get(0).equals(xNomeProprioAtual)){
+			if (!DBSString.toArrayList(xDAO.getValue(xNomeDaColuna).toString(), " ").get(0).equals(xNomeProprioAtual)){
 				xNomeProprioAnterior = xNomeProprioAtual;
 				xSobrenomeAnterior = xSobrenomeAtual;
 			}
-			xNomeProprioAtual = DBSString.toArray(xDAO.getValue(xNomeDaColuna).toString(), " ").get(0);
-			if (DBSString.toArray(xDAO.getValue(xNomeDaColuna).toString(), " ").size()>1){
-				xSobrenomeAtual = DBSString.toArray(xDAO.getValue(xNomeDaColuna).toString(), " ").get(1);
+			xNomeProprioAtual = DBSString.toArrayList(xDAO.getValue(xNomeDaColuna).toString(), " ").get(0);
+			if (DBSString.toArrayList(xDAO.getValue(xNomeDaColuna).toString(), " ").size()>1){
+				xSobrenomeAtual = DBSString.toArrayList(xDAO.getValue(xNomeDaColuna).toString(), " ").get(1);
 			}
 			xNovoNome = DBSString.changeStr(xDAO.getValue(xNomeDaColuna).toString(), xNomeProprioAtual, xNomeProprioAnterior);
 			xNovoNome = DBSString.changeStr(xNovoNome, xSobrenomeAtual, xSobrenomeAnterior);

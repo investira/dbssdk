@@ -2717,9 +2717,9 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		xS = DBSString.changeStr(xS, " NATURAL ", " ", false);
 		
 		//Recupera os nomes das tabelas ou o Alias 
-		xBlocks = DBSString.toArray(xS,",");
+		xBlocks = DBSString.toArrayList(xS,",");
 		for (String xBlock:xBlocks){
-			xTmps = DBSString.toArray(xBlock," JOIN ", false);
+			xTmps = DBSString.toArrayList(xBlock," JOIN ", false);
 			for (String xTable:xTmps){
 				int x = 0;
 				x = DBSString.getInStr(xTable," ON ", false);

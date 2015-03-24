@@ -48,14 +48,14 @@ public class TstString {
 		xC.add("");
 		xC.add("");
 		
-		assertEquals(xA, DBSString.toArray("d d d d", " "));
-		assertEquals(xA, DBSString.toArray("dXdXdXd", "X"));
-		assertEquals(xA, DBSString.toArray("dxdxdxd", "X",false));
-		assertEquals(xB, DBSString.toArray("dxdxdxd", "X"));
+		assertEquals(xA, DBSString.toArrayList("d d d d", " "));
+		assertEquals(xA, DBSString.toArrayList("dXdXdXd", "X"));
+		assertEquals(xA, DBSString.toArrayList("dxdxdxd", "X",false));
+		assertEquals(xB, DBSString.toArrayList("dxdxdxd", "X"));
 //		String xS =  new String("abcd");
 //		xS.indexOf("a", 1);
 
-		assertEquals(xC, DBSString.toArray(";;;", ";"));
+		assertEquals(xC, DBSString.toArrayList(";;;", ";"));
 	}
 
 	

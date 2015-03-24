@@ -217,7 +217,7 @@ public class DBSRow implements Serializable {
 			return false;
 		}
 		//Recupera os valores de cada coluna
-		ArrayList<String> xColumnsValues =  DBSString.toArray(pString, pColumnDelimiter);
+		ArrayList<String> xColumnsValues =  DBSString.toArrayList(pString, pColumnDelimiter);
 		Iterator<DBSColumn> xColumns = wColumns.values().iterator();
 		int xX = 0;
 		DBSColumn xColumn; 
