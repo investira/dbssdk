@@ -420,36 +420,49 @@ public class DBSString {
 		return xA; 
 	}
 
-//	/**
-//	 * Retorna um array a partir das strings informadas
-//	 * @param pStrings
-//	 * @return
-//	 */
-//	public static String[] toArray(String... pStrings){
-//		return toArray(pStrings);
-//	}
-//	
-//	/**
-//	 * Retorna um array a partir das strings informadas
-//	 * @param pStrings
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public static <T> T[] toArray(T... pStrings){
-//		if (pStrings==null){
-//			return null;
-//		}
-//		List<T> xItens = new ArrayList<T>();
-//		//Loop entre todas as strings recebidas
-//		for (int xX=0; xX < pStrings.length; xX++){
-//			//Se não for a primeira
-//			if (!DBSObject.isEmpty(pStrings[xX])){
-//				xItens.add(pStrings[xX]);
-//			}
-//		}
-//		return (T[]) xItens.toArray();
-//	}
+	/**
+	 * Retorna um array a partir das strings informadas
+	 * @param pStrings
+	 * @return
+	 */
+	public static String[] toArray(String... pStrings){
+		return toArray(pStrings);
+	}
+	
+	/**
+	 * Retorna um array a partir das strings informadas
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] toArray(T... pValues){
+		if (pValues==null){
+			return null;
+		}
+		List<T> xItens = new ArrayList<T>();
+		//Loop entre todas as strings recebidas
+		for (int xX=0; xX < pValues.length; xX++){
+			//Se não for a primeira
+			if (!DBSObject.isEmpty(pValues[xX])){
+				xItens.add(pValues[xX]);
+			}
+		}
+		return (T[]) xItens.toArray();
+	}
 
+	/**
+	 * Retorna array incluindo os itens informados
+	 * @param pArray
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] addToArray(T[] pArray, T... pValues){
+		if (pArray == null){return null;}
+		List<T> xList = new ArrayList<T>(Arrays.asList(pArray));
+		xList.addAll(Arrays.asList(toArray(pValues)));
+		return (T[]) xList.toArray();
+	}
 
 	/**
 		 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
