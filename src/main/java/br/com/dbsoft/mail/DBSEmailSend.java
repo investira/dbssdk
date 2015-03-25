@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.NETWORK.PROTOCOL;
 import br.com.dbsoft.util.DBSFile;
+import br.com.dbsoft.util.DBSMail;
 import br.com.dbsoft.util.DBSObject;
 
 
@@ -70,6 +71,7 @@ public class DBSEmailSend {
 	//================================================================================================================
 	public boolean send(DBSEmailMessage pMessage){
 		if (pMessage == null
+			|| DBSObject.isEmpty(pMessage.getFrom())
 			|| DBSObject.isEmpty(pMessage.getTo())
 			|| DBSObject.isEmpty(pMessage.getSubject())){
 			return false;
@@ -163,8 +165,20 @@ public class DBSEmailSend {
 	}
 	
 	private void pvAddRecipient(Message pMessage, RecipientType pRecipientType, DBSEmailAddress pEmailAddress) throws MessagingException, UnsupportedEncodingException{
+		if (pMessage == null 
+		 || pRecipientType == null
+		 || pEmailAddress == null
+		 || DBSObject.isEmpty(pEmailAddress.getAddress())
+		 || !DBSMail.isValidEmailAddress(pEmailAddress.getAddress())){
+			return;
+		}
+		
 		InternetAddress xToAddress = new InternetAddress(pEmailAddress.getAddress());
-		xToAddress.setPersonal(pEmailAddress.getName());
+		if (DBSObject.isEmpty(pEmailAddress.getName())){
+			xToAddress.setPersonal(pEmailAddress.getAddress());
+		}else{
+			xToAddress.setPersonal(pEmailAddress.getName());
+		}
 		pMessage.addRecipient(pRecipientType, xToAddress);
 	}
 	
