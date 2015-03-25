@@ -12,6 +12,7 @@ public class DBSEmailMessage {
 	private String 					wSubject;
 	private String 					wText;
 	private List<String> 			wAttachments = new ArrayList<String>();
+	private Boolean					wIsHtmlContent = true;
 	
 	public DBSEmailAddress getFrom() {return wFrom;}
 
@@ -39,9 +40,20 @@ public class DBSEmailMessage {
 	public String getText() {return wText;}
 	public void setText(String pText) {wText = pText;}
 	
-	public List<String> getAttachments() {
-		return wAttachments;
-	}
+	public List<String> getAttachments() {return wAttachments;}
+	
+	/**
+	 * Se conteúdo da mensagem é HTML.<br/>
+	 * O padrão é true.
+	 * @return
+	 */
+	public Boolean getIsHtmlContent() {return wIsHtmlContent;}
+	/**
+	 * Se conteúdo da mensagem é HTML.<br/>
+	 * O padrão é true.
+	 * @param pHtmlContent
+	 */
+	public void setIsHtmlContent(Boolean pHtmlContent) {wIsHtmlContent = pHtmlContent;}
 	
 	
 }

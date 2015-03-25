@@ -186,7 +186,11 @@ public class DBSEmailSend {
 			
 			//Texto da mensagem----------
 			xMessage.setSubject(pMessage.getSubject());
-			xMessageBodyPart.setText(pMessage.getText());
+			if (pMessage.getIsHtmlContent()){
+				xMessageBodyPart.setContent(pMessage.getText(), "text/html; charset=utf-8");			
+			}else{
+				xMessageBodyPart.setText(pMessage.getText());
+			}
 			xMultipart = new MimeMultipart();
 			xMultipart.addBodyPart(xMessageBodyPart);
 			
