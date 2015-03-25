@@ -1,5 +1,7 @@
 package br.com.dbsoft.mail;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -38,25 +40,67 @@ public class DBSEmailSend {
 	private String 		wHostPort = "587";
 	private PROTOCOL 	wProtocol;
 	private String		wProtocolString;
+	private List<DBSEmailAddress> wInvalidEmails = new ArrayList<DBSEmailAddress>();
+	
 
 	public DBSEmailSend(){
 		setProtocol(null);
 	}
 	
 	//================================================================================================================
+	/**
+	 * Conta do usuário no servidor de email
+	 * @return
+	 */
 	public String getHostUserName() {return wHostUserName;}
+	/**
+	 * Conta do usuário no servidor de email
+	 * @return
+	 */
 	public void setHostUserName(String pHostUserName) {wHostUserName = pHostUserName;}
 
+	/**
+	 * Senha do usuário no servidor de email
+	 * @return
+	 */
 	public String getHostPassword() {return wHostPassword;}
+	/**
+	 * Senha do usuário no servidor de email
+	 * @return
+	 */
 	public void setHostPassword(String pHostPassword) {wHostPassword = pHostPassword;}
 
+	/**
+	 * Servidor SMTP de email
+	 * @return
+	 */
 	public String getHost() {return wHost;}
+	/**
+	 * Servidor SMTP de email
+	 * @return
+	 */
 	public void setHost(String pHost) {wHost = pHost;}
 
+	/**
+	 * Porta do servidor de email
+	 * @return
+	 */
 	public String getHostPort() {return wHostPort;}
+	/**
+	 * Porta do servidor de email
+	 * @return
+	 */
 	public void setHostPort(String pHostPort) {wHostPort = pHostPort;}
 
+	/**
+	 * Protocolo smtp
+	 * @return
+	 */
 	public PROTOCOL getProtocol() {return wProtocol;}
+	/**
+	 * Protocolo smtp
+	 * @return
+	 */
 	public void setProtocol(PROTOCOL pProtocol) {
 		wProtocol = pProtocol;
 		if (pProtocol == null){
@@ -68,8 +112,22 @@ public class DBSEmailSend {
 
 	public String getProtocolString() {return wProtocolString;}
 	
+	/**
+	 * Retorna emails inválidos
+	 * @return
+	 */
+	public List<DBSEmailAddress> getInvalidEmails(){
+		return wInvalidEmails;
+	}
 	//================================================================================================================
+	/**
+	 * Envia o email para os endereço informados.<br/>
+	 * Endereço de email inválidos serão adicionados o atributo <i>invalidEmails</i>.
+	 * @param pMessage
+	 * @return
+	 */
 	public boolean send(DBSEmailMessage pMessage){
+		wInvalidEmails.clear();
 		if (pMessage == null
 			|| DBSObject.isEmpty(pMessage.getFrom())
 			|| DBSObject.isEmpty(pMessage.getTo())
@@ -164,13 +222,25 @@ public class DBSEmailSend {
 		
 	}
 	
+    private class SMTPAuthenticator extends Authenticator {
+        @Override
+		public PasswordAuthentication getPasswordAuthentication() {
+           String username = wHostUserName;
+           String password = wHostPassword;
+           return new PasswordAuthentication(username, password);
+        }
+    }
+    
 	private void pvAddRecipient(Message pMessage, RecipientType pRecipientType, DBSEmailAddress pEmailAddress) throws MessagingException, UnsupportedEncodingException{
 		if (pMessage == null 
 		 || pRecipientType == null
 		 || pEmailAddress == null
-		 || DBSObject.isEmpty(pEmailAddress.getAddress())
-		 || !DBSMail.isValidEmailAddress(pEmailAddress.getAddress())){
+		 || DBSObject.isEmpty(pEmailAddress.getAddress())){
 			return;
+		}
+
+		if (!DBSMail.isValidEmailAddress(pEmailAddress.getAddress())){
+			wInvalidEmails.add(pEmailAddress);
 		}
 		
 		InternetAddress xToAddress = new InternetAddress(pEmailAddress.getAddress());
@@ -182,13 +252,6 @@ public class DBSEmailSend {
 		pMessage.addRecipient(pRecipientType, xToAddress);
 	}
 	
-    private class SMTPAuthenticator extends Authenticator {
-        @Override
-		public PasswordAuthentication getPasswordAuthentication() {
-           String username = wHostUserName;
-           String password = wHostPassword;
-           return new PasswordAuthentication(username, password);
-        }
-    }
+
 	
 }
