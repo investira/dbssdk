@@ -261,11 +261,13 @@ public class DBSString {
 	}
 	
 	/**
-	 * Retorna string concatenando as strings recebidas, separando por vírgula e fazendo trim em cada string.
+	 * Retorna string concatenando as strings recebidas, separando por vírgula e espaço e fazendo trim em cada string.<br/>
+	 * Valores nulos ou vazios serão despresados.
 	 * @param Strings
 	 * @return String contatenada
 	 */
-	public static String joinString(Object... pStrings){
+	@SuppressWarnings("unchecked")
+	public static <T> String joinString(T... pStrings){
 		if (pStrings==null){
 			return null;
 		}else if(pStrings.length>0){//Se houver mais de uma string
@@ -274,7 +276,8 @@ public class DBSString {
 			//Loop entre todas as strings recebidas
 			for (int xX=0; xX < pStrings.length; xX++){
 				//Se não for a primeira
-				if (!DBSObject.isEmpty(pStrings[xX])){
+				String xString = DBSString.toString(pStrings[xX], "").trim();
+				if (!DBSObject.isEmpty(xString)){
 					if (xX>0){
 						//Se a anterior foi diferente de null
 						if (xTemAnterior){
@@ -283,8 +286,8 @@ public class DBSString {
 						}
 					}
 					xTemAnterior = true;
-					//Concatena sstring
-					xStringBuilder.append(pStrings[xX].toString().trim());
+					//Concatena String
+					xStringBuilder.append(xString);
 				}
 			}
 		    return xStringBuilder.toString();
@@ -421,7 +424,7 @@ public class DBSString {
 	}
 
 	/**
-	 * Retorna um array a partir das strings informadas
+	 * Retorna um array a partir dos valores informados, ignorando os valores vazios ou nulos.
 	 * @param pValues
 	 * @return
 	 */
@@ -430,15 +433,7 @@ public class DBSString {
 		if (pValues==null){
 			return null;
 		}
-		List<T> xItens = new ArrayList<T>();
-		//Loop entre todas as strings recebidas
-		for (int xX=0; xX < pValues.length; xX++){
-			//Se não for a primeira
-			if (!DBSObject.isEmpty(pValues[xX])){
-				xItens.add(pValues[xX]);
-			}
-		}
-		return (T[]) xItens.toArray();
+		return pValues;
 	}
 	
 	/**
