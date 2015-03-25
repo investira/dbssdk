@@ -268,7 +268,30 @@ public class DBSString {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> String joinString(T... pStrings){
-		if (pStrings==null){
+		return joinStringWithDelimiter(", ", pStrings);
+	}
+
+	/**
+	 * Retorna string concatenando as strings recebidas, separando <i>enter</I> e fazendo trim em cada string.<br/>
+	 * Valores nulos ou vazios serão despresados.
+	 * @param Strings
+	 * @return String contatenada
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> String joinStringWithDelimiterNewLine(T... pStrings){
+		return joinStringWithDelimiter(Character.toString((char) 13), pStrings);
+	}
+
+	/**
+	 * Retorna string concatenando as strings recebidas, separando por vírgula e espaço e fazendo trim em cada string.<br/>
+	 * Valores nulos ou vazios serão despresados.
+	 * @param Strings
+	 * @return String contatenada
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> String joinStringWithDelimiter(String pDelimiter, T... pStrings){
+		if (pStrings == null
+		 || pDelimiter == null){
 			return null;
 		}else if(pStrings.length>0){//Se houver mais de uma string
 			StringBuilder xStringBuilder = new StringBuilder();
@@ -282,7 +305,7 @@ public class DBSString {
 						//Se a anterior foi diferente de null
 						if (xTemAnterior){
 							//Concatena a string com a vírgula
-							xStringBuilder.append(", ");
+							xStringBuilder.append(pDelimiter);
 						}
 					}
 					xTemAnterior = true;
