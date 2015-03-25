@@ -214,7 +214,7 @@ public class DBSColumn implements Serializable{
 
 	public final void setValue(Object pValue) {
 		wValue = DBSIO.getDataTypeConvertedValue(getDataType(), pValue);
-		this.setChanged(true);//Indica que valor foi alterado pelo usuário
+		this.setChanged(true);//Indica que valor foi setado pelo usuário
 	}
 	
 	public final void setValue(Object pValue, boolean pOriginalValue) {
