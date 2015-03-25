@@ -1160,7 +1160,7 @@ public class DBSIO{
 	}	
 
 	/**
-	 * Retorna o valor de uma coluna a partir da query informada<br>.
+	 * Retorna o valor de uma coluna a partir da query informada.<br/>
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
 	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
@@ -1175,7 +1175,7 @@ public class DBSIO{
 	}
 
 	/**
-	 * Retorna o valor de uma coluna a partir da query informada<br>.
+	 * Retorna o valor de uma coluna a partir da query informada.<br/>
 	 * Caso a pesquisa retorne mais de um registro, será retornada a informação do primeiro registro.
 	 * @param pCn Conexão com o banco de dados
 	 * @param pSQL Sintaxe sql contendo todas as informações para efetuar a query.
