@@ -422,15 +422,6 @@ public class DBSString {
 
 	/**
 	 * Retorna um array a partir das strings informadas
-	 * @param pStrings
-	 * @return
-	 */
-	public static String[] toArray(String... pStrings){
-		return toArray(pStrings);
-	}
-	
-	/**
-	 * Retorna um array a partir das strings informadas
 	 * @param pValues
 	 * @return
 	 */
@@ -449,7 +440,7 @@ public class DBSString {
 		}
 		return (T[]) xItens.toArray();
 	}
-
+	
 	/**
 	 * Retorna array incluindo os itens informados
 	 * @param pArray
@@ -777,6 +768,7 @@ public class DBSString {
 		//System.out.println(pTexto);
 		return xTexto;
 	}
+
 	/**
 	 * Converte a primeira letra para maiúscula e o restante minúscula
 	 * @param pString
