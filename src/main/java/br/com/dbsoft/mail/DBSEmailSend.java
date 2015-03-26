@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.NETWORK.PROTOCOL;
 import br.com.dbsoft.util.DBSFile;
-import br.com.dbsoft.util.DBSMail;
+import br.com.dbsoft.util.DBSEmail;
 import br.com.dbsoft.util.DBSObject;
 
 
@@ -172,7 +172,7 @@ public class DBSEmailSend {
 			xMessage.setFrom(xFromAddress);
 			
 			//TO ---------------------
-			for (DBSEmailAddress xEmailAddress:pMessage.getTo()){
+			for (DBSEmailAddress xEmailAddress:DBSEmail.validateEmailAddress(pMessage.getTo())){ //ALBERTO: Adicionada validação de lista de E-mails. Em 26/03/2015.
 				pvAddRecipient(xMessage, RecipientType.TO, xEmailAddress);
 			}
 			//CC ---------------------
@@ -243,7 +243,7 @@ public class DBSEmailSend {
 			return;
 		}
 
-		if (!DBSMail.isValidEmailAddress(pEmailAddress.getAddress())){
+		if (!DBSEmail.isValidEmailAddress(pEmailAddress.getAddress())){
 			wInvalidEmails.add(pEmailAddress);
 		}
 		
