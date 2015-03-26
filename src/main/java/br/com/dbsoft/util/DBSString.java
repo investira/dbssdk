@@ -1,6 +1,7 @@
 package br.com.dbsoft.util;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -458,21 +459,60 @@ public class DBSString {
 		}
 		return pValues;
 	}
+
+	/**
+	 * Retorna um array a partir dos valores informados, ignorando os valores nulos.
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] toArrayNotNull(T... pValues){
+		return pvAddToArray(1, null, pValues);
+	}
+
+	/**
+	 * Retorna um array a partir dos valores informados, ignorando os valores vazios ou nulos.
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] toArrayNotEmpty(T... pValues){
+		return pvAddToArray(2, null, pValues);
+	}
 	
 	/**
-	 * Retorna array incluindo os itens informados
+	 * Retorna array incluindo os itens informados desconsiderando os valores vazios e nulos.
+	 * @param pArray
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] addToArrayNotEmpty(T[] pArray, T... pValues){
+		return pvAddToArray(2, pArray, pValues);
+	}
+	
+	/**
+	 * Retorna array incluindo os itens informados  os valores nulos.
+	 * @param pArray
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] addToArrayNotNull(T[] pArray, T... pValues){
+		return pvAddToArray(1, pArray, pValues);
+	}
+	
+	/**
+	 * Retorna array incluindo os itens informados.
 	 * @param pArray
 	 * @param pValues
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] addToArray(T[] pArray, T... pValues){
-		if (pArray == null){return null;}
-		List<T> xList = new ArrayList<T>(Arrays.asList(pArray));
-		xList.addAll(Arrays.asList(toArray(pValues)));
-		return (T[]) xList.toArray();
+		return pvAddToArray(0, pArray, pValues);
 	}
-
+	
 	/**
 		 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
 		 * @param pTextoBase
@@ -787,6 +827,77 @@ public class DBSString {
 		return xTexto;
 	}
 
+	/**
+		 * Retorna array incluindo os itens informados
+		 * @param pArray
+		 * @param pValues
+		 * @return
+		 */
+		@SuppressWarnings("unchecked")
+		private static <T> T[] pvAddToArray(int pTipo, T[] pArray, T... pValues){
+			if (pValues == null){return null;}
+			
+			//Armazena lista recebida
+			List<T> xList;
+			T[] 	xArray = null;
+	
+			if (pArray == null){
+				xList = new ArrayList<T>();
+			}else{
+		 		xList = new ArrayList<T>(Arrays.asList(pArray));
+			}
+			
+			//Adiciona os valores recebidos a lista
+			for (T xValue:pValues){
+				if (pTipo == 2){
+					if(!DBSObject.isEmpty(xValue)){
+						xList.add(xValue);
+					}
+				}else if (pTipo == 1){
+					if (xValue != null){
+						xList.add(xValue);
+					}
+				}else{
+					xList.add(xValue);
+				}
+			}
+	
+			//Também busca por item com valor válido para se identificar a class T
+			for (T xValue:xList){
+				if (xValue !=null){
+					xArray = (T[]) Array.newInstance(xValue.getClass(), xList.size());
+					break;
+				}
+			}
+			//Se não consegui cria um novo array por não haver valores válidos, retorna o próprio array enviado.
+			if (xArray == null){
+				return null;
+			}
+	
+			//Copia valores da lista para o array
+			for (int xI=0; xI < xList.size(); xI++){
+				xArray[xI] = xList.get(xI);
+			}
+	
+			return xArray;
+			
+	//		if (pArray == null){return null;}
+	//		//Salva lista inicial
+	//		List<T> xList = new ArrayList<T>(Arrays.asList(pArray));
+	//		//Adiciona valores enviadoa a lista inicial
+	//		xList.addAll(Arrays.asList(toArray(pValues)));
+	//		//Retorna lista como array
+	//		if (xList.size() > 0){
+	//			T[] xArray = (T[]) Array.newInstance(xList.get(0).getClass(), xList.size());
+	//			for (int xI=0; xI <= xList.size()-1; xI++){
+	//				if (xList.get(xI) != null){
+	//					xArray[xI] =  xList.get(xI);
+	//				}
+	//			}
+	//			return xArray;
+	//		}
+	//		return pArray;
+		}
 	/**
 	 * Converte a primeira letra para maiúscula e o restante minúscula
 	 * @param pString
