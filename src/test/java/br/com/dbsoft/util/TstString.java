@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.dbsoft.util.DBSFormat.NUMBER_SIGN;
 import br.com.dbsoft.util.DBSString;
 
 public class TstString {
@@ -24,14 +23,13 @@ public class TstString {
 	
 	@Test
 	public void test_ascii(){
-		System.out.println(DBSString.changeStr("Odebrecht  Defesa  e  Tecnologia S.A.", "  ", " ",false));
 //		System.out.println(DBSString.toASCII("É"));
 //		pValue = DBSString.changeStr((String)pValue, "╔", "É");
 //		pValue = DBSString.changeStr((String)pValue, "ß", "á");
 		assertEquals("╔", DBSString.toASCII("É"));
 	}
 	@Test
-	public void test_toArray() {
+	public void test_toArrayList() {
 
 		ArrayList <String> xA = new ArrayList<String>();
 		ArrayList <String> xB=  new ArrayList<String>();
@@ -58,6 +56,16 @@ public class TstString {
 		assertEquals(xC, DBSString.toArrayList(";;;", ";"));
 	}
 
+	@Test
+	public void test_toArray() {
+		String [] xArray;
+		xArray = DBSString.toArray("1", "2");
+		assertEquals(2, xArray.length);
+		xArray = DBSString.toArrayNotNull("1", null, "3", "4");
+		assertEquals(3, xArray.length);
+		xArray = DBSString.toArrayNotEmpty("1", "2", "3", "", "5");
+		assertEquals(4, xArray.length);
+	}
 	
 	@Test
 	public void test_getInStr() {
@@ -211,35 +219,7 @@ public class TstString {
 		assertEquals("22/04/2011 00:00:00", DBSFormat.getFormattedDateTime(xxDate));
 	}
 
-	@Test
-	public void test_getFormattedNumber() {
-		
-		double xxNumero = 2340;
-		assertEquals("2.340,00", DBSFormat.getFormattedNumber(xxNumero, "###,###,##0.00") );
-	    xxNumero = 2340;
-		assertEquals("2340", DBSFormat.getFormattedNumber(xxNumero, "####") );
-		xxNumero = 1234543456.34;
-		assertEquals("1.234.543.456,34", DBSFormat.getFormattedNumber(xxNumero, "###,###,###,##0.00") );
-		xxNumero = .34;
-		assertEquals("0,34", DBSFormat.getFormattedNumber(xxNumero, "###,###,###,##0.00") );
-		xxNumero = 2340;
-		assertEquals("2.340,00", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2)) );
-		xxNumero = 29340.23;
-		assertEquals("29.340,23", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2)) );
-		xxNumero = 29340.1999;
-		assertEquals("29.340,20", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2)) );
-		xxNumero = 29340.2376654565656;
-		assertEquals("29.340,23767", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(5)) );
-		xxNumero = 29340.2376654565656;
-		assertEquals("29.340,23766 CR", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(5)) );
-		xxNumero = 29340.277;
-		assertEquals("29.340,27 CR", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(2)) );
-		xxNumero = 29340.277;
-		assertEquals("29.340,28", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2,true,0)) );
-		xxNumero = 29340.277;
-		assertEquals("29.340,28", DBSFormat.getFormattedNumber(xxNumero, DBSFormat.getNumberMask(2,true,-1)) );
-		
-	}
+
 	
 	@Test
 	public void test_Corretor(){

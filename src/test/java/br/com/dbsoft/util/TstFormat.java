@@ -21,9 +21,9 @@ public class TstFormat extends TestCase {
 	
 	@Test
 	public void test_numberDecimal(){
-		assertEquals("1.234.567,12", DBSFormat.getFormattedNumber(1234567.1234567, DBSFormat.getNumberMask(2)));
-		assertEquals("1.234.567,12", DBSFormat.getFormattedNumber(1234567.1234567, DBSFormat.getNumberMask(2)));
-		assertEquals("1.234.567", DBSFormat.getFormattedNumber(1234567.1234567, DBSFormat.getNumberMask(0)));
+		assertEquals("1.234.567,12", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(2)));
+		assertEquals("1.234.567,12", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(2)));
+		assertEquals("1.234.567", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(0)));
 		
 		assertEquals("CR 1.234.567", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_PREFIX,  DBSFormat.getNumberMask(0)));
 		assertEquals("1.234.567 CR", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(0)));
@@ -36,19 +36,49 @@ public class TstFormat extends TestCase {
 		assertEquals("-1.234.567", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_PREFIX, DBSFormat.getNumberMask(0)));
 		assertEquals("1.234.567-", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_SUFFIX, DBSFormat.getNumberMask(0)));
 		assertEquals("1.234.567", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(0)));
-		assertEquals("(1.234.567,123456)", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));
-		assertEquals("CR 1.234.567,123456", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_PREFIX,  DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456 CR", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.MINUS_PREFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.MINUS_SUFFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));
-		assertEquals("DB 1.234.567,123456", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.CRDB_PREFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456 DB", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("-1.234.567,123456", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_PREFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456-", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_SUFFIX, DBSFormat.getNumberMask(6)));
-		assertEquals("1.234.567,123456", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(6)));
-		assertEquals("(1.234.567,123456)", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));		
+		assertEquals("(1.234.567,123457)", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));
+		assertEquals("CR 1.234.567,123457", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_PREFIX,  DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457 CR", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.MINUS_PREFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.MINUS_SUFFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457", DBSFormat.getFormattedNumber(1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));
+		assertEquals("DB 1.234.567,123457", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.CRDB_PREFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457 DB", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("-1.234.567,123457", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_PREFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457-", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.MINUS_SUFFIX, DBSFormat.getNumberMask(6)));
+		assertEquals("1.234.567,123457", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(6)));
+		assertEquals("(1.234.567,123457)", DBSFormat.getFormattedNumber(-1234567.1234567, NUMBER_SIGN.PARENTHESES, DBSFormat.getNumberMask(6)));		
+	}
+	
+	@Test
+	public void test_getFormattedNumber() {
+		
+		double xxNumero = 2340;
+		assertEquals("2.340,00", DBSFormat.getFormattedNumber(xxNumero, 2) );
+	    xxNumero = 2340;
+		assertEquals("2.340", DBSFormat.getFormattedNumber(xxNumero, 0) );
+		xxNumero = 1234543456.34;
+		assertEquals("1.234.543.456,34", DBSFormat.getFormattedNumber(xxNumero, 2) );
+		xxNumero = .34;
+		assertEquals("0,34", DBSFormat.getFormattedNumber(xxNumero, 2) );
+		xxNumero = 2340;
+		assertEquals("2.340,00", DBSFormat.getFormattedNumber(xxNumero, 2) );
+		xxNumero = 29340.23;
+		assertEquals("29.340,23", DBSFormat.getFormattedNumber(xxNumero, 2) );
+		xxNumero = 29340.1999;
+		assertEquals("29.340,20", DBSFormat.getFormattedNumber(xxNumero, 2) );
+		xxNumero = 29340.2376654565656;
+		assertEquals("29.340,23767", DBSFormat.getFormattedNumber(xxNumero, 5) );
+		xxNumero = 29340.2376654565656;
+		assertEquals("29.340,23767 CR", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(5)) );
+		xxNumero = 29340.277;
+		assertEquals("29.340,28 CR", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.CRDB_SUFFIX, DBSFormat.getNumberMask(2)) );
+		xxNumero = 29340.277;
+		assertEquals("29.340,28", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(2,true,0)) );
+		xxNumero = 29340.277;
+		assertEquals("29.340,28", DBSFormat.getFormattedNumber(xxNumero, NUMBER_SIGN.NONE, DBSFormat.getNumberMask(2,true,-1)) );
+		
 	}
 
 	@Test
