@@ -355,6 +355,22 @@ public class DBSFormat {
 		return getFormattedMask(pCEP, "99999-999", " ");
 	}
 
+	/**
+	 * Retorna valor formatado no padrão CPF ou CNPJ.<br/>
+	 * Será desconsiderado qualquer caracter não númerico informado em <b>pValue<b/>. 
+	 * @param pPessoaFisica se é pessoa física.
+	 * @param pValue
+	 * @return
+	 */
+	public static String getCPFCNPJ(Object pPessoaFisica, Object pValue){
+		String xValue = DBSString.toString(pValue);
+		xValue = DBSNumber.getOnlyNumber(xValue);
+		if (DBSBoolean.toBoolean(pPessoaFisica)){
+			return getCPF(pValue);
+		}else{
+			return getCNPJ(pValue);
+		}
+	}
 
 	/**
 	 * Retorna o caracter utilizado para separar a casa decimal
