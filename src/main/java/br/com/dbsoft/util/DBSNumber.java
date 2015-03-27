@@ -731,7 +731,7 @@ public class DBSNumber {
 		for (int x=0;x<pTexto.length();x++){
 			xB = pTexto.substring(x, x+1);
 			if (isNumber(xB)){
-				xA = xA + xB;
+				xA += xB;
 			}
 		}
 		return DBSString.getNotEmpty(xA, "0");
