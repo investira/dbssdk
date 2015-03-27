@@ -26,6 +26,11 @@ public class DBSEmail {
 	   return xResult;
 	}
 	
+	/**
+	 * Valida todos os email contidos na lista.
+	 * @param pArrayList
+	 * @return
+	 */
 	public static List<DBSEmailAddress> validateEmailAddress(List<DBSEmailAddress> pArrayList) {
 		List<DBSEmailAddress> xList = new ArrayList<DBSEmailAddress>();
 		for (DBSEmailAddress xDbsEmailAddress : pArrayList) {
@@ -35,4 +40,5 @@ public class DBSEmail {
 		}
 		return xList;
 	}
+
 }
