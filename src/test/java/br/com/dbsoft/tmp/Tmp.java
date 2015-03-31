@@ -2,11 +2,18 @@ package br.com.dbsoft.tmp;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 
 import br.com.dbsoft.util.DBSDate;
+import br.com.dbsoft.util.DBSFormat;
+import br.com.dbsoft.util.DBSNumber;
+import br.com.dbsoft.util.DBSObject;
 
 
 
@@ -17,11 +24,73 @@ public class Tmp {
 	private static Integer Ctvm= 4;
 	private static Integer Fundo = 8;
 	
-	@Test
-	public void teste_x(){
+//	@Test
+	public void galtonBoard(){
+		Random xR = new Random();
+		Integer xTotalBolas = 1000000;
+		Integer xTotalVezes = 20;
+		Integer xSoma = 0;
+		Map<Integer, Integer> xSaldo = new HashMap<Integer, Integer>(); 
+		Integer xZ = 0;
+		Integer xU = 0;
+//		Integer[] xInteger = new Integer[xTotalVezes];
+		for (int xA=1;xA <= xTotalBolas;xA++){
+			xSoma = 0;
+			for (int xI=1;xI <= xTotalVezes;xI++){
+				int xB = xR.nextInt(2);
+				if (xB == 0){
+					xSoma--;
+					xZ++;
+				}else if (xB == 1){
+					xSoma++;
+					xU++;
+				}else{
+					System.out.println("STOP");
+				}
+			}
+			xSaldo.put(xSoma, DBSObject.getNotNull(xSaldo.get(xSoma),0) + 1);
+		}
+		System.out.println("0=" + xZ);
+		System.out.println("1=" + xU);
+		for (Integer xKey: xSaldo.keySet()){
+			System.out.println(xKey + "\t" + xSaldo.get(xKey) + "\t" + DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.divide(xSaldo.get(xKey), xTotalBolas), 100), 2));
+		}
 	}	
 	
-//	@Test
+	@Test
+	public void galtonBoard2(){
+		Random xR = new Random();
+		Integer xTotalBolas = 1000000;
+		Integer xSoma = 0;
+		Map<Integer, Integer> xSaldo = new HashMap<Integer, Integer>(); 
+		Integer xZ = 0;
+		Integer xU = 0;
+		Integer xAnterior = 0;
+//		Integer[] xInteger = new Integer[xTotalVezes];
+		for (int xA=1;xA <= xTotalBolas;xA++){
+			int xAtual = xR.nextInt(2);
+			if (xAtual == 0){
+				xSoma--;
+				xZ++;
+			}else if (xAtual == 1){
+				xSoma++;
+				xU++;
+			}
+			if (xAtual == xAnterior){
+				xSaldo.put(xSoma, DBSObject.getNotNull(xSaldo.get(xSoma),0) + 1);
+			}else{
+				xAnterior = xAtual;
+				xSoma = 1;
+			}
+		}
+		System.out.println("0=" + xZ);
+		System.out.println("1=" + xU);
+		for (Integer xKey: xSaldo.keySet()){
+			System.out.println(xKey + "\t" + xSaldo.get(xKey) + "\t" + DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.divide(xSaldo.get(xKey), xTotalBolas), 100), 4));
+		}
+	}	
+
+	//	@Test
 	public void teste_bit(){
 		Integer xImport = 0;
 		
