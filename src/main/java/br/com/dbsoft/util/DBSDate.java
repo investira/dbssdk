@@ -1514,6 +1514,29 @@ public class DBSDate{
 	}
 	
 	/**
+	 * Retorna número do mês a partir do nome curto com as três primeiras letras (Ex.: JAN, FEV, MAR).<br/>
+	 * @param pMes Número do mês e número <b>0</b>(zero) caso não encontre.
+	 * @return Número do mês
+	 */
+	public static int getNumeroDoMesCurto(String pMes){
+		String[] xMeses = DBSDate.getNomeDosMeses();
+		int xI = 0;
+		//Uniformiza texto
+		pMes = pMes.trim().toUpperCase();
+		for (String xMes : xMeses){
+			//Uniformiza texto
+			xMes = xMes.trim().toUpperCase();
+			xI++;
+			//Se encontrou o mes, retorna o número
+			if (!xMes.equals("") 
+			  && pMes.equals(DBSString.getSubString(xMes, 1, 3))){
+				return xI; 
+			}
+		}
+		return 0;
+	}
+	
+	/**
 	 * Retorna uma Data a partir de uma data base, um prazo e o dia da semana desejado
 	 * @param pConexao Conexão com banco de dados
 	 * @param pDataAtual Data a partir do qual será efetuado o cálculo do próximo aniversário
@@ -1764,5 +1787,15 @@ public class DBSDate{
 		return xDate;
 	}
 
+	/**
+	 * Retorna o Date no dia primeiro da Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @param pDate Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @return
+	 */
+	public static Date toDateMYY(String pDate) {
+		int xMes = getNumeroDoMesCurto(DBSString.getSubString(pDate, 1, 3));
+		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
+		return toDate(01, xMes, xAno);
+	}
 
 }
