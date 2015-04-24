@@ -1177,7 +1177,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 					}
 				}
 				//dispara evento 'ended' se não houver uma nova tentativa
-				if (getScheduleDate() == null
+				if ((getScheduleDate() == null || getScheduleDate().before(DBSDate.getNowDate(true)))
 				 && wReRun == false){
 					pvFireEventTaskUpdated(true);
 					pvFireEventEnded();
