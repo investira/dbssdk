@@ -6,7 +6,7 @@ package br.com.dbsoft.xmladapter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * @author Avila
+ * @author jose.avila@dbsoft.com.br
  *
  */
 public class StringToBooleanAdapter extends XmlAdapter<String, Boolean> {

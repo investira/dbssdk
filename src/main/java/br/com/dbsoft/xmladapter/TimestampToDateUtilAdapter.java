@@ -9,7 +9,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * @author Avila
+ * @author jose.avila@dbsoft.com.br
  * 
  */
 public class TimestampToDateUtilAdapter extends XmlAdapter<java.util.Date, Timestamp> {

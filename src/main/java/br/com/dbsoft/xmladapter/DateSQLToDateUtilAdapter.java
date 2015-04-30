@@ -8,7 +8,7 @@ import java.sql.Date;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * @author Avila
+ * @author jose.avila@dbsoft.com.br
  *
  */
 public class DateSQLToDateUtilAdapter extends XmlAdapter<java.util.Date, java.sql.Date> {
