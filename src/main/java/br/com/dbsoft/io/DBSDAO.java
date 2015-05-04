@@ -19,6 +19,7 @@ import javax.servlet.jsp.jstl.sql.ResultSupport;
 import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSIO.MOVE_DIRECTION;
 import br.com.dbsoft.util.DBSObject;
@@ -607,6 +608,28 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		 && getShowColumnNameNotFoundMessage()){
 			wLogger.error("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
+	}
+	
+	@Override
+	public DBSMessage getMessage(String pColumnName) {
+		if (pColumnName==null){return null;}
+		String xColumnName = pvGetColumnName(pColumnName);
+		
+		//Retorna valor do DataModel se existir
+		if (wDataModel != null){
+			return null;
+		}
+		//Retorna valor a parti do controle local das colunas de comando
+		if (wCommandColumns.containsKey(xColumnName)){
+			return wCommandColumns.getColumn(pColumnName).getMessage();
+			//Retorna valor a parti do controle local das colunas de pesquisa
+		}else if (wQueryColumns.containsKey(xColumnName)){
+			return wQueryColumns.getColumn(pColumnName).getMessage();
+		}
+		if (getShowColumnNameNotFoundMessage()){
+			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+		}
+		return null;
 	}
 	
 	

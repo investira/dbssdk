@@ -7,9 +7,15 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.core.DBSSDK.COLUMN.HORIZONTALALIGNMENT;
 import br.com.dbsoft.core.DBSSDK.COLUMN.VERTICALALIGNMENT;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
+import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.DBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSIO;
 
 
+/**
+ * @author ricardo.villar
+ *
+ */
 /**
  * @author ricardo.villar
  *
@@ -49,13 +55,8 @@ public class DBSColumn implements Serializable{
     private boolean 				wReadOnly;
     private boolean  				wComboBox;
     private boolean  				wAllowSort;
-    //Dim wsAlign As DBSCnsColumnAlign
+    private DBSMessage				wMessage;
 
-//	@Override
-//	protected DBSColumn clone() throws CloneNotSupportedException {
-//		return (DBSColumn) super.clone();
-//	}
-//	
     
     DBSColumn(){
         wTableName = "";	
@@ -77,10 +78,50 @@ public class DBSColumn implements Serializable{
         wReadOnly = true;
         wComboBox = false;
         wAllowSort = true;
+        wMessage = null;
         this.restoreValueDefault();
     }
     
-    /**
+	/**
+	 * Retorna a mensagem vinculada a esta coluna.<br/>
+	 * Esta mensagem serve para informar qualquer tipo de aviso/erro referente ao valor nela contido.<br/>
+	 * Será retornado o valor nulo quando não houve mensagem.<br/>
+	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
+	 */
+    public DBSMessage getMessage() {
+		return wMessage;
+	}
+	/**
+	 * Configura a mensagem da coluna.<br/>
+	 * Esta mensagem serve para informar qualquer tipo de aviso/erro referente ao valor nela contido.<br/>
+	 * Para apagar a mensagem que possa eventualmente já existir, envie <i>null</i> no parametro.<br/>
+	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
+	 * @param pMessage
+	 */
+	public void setMessage(DBSMessage pMessage) {
+		if (pMessage == null){
+	    	wMessage = null;
+	    	return;
+		}
+		wMessage = new DBSMessage(pMessage.getMessageType(), pMessage.getMessageText());
+	}
+	/**
+	 * Configura a mensagem da coluna.<br/>
+	 * Esta mensagem serve para informar qualquer tipo de aviso/erro referente ao valor nela contido.<br/>
+	 * Para apagar a mensagem que possa eventualmente já existir, envie <i>null</i> em qualquer um dos parametros. 
+	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
+	 * @param pMessage
+	 */
+	public void setMessage(MESSAGE_TYPE pMessageType, String pMessageText) {
+		if (pMessageType == null
+	     || pMessageText == null){
+    		wMessage = null;
+	    	return;
+		}
+		wMessage = new DBSMessage(pMessageType, pMessageText);
+	}
+
+	/**
      * Copia o valor default como sendo o valor corrente.
      */
 	public final void restoreValueDefault(){
@@ -89,6 +130,7 @@ public class DBSColumn implements Serializable{
         try {
             wValue = this.getValueDefault(); //xValueDefault;
             wValueOriginal = wValue;
+            setMessage(null);
 		} catch (Exception xE) {
 			wLogger.error(xE);
 		}
@@ -102,6 +144,7 @@ public class DBSColumn implements Serializable{
         try {
             wValue = this.getValueOriginal();
             wValueOriginal = wValue;
+            setMessage(null);
 		} catch (Exception xE) {
 			wLogger.error(xE);
 		}
@@ -280,6 +323,7 @@ public class DBSColumn implements Serializable{
 	}
 	public final void setChanged(boolean pChanged) {
 		wChanged = pChanged;
+		setMessage(null);
 	}
 
 	//--------------------------------------------------------------------------------------------------------

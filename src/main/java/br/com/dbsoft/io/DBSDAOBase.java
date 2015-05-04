@@ -13,6 +13,7 @@ import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSRow;
+import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -477,6 +478,15 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	 * @param pValue Valor
 	 */
 	public abstract void setValue(String pColumnName, Object pValue, boolean pOriginalValue);
+
+
+	/**
+	 * Retorna a mensagem vinculada a esta coluna.<br/>
+	 * Esta mensagem serve para informar qualquer tipo de aviso/erro referente ao valor nela contido.<br/>
+	 * Será retornado o valor nulo quando não houve mensagem.<br/>
+	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
+	 */
+	public abstract DBSMessage getMessage(String pColumnName);
 
 
 	/**

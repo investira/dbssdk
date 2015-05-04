@@ -17,6 +17,7 @@ import java.util.List;
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
@@ -260,11 +261,6 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 		return this.<A>getValue(this.getColumnName(pColumnIndex));
 	}
 
-	/**
-	 * Valor da coluna infomada, considerando a linha corrente
-	 * @param pColumnName Nome da Coluna
-	 * @return
-	 */
 	@Override
 	public <A> A getValue(String pColumnName) {
 		if (wDataModel != null){
@@ -275,6 +271,20 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 				return null;
 			}else{
 				return xC.<A>getValue();
+			}
+		}
+	}
+	
+	@Override
+	public DBSMessage getMessage(String pColumnName) {
+		if (wDataModel == null){
+			return null;
+		}else{
+			DBSColumn xC = wListRow.get(wCurrentRow).getColumn(pColumnName);
+			if (xC==null){
+				return null;
+			}else{
+				return xC.getMessage();
 			}
 		}
 	}
