@@ -13,6 +13,7 @@ import br.com.dbsoft.util.DBSNumber;
 public class DBSMessage {
 
 	public static enum MESSAGE_TYPE{
+	   	SUCESS		(1, "-sucess"),
 	   	INFORMATION	(10, "-information"),
 	    WARNING		(20, "-warning"),
 	    IMPORTANT	(30, "-important"),
@@ -32,6 +33,8 @@ public class DBSMessage {
 	    
 		public static MESSAGE_TYPE get(Integer pCode) {
 			switch (pCode) {
+			case 1:
+				return MESSAGE_TYPE.SUCESS;
 			case 10:
 				return MESSAGE_TYPE.INFORMATION;
 			case 20:
