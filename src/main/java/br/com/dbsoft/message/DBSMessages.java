@@ -279,9 +279,13 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 	}
 
 	/**
-	 * Retorna se mensagem foi validada
+	 * Retorna se mensagem foi validada.<br/>
 	 * @param pMessageKey
-	 * @return
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
+	 * 
 	 */
 	public Boolean isValidated(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
