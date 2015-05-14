@@ -977,7 +977,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	/**
 	 * Executa o insert da tabela definida como CommandTable.<br/>
 	 * Consulte o atributo <b>executeOnlyChangedValues</b> para outras considerações relacionadas ao insert.
-	 * @returnQuantidade de linhas afetadas
+	 * @return Quantidade de linhas afetadas
 	 * @throws SQLException
 	 */
 	@Override
