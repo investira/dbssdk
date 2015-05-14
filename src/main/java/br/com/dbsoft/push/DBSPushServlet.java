@@ -12,7 +12,8 @@ import br.com.dbsoft.util.DBSSession;
 
 /**
  * Servlet que faz a conexão com o SSE no xhtml<br/>
- * Recebe os requests e armazena em um DBSPushBean para posteriormente ser utilizado para disparar o response. 
+ * Recebe os requests e armazena em um DBSPushBean para posteriormente ser utilizado para disparar o response.<br/>
+ * É necessário que a class que extenderá esta possua a anotação @WebServlet(value="/??", asyncSupported=true) 
  *
  */
 public abstract class DBSPushServlet extends HttpServlet {
