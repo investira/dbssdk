@@ -65,6 +65,11 @@ public class DBSPassword {
 		return DBSString.toHex(xHash);
 	}
 
+    public static String createPassword(String pSalt, String pPlainPassword, Integer pLength) {
+    	byte[] xHash = pvGetHash(DBSString.toHex(pSalt.getBytes()), pPlainPassword, pLength);
+		return DBSString.toHex(xHash);
+	}
+    
     public static boolean validateSaltedPassword(String pPlainPassword, String pStoredPassword){
     	//Recupera parte da senha armazenada que é a efetiva senha do usuário
     	String xPassword = DBSString.getSubString(pStoredPassword, 1, PasswordLenght);
@@ -104,8 +109,18 @@ public class DBSPassword {
      * @return
      */
     private static byte[] pvGetHash(String pSalt, String pPlainPassword){
+		return pvGetHash(pSalt, pPlainPassword, PasswordLenght);
+ 	}
+
+    /**
+     * Cria string hash criptografado a partir da string informada.
+     * @param pSalt String adicional que será utilizada para criptografar a senha.
+     * @param pPlainPassword Senha não criptografada
+     * @return
+     */
+    private static byte[] pvGetHash(String pSalt, String pPlainPassword, Integer pLenght){
 		byte[] xSalt = DBSString.fromHex(pSalt);
-		KeySpec xSpec = new PBEKeySpec(pPlainPassword.toCharArray(), xSalt, Iterations, PasswordLenght * 4);
+		KeySpec xSpec = new PBEKeySpec(pPlainPassword.toCharArray(), xSalt, Iterations, pLenght * 4);
 		try {
 			SecretKeyFactory xFactory = SecretKeyFactory.getInstance(Algorithm);
 			return xFactory.generateSecret(xSpec).getEncoded();
@@ -114,7 +129,6 @@ public class DBSPassword {
 			return null;
 		}
 	}
-
 
 
 //    private static byte[] pvGetPlainText(String pSalt, String pHash, int pHashLenght) throws NoSuchAlgorithmException, InvalidKeySpecException{
