@@ -3,29 +3,32 @@ package br.com.dbsoft.util;
 public class DBSHtml {
 	
 	/**
-	 * Retorna html contendo o valor em informado <b>pValue<b/> dento do tab informada em <b>pTab<b/>.<br/>
-	 * O tab <b>não</b> deve vir com os sinais <>.
-	 * @param pTag
-	 * @param pString
+	 * Retorna html contendo o valor em informado <b>pValue</b> dento do tag informada em <b>pTag</b>.<br/>
+	 * O tag <b>não</b> deve vir com os sinais <br/>.
+	 * @param pTag Nome do tag
+	 * @param pContent Conteúdo dentro do tag
+	 * @return
 	 */
-	public static String encodeTag(String pTag, Object pValue){
-		return encodeTag(pTag, pValue, null);
+	public static String encodeTag(String pTag, Object pContent){
+		return encodeTag(pTag, pContent, null);
 	}
 
 	/**
-	 * Retorna html contendo o valor em informado <b>pValue<b/> dento do tab informada em <b>pTab<b/>.<br/>
-	 * O tab <b>não</b> deve vir com os sinais <>.
-	 * @param pTag
-	 * @param pString
+	 * Retorna html contendo o valor em informado <b>pVapContentlue</b> dento do tag informada em <b>pTag</b>.<br/>
+	 * O tag <b>não</b> deve vir com os sinais <br/>.
+	 * @param pTag Nome do tag
+	 * @param pContent Conteúdo dentro do tag. Se for nulo, faz o encode sem conteúdo.
+	 * @param pTagAttributes Atributos do tag
+	 * @return
 	 */
-	public static String encodeTag(String pTag, Object pValue, String pAttributes){
+	public static String encodeTag(String pTag, Object pContent, String pTagAttributes){
 		if (pTag == null){return null;}
-		return encodeTagBegin(pTag, pAttributes) + DBSString.toString(pValue, "") + encodeTagEnd(pTag);
+		return encodeTagBegin(pTag, pTagAttributes) + DBSString.toString(pContent, "") + encodeTagEnd(pTag);
 	}
 
 	/**
-	 * Retorna html contendo o valor em informado <b>pValue<b/> dento do tab informada em <b>pTab<b/>.<br/>
-	 * O tab <b>não</b> deve vir com os sinais <>.
+	 * Retorna html contendo a inicialização do tag informada em <b>pTag</b>.<br/>
+	 * O tag <b>não</b> deve vir com os sinais <br/>.
 	 * @param pTag
 	 * @param pString
 	 */
@@ -34,8 +37,8 @@ public class DBSHtml {
 	}
 
 	/**
-	 * Retorna html contendo o valor em informado <b>pValue<b/> dento do tab informada em <b>pTab<b/>.<br/>
-	 * O tab <b>não</b> deve vir com os sinais <>.
+	 * Retorna html contendo o valor em informado <b>pValue</b> dento do tag informada em <b>pTag</b>.<br/>
+	 * O tag <b>não</b> deve vir com os sinais <br/>.
 	 * @param pTag
 	 * @param pString
 	 */
@@ -45,8 +48,8 @@ public class DBSHtml {
 	}
 
 	/**
-	 * Retorna html contendo o valor em informado <b>pValue<b/> dento do tab informada em <b>pTab<b/>.<br/>
-	 * O tab <b>não</b> deve vir com os sinais <>.
+	 * Retorna html com a filalização do tag informada em <b>pTag</b>.<br/>
+	 * O tag <b>não</b> deve vir com os sinais <br/>.
 	 * @param pTag
 	 * @param pString
 	 */
