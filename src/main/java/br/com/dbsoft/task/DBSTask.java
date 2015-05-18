@@ -1362,7 +1362,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		if (wRetryOnErrorSeconds > 0
 		 && wRetryOnErrorTimes > 0){
 			Date xData = DBSDate.getNowDate(true);
-			xData = DBSDate.getDateAddSeconds(xData, wRetryOnErrorSeconds);
+			xData = DBSDate.addSeconds(xData, wRetryOnErrorSeconds);
 			wLogger.warn(getName() + ":Tentativa " + wRetryOnErrorCount + " de " + wRetryOnErrorTimes + " será executada em: " + DBSFormat.getFormattedDateCustom(xData, "dd/MM/yyyy HH:mm:ss"));
 			pvScheduleDate(xData);
 		}

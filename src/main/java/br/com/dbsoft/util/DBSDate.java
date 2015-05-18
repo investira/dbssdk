@@ -685,7 +685,7 @@ public class DBSDate{
 	 * @param pData
 	 * @return dia
 	 */
-	public static Integer getDia(Date pData){
+	public static Integer getDay(Date pData){
 		Calendar xData = toCalendar(pData);
 		return xData.get(Calendar.DAY_OF_MONTH);
 	}
@@ -695,7 +695,7 @@ public class DBSDate{
 	 * @param pData
 	 * @return mes
 	 */
-	public static Integer getMes(Date pData){
+	public static Integer getMonth(Date pData){
 		Calendar xData = toCalendar(pData);
 		return xData.get(Calendar.MONTH) + 1;
 	}
@@ -705,9 +705,39 @@ public class DBSDate{
 	 * @param pData
 	 * @return Ano
 	 */
-	public static Integer getAno(Date pData){
+	public static Integer getYear(Date pData){
 		Calendar xData = toCalendar(pData);
 		return xData.get(Calendar.YEAR);
+	}
+
+	/**
+	 * Retorna a hora(sem minutos ou segundos) a partir de um timestamp
+	 * @param pData
+	 * @return Ano
+	 */
+	public static Integer getHour(Timestamp pTime){
+		Calendar xData = toCalendar(pTime);
+		return xData.get(Calendar.HOUR_OF_DAY); 
+	}
+
+	/**
+	 * Retorna o minuto a partir de um timestamp
+	 * @param pData
+	 * @return Ano
+	 */
+	public static Integer getMinute(Timestamp pTime){
+		Calendar xData = toCalendar(pTime);
+		return xData.get(Calendar.MINUTE);
+	}
+
+	/**
+	 * Retorna o segundo a partir de um timestamp
+	 * @param pData
+	 * @return Ano
+	 */
+	public static Integer getSecond(Timestamp pTime){
+		Calendar xData = toCalendar(pTime);
+		return xData.get(Calendar.SECOND);
 	}
 
 	//Métodos de Cálculo de datas=========================================================================
@@ -720,8 +750,8 @@ public class DBSDate{
 	 * @param pUtil Indica se é dia útil ou não (True = Dia útil / False = Dia corrido)
 	 * @return Quantidade de dias
 	 */
-	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil) {
-		return getDias(pConexao, pDataInicio, pDataFim, pUtil, -1, null);
+	public static int getDays(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil) {
+		return getDays(pConexao, pDataInicio, pDataFim, pUtil, -1, null);
 	}
 
 	/**
@@ -733,8 +763,8 @@ public class DBSDate{
 	 * @param pUtil Indica se é dia útil ou não (True = Dia útil / False = Dia corrido)
 	 * @return Quantidade de dias
 	 */
-	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, String pApplicationColumnName) {
-		return getDias(pConexao, pDataInicio, pDataFim, pUtil, -1, pApplicationColumnName);
+	public static int getDays(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, String pApplicationColumnName) {
+		return getDays(pConexao, pDataInicio, pDataFim, pUtil, -1, pApplicationColumnName);
 	}
 	
 	/**
@@ -748,8 +778,8 @@ public class DBSDate{
 	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
 	 * @return Quantidade de dias
 	 */
-	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, int pCidade) {
-		return getDias(pConexao, pDataInicio, pDataFim, pUtil, pCidade, null);
+	public static int getDays(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, int pCidade) {
+		return getDays(pConexao, pDataInicio, pDataFim, pUtil, pCidade, null);
 	}
 	
 	
@@ -765,7 +795,7 @@ public class DBSDate{
 	 * 								 ex:Renda Variavel - RV
 	 * @return Quantidade de dias
 	 */
-	public static int getDias(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, int pCidade, String pApplicationColumnName) {
+	public static int getDays(Connection pConexao, Date pDataInicio, Date pDataFim, boolean pUtil, int pCidade, String pApplicationColumnName) {
 		int xDias;
 		int xSinal=1;
 		
@@ -780,7 +810,7 @@ public class DBSDate{
 					xSinal = -1;
 				}
 				//Subtrai da quantidade de dias os feriádos e finais de semana
-				return xSinal * (Math.abs(xDias) - getFinaisDeSemana(pDataInicio, pDataFim) - getFeriados(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName));
+				return xSinal * (Math.abs(xDias) - getWeekends(pDataInicio, pDataFim) - getHolidays(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName));
 			} else {
 				return  getDateDif(pDataInicio, pDataFim);  
 			}
@@ -793,10 +823,10 @@ public class DBSDate{
 	 * @param pDataFim Data fim
 	 * @return Quantidade de meses
 	 */
-	public static int getMeses(Date pDataInicio, Date pDataFim){
+	public static int getMonths(Date pDataInicio, Date pDataFim){
 		Calendar xDataInicio = toCalendar(pDataInicio);
 		Calendar xDataFim = toCalendar(pDataFim);
-		return getMeses(xDataInicio, xDataFim);  
+		return getMonths(xDataInicio, xDataFim);  
 	}
 	
 	/**
@@ -805,51 +835,22 @@ public class DBSDate{
 	 * @param pDataFim Data fim
 	 * @return Quantidade de meses
 	 */
-	public static int getMeses(Calendar pDataInicio, Calendar pDataFim){
+	public static int getMonths(Calendar pDataInicio, Calendar pDataFim){
 		int xAnos =  pDataFim.get(Calendar.YEAR) -  pDataInicio.get(Calendar.YEAR); //Anos entre duas Data;
 		int xMeses  = pDataFim.get(Calendar.MONTH) -  pDataInicio.get(Calendar.MONTH); //Anos entre duas Data;
 		return (xAnos * 12) + xMeses;  
 	}
 
 	/**
-	 * Retorna a hora(sem minutos ou segundos) a partir de um timestamp
-	 * @param pData
-	 * @return Ano
-	 */
-	public static Integer getHora(Timestamp pTime){
-		Calendar xData = toCalendar(pTime);
-		return xData.get(Calendar.HOUR_OF_DAY); 
-	}	
-
-	/**
-	 * Retorna o minuto a partir de um timestamp
-	 * @param pData
-	 * @return Ano
-	 */
-	public static Integer getMinuto(Timestamp pTime){
-		Calendar xData = toCalendar(pTime);
-		return xData.get(Calendar.MINUTE);
-	}	
-	
-	/**
-	 * Retorna o segundo a partir de um timestamp
-	 * @param pData
-	 * @return Ano
-	 */
-	public static Integer getSegundo(Timestamp pTime){
-		Calendar xData = toCalendar(pTime);
-		return xData.get(Calendar.SECOND);
-	}	
-	/**
 	 * Calcula a quantidade de anos entre duas datas
 	 * @param pDataInicio Data inicio
 	 * @param pDataFim Data fim
 	 * @return Quantidade de anos
 	 */
-	public static int getAnos(Date pDataInicio, Date pDataFim){
+	public static int getYears(Date pDataInicio, Date pDataFim){
 		Calendar xDataInicio = toCalendar(pDataInicio);
 		Calendar xDataFim = toCalendar(pDataFim);
-		return getAnos(xDataInicio, xDataFim);  
+		return getYears(xDataInicio, xDataFim);  
 	}
 	
 	/**
@@ -858,7 +859,7 @@ public class DBSDate{
 	 * @param pDataFim Data fim
 	 * @return Quantidade de anos
 	 */
-	public static int getAnos(Calendar pDataInicio, Calendar pDataFim){
+	public static int getYears(Calendar pDataInicio, Calendar pDataFim){
 		//Anos entre duas datas  
 		return pDataFim.get(Calendar.YEAR) -  pDataInicio.get(Calendar.YEAR); 
 	}
@@ -869,7 +870,7 @@ public class DBSDate{
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
-	public static Date getDateAdd(Date pDataBase, int pPrazo){
+	public static Date addDays(Date pDataBase, int pPrazo){
 		if (pDataBase!=null){
 			if (pPrazo==0){
 				return pDataBase;
@@ -891,7 +892,7 @@ public class DBSDate{
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
-	public static Date getDateAddMes(Date pDataBase, int pPrazo){
+	public static Date addMonths(Date pDataBase, int pPrazo){
 		if (pDataBase!=null){
 			if (pPrazo==0){
 				return pDataBase;
@@ -913,7 +914,7 @@ public class DBSDate{
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
-	public static Date getDateAddAno(Date pDataBase, int pPrazo){
+	public static Date addYears(Date pDataBase, int pPrazo){
 		if (pDataBase!=null){
 			if (pPrazo==0){
 				return pDataBase;
@@ -927,6 +928,41 @@ public class DBSDate{
 		}else{
 			return null;
 		}
+	}
+
+	/**
+	 * Adiciona minutos a uma data informada.
+	 * @param Data e Hora
+	 * @param pMinutes
+	 * @return
+	 */
+	public static Date addMinutes(Date pDate, int pMinutes){
+		LocalDateTime xDT = new LocalDateTime(pDate);
+		xDT = xDT.plusMinutes(pMinutes);
+		return DBSDate.toDate(xDT.toDateTime());
+	}
+
+	/**
+	 * Adiciona minutos a uma data informada.
+	 * @param Data e Hora
+	 * @param pMinutes
+	 * @return
+	 */
+	public static Date addMinutes(Timestamp pDate, int pMinutes){
+		Date xDate = DBSDate.toDate(pDate);
+		return addMinutes(xDate, pMinutes);
+	}
+
+	/**
+	 * Adiciona minutos a uma data informada.
+	 * @param pDate Data e Hora
+	 * @param pSeconds
+	 * @return
+	 */
+	public static Date addSeconds(Date pDate, int pSeconds){
+		LocalDateTime xDT = new LocalDateTime(pDate);
+		xDT = xDT.plusSeconds(pSeconds);
+		return DBSDate.toDate(xDT.toDateTime());
 	}
 
 	/**
@@ -954,7 +990,7 @@ public class DBSDate{
 	 * 								 ex:Renda Variavel - RV
 	 * @return true = dia útil ou false = não útil
 	 */
-	public static boolean isDiaUtil(Connection pConexao, Date pData, int pCidade, String pApplicationColumnName){
+	public static boolean isBusinessDay(Connection pConexao, Date pData, int pCidade, String pApplicationColumnName){
 		Calendar xData = Calendar.getInstance();
 		
 		xData.setTime(pData);
@@ -962,7 +998,7 @@ public class DBSDate{
 		xData.add(Calendar.DAY_OF_MONTH, -1);
 		
 		//Verifica se é um feriado, sábado ou domingo
-		if (getFeriados(pConexao, toDate(xData), pData, pCidade, pApplicationColumnName) > 0 || 
+		if (getHolidays(pConexao, toDate(xData), pData, pCidade, pApplicationColumnName) > 0 || 
 			toCalendar(pData).get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || 
 			toCalendar(pData).get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
 			return false;
@@ -977,8 +1013,8 @@ public class DBSDate{
 	 * @param pData Data será verificada se é útil ou não
 	 * @return true = dia útil ou false = não útil
 	 */	
-	public static boolean isDiaUtil(Connection pConexao, Date pData, int pCidade){
-		return isDiaUtil(pConexao, pData, pCidade, null);
+	public static boolean isBusinessDay(Connection pConexao, Date pData, int pCidade){
+		return isBusinessDay(pConexao, pData, pCidade, null);
 	}
 	
 	/**
@@ -987,8 +1023,8 @@ public class DBSDate{
 	 * @param pData Data será verificada se é útil ou não
 	 * @return true = dia útil ou false = não útil
 	 */	
-	public static boolean isDiaUtil(Connection pConexao, Date pData){
-		return isDiaUtil(pConexao, pData, -1);
+	public static boolean isBusinessDay(Connection pConexao, Date pData){
+		return isBusinessDay(pConexao, pData, -1);
 	}
 	
 	/**
@@ -1000,8 +1036,8 @@ public class DBSDate{
 	 * @param pDataFim Data Final
 	 * @return Quantidade de dias cadastrados como feriados
 	 */
-	public static int getFeriados(Connection pConexao, Date pDataInicio, Date pDataFim) {
-		return getFeriados(pConexao, pDataInicio, pDataFim, -1);
+	public static int getHolidays(Connection pConexao, Date pDataInicio, Date pDataFim) {
+		return getHolidays(pConexao, pDataInicio, pDataFim, -1);
 	}
 	
 	/**
@@ -1015,8 +1051,8 @@ public class DBSDate{
 	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
 	 * @return Quantidade de dias cadastrados como feriados
 	 */
-	public static int getFeriados(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade) {
-		return getFeriados(pConexao, pDataInicio, pDataFim, pCidade, null);
+	public static int getHolidays(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade) {
+		return getHolidays(pConexao, pDataInicio, pDataFim, pCidade, null);
 	}
 	
 	/**
@@ -1031,7 +1067,7 @@ public class DBSDate{
 	 * 								 ex:Renda Variavel - RV
 	 * @return Quantidade de dias cadastrados como feriados
 	 */
-	public static int getFeriados(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
+	public static int getHolidays(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
 		if (pConexao == null
 		 || pDataInicio == null
 		 || pDataFim == null){
@@ -1043,82 +1079,24 @@ public class DBSDate{
 		Date	xDataFim;
 		
 		//Recupera feriados nacionais(onde o ano é 1000)
-		xDataInicio =  toDate(getDia(pDataInicio), getMes(pDataInicio), 1000);
-		xDataFim =  toDate(getDia(pDataFim), getMes(pDataFim), 1000);
+		xDataInicio =  toDate(getDay(pDataInicio), getMonth(pDataInicio), 1000);
+		xDataFim =  toDate(getDay(pDataFim), getMonth(pDataFim), 1000);
 		
 		//Recupera feriados nacionais
-		xDias = pvGetFeriados(pConexao, xDataInicio, xDataFim, pCidade, pApplicationColumnName);
+		xDias = pvGetHolidays(pConexao, xDataInicio, xDataFim, pCidade, pApplicationColumnName);
 		
-		xDias += pvGetFeriados(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName);
+		xDias += pvGetHolidays(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName);
 		return xDias;
 
 	}
 	
-	/**
-	 * Retorna a quantidade de feriados entre duas datas.<br/>
-	 * Feriados cadastrados em finais de semana serão ignorados.
-	 * @param pConexao Conexão com banco de dados
-	 * @param pDataInicio Data Inicial
-	 * @param pDataFim Data Final
-	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
-	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
-	 * @param pApplicationColumnName ex:Renda Fixa - RF
-	 * 								 ex:Renda Variavel - RV
-	 * @return Quantidade de dias cadastrados como feriados
-	 */
-	private static int pvGetFeriados(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
-		if (DBSSDK.TABLE.FERIADO.equals("")){
-			wLogger.error("DBSSDK.TABLE.FERIADO em branco, Favor informar o tarefa que contém o cadastro de feriados.");
-			return 0;
-		}
-		String 			xSql;
-		String 			xFiltroCidade= "";
-		Integer 		xDias = 0;
-		DBSDAO<Object> 	xDao = new DBSDAO<Object>(pConexao);
-		xSql = "SELECT * FROM " + DBSSDK.TABLE.FERIADO + " ";
-		
-		if (pDataInicio.after(pDataFim)) {
-			xSql += "WHERE DATA >=" + DBSIO.toSQLDate(pConexao, pDataFim) + 
-					 " AND DATA <" + DBSIO.toSQLDate(pConexao, pDataInicio) ;
-		} else {
-			xSql += "WHERE DATA >" + DBSIO.toSQLDate(pConexao, pDataInicio) + 
-					 " AND DATA <=" + DBSIO.toSQLDate(pConexao, pDataFim) ;
-		}
-		if (DBSObject.isIdValid(pCidade)) {
-			xFiltroCidade = " OR CIDADE_ID = " + pCidade;
-		}
-		xSql += " AND (" + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + " OR CIDADE_ID = -1 " + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
-
-		//ALBERTO
-		//Trecho para retirar os feriados que caem no sábado ou domingo
-		if (!DBSObject.isEmpty(pApplicationColumnName)) {
-			xSql += " AND "+ pApplicationColumnName + " = -1";
-		}
-		try {
-			if (xDao.open(xSql)) {
-				xDao.moveBeforeFirstRow();
-				while (xDao.moveNextRow()) {
-					//Se feriado for final de semana, ignora
-					if (DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SATURDAY
-					 && DBSDate.getNumeroDaSemana(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SUNDAY) {
-			            xDias += 1;
-					}
-				}
-				xDao.close();
-			}
-		} catch (DBSIOException e) {
-			wLogger.error(e);
-		}
-		return xDias;
-	}
-
 	/**
 	 * Retorna quantidade de domingos e sábados entre duas datas.
 	 * @param pDataInicio Data Inicial
 	 * @param pDataFim Data Final
 	 * @return Quantidade de domingos e sábados
 	 */
-	public static int getFinaisDeSemana(Date pDataInicio, Date pDataFim){
+	public static int getWeekends(Date pDataInicio, Date pDataFim){
 		Double xDiasI;
 		Double xDiasF;
 		int xDias;
@@ -1151,44 +1129,6 @@ public class DBSDate{
 		return xDias;
 	}
 	/**
-	 * Calcula a quantidade de dias corridos/úteis no ano informado.
-	 * @param pConexao Conexão com banco de dados
-	 * @param pAno Ano 
-	 * @param pUtil indicativo se é dia útil(True) ou não(False)
-	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
-	 * 			      Código da cidade como -1 indica que será pesquisado feriado Nacional
-	 * @return Quantidade de dias do ano informado
-	 */
-	public static int getDiasDoAno(Connection pConexao, int pAno, boolean pUtil, int pCidade, String pApplicationColumnName){
-		Date xInicio = DBSDate.toDate("31","12", String.valueOf(pAno - 1));
-		Date xFim = DBSDate.toDate("31","12", String.valueOf(pAno));
-		return DBSDate.getDias(pConexao, xInicio, xFim, pUtil, pCidade, pApplicationColumnName);
-	}
-
-	/**
-	 * Chama o metodo getDiasDoAno().
-	 * @param pConexao Conexão com banco de dados
-	 * @param pAno Ano 
-	 * @param pUtil indicativo se é dia útil(True) ou não(False)
-	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
-	 * 			      Código da cidade como -1 indica que será pesquisado feriado Nacional
-	 * @return Quantidade de dias do ano informado
-	 */
-	public static int getDiasDoAno(Connection pConexao, int pAno, boolean pUtil, int pCidade){
-		return getDiasDoAno(pConexao, pAno, pUtil, pCidade, null);
-	}
-	/**
-	 * Chama o metodo getDiasDoAno(), considerando cidade_id = -1
-	 * @param pConexao Conexão com banco de dados
-	 * @param pAno Ano 
-	 * @param pUtil indicativo se é dia útil(True) ou não(False)
-	 * @return Quantidade de dias do ano informado
-	 */
-	public static int getDiasDoAno(Connection pConexao, int pAno, boolean pUtil){
-		return getDiasDoAno(pConexao, pAno, pUtil, -1);
-	}
-
-	/**
 	 * Retorna uma Data a partir de uma data base e um prazo.
 	 * Chama o metodo getProximaData(), considerando cidade_id = -1 e pApplicationColumnName = null.
 	 * @param pConexao Conexao do banco de dados
@@ -1198,8 +1138,8 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @return Próxima data
 	 */
-	public static Date getProximaData(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil){
-		return getProximaData(pConexao, pDataBase, pPrazo, pUtil, -1, null);
+	public static Date getNextDate(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil){
+		return getNextDate(pConexao, pDataBase, pPrazo, pUtil, -1, null);
 	}
 	
 	/**
@@ -1214,8 +1154,8 @@ public class DBSDate{
 	 *                Código da cidade como -1, indica que o serão considerados somente feriados nacionais
 	 * @return Próxima data
 	 */
-	public static Date getProximaData(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil, int pCidade){
-		return getProximaData(pConexao, pDataBase, pPrazo, pUtil, pCidade, null);
+	public static Date getNextDate(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil, int pCidade){
+		return getNextDate(pConexao, pDataBase, pPrazo, pUtil, pCidade, null);
 	}
 	
 	/**
@@ -1230,7 +1170,7 @@ public class DBSDate{
 	 * @param pApplicationColumnName Nome da Coluna de aplicação específica
 	 * @return Próxima data
 	 */
-	public static Date getProximaData(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil, int pCidade, String pApplicationColumnName){
+	public static Date getNextDate(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil, int pCidade, String pApplicationColumnName){
 		Date xDataFim = pDataBase;
 
 		if (pDataBase == null){
@@ -1238,8 +1178,8 @@ public class DBSDate{
 		}
 		if (pPrazo == 0){
 			if (pUtil){
-				while (!isDiaUtil(pConexao, xDataFim, pCidade, pApplicationColumnName)) {
-					xDataFim = DBSDate.getDateAdd(xDataFim, 1);
+				while (!isBusinessDay(pConexao, xDataFim, pCidade, pApplicationColumnName)) {
+					xDataFim = DBSDate.addDays(xDataFim, 1);
 				}
 			}
 			return xDataFim;
@@ -1248,7 +1188,7 @@ public class DBSDate{
 			xDataFim = pvGetProximaDataUtil(pConexao,pDataBase,pPrazo,pCidade, pApplicationColumnName);
 			return xDataFim;
 		}else{
-			xDataFim = DBSDate.getDateAdd(xDataFim, pPrazo);
+			xDataFim = DBSDate.addDays(xDataFim, pPrazo);
 			return xDataFim;
 		}
 	}
@@ -1258,13 +1198,13 @@ public class DBSDate{
 	 * @param pData
 	 * @return Retorna o nome do Mês a partir de uma data.
 	 */
-	public static String getNomeDoMesAbreviado(Date pData){
+	public static String getMonthNameShort(Date pData){
 		String xRetorno = "";
 		if (pData == null) {
 			return xRetorno;
 		}
 		DateFormatSymbols xDF= new DateFormatSymbols(new Locale("pt", "BR"));
-    	xRetorno = xDF.getShortMonths()[DBSDate.getMes(pData)];
+    	xRetorno = xDF.getShortMonths()[DBSDate.getMonth(pData)];
 		return xRetorno; 
 	}
 	
@@ -1273,19 +1213,19 @@ public class DBSDate{
 	 * @param pData
 	 * @return Retorna o nome do Mês a partir de uma data.
 	 */
-	public static String getNomeDoMes(Date pData){
+	public static String getMonthName(Date pData){
 		String xRetorno = "";
 		if (pData == null) {
 			return xRetorno;
 		}
-		return getNomeDosMeses()[DBSDate.getMes(pData)-1];// xRetorno; 
+		return getMonthsNames()[DBSDate.getMonth(pData)-1];// xRetorno; 
 	}	
 
 	/**
 	 * Retorna array com os nomes de todos os meses
 	 * @return
 	 */
-	public static String[] getNomeDosMeses(){
+	public static String[] getMonthsNames(){
 		DateFormatSymbols xDF= new DateFormatSymbols(new Locale("pt", "BR"));
 //		DateFormatSymbols xDF = new DateFormatSymbols();
     	return xDF.getMonths();
@@ -1296,8 +1236,8 @@ public class DBSDate{
 	 * @param pData
 	 * @return Nome da semana a partir de uma data.
 	 */
-	public static String getNomeDaSemana(Date pData){
-	    int xDiaSemana = getNumeroDaSemana(pData);
+	public static String getWeekdayName(Date pData){
+	    int xDiaSemana = getWeekdayNumber(pData);
 	    String xRetorno = "";
     
 	    if (xDiaSemana==-1) {
@@ -1313,8 +1253,8 @@ public class DBSDate{
 	 * @param pData
 	 * @return Nome da semana a partir de uma data.
 	 */
-	public static String getNomeDaSemanaAbreviado(Date pData){
-	    int xDiaSemana = getNumeroDaSemana(pData);
+	public static String getWeekdayNameShort(Date pData){
+	    int xDiaSemana = getWeekdayNumber(pData);
 	    String xRetorno = "";
     
 	    if (xDiaSemana==-1) {
@@ -1332,13 +1272,13 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @return
 	 */
-	public static Date getPrimeiroDiaDoMes(Connection pConexao, Date pData, boolean pUtil){
+	public static Date getFirstDayOfTheMonth(Connection pConexao, Date pData, boolean pUtil){
 		if (pData == null){
 			return null;
 		}
 		Calendar xData = toCalendar(pData);
 		pData = toDate(01,xData.get(Calendar.MONTH)+1,xData.get(Calendar.YEAR));
-		return getProximaData(pConexao, pData, 0, pUtil);
+		return getNextDate(pConexao, pData, 0, pUtil);
 	}
 	/**
 	 * Retorna último dia do Mês.
@@ -1347,7 +1287,7 @@ public class DBSDate{
 	 * @param pUtil  Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @return
 	 */
-	public static Date getUltimoDiaDoMes(Connection pConexao, Date pData, boolean pUtil){
+	public static Date getLastDayOfTheMonth(Connection pConexao, Date pData, boolean pUtil){
 		if (pData == null){
 			return null;
 		}
@@ -1355,10 +1295,86 @@ public class DBSDate{
 		//Encontra o próximo mês
 		xData.add(Calendar.MONTH, 1);
 		//Encontra o primeiro dia do próximo mês
-		pData = getPrimeiroDiaDoMes(pConexao, toDate(xData), false);
+		pData = getFirstDayOfTheMonth(pConexao, toDate(xData), false);
 		//Encontra o dia anterior
-		return getProximaData(pConexao, pData, -1, pUtil);
+		return getNextDate(pConexao, pData, -1, pUtil);
 	}
+	/**
+	 * Retorna o primeiro dia do ano
+	 * @param pData Data a partir do qual será efetuado o cálculo do primeiro dia do ano
+	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
+	 * @return Primeiro dia do ano
+	 */
+	public static Date getFirstDayOfTheYear(Connection pConexao, Date pData, boolean pUtil) {
+		if (pData == null){
+			return null;
+		}
+		Calendar xData = toCalendar(pData);
+		//Primeiro dia do ano
+		pData = toDate(1,1,xData.get(Calendar.YEAR));
+		//Retorna o próximo dia util caso pUtil=true
+		if (pUtil){
+			return getNextDate(pConexao, pData, 0, pUtil);
+		}
+		return pData;
+	}
+
+	/**
+	 * Retorna Último dia do Ano
+	 * @param pData Data a partir do qual será efetuado o cálculo do último dia do ano
+	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
+	 * @return Último dia do Ano
+	 */
+	public static Date getLastDayOfTheYear(Connection pConexao, Date pData, boolean pUtil){
+		if (pData == null){
+			return null;
+		}
+		Calendar xData = toCalendar(pData);
+		//Primeiro Dia do ano Seguinte
+		pData = toDate(1,1,xData.get(Calendar.YEAR)+1);
+		//Menos um dia
+		return getNextDate(pConexao, pData,-1,pUtil);  
+	}
+
+	/**
+	 * Calcula a quantidade de dias corridos/úteis no ano informado.
+	 * @param pConexao Conexão com banco de dados
+	 * @param pAno Ano 
+	 * @param pUtil indicativo se é dia útil(True) ou não(False)
+	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
+	 * 			      Código da cidade como -1 indica que será pesquisado feriado Nacional
+	 * @return Quantidade de dias do ano informado
+	 */
+	public static int getDaysOfTheYear(Connection pConexao, int pAno, boolean pUtil, int pCidade, String pApplicationColumnName){
+		Date xInicio = DBSDate.toDate("31","12", String.valueOf(pAno - 1));
+		Date xFim = DBSDate.toDate("31","12", String.valueOf(pAno));
+		return DBSDate.getDays(pConexao, xInicio, xFim, pUtil, pCidade, pApplicationColumnName);
+	}
+
+	/**
+	 * Chama o metodo getDiasDoAno().
+	 * @param pConexao Conexão com banco de dados
+	 * @param pAno Ano 
+	 * @param pUtil indicativo se é dia útil(True) ou não(False)
+	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
+	 * 			      Código da cidade como -1 indica que será pesquisado feriado Nacional
+	 * @return Quantidade de dias do ano informado
+	 */
+	public static int getDaysOfTheYear(Connection pConexao, int pAno, boolean pUtil, int pCidade){
+		return getDaysOfTheYear(pConexao, pAno, pUtil, pCidade, null);
+	}
+
+	/**
+	 * Chama o metodo getDiasDoAno(), considerando cidade_id = -1
+	 * @param pConexao Conexão com banco de dados
+	 * @param pAno Ano 
+	 * @param pUtil indicativo se é dia útil(True) ou não(False)
+	 * @return Quantidade de dias do ano informado
+	 */
+	public static int getDaysOfTheYear(Connection pConexao, int pAno, boolean pUtil){
+		return getDaysOfTheYear(pConexao, pAno, pUtil, -1);
+	}
+
 	/**
 	 * Calcula a quantidade de dias corridos/úteis do mês
 	 * @param pData Data a partir do qual será efetuado o cálculo dos dias do mês
@@ -1368,15 +1384,15 @@ public class DBSDate{
 	 * 								 Renda Variavel - RV
 	 * @return Quantidade de dias do mês
 	 */
-	public static int getDiasDoMes(Connection pConexao, Date pData, boolean pUtil, int pCidade, String pApplicationColumnName) {
+	public static int getDaysOfTheMonth(Connection pConexao, Date pData, boolean pUtil, int pCidade, String pApplicationColumnName) {
 		if (pData == null){
 			return 0;
 		}
-		Date xInicio = getPrimeiroDiaDoMes(pConexao, pData, false);
-		Date xFim = getUltimoDiaDoMes(pConexao, pData, false);
+		Date xInicio = getFirstDayOfTheMonth(pConexao, pData, false);
+		Date xFim = getLastDayOfTheMonth(pConexao, pData, false);
 		//Ultimo dia do mês anterior
-		xInicio = getProximaData(pConexao, xInicio,-1,false, pCidade); 
-		return getDias(pConexao, xInicio, xFim, pUtil, pCidade, pApplicationColumnName);
+		xInicio = getNextDate(pConexao, xInicio,-1,false, pCidade); 
+		return getDays(pConexao, xInicio, xFim, pUtil, pCidade, pApplicationColumnName);
 	}
 	
 	/**
@@ -1387,8 +1403,8 @@ public class DBSDate{
 	 * @param pCidade Código da cidade que será utilizada para considerar os dias úteis
 	 * @return
 	 */
-	public static int getDiasDoMes(Connection pConexao, Date pData, boolean pUtil, int pCidade) {
-		return getDiasDoMes(pConexao, pData, pUtil, pCidade, null);
+	public static int getDaysOfTheMonth(Connection pConexao, Date pData, boolean pUtil, int pCidade) {
+		return getDaysOfTheMonth(pConexao, pData, pUtil, pCidade, null);
 	}
 	
 	/**
@@ -1397,53 +1413,16 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
 	 * @return Quantidade de dias do mês
 	 */
-	public static int getDiasDoMes(Connection pConexao, Date pData, boolean pUtil) {
-		return getDiasDoMes(pConexao, pData, pUtil, -1);
+	public static int getDaysOfTheMonth(Connection pConexao, Date pData, boolean pUtil) {
+		return getDaysOfTheMonth(pConexao, pData, pUtil, -1);
 	}
 
-	/**
-	 * Retorna Último dia do Ano
-	 * @param pData Data a partir do qual será efetuado o cálculo do último dia do ano
-	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
-	 * @return Último dia do Ano
-	 */
-	public static Date getUltimoDiaDoAno(Connection pConexao, Date pData, boolean pUtil){
-		if (pData == null){
-			return null;
-		}
-		Calendar xData = toCalendar(pData);
-		//Primeiro Dia do ano Seguinte
-		pData = toDate(1,1,xData.get(Calendar.YEAR)+1);
-		//Menos um dia
-		return getProximaData(pConexao, pData,-1,pUtil);  
-	}
-	
-	/**
-	 * Retorna o primeiro dia do ano
-	 * @param pData Data a partir do qual será efetuado o cálculo do primeiro dia do ano
-	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia Corrido(False)
-	 * @return Primeiro dia do ano
-	 */
-	public static Date getPrimeiroDiaDoAno(Connection pConexao, Date pData, boolean pUtil) {
-		if (pData == null){
-			return null;
-		}
-		Calendar xData = toCalendar(pData);
-		//Primeiro dia do ano
-		pData = toDate(1,1,xData.get(Calendar.YEAR));
-		//Retorna o próximo dia util caso pUtil=true
-		if (pUtil){
-			return getProximaData(pConexao, pData, 0, pUtil);
-		}
-		return pData;
-	}
-	
 	/**
 	 * Retorna o número que representa o dia da semana onde 1-domingo/2-Segunda/etc 
 	 * @param pData
 	 * @return número do dia da semana
 	 */
-	public static int getNumeroDaSemana(Date pData){
+	public static int getWeekdayNumber(Date pData){
 	    Calendar xCalendar = Calendar.getInstance();   
 	    if (pData == null) {
 	    	return -1;
@@ -1457,8 +1436,8 @@ public class DBSDate{
 	 * @param pMes Número do mês e número <b>0</b>(zero) caso não encontre.
 	 * @return Número do mês
 	 */
-	public static int getNumeroDoMes(String pMes){
-		String[] xMeses = DBSDate.getNomeDosMeses();
+	public static int getWeekdayNumber(String pMes){
+		String[] xMeses = DBSDate.getMonthsNames();
 		int xI = 0;
 		//Uniformiza texto
 		pMes = pMes.trim().toUpperCase();
@@ -1518,8 +1497,8 @@ public class DBSDate{
 	 * @param pMes Número do mês e número <b>0</b>(zero) caso não encontre.
 	 * @return Número do mês
 	 */
-	public static int getNumeroDoMesCurto(String pMes){
-		String[] xMeses = DBSDate.getNomeDosMeses();
+	public static int getMonthNumberFromShortMonthName(String pMes){
+		String[] xMeses = DBSDate.getMonthsNames();
 		int xI = 0;
 		//Uniformiza texto
 		pMes = pMes.trim().toUpperCase();
@@ -1548,7 +1527,7 @@ public class DBSDate{
 	 * 								 Renda Variavel - RV
 	 * @return
 	 */
-	public static Date getProximaSemana(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil, int pCidade, String pApplicationColumnName){
+	public static Date getNextWeek(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil, int pCidade, String pApplicationColumnName){
 		if (pDataAtual == null){
 			return null;
 		}
@@ -1556,21 +1535,21 @@ public class DBSDate{
 			return null;			
 		}
 		//Calcula um data aproximada a data desejada
-		pDataAtual = getProximaData(pConexao, pDataAtual, pPrazo, false, pCidade);
+		pDataAtual = getNextDate(pConexao, pDataAtual, pPrazo, false, pCidade);
 		Calendar xData = toCalendar(pDataAtual);
 		//Loop até encontrar a data que seja do dia da semana selecionado
 		while (xData.get(Calendar.DAY_OF_WEEK) != pDiaDaSemana) {
-			pDataAtual = getProximaData(pConexao, toDate(xData), 1, false, pCidade);
+			pDataAtual = getNextDate(pConexao, toDate(xData), 1, false, pCidade);
 			xData.setTime(pDataAtual);
 		} 
 		//Se for busca uma data útil e a data encontrada não for dia útil... 
-		if (pUtil && !isDiaUtil(pConexao, pDataAtual, pCidade, pApplicationColumnName)){
+		if (pUtil && !isBusinessDay(pConexao, pDataAtual, pCidade, pApplicationColumnName)){
 			int xSinal=1;
 			if (pPrazo<0){
 				xSinal=-1;
 			}
 			//Procura próxima data util
-			pDataAtual = getProximaData(pConexao, pDataAtual, xSinal, true, pCidade);		
+			pDataAtual = getNextDate(pConexao, pDataAtual, xSinal, true, pCidade);		
 		}
 		return pDataAtual;
 	}
@@ -1585,8 +1564,8 @@ public class DBSDate{
 	 * @param pCidade Código da cidade que será utilizada para considerar os dias úteis
 	 * @return
 	 */
-	public static Date getProximaSemana(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil, int pCidade){
-		return getProximaSemana(pConexao, pDataAtual, pPrazo, pDiaDaSemana, pUtil, pCidade, null);
+	public static Date getNextWeek(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil, int pCidade){
+		return getNextWeek(pConexao, pDataAtual, pPrazo, pDiaDaSemana, pUtil, pCidade, null);
 	}
 
 	/**
@@ -1598,8 +1577,8 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia corrido(False);
 	 * @return
 	 */
-	public static Date getProximaSemana(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil){
-		return getProximaSemana(pConexao, pDataAtual, pPrazo, pDiaDaSemana, pUtil, -1);
+	public static Date getNextWeek(Connection pConexao, Date pDataAtual, int pPrazo, int pDiaDaSemana, boolean pUtil){
+		return getNextWeek(pConexao, pDataAtual, pPrazo, pDiaDaSemana, pUtil, -1);
 	}
 
 	/**
@@ -1612,7 +1591,7 @@ public class DBSDate{
 	 * @param pCidade Código da Cidade que será utilizada para considerar os dias úteis.
 	 * @return Data do próximo aniversário
 	 */
-	public static Date getProximoAniversario(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil, int pCidade, String pApplicationColumnName){
+	public static Date getNextAnniversary(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil, int pCidade, String pApplicationColumnName){
 		if (pData == null 
 		 || pPeriodicidade == null){
 			return null;
@@ -1625,7 +1604,7 @@ public class DBSDate{
 		} else if (pPeriodicidade == PERIODICIDADE.ANUAL) {
 			xData.add(Calendar.YEAR, pPrazo);
 		}
-		return getProximaData(pConexao, toDate(xData), 0, pUtil, pCidade, pApplicationColumnName);		
+		return getNextDate(pConexao, toDate(xData), 0, pUtil, pCidade, pApplicationColumnName);		
 	}
 	
 	/**
@@ -1637,8 +1616,8 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia corrido(False)
 	 * @return Data do próximo aniversário
 	 */
-	public static Date getProximoAniversario(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil, int pCidade){
-		return getProximoAniversario(pConexao, pData, pPrazo, pPeriodicidade, pUtil, pCidade, null);
+	public static Date getNextAnniversary(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil, int pCidade){
+		return getNextAnniversary(pConexao, pData, pPrazo, pPeriodicidade, pUtil, pCidade, null);
 	}
 	
 	/**
@@ -1650,8 +1629,8 @@ public class DBSDate{
 	 * @param pUtil Indica se o cálculo será em dia útil(True) ou dia corrido(False)
 	 * @return Data do próximo aniversário
 	 */
-	public static Date getProximoAniversario(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil){
-		return getProximoAniversario(pConexao, pData, pPrazo, pPeriodicidade, pUtil, -1);		
+	public static Date getNextAnniversary(Connection pConexao, Date pData, int pPrazo, PERIODICIDADE pPeriodicidade, boolean pUtil){
+		return getNextAnniversary(pConexao, pData, pPrazo, pPeriodicidade, pUtil, -1);		
 	}	
 	
 //	public static Date getVencimento(Connection pConexao, int pParcela, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, int pPrazo, boolean pUtil, String pApplicationColumnName){
@@ -1672,59 +1651,23 @@ public class DBSDate{
 	 * @param pConexao Conexão do banco de dados
 	 * @return
 	 */
-	public static Date getVencimento(Connection pConnection, Integer pParcelas, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, Integer pPrazo, boolean pUtil, String pApplicationColumnName) {
+	public static Date getDueDate(Connection pConnection, Integer pParcelas, Date pPrimeiraParcela, PERIODICIDADE pPeriodicidade, Integer pPrazo, boolean pUtil, String pApplicationColumnName) {
 		Date xVencimento = pPrimeiraParcela;
 		
 	    if (DBSObject.isEmpty(xVencimento)) return xVencimento;
 	    if (PERIODICIDADE.DIARIA.equals(pPeriodicidade)) {
-	        xVencimento = DBSDate.getProximaData(pConnection, xVencimento, pPrazo * (pParcelas - 1), false, -1, pApplicationColumnName);
+	        xVencimento = DBSDate.getNextDate(pConnection, xVencimento, pPrazo * (pParcelas - 1), false, -1, pApplicationColumnName);
 	        if (pUtil) {
-	            if (!DBSDate.isDiaUtil(pConnection, xVencimento, -1)) {
-	                xVencimento = DBSDate.getProximaData(pConnection, xVencimento, 1, true, -1, pApplicationColumnName);
+	            if (!DBSDate.isBusinessDay(pConnection, xVencimento, -1)) {
+	                xVencimento = DBSDate.getNextDate(pConnection, xVencimento, 1, true, -1, pApplicationColumnName);
 	            }
 	        }
 		} else {
-	        xVencimento = DBSDate.getProximoAniversario(pConnection, xVencimento, pPrazo * DBSNumber.toInteger(pParcelas - 1), pPeriodicidade, pUtil, -1, pApplicationColumnName);
+	        xVencimento = DBSDate.getNextAnniversary(pConnection, xVencimento, pPrazo * DBSNumber.toInteger(pParcelas - 1), pPeriodicidade, pUtil, -1, pApplicationColumnName);
 		}
 		return xVencimento;
 	}
 	
-	/**
-	 * Adiciona minutos a uma data informada.
-	 * @param Data e Hora
-	 * @param pMinutes
-	 * @return
-	 */
-	public static Date getDateAddMinutes(Date pDate, int pMinutes){
-		LocalDateTime xDT = new LocalDateTime(pDate);
-		xDT = xDT.plusMinutes(pMinutes);
-		return DBSDate.toDate(xDT.toDateTime());
-	}
-	
-	/**
-	 * Adiciona minutos a uma data informada.
-	 * @param Data e Hora
-	 * @param pMinutes
-	 * @return
-	 */
-	public static Date getTimestampAddMinutos(Timestamp pDate, int pMinutes){
-		Date xDate = DBSDate.toDate(pDate);
-		return getDateAddMinutes(xDate, pMinutes);
-	}
-
-	/**
-	 * Adiciona minutos a uma data informada.
-	 * @param pDate Data e Hora
-	 * @param pSeconds
-	 * @return
-	 */
-	public static Date getDateAddSeconds(Date pDate, int pSeconds){
-		LocalDateTime xDT = new LocalDateTime(pDate);
-		xDT = xDT.plusSeconds(pSeconds);
-		return DBSDate.toDate(xDT.toDateTime());
-	}
-	
-
 	/**
      * Parse de string para data.
      * @param pValue String no formato YYYYMMDD.
@@ -1753,13 +1696,82 @@ public class DBSDate{
 		return xData;
 	}
 
+	/**
+	 * Retorna o Date no dia primeiro da Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @param pDate Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @return
+	 */
+	public static Date toDateMYY(String pDate) {
+		int xMes = getMonthNumberFromShortMonthName(DBSString.getSubString(pDate, 1, 3));
+		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
+		return toDate(01, xMes, xAno);
+	}
+
+	/**
+	 * Retorna a quantidade de feriados entre duas datas.<br/>
+	 * Feriados cadastrados em finais de semana serão ignorados.
+	 * @param pConexao Conexão com banco de dados
+	 * @param pDataInicio Data Inicial
+	 * @param pDataFim Data Final
+	 * @param pCidade Código da Cidade que se deseja pesquisar o feriado
+	 *                Código da cidade como -1 indica que será pesquisado feriado Nacional
+	 * @param pApplicationColumnName ex:Renda Fixa - RF
+	 * 								 ex:Renda Variavel - RV
+	 * @return Quantidade de dias cadastrados como feriados
+	 */
+	private static int pvGetHolidays(Connection pConexao, Date pDataInicio, Date pDataFim, int pCidade, String pApplicationColumnName) {
+		if (DBSSDK.TABLE.FERIADO.equals("")){
+			wLogger.error("DBSSDK.TABLE.FERIADO em branco, Favor informar o tarefa que contém o cadastro de feriados.");
+			return 0;
+		}
+		String 			xSql;
+		String 			xFiltroCidade= "";
+		Integer 		xDias = 0;
+		DBSDAO<Object> 	xDao = new DBSDAO<Object>(pConexao);
+		xSql = "SELECT * FROM " + DBSSDK.TABLE.FERIADO + " ";
+		
+		if (pDataInicio.after(pDataFim)) {
+			xSql += "WHERE DATA >=" + DBSIO.toSQLDate(pConexao, pDataFim) + 
+					 " AND DATA <" + DBSIO.toSQLDate(pConexao, pDataInicio) ;
+		} else {
+			xSql += "WHERE DATA >" + DBSIO.toSQLDate(pConexao, pDataInicio) + 
+					 " AND DATA <=" + DBSIO.toSQLDate(pConexao, pDataFim) ;
+		}
+		if (DBSObject.isIdValid(pCidade)) {
+			xFiltroCidade = " OR CIDADE_ID = " + pCidade;
+		}
+		xSql += " AND (" + DBSIO.toSQLNull(pConexao, "CIDADE_ID") + " OR CIDADE_ID = -1 " + xFiltroCidade + ")";// Objetivo: Retorna quantidade de feriados em dias
+	
+		//ALBERTO
+		//Trecho para retirar os feriados que caem no sábado ou domingo
+		if (!DBSObject.isEmpty(pApplicationColumnName)) {
+			xSql += " AND "+ pApplicationColumnName + " = -1";
+		}
+		try {
+			if (xDao.open(xSql)) {
+				xDao.moveBeforeFirstRow();
+				while (xDao.moveNextRow()) {
+					//Se feriado for final de semana, ignora
+					if (DBSDate.getWeekdayNumber(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SATURDAY
+					 && DBSDate.getWeekdayNumber(DBSDate.toDate(xDao.getValue("DATA"))) != Calendar.SUNDAY) {
+			            xDias += 1;
+					}
+				}
+				xDao.close();
+			}
+		} catch (DBSIOException e) {
+			wLogger.error(e);
+		}
+		return xDias;
+	}
+
 	//========================================================================================
 	// privates
 	//========================================================================================
 	private static Date pvGetProximaDataUtil(Connection pConexao, Date pDataBase, int pPrazo, int pCidade, String pApplicationColumnName){
-		Date xDataFim = DBSDate.getDateAdd(pDataBase, pPrazo);
-		int xDiasNaoUteis = getFinaisDeSemana(pDataBase, xDataFim) + 
-				            getFeriados(pConexao, pDataBase, xDataFim, pCidade, pApplicationColumnName);
+		Date xDataFim = DBSDate.addDays(pDataBase, pPrazo);
+		int xDiasNaoUteis = getWeekends(pDataBase, xDataFim) + 
+				            getHolidays(pConexao, pDataBase, xDataFim, pCidade, pApplicationColumnName);
 		if (pPrazo < 0){
 			xDiasNaoUteis = -xDiasNaoUteis; 
 		}
@@ -1785,17 +1797,6 @@ public class DBSDate{
 			return null;
 		}   
 		return xDate;
-	}
-
-	/**
-	 * Retorna o Date no dia primeiro da Data no formato mes/ano (Ex.: mar/15, fev/15)
-	 * @param pDate Data no formato mes/ano (Ex.: mar/15, fev/15)
-	 * @return
-	 */
-	public static Date toDateMYY(String pDate) {
-		int xMes = getNumeroDoMesCurto(DBSString.getSubString(pDate, 1, 3));
-		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
-		return toDate(01, xMes, xAno);
 	}
 
 }
