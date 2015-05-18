@@ -2,6 +2,9 @@ package br.com.dbsoft.util;
 
 public class DBSHtml {
 	
+//	private static Logger		wLogger = Logger.getLogger(DBSHtml.class);
+	
+
 	/**
 	 * Retorna html contendo o valor em informado <b>pValue</b> dento do tag informada em <b>pTag</b>.<br/>
 	 * O tag <b>não</b> deve vir com os sinais <br/>.
