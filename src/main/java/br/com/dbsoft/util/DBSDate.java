@@ -410,6 +410,45 @@ public class DBSDate{
 	}
 
 	/**
+	 * Parse de string para data.
+	 * @param pValue String no formato YYYYMMDD.
+	 * @return Date
+	 */
+	public static Date toDateYYYYMMDD(String pValue) {
+		Date xData = null;
+		String xAno = DBSString.getSubString(pValue, 1, 4);
+		String xMes = DBSString.getSubString(pValue, 5, 2);
+		String xDia = DBSString.getSubString(pValue, 7, 2);
+		xData = toDate(xDia, xMes, xAno);
+		return xData;
+	}
+
+	/**
+	* Parse de string para data.
+	* @param pValue String no formato YYMMDD.
+	* @return Date
+	*/
+	public static Date toDateYYMMDD(String pValue) {
+		Date xData = null;
+		String xAno = DBSString.getSubString(pValue, 1, 2);
+		String xMes = DBSString.getSubString(pValue, 3, 2);
+		String xDia = DBSString.getSubString(pValue, 5, 2);
+		xData = toDate(xDia, xMes, xAno);
+		return xData;
+	}
+
+	/**
+	 * Retorna o Date no dia primeiro da Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @param pDate Data no formato mes/ano (Ex.: mar/15, fev/15)
+	 * @return
+	 */
+	public static Date toDateMYY(String pDate) {
+		int xMes = getMonthNumberFromShortMonthName(DBSString.getSubString(pDate, 1, 3));
+		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
+		return toDate(01, xMes, xAno);
+	}
+
+	/**
 	 * Retorna uma Data do tipo Timestamp, a partir de uma data do tipo Date.
 	 * @param pData
 	 * @return
@@ -865,7 +904,8 @@ public class DBSDate{
 	}
 
 	/**
-	 * Calcula a data a partir da database adicionada de dias
+	 * Calcula a data a partir da database adicionada de dias.<br/>
+	 * Horário, se houver, será desprezado.
 	 * @param pDataBase Data base
 	 * @param pPrazo em dias
 	 * @return Data
@@ -878,6 +918,36 @@ public class DBSDate{
 				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
 				xDT = xDT.plusDays(pPrazo);
 				return DBSDate.toDate(xDT); 
+		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
+		        
+			}
+		}else{
+			return null;
+		}
+	}
+
+	/**
+	 * Calcula a data a partir da database adicionada de dias.<br/>
+	 * @param pDataBase
+	 * @param pPrazo
+	 * @param pIncludeTime Se considera a hora
+	 * @return Data
+	 * @return
+	 */
+	public static Date addDays(Date pDataBase, int pPrazo, Boolean pIncludeTime){
+		if (pDataBase!=null){
+			if (pPrazo==0){
+				return pDataBase;
+			}else{
+				if (pIncludeTime){
+					LocalDateTime xDT = new DateTime(pDataBase).toLocalDateTime();
+					xDT = xDT.plusDays(pPrazo);
+					return DBSDate.toDate(xDT.toDateTime()); 
+				}else{
+					LocalDate xDT = new DateTime(pDataBase).toLocalDate();
+					xDT = xDT.plusDays(pPrazo);
+					return DBSDate.toDate(xDT); 
+				}
 		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
 		        
 			}
@@ -928,6 +998,18 @@ public class DBSDate{
 		}else{
 			return null;
 		}
+	}
+
+	/**
+	 * Adiciona horas a uma data informada.
+	 * @param Data e Hora
+	 * @param pMinutes
+	 * @return
+	 */
+	public static Date addHour(Date pDate, int pHour){
+		LocalDateTime xDT = new LocalDateTime(pDate);
+		xDT = xDT.plusHours(pHour);
+		return DBSDate.toDate(xDT.toDateTime());
 	}
 
 	/**
@@ -1668,45 +1750,6 @@ public class DBSDate{
 		return xVencimento;
 	}
 	
-	/**
-     * Parse de string para data.
-     * @param pValue String no formato YYYYMMDD.
-     * @return Date
-     */
-	public static Date toDateYYYYMMDD(String pValue) {
-		Date xData = null;
-		String xAno = DBSString.getSubString(pValue, 1, 4);
-		String xMes = DBSString.getSubString(pValue, 5, 2);
-		String xDia = DBSString.getSubString(pValue, 7, 2);
-		xData = toDate(xDia, xMes, xAno);
-		return xData;
-	}
-	
-	/**
-    * Parse de string para data.
-    * @param pValue String no formato YYMMDD.
-    * @return Date
-    */
-	public static Date toDateYYMMDD(String pValue) {
-		Date xData = null;
-		String xAno = DBSString.getSubString(pValue, 1, 2);
-		String xMes = DBSString.getSubString(pValue, 3, 2);
-		String xDia = DBSString.getSubString(pValue, 5, 2);
-		xData = toDate(xDia, xMes, xAno);
-		return xData;
-	}
-
-	/**
-	 * Retorna o Date no dia primeiro da Data no formato mes/ano (Ex.: mar/15, fev/15)
-	 * @param pDate Data no formato mes/ano (Ex.: mar/15, fev/15)
-	 * @return
-	 */
-	public static Date toDateMYY(String pDate) {
-		int xMes = getMonthNumberFromShortMonthName(DBSString.getSubString(pDate, 1, 3));
-		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
-		return toDate(01, xMes, xAno);
-	}
-
 	/**
 	 * Retorna a quantidade de feriados entre duas datas.<br/>
 	 * Feriados cadastrados em finais de semana serão ignorados.
