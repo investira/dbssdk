@@ -1,7 +1,7 @@
 package br.com.dbsoft.util;
 
 /**
- * Artifício para enviar e retornar valor como parametro.
+ * Artifício para enviar e <b>retornar</b> valor como parametro.
  * @author ricardo.villar
  *
  */
