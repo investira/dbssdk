@@ -183,6 +183,9 @@ public class DBSEmailSend {
 			for (DBSEmailAddress xEmailAddress:pMessage.getBCC()){
 				pvAddRecipient(xMessage, RecipientType.BCC, xEmailAddress);
 			}
+			if (xMessage.getAllRecipients() == null){
+				return false;
+			}
 			
 			//Texto da mensagem----------
 			xMessage.setSubject(pMessage.getSubject());
