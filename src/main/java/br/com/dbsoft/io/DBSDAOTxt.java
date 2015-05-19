@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import br.com.dbsoft.core.DBSSDK;
+import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.util.DBSIO;
@@ -40,7 +40,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	private String					wColumnsDelimiter;
 	private boolean					wHeaderDefinesColumnsNames;
 	private boolean					wTrimValues = true;
-	private String					wEncode = DBSSDK.FILE.ENCODE.ISO_8859_1;
+	private String					wEncode = ENCODE.ISO_8859_1;
 	private boolean					wKeepData = true;
 	private List<String> 			wColumnsHeader=new ArrayList<String>();
 	private DBSRow					wFixedColumns = new DBSRow();

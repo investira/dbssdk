@@ -112,15 +112,16 @@ public final class DBSSDK {
 			}
 		}
 	}
+
+	public final static class ENCODE{
+		public static final String US_ASCII = "US-ASCII";
+		public static final String UTF_8 = "UTF-8";
+		public static final String ISO_8859_1 = "ISO-8859-1";
+		public static final String ISO_8859_6 = "ISO-8859-6";
+	}
 	
 	public final static class FILE
 	{
-		public final static class ENCODE{
-			public static final String US_ASCII = "US-ASCII";
-			public static final String UTF_8 = "UTF-8";
-			public static final String ISO_8859_1 = "ISO-8859-1";
-			public static final String ISO_8859_6 = "ISO-8859-6";
-		}
 		
 		
 		public enum TYPE{

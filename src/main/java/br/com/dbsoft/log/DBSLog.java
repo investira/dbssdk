@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.dbsoft.core.DBSSDK;
+import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.io.DBSDAOTxt;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
@@ -34,7 +34,7 @@ public class DBSLog implements Serializable {
 	 */
 	public static List<DBSLogModel> loadLogFile(String pArquivoLog) {
 		DBSDAOTxt<DBSLogModel> xDAOTxt = new DBSDAOTxt<DBSLogModel>(pArquivoLog);
-		xDAOTxt.setEncode(DBSSDK.FILE.ENCODE.UTF_8);
+		xDAOTxt.setEncode(ENCODE.UTF_8);
 		xDAOTxt.setColumnsDelimiter(";");
 		xDAOTxt.setHeaderDefinesColumnsNames(false);
 		xDAOTxt.setKeepData(false);
@@ -96,7 +96,7 @@ public class DBSLog implements Serializable {
 		}
 		xData = xData.substring(0, xData.length()-5);
 		
-		xDAOTxt.setEncode(DBSSDK.FILE.ENCODE.UTF_8);
+		xDAOTxt.setEncode(ENCODE.UTF_8);
 //		xDAOTxt.setColumnsDelimiter(";");
 		xDAOTxt.setHeaderDefinesColumnsNames(false);
 		xDAOTxt.setKeepData(false);

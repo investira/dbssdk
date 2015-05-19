@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.com.dbsoft.core.DBSSDK;
+import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
 import br.com.dbsoft.io.DBSDAOTxt.TYPE;
 import br.com.dbsoft.util.DBSBoolean;
@@ -39,8 +40,8 @@ public class TstDAOTxt {
 	
 //	@Test
 	public void test_append() {
-		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
-		DBSDAOTxt<Object> xDAOWrite = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/new.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAOWrite = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/new.txt", DBSSDK.ENCODE.ISO_8859_1);
 	    if (xDAO.loadFile()){
 	    	System.out.println("ABRIU");
 	    	while (xDAO.moveNextRow()){
@@ -73,7 +74,7 @@ public class TstDAOTxt {
 
 //	@Test
 	public void test_loop1() {
-		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/users/jose.avila/downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CIA_ABERTA.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/users/jose.avila/downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CIA_ABERTA.TXT", DBSSDK.ENCODE.ISO_8859_1);
 	    if (xDAO.loadFile()){
 	    	System.out.println("ABRIU");
 	    	while (xDAO.moveNextRow()){
@@ -86,7 +87,7 @@ public class TstDAOTxt {
 
 //	@Test
 	public void test_loop2() {
-		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt<Object> xDAO = new DBSDAOTxt<Object>("/Users/ricardo.villar/ifeed/debentures/pub/debentures.txt", DBSSDK.ENCODE.ISO_8859_1);
 	    if (xDAO.open()){
 	    	System.out.println("ABRIU");
 	    	while (xDAO.readLine()){
@@ -135,13 +136,13 @@ public class TstDAOTxt {
 	
 	//@Test
 	public void test_readAll() throws UnsupportedEncodingException {
-		DBSDAOTxt xDAO = new DBSDAOTxt("/Users/ricardovillar/downloads/cvm/empresas.txt", DBSSDK.FILE.ENCODE.ISO_8859_1);
+		DBSDAOTxt xDAO = new DBSDAOTxt("/Users/ricardovillar/downloads/cvm/empresas.txt", DBSSDK.ENCODE.ISO_8859_1);
 		assertTrue("TESTE ESPERAVA TRUE", xDAO.loadFile());
 	}
 	
 	//@Test
 	public void test_writeAllDelimited() throws UnsupportedEncodingException {
-		DBSDAOTxt xDAO = new DBSDAOTxt("/Users/ricardovillar/Downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CI2.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1,TYPE.DELIMITED_COLUMNS,";",true);
+		DBSDAOTxt xDAO = new DBSDAOTxt("/Users/ricardovillar/Downloads/ifeed/CVM/CIAS_ABERTAS/SPW_CI2.TXT", DBSSDK.ENCODE.ISO_8859_1,TYPE.DELIMITED_COLUMNS,";",true);
 		xDAO.loadFile();
 //		System.out.println(xDAO.getRowsCount()); //2049
 		while(xDAO.moveNextRow()){
@@ -169,7 +170,7 @@ public class TstDAOTxt {
 	
 	//@Test
 	public void test_writeAll() throws UnsupportedEncodingException {
-		DBSDAOTxt xDAORead = new DBSDAOTxt("/Users/ricardovillar/downloads/cvm/empresas.txt", DBSSDK.FILE.ENCODE.ISO_8859_1, TYPE.DELIMITED_COLUMNS,";",  true);
+		DBSDAOTxt xDAORead = new DBSDAOTxt("/Users/ricardovillar/downloads/cvm/empresas.txt", DBSSDK.ENCODE.ISO_8859_1, TYPE.DELIMITED_COLUMNS,";",  true);
 		DBSDAOTxt xDAOWrite = new DBSDAOTxt("/Users/ricardovillar/downloads/cvm/empresas2.txt");
 		xDAORead.setTrimValues(true);
 		String xStr;
@@ -187,7 +188,7 @@ public class TstDAOTxt {
 
 //	@Test
 	public void test_fixedSize() throws UnsupportedEncodingException {
-		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>("/Users/jose.avila/Downloads/BDIN/BDIN.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
+		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>("/Users/jose.avila/Downloads/BDIN/BDIN.TXT", DBSSDK.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
 		xDAORead.setConvertToASCII(true);
 		xDAORead.setHeaderDefinesColumnsNames(false);
 		xDAORead.setKeepData(false);
@@ -200,7 +201,7 @@ public class TstDAOTxt {
 //	@Test
 	public void test_BDIN() throws UnsupportedEncodingException {
 		String xArquivoBDIN = "/Users/jose.avila/Downloads/ifeed/BMF/BDIN/BDIN";
-		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>(xArquivoBDIN, DBSSDK.FILE.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
+		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>(xArquivoBDIN, DBSSDK.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
 		xDAORead.setConvertToASCII(true);
 		xDAORead.setHeaderDefinesColumnsNames(false);
 		xDAORead.setKeepData(false);
@@ -214,7 +215,7 @@ public class TstDAOTxt {
 //	@Test
 	public void test_Selic() throws UnsupportedEncodingException {
 		String xArquivoBDIN = "/Users/jose.avila/Downloads/ifeed/SELIC/20131101ASEL007.TXT";
-		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>(xArquivoBDIN, DBSSDK.FILE.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
+		DBSDAOTxt<Object> xDAORead = new DBSDAOTxt<Object>(xArquivoBDIN, DBSSDK.ENCODE.ISO_8859_1, TYPE.FIXED_COLUMNS);
 		xDAORead.setConvertToASCII(true);
 		xDAORead.setHeaderDefinesColumnsNames(false);
 		xDAORead.setKeepData(false);
@@ -227,7 +228,7 @@ public class TstDAOTxt {
 	
 //	@Test
 	public void test_ANDIMA() throws UnsupportedEncodingException {
-		DBSDAOTxt<Object> xDAOTxt = new DBSDAOTxt<Object>("/Users/jose.avila/Downloads/ifeed/ANDIMA/Ms131101.TXT", DBSSDK.FILE.ENCODE.ISO_8859_1,TYPE.DELIMITED_COLUMNS,"@",false);
+		DBSDAOTxt<Object> xDAOTxt = new DBSDAOTxt<Object>("/Users/jose.avila/Downloads/ifeed/ANDIMA/Ms131101.TXT", ENCODE.ISO_8859_1,TYPE.DELIMITED_COLUMNS,"@",false);
 		xDAOTxt.setConvertToASCII(true);
 		if (xDAOTxt.open()) {
 			while(xDAOTxt.readLine()) {
