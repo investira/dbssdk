@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
+import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSObject;
 
 public class DBSHttp {
@@ -80,36 +81,51 @@ public class DBSHttp {
 	 * Retorna String contendo os parametros sepadados por '&' e codificados em UTF-8 para utilização em requests http
 	 * @param pParams
 	 * @return
+	 * @throws DBSIOException 
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String encodeParams(Map<String, String> pParams) throws UnsupportedEncodingException{
+	public static String encodeParams(Map<String, String> pParams) throws DBSIOException {
 		StringBuilder xString = new StringBuilder();
-		for (String xParametro:pParams.keySet()){
-			xString.append("&");
-			xString.append(xParametro.trim());
-			xString.append("=");
-			xString.append(URLEncoder.encode(pParams.get(xParametro), ENCODE.ISO_8859_1));
+		try {
+			for (String xParametro:pParams.keySet()){
+				xString.append("&");
+				xString.append(xParametro.trim());
+				xString.append("=");
+					String xValue = DBSString.toString(pParams.get(xParametro),"").trim();
+					xString.append(URLEncoder.encode(xValue, ENCODE.ISO_8859_1));
+			}
+			return xString.toString();
+		} catch (UnsupportedEncodingException e) {
+			DBSIO.throwIOException(e);
 		}
-		return xString.toString();
+		return null;
 	}
 	
 	/**
 	 * Retorna lista com o nome do parametro e respectivo valor ja convertidos a partir de UTF-8;
 	 * @param pParams
 	 * @return
+	 * @throws DBSIOException 
 	 * @throws UnsupportedEncodingException
 	 */
-	public static Map<String, String> decodeParams(String pParams) throws UnsupportedEncodingException{
-		Map<String, String> xParams = new HashMap<String, String>();
-		ArrayList<String> xList = DBSString.toArrayList(pParams, "&");
-		for (String xParam: xList){
-			ArrayList<String> xValues = DBSString.toArrayList(xParam, "=");
-			if (!DBSObject.isEmpty(xValues.get(0))
-			 && !DBSObject.isEmpty(xValues.get(1))){
-				xParams.put(URLDecoder.decode(xValues.get(0), ENCODE.ISO_8859_1), URLDecoder.decode(xValues.get(1), ENCODE.ISO_8859_1));
+	public static Map<String, String> decodeParams(String pParams) throws DBSIOException {
+		try {
+			Map<String, String> xParams = new HashMap<String, String>();
+			ArrayList<String> xList = DBSString.toArrayList(pParams, "&");
+			for (String xParam: xList){
+				ArrayList<String> xValues = DBSString.toArrayList(xParam, "=");
+				if (xValues.size() ==  2){
+					if (!DBSObject.isEmpty(xValues.get(0))
+					 && !DBSObject.isEmpty(xValues.get(1))){
+						xParams.put(URLDecoder.decode(xValues.get(0), ENCODE.ISO_8859_1), URLDecoder.decode(xValues.get(1), ENCODE.ISO_8859_1));
+					}
+				}
 			}
+			return xParams;
+		} catch (UnsupportedEncodingException e) {
+			DBSIO.throwIOException(e);
 		}
-		return xParams;
+		return null;
 	}
 }
 
