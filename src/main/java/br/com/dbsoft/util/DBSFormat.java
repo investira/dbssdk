@@ -521,9 +521,6 @@ public class DBSFormat {
 		Boolean xWasNumber = null;
 		Integer xGroup = 1;
 		StringBuilder xValue = new StringBuilder();
-		System.out.println("=================================");
-		System.out.println(pPhoneNumber);
-		
 		for (int i=pPhoneNumber.length(); i>0; i--){
 			xChar = pPhoneNumber.substring(i-1, i);
 			xIsNumber = xChar.matches(REGEX.ONLY_NUMBERS);
@@ -551,14 +548,14 @@ public class DBSFormat {
 		if (!DBSObject.isEmpty(xValue.toString())){
 			xGroup = pvPhoneNumber(xFormattedNumber, xGroup, xValue.toString(), xWasNumber);
 		}
-		if (xGroup == null){
+		String xFN = xFormattedNumber.toString();
+		if (xGroup == null
+		 || DBSObject.isEmpty(xFN)){
 			return null;
 		}else{
-			String xFN =xFormattedNumber.toString();
 			if (xFN.startsWith("-")){
 				xFN = xFN.substring(1, xFN.length()-1);
 			}
-			System.out.println(xFN);
 			return xFN;
 		}
 	}
@@ -599,6 +596,9 @@ public class DBSFormat {
 				pValue = "";
 			}
 		}else{
+			if (!pIsNumber){
+				return null;
+			}
 			//Final do número
 			if (pGroup==1){
 				xMin = 4;
