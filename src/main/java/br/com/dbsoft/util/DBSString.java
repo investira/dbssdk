@@ -91,12 +91,12 @@ public class DBSString {
 
 	
 	/**
-	 * Retorna uma string a partir de uma string original
+	 * Retorna uma string a partir de uma string original.<br/>
 	 * Esta função tem o mesmo mecanismo que a função substring em .Net
 	 * @param pString String original
-	 * @param pInicio Posicao inicial dentro a string, sendo 1 a primeira posição
-	 * @param pTamanho Tamanho da string que se deseja recuperar a partir da posição pI. Se o tamanho for maior que o tamanho da string, utilizará o tamanho máximo
-	 * @return String Se tamanho informado for maior que o tamanho da String original, retorna string máxima permitida
+	 * @param pInicio Posicao inicial dentro a string, sendo 1 a primeira posição.
+	 * @param pTamanho Tamanho da string que se deseja recuperar a partir da posição pI. Se o tamanho for maior que o tamanho da string, utilizará o tamanho máximo.
+	 * @return String Se tamanho informado for maior que o tamanho da String original, retorna string máxima permitida.
 	 */
 	public static String getSubString(String pString, int pInicio, int pTamanho){
 		if (DBSObject.isEmpty(pString)){
@@ -765,8 +765,9 @@ public class DBSString {
 	    }
 	    return xBytes;
 	}
+	
 	/**
-	 * Retorna se a string é somente ccontinuida de letra alfabética
+	 * Retorna se a string é somente continuida de letra alfabética considerando 'espaço' também válido.
 	 * @param pString
 	 * @return
 	 */
@@ -774,14 +775,10 @@ public class DBSString {
 		if (pString == null){
 			return false;
 		}
-		for (int xMI =0 ; xMI < pString.length(); xMI++){
-			char xC = pString.charAt(xMI);
-			if(!Character.isAlphabetic(xC)){
-				return false;
-			}
-		}
-		return true;
+		return pString.matches("[a-zA-Z\\s]+$");
 	}
+
+
 	/**
 	 * Busca dentro do array se existe a string informada e retorna a posição.
 	 * Se não eistir, retorna -1; 
@@ -1002,105 +999,4 @@ public class DBSString {
 		}
 	}
 
-	
-//	/**
-//	 * Corrige erros ortográficos a partir do dicionário interno.
-//	 * Para inclur novas palavras, deve-se editar os arquivs: dicionario_acento e dicionario_palavra.
-//	 * dicionario_acento: correções de acentuação assumindo que a palavra esta correta
-//	 * dicionario_palavra: troca uma palavra pela outra, considerando inclusive a caixa da letra
-//	 * @param pTexto
-//	 * @return
-//	 */
-//	public static String CorretorOrtografico2(String pTexto){
-//		pTexto = pvCorretorOrtograticoSilaba2(pTexto);
-//		pTexto = pvCorretorOrtograficoPalavra2(pTexto);
-//		pTexto = pvCorretorOrtograficoFrase2(pTexto);
-//		return pTexto;
-//	}	
-	
-//
-//	/**
-//	 * Troca parte da palavras por outro texto considerando a caixa da letra a partir do dicinário interno
-//	 * É respeitado a ordem que a frase está no dicionário 
-//	 * @param pTexto
-//	 * @return
-//	 */
-//	private static String pvCorretorOrtograticoSilaba2(String pTexto){
-//		String 				xTexto = pTexto;
-//		DBSLinkedProperties xProps = new DBSLinkedProperties();
-//		try {
-//			xProps.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_silaba.properties"));
-//			//xProps.load(new FileInputStream("dicionario_acento.properties"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		Enumeration<Object> xE = xProps.keys();
-//		String xKey = ""; 
-//		while (xE.hasMoreElements()){
-//			xKey = (String) xE.nextElement();
-//			xTexto = DBSString.changeStr(xTexto, xKey, xProps.getProperty(xKey),true);
-//		}
-//		return xTexto;
-//	}	
-//	/**
-//	 * Troca uma palavra pela outra considerando a caixa da letra a partir do dicinário interno
-//	 * É respeitado a ordem que a frase está no dicionário 
-//	 * @param pTexto
-//	 * @return
-//	 */
-//	private static String pvCorretorOrtograficoPalavra2(String pTexto){
-//		List<String> 		xPalavras = new ArrayList<String>();
-//		//String 		 	xPalavraNova = ""; 
-//		String 		 		xTexto = "";
-//		//char 		 		xChar;
-//		DBSLinkedProperties xProps = new DBSLinkedProperties();
-//		try {
-//			xProps.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_palavra.properties"));
-//			//xProps.load(DBSString.class.getResourceAsStream("dicionario_palavra.properties"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		String xPalavraErrada = ""; 
-//		xPalavras = DBSString.toArray(pTexto, " ", false);
-//		for (String xPalavra: xPalavras){
-//			Enumeration<Object> xE = xProps.keys();
-//			while (xE.hasMoreElements()){
-//				xPalavraErrada = (String) xE.nextElement();
-//				if (xPalavraErrada.equals(xPalavra)){
-//					xPalavra = DBSString.changeStr(xPalavra, xPalavraErrada, xProps.getProperty(xPalavraErrada), true);
-//					break;
-//				}
-//			}
-//			if (xTexto.equals("")){
-//				xTexto = xPalavra; 
-//			}else{
-//				xTexto = xTexto + " " + xPalavra;
-//			}
-//		}
-//		return xTexto;
-//	}
-//
-//	/**
-//	 * Troca frase(Mais de uma palavra) por outra(s) considerando a caixa da letra a partir do dicinário interno
-//	 * É respeitado a ordem que a frase está no dicionário 
-//	 * @param pTexto
-//	 * @return
-//	 */
-//	private static String pvCorretorOrtograficoFrase2(String pTexto){
-//		String 				xTexto = pTexto;
-//		DBSLinkedProperties xProps = new DBSLinkedProperties();
-//		try {
-//			xProps.load(DBSString.class.getResourceAsStream("/META-INF/dicionario_frase.properties"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		Enumeration<Object> xE = xProps.keys();
-//		String xKey = ""; 
-//		while (xE.hasMoreElements()){
-//			xKey = (String) xE.nextElement();
-//			xTexto = DBSString.changeStr(xTexto, xKey, xProps.getProperty(xKey),true);
-//		}
-//		return xTexto;
-//	}
-//	
 }
