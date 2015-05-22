@@ -1,12 +1,162 @@
 package br.com.dbsoft.util;
 
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import junit.framework.TestCase;
 
 import org.junit.Test;
 
 import br.com.dbsoft.util.DBSFormat.NUMBER_SIGN;
+import br.com.dbsoft.util.DBSFormat.REGEX;
+
 
 public class TstFormat extends TestCase {
+
+	@Test
+	public void test_REGEX(){
+		String xStr;
+		xStr = "+12125168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "0800 1234567";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "08001234567";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "+00102125168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "0215168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "+102125168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "+5521987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "021987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "21 987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "+55 021 987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "21-987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "(21)987651234";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "+55 (021) 516--8899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "02125168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "2125168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "21 25168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "21-5168899";
+		DBSFormat.getPhoneNumber(xStr);
+		xStr = "021 5168899";
+		DBSFormat.getPhoneNumber(xStr);
+	}
+	
+	
+	public void phoneNumberBkp(String pPhoneNumber){
+		String xFormattedNumber = "";
+		ArrayList <String> xSplits = new ArrayList<String>();
+		String xChar;
+		Boolean xIsNumber = false;
+		Boolean xWasNumber = null;
+		Integer xGroup = 1;
+		StringBuilder xValue = new StringBuilder();
+		System.out.println("=================================");
+		System.out.println(pPhoneNumber);
+		
+		for (int i=pPhoneNumber.length(); i>0; i--){
+			xChar = pPhoneNumber.substring(i-1, i);
+			xIsNumber = xChar.matches("[0-9]");
+			if (xWasNumber == null){
+				xWasNumber = xIsNumber;
+			}else if (xIsNumber != xWasNumber){
+//				pvPhoneNumber(xSplits, xValue.toString());
+				xValue = new StringBuilder();
+				xWasNumber = xIsNumber;
+				//Substitui qualquer caracter não numérico por '-'
+				if (!xIsNumber){
+					xChar = "-";
+				}
+			//Ignora caracter não numérico em caso de repetição	
+			}else if (!xIsNumber){
+				xChar = null;
+			}
+			if (xChar != null){
+				xValue.insert(0, xChar);
+			}
+		}
+		if (!DBSObject.isEmpty(xValue.toString())){
+			xSplits.add(xValue.toString());
+		}
+		for (String xX:xSplits){
+			System.out.println(xX);
+		}
+	}
+
+	
+	public void phoneNumber1(String pPhoneNumber){
+		String xFormattedNumber = "";
+		ArrayList <String> xSplits = new ArrayList<String>();
+		String xChar;
+		Boolean xIsNumber = false;
+		Boolean xWasNumber = null;
+		StringBuilder xValue = new StringBuilder();
+		System.out.println("=================================");
+		System.out.println(pPhoneNumber);
+		
+		for (int i=pPhoneNumber.length(); i>0; i--){
+			xChar = pPhoneNumber.substring(i-1, i);
+			xIsNumber = xChar.matches("[0-9]");
+			if (xWasNumber == null){
+				xWasNumber = xIsNumber;
+			}else if (xIsNumber != xWasNumber){
+				xSplits.add(xValue.toString());
+				xValue = new StringBuilder();
+				xWasNumber = xIsNumber;
+				//Substitui qualquer caracter não numérico por '-'
+				if (!xIsNumber){
+					xChar = "-";
+				}
+			//Ignora caracter não numérico em caso de repetição	
+			}else if (!xIsNumber){
+				xChar = null;
+			}
+			if (xChar != null){
+				xValue.append(xChar);
+			}
+		}
+		if (!DBSObject.isEmpty(xValue.toString())){
+			xSplits.add(xValue.toString());
+		}
+		for (String xX:xSplits){
+			
+			System.out.println(xX);
+		}
+	}
+	public void phoneNumber2(String pPhoneNumber){
+		try{
+			Pattern xP = Pattern.compile(REGEX.PHONE_NUMBER); 
+			Matcher xM = xP.matcher(pPhoneNumber);
+			System.out.println("==========================================");
+			System.out.println(pPhoneNumber);
+			if (xM.matches()){
+//				System.out.printf("%s-%s-%s%n", m.group(1), m.group(2), m.group(3));
+//				Formatter f = new Formatter().format("(%d)%d-%d", xM.group(9), xM.group(11), xM.group(13));  
+//				String s = f.toString(); 
+				for (int i=xM.groupCount(); i>0; i--){
+					System.out.println(i + ": " + xM.group(i));
+				}
+			}else{
+				System.out.println("INVALID");
+			}
+		}catch(IllegalStateException e){
+			System.out.println(e);
+		}
+	}
 
 	@Test
 	public void test_isDate() {

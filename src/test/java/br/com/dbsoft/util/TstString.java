@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,18 @@ public class TstString {
 //		pValue = DBSString.changeStr((String)pValue, "ß", "á");
 		assertEquals("╔", DBSString.toASCII("É"));
 	}
+	
+	@Test
+	public void test_isAlphabetic(){
+		Assert.assertEquals(true,DBSString.isAlphabetic("ad    sd cd"));
+		Assert.assertEquals(true,DBSString.isAlphabetic("adsdcd"));
+		Assert.assertEquals(false,DBSString.isAlphabetic("ad1    sd cd"));
+		Assert.assertEquals(false,DBSString.isAlphabetic("ad1sdcd"));
+		Assert.assertEquals(false,DBSString.isAlphabetic("1232"));
+		Assert.assertEquals(false,DBSString.isAlphabetic("-="));
+		Assert.assertEquals(false,DBSString.isAlphabetic("dbsoft@#-="));
+	}
+	
 	@Test
 	public void test_toArrayList() {
 
