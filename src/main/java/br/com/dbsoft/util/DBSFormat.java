@@ -8,13 +8,31 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DBSFormat {
+
+	public static String[] ZERO_DDI_DDDs = new String[]{
+		"800",
+		"300"
+	};
 	
 	public class MASK{
-		public static final String QUANTIDADE_INTEIRA = "###,##0";
-		public static final String FINANCEIRO = "###,##0.00";
+		public static final String CURRENCY = "###,##0.00";
 	}
+	
+	public final static class REGEX{
+		public static final String ZIP = "\\d{5}-\\d{3}";
+		public static final String LICENSE_PLATE = "[A-Z]{3}-\\d{4}";
+//		public static final String PHONE_NUMBER = "^([(+]{0,1})([0-9]{0,2})([)\\-\\s]{0,1})([(\\-\\s]{0,1})([0-9]{0,3})([)\\-\\s]{0,1})([0-9]{3,4})([-.]{0,1})([0-9]{4})$";
+		public static final String PHONE_NUMBER = "^([(+]{0,1})(([0-9]{2,3})|([0-9]{0}))([)\\-\\s]{0,1})([(\\-\\s]{0,1})(([0-9]{2,3})|([0-9]{0}))([)\\-\\s]{0,1})([0-9]{3,4})([-.]{0,1})([0-9]{4})$";
+//		public static final String PHONE_NUMBER = "^([(+]{0,1})([0-9]{2,3})([)\\-\\s]{0,1})([(\\-\\s]{0,1})([0-9]{2,3})([)\\-\\s]{0,1})([0-9]{3,4})([-.]{0,1})([0-9]{4})$";
+		public static final String ONLY_NUMBERS = "^[0-9]+$";
+	}
+	
+	private static Pattern wPHONE_NUMBER;
+	
 	
 	public static enum NUMBER_SIGN{
 		NONE,
@@ -23,6 +41,11 @@ public class DBSFormat {
 		MINUS_SUFFIX,
 		MINUS_PREFIX,
 		PARENTHESES;
+	}
+	
+	
+	DBSFormat(){
+		wPHONE_NUMBER = Pattern.compile(REGEX.PHONE_NUMBER);
 	}
 	
 	//######################################################################################################### 
@@ -223,10 +246,27 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedCurrency(Double pValor, NUMBER_SIGN pSign){
-		return getFormattedNumber(pValor, pSign, MASK.FINANCEIRO);
+		return getFormattedNumber(pValor, pSign, MASK.CURRENCY);
 	}
 
+	/**
+	 * Retorna valor formatado conforme a indicação do sinal e máscara.
+	 * @param pValor
+	 * @param pSign
+	 * @param pNumberMask
+	 * @return
+	 */
+	public static String getFormattedNumber(Object pValor, NUMBER_SIGN pSign, String pNumberMask){
+		return getFormattedNumber(DBSNumber.toDouble(pValor), pSign, pNumberMask);
+	}
 
+	/**
+	 * Retorna valor formatado conforme a indicação do sinal e máscara.
+	 * @param pValor
+	 * @param pSign
+	 * @param pNumberMask
+	 * @return
+	 */
 	public static String getFormattedNumber(Double pValor, NUMBER_SIGN pSign, String pNumberMask){
 		if (DBSObject.isEmpty(pValor)) {
 			return null;
@@ -390,7 +430,7 @@ public class DBSFormat {
 
 
 	/**
-	 * Retorna uma string com o valor formatado conforme a máscara
+	 * Retorna uma string com o valor formatado conforme a máscara.<br/>
 	 * Serão ignorados os caracteres não numericos ou alfabéticos da valor informado
 	 * serão ignorados os caracteres que ultrapassatem o tamanho da máscara  
 	 * @param pValue Valor que será utilizado para preencher a máscara
@@ -402,7 +442,7 @@ public class DBSFormat {
 	}
 	
 	/**
-	 * Retorna uma string com o valor formatado conforme a máscara
+	 * Retorna uma string com o valor formatado conforme a máscara.<br/>
 	 * Serão ignorados os caracteres não numericos ou alfabéticos da valor informado
 	 * serão ignorados os caracteres que ultrapassatem o tamanho da máscara  
 	 * @param pValue Valor que será utilizado para preencher a máscara
@@ -451,5 +491,164 @@ public class DBSFormat {
 		}
 		return xFV;
 	}
+
+	//====================================================
+	//Validation
+	//====================================================
+	
+	/**
+	 * Retorna se string é um número telefonico.
+	 * @param pString
+	 * @return
+	 */
+	public static Matcher isPhone(String pString){
+		if (pString == null){
+			return null;
+		}
+		Matcher xP = wPHONE_NUMBER.matcher(pString);
+		return xP;
+	}
+	
+	/**
+	 * Retorna número de telefone formatado
+	 * @param pPhoneNumber
+	 * @return
+	 */
+	public static String getPhoneNumber(String pPhoneNumber){
+		StringBuilder xFormattedNumber = new StringBuilder();
+		String xChar;
+		Boolean xIsNumber = false;
+		Boolean xWasNumber = null;
+		Integer xGroup = 1;
+		StringBuilder xValue = new StringBuilder();
+		System.out.println("=================================");
+		System.out.println(pPhoneNumber);
+		
+		for (int i=pPhoneNumber.length(); i>0; i--){
+			xChar = pPhoneNumber.substring(i-1, i);
+			xIsNumber = xChar.matches(REGEX.ONLY_NUMBERS);
+			if (xWasNumber == null){
+				xWasNumber = xIsNumber;
+			}else if (xIsNumber != xWasNumber){
+				xGroup = pvPhoneNumber(xFormattedNumber, xGroup, xValue.toString(), xWasNumber);
+				if (xGroup == null){
+					return null;
+				}
+				xValue = new StringBuilder();
+				xWasNumber = xIsNumber;
+				//Substitui qualquer caracter não numérico por '-'
+				if (!xIsNumber){
+					xChar = "-";
+				}
+			//Ignora caracter não numérico em caso de repetição	
+			}else if (!xIsNumber){
+				xChar = null;
+			}
+			if (xChar != null){
+				xValue.insert(0, xChar);
+			}
+		}
+		if (!DBSObject.isEmpty(xValue.toString())){
+			xGroup = pvPhoneNumber(xFormattedNumber, xGroup, xValue.toString(), xWasNumber);
+		}
+		if (xGroup == null){
+			return null;
+		}else{
+			String xFN =xFormattedNumber.toString();
+			if (xFN.startsWith("-")){
+				xFN = xFN.substring(1, xFN.length()-1);
+			}
+			System.out.println(xFN);
+			return xFN;
+		}
+	}
+	
+	/**
+	 * DDI DDD NUMERO
+	 * xxx xxx xxxx-xxxx
+	 * @param pFormattedNumber
+	 * @param pGroup
+	 * @param pValue
+	 * @param pIsNumber
+	 * @return
+	 */
+	private static Integer pvPhoneNumber(StringBuilder pFormattedNumber, Integer pGroup, String pValue, Boolean pIsNumber){
+		String xValue = null;
+		int xB = 0;
+		int xE = 0;
+		Integer xMin = 0;
+		Integer xMax = null;
+		if (DBSObject.isEmpty(pValue)){return pGroup;}
+		xE = pValue.length();
+		//Não pode haver mais de 8 grupos.
+		if (pGroup > 8){
+			return null;
+		}else if (pGroup==2 //Separadores
+			   || pGroup==4
+			   || pGroup==6
+			   || pGroup==8){
+			//Força o separador
+			if (pGroup==8){
+				xValue = "+";
+			}else{
+				xValue = "-";
+			}
+			//Se for número, não faz nada com o valore recebido, para que seja tratado na chamada recursiva.
+			//Se não for número, força resto para 'vázio' para evitar uma nova chamada recursiva.
+			if (!pIsNumber){
+				pValue = "";
+			}
+		}else{
+			//Final do número
+			if (pGroup==1){
+				xMin = 4;
+				xMax = 4;
+			//Inicio do número
+			}else if (pGroup==3){
+				xMin = 3;
+				xMax = 5;
+			//DDD
+			}else if (pGroup==5){
+				xMin = 2;
+				xMax = 3;
+			//DDI
+			}else if (pGroup==7){
+				xMin = 1;
+				xMax = 3;
+			}
+			xB = xE - xMax +1;
+			if (xB<=0){
+				xB=1;
+			}
+			//Valor utilizado
+			xValue = DBSString.getSubString(pValue, xB, xE);
+			
+			//DDD e DDI: Retira os zeros a esquerda
+			if (pGroup==5
+			 || pGroup==7){
+				xValue = getFormattedNumber(xValue, NUMBER_SIGN.NONE, "####");
+			}
+			
+			//Erro se tamanho for menor que o necessário
+			if (xValue.equals("0") 
+			 || xValue.length() < xMin){
+				String xDDD = pFormattedNumber.substring(1, 4);
+				if (DBSString.findStringInArray(ZERO_DDI_DDDs, xDDD) == -1){
+					return null; //Erro
+				}
+			}
+
+			//Resto
+			pValue = DBSString.getSubString(pValue, 1, xB-1);
+		}
+		pGroup++;
+		//Adiciona a string
+		pFormattedNumber.insert(0, xValue);
+		//Verifica se resto é número
+		pIsNumber = pValue.matches(REGEX.ONLY_NUMBERS);
+		//Retorna chamando recursivamente para verificar se o resto deve ser tratado também.
+		return pvPhoneNumber(pFormattedNumber, pGroup, pValue, pIsNumber);
+	}
+
 
 }
