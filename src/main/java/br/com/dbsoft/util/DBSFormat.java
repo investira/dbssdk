@@ -508,9 +508,30 @@ public class DBSFormat {
 		Matcher xP = wPHONE_NUMBER.matcher(pString);
 		return xP;
 	}
+
+	/**
+	 * Retorna número de telefone formatado.
+	 * @param pPhoneNumber
+	 * @return
+	 */
+	public static String getPhoneNumber(String pDDI, String pDDD, String pNumber){
+		StringBuilder xSB = new StringBuilder();
+		if (!DBSObject.isEmpty(pDDI)){
+			xSB.append("(");
+			xSB.append(pDDI);
+			xSB.append(")");
+		}
+		if (!DBSObject.isEmpty(pDDD)){
+			xSB.append("(");
+			xSB.append(pDDD);
+			xSB.append(")");
+		}
+		xSB.append(pNumber);
+		return getPhoneNumber(xSB.toString());
+	}
 	
 	/**
-	 * Retorna número de telefone formatado
+	 * Retorna número de telefone formatado.
 	 * @param pPhoneNumber
 	 * @return
 	 */
@@ -553,8 +574,8 @@ public class DBSFormat {
 		 || DBSObject.isEmpty(xFN)){
 			return null;
 		}else{
-			if (xFN.startsWith("-")){
-				xFN = xFN.substring(1, xFN.length()-1);
+			if (xFN.startsWith(")")){
+				xFN = xFN.substring(1, xFN.length());
 			}
 			return xFN;
 		}
@@ -586,8 +607,12 @@ public class DBSFormat {
 			   || pGroup==8){
 			//Força o separador
 			if (pGroup==8){
-				xValue = "+";
-			}else{
+				xValue = "(";
+			}else if (pGroup==6){
+				xValue = ")(";
+			}else if (pGroup==4){
+				xValue = ")";
+			}else if (pGroup==2){
 				xValue = "-";
 			}
 			//Se for número, não faz nada com o valore recebido, para que seja tratado na chamada recursiva.
@@ -632,10 +657,7 @@ public class DBSFormat {
 			//Erro se tamanho for menor que o necessário
 			if (xValue.equals("0") 
 			 || xValue.length() < xMin){
-				String xDDD = pFormattedNumber.substring(1, 4);
-				if (DBSString.findStringInArray(ZERO_DDI_DDDs, xDDD) == -1){
-					return null; //Erro
-				}
+				return null; //Erro
 			}
 
 			//Resto

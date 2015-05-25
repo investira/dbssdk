@@ -59,14 +59,19 @@ public class DBSPassword {
 
     /**
      * Retorna String com a senha criptografada a partir do texto informado adicionando um hash criado randomicamente(<b>salt</b>) para obrigar que todos os textos sejam sempre diferentes.<br/>
-     * Para a validação da senha porteriormente, deve-se utilizar o método<b>validateSaltedPassword</b>.
+     * Para a validação da senha porteriormente, deve-se utilizar o método<b>validateSaltedPassword</b>.</br>.
+     * O tamanho da senha retornarda para ser inferior ao tamanho solicitado.<br/>
      * @param pPlainPassword
      * @param pHashLenght
      * @return
      */
     public static String createSaltedPassword(String pPlainPassword, Integer pLength) {
+    	if (pLength < 30){
+    		wLogger.error("Tamanho para o resultado criptografado da senha precisa ser superior a 30.");
+    		return null;
+    	}
 		String xSalt = createRandomSalt(); 
-    	byte[] xHash = pvGetHash(xSalt, pPlainPassword, pLength);
+    	byte[] xHash = pvGetHash(xSalt, pPlainPassword, pLength - PasswordLenght);
 		return DBSString.toHex(xHash) + xSalt;
 	}
 

@@ -11,12 +11,32 @@ public class TstPasswordHash {
 	@Test
 	public void testeSaltedPassword(){
 		String xPassword;
-		xPassword = DBSPassword.createSaltedPassword("dbsoft");
-		System.out.println(xPassword);
-		Assert.assertEquals(true, DBSPassword.validateSaltedPassword("dbsoft", xPassword));
-		xPassword = DBSPassword.createSaltedPassword("dbsoft");
-		System.out.println(xPassword);
-		Assert.assertEquals(true, DBSPassword.validateSaltedPassword("dbsoft", xPassword));
+//		xPassword = DBSPassword.createSaltedPassword("dbsoft");
+//		System.out.println(xPassword);
+//		Assert.assertEquals(true, DBSPassword.validateSaltedPassword("dbsoft", xPassword));
+//		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 10);
+//		System.out.println(xPassword.length());
+//		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 20);
+//		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 31);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 40);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 50);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 60);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 70);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 80);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 90);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 100);
+		System.out.println(xPassword.length());
+		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 110);
+		System.out.println(xPassword.length());
+//		Assert.assertEquals(true, DBSPassword.validateSaltedPassword("dbsoft", xPassword));
 	}
 	
 

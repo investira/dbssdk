@@ -448,7 +448,7 @@ public class DBSString {
 	}
 
 	/**
-	 * Retorna um array a partir dos valores informados, ignorando os valores vazios ou nulos.
+	 * Retorna um array a partir dos valores informados.
 	 * @param pValues
 	 * @return
 	 */
