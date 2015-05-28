@@ -24,6 +24,8 @@ import javax.mail.Message.RecipientType;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
+import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSSDK.NETWORK.PROTOCOL;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSEmail;
@@ -190,7 +192,7 @@ public class DBSEmailSend {
 			//Texto da mensagem----------
 			xMessage.setSubject(pMessage.getSubject());
 			if (pMessage.getIsHtmlContent()){
-				xMessageBodyPart.setContent(pMessage.getText(), "text/html; charset=utf-8");			
+				xMessageBodyPart.setContent(pMessage.getText(), CONTENT_TYPE.TEXT_HTML +  "; charset=" + ENCODE.UTF_8.toLowerCase());			
 			}else{
 				xMessageBodyPart.setText(pMessage.getText());
 			}

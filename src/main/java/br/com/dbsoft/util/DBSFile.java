@@ -38,33 +38,12 @@ import java.util.zip.ZipFile;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.APP_SERVER_PROPERTY;
+import br.com.dbsoft.core.DBSSDK.FILE;
 
 public class DBSFile {
 	
 	private static Logger		wLogger = Logger.getLogger(DBSFile.class);
 
-	public static class FILE_EXTENSION{
-		public static final String PDF = ".pdf";
-		public static final String HTML = ".html";
-		public static final String XML = ".xml";
-		public static final String XLS = ".xls";
-		public static final String XLSX = ".xlsx";
-		public static final String JASPER= ".jasper";
-		public static final String JRXML = ".jrxml";
-		public static final String ZIP = ".zip";
-		public static final String DOC = ".doc";
-		public static final String RAR = ".rar";
-		public static final String TXT = ".txt";
-		public static final String CSV = ".csv";
-	}
-	
-	public static class CONTENT_TYPE{
-		public static final String PDF = "application/pdf";
-		public static final String XML = "application/xml";
-		public static final String XLS = "application/excel";
-		public static final String XLSX = "application/excel";
-	}
-	
 	public static enum SORT_BY{
 		NAME,
 		SIZE,
@@ -82,7 +61,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameJASPER(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.JASPER);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.JASPER);
 	}
 	
 	/**
@@ -91,7 +70,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameJRXML(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.JRXML);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.JRXML);
 	}
 
 	/**
@@ -100,7 +79,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNamePDF(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.PDF);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.PDF);
 	}
 
 	/**
@@ -109,7 +88,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameXML(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.XML);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.XML);
 	}
 
 	/**
@@ -118,7 +97,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameXLS(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.XLS);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.XLS);
 	}
 	
 	/**
@@ -127,7 +106,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameXLSX(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.XLSX);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.XLSX);
 	}
 
 	/**
@@ -136,7 +115,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameHTML(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.HTML);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.HTML);
 	}
 
 	/**
@@ -145,7 +124,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameZIP(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.ZIP);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.ZIP);
 	}
 
 	/**
@@ -154,7 +133,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameDOC(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.DOC);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.DOC);
 	}
 
 	/**
@@ -163,7 +142,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getFileNameRAR(String pReportFileName){
-		return pvGetFileNameWithExtention(pReportFileName, FILE_EXTENSION.RAR);
+		return pvGetFileNameWithExtention(pReportFileName, FILE.EXTENSION.RAR);
 	}
 	
 	/**

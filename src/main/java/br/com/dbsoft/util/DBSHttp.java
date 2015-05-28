@@ -1,8 +1,11 @@
 package br.com.dbsoft.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -17,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+
+import com.google.gson.Gson;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
@@ -126,6 +131,48 @@ public class DBSHttp {
 			DBSIO.throwIOException(e);
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * Grava objeto JSON do outputstream.<br/>
+	 * @param pObjectOutputStream
+	 * @param pObject
+	 * @throws DBSIOException
+	 */
+	public static void ObjectOutputStreamWriteObject(ObjectOutputStream pObjectOutputStream, Object pObject) throws DBSIOException{
+		if (pObjectOutputStream == null){return;}
+		try {
+			Gson xJSON = new Gson();
+			pObjectOutputStream.writeObject(xJSON.toJson(pObject));
+//			wObjectOutputStream.writeObject(pObject);
+		} catch (IOException e) {
+			DBSIO.throwIOException(e);
+		}
+	}
+	
+
+	/**
+	 * Lê objeto JSON do inputstream.<br/>
+	 * Os objetos são lidos sequencialmente(FIFO/PEPS). O primeiro objeto enviado, será o primeiro lido.
+	 * @param pObjectInputStream
+	 * @param pClass
+	 * @return
+	 * @throws DBSIOException
+	 */
+	public static <T> T ObjectInputStreamReadObject(ObjectInputStream pObjectInputStream, Class<T> pClass) throws DBSIOException{
+		if (pObjectInputStream == null){return null;}
+		try {
+			Gson 	xJSON = new Gson();
+			String 	xS = pObjectInputStream.readObject().toString();
+			return xJSON.fromJson(xS, pClass);
+//			return (T) wObjectInputStream.readObject();
+		} catch (EOFException e){
+			return null;
+		} catch (IOException | ClassNotFoundException e) {
+			DBSIO.throwIOException(e);
+			return null;
+		}
 	}
 }
 

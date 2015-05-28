@@ -120,10 +120,21 @@ public final class DBSSDK {
 		public static final String ISO_8859_6 = "ISO-8859-6";
 	}
 	
-	public final static class FILE
-	{
-		
-		
+	public final static class CONTENT_TYPE{
+		public static final String APPLICATION_JSON = "application/json";
+		public static final String APPLICATION_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
+		public static final String APPLICATION_PDF = "application/pdf";
+		public static final String APPLICATION_XML = "application/xml";
+		public static final String APPLICATION_XLS = "application/excel";
+		public static final String APPLICATION_XLSX = "application/excel";
+		public static final String TEXT_PLAIN = "text/plain";
+		public static final String TEXT_EVENT_STREAM = "text/event-stream";
+		public static final String TEXT_HTML = "text/html";
+		public static final String TEXT_JAVASCRIPT = "text/javascript";
+	}
+	
+	
+	public final static class FILE{
 		public enum TYPE{
 			HTML,
 			XML,
@@ -138,7 +149,20 @@ public final class DBSSDK {
 			FOLDER,
 			GENERAL;
 		}
-	
+		public static class EXTENSION{
+			public static final String PDF = ".pdf";
+			public static final String HTML = ".html";
+			public static final String XML = ".xml";
+			public static final String XLS = ".xls";
+			public static final String XLSX = ".xlsx";
+			public static final String JASPER= ".jasper";
+			public static final String JRXML = ".jrxml";
+			public static final String ZIP = ".zip";
+			public static final String DOC = ".doc";
+			public static final String RAR = ".rar";
+			public static final String TXT = ".txt";
+			public static final String CSV = ".csv";
+		}	
 	}
 	
 	public final static class NETWORK{
@@ -217,14 +241,14 @@ public final class DBSSDK {
 		}
 		
 		public enum OS {
-			WINDOWS,
-			WINDOWSPHONE,
 			MACOS,
 			IOS,
 			ANDROID,
 			RIM,
 			LINUX,
 			WEBOS,
+			WINDOWS,
+			WINDOWSPHONE,
 			SYMBIAN;
 		}
 

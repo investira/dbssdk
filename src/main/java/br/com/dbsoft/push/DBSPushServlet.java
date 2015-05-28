@@ -4,10 +4,12 @@ import javax.annotation.PreDestroy;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.dbsoft.core.DBSSDK.ENCODE;
+import br.com.dbsoft.core.DBSServlet;
+import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.util.DBSSession;
 
 /**
@@ -16,7 +18,7 @@ import br.com.dbsoft.util.DBSSession;
  * É necessário que a class que extenderá esta possua a anotação @WebServlet(value="/??", asyncSupported=true) 
  *
  */
-public abstract class DBSPushServlet extends HttpServlet {
+public abstract class DBSPushServlet extends DBSServlet {
 
 	private static final long serialVersionUID = -7513051390653245604L;
 	
@@ -51,59 +53,59 @@ public abstract class DBSPushServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest pReq, HttpServletResponse pRes)  {
 		try {
-				pRes.setContentType("text/event-stream");
-				pRes.setCharacterEncoding("UTF-8");
-				pRes.setHeader("Cache-Control", "no-cache");
-				pRes.setHeader("Connection", "keep-alive");
-	
-				//Vincula o usuário ao request para posteriormente pode identifica o usuário de cada request
-				pReq.setAttribute(USER_ID, getUserId().trim().toUpperCase());
-	
-				final AsyncContext xAC = pReq.startAsync();
-				
-				xAC.setTimeout(60000); //10 minutos = 600.000 milisegundos
-				xAC.addListener(new AsyncListener() {
-					@Override 
-					public void onComplete(AsyncEvent pEvent) {
+			pRes.setContentType(CONTENT_TYPE.TEXT_EVENT_STREAM);
+			pRes.setCharacterEncoding(ENCODE.UTF_8);
+			pRes.setHeader("Cache-Control", "no-cache");
+			pRes.setHeader("Connection", "keep-alive");
+
+			//Vincula o usuário ao request para posteriormente pode identifica o usuário de cada request
+			pReq.setAttribute(USER_ID, getUserId().trim().toUpperCase());
+
+			final AsyncContext xAC = pReq.startAsync();
+			
+			xAC.setTimeout(60000); //10 minutos = 600.000 milisegundos
+			xAC.addListener(new AsyncListener() {
+				@Override 
+				public void onComplete(AsyncEvent pEvent) {
 //						System.out.println("COMPLETE");
-					}
-					
-					@Override 
-					public void onTimeout(AsyncEvent pEvent) {
+				}
+				
+				@Override 
+				public void onTimeout(AsyncEvent pEvent) {
 //						System.out.println("TIMEOUT");
-						try{
-							if (pEvent == null){
+					try{
+						if (pEvent == null){
 //								System.out.println("TIMEOUT NULL");
-							}
-							pvOnTimeout(pEvent);
-						}catch(Exception ignore){
-//							System.out.println("TIMEOUT IGNORE");
 						}
+						pvOnTimeout(pEvent);
+					}catch(Exception ignore){
+//							System.out.println("TIMEOUT IGNORE");
 					}
-					
-					@Override 
-					public void onError(AsyncEvent pEvent) {
+				}
+				
+				@Override 
+				public void onError(AsyncEvent pEvent) {
 //						System.out.println("ERROR");
 //						pvOnError(pEvent);
-					}
-					
-					@Override 
-					public void onStartAsync(AsyncEvent pEvent) {
-//						System.out.println("START");
-					}
-			    });
-				//Envia resposta vázia
-				DBSSession.writeServletEventSourceResponse(xAC.getResponse(), "init", null);
-				pvOnNewRequest(xAC);			
+				}
 				
-	//			super.service(pReq, pRes);
-			} catch(Exception e){
+				@Override 
+				public void onStartAsync(AsyncEvent pEvent) {
+//						System.out.println("START");
+				}
+		    });
+			//Envia resposta vázia
+			DBSSession.writeServletEventSourceResponse(xAC.getResponse(), "init", null);
+			pvOnNewRequest(xAC);			
+			
+//			super.service(pReq, pRes);
+		} catch(Exception e){
 //				System.out.println("REQUEST EXCEPTION ");
 //				e.printStackTrace();
-			} finally {
+		} finally {
 //				System.out.println("REQUEST");
-	//			this.destroy();
-			}
+//			this.destroy();
+		}
 //		System.out.println("-------------------------------------");
 
 	}

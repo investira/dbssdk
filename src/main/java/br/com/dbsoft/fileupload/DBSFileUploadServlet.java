@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.apache.log4j.Logger;
-
+import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSIO;
@@ -26,12 +24,10 @@ import br.com.dbsoft.util.DBSString;
  * <b>MultipartConfig</b><br/>
  * <b>WebServlet(value='caminho e nome da servlet')</b><br/>
  */
-public abstract class DBSFileUploadServlet extends HttpServlet{
+public abstract class DBSFileUploadServlet extends DBSServlet{
 
 	private static final long serialVersionUID = 1063600676650691271L;
 
-	protected Logger			wLogger = Logger.getLogger(this.getClass());
-	
 	private List<IDBSFileUploadServletEventsListener>	wEventListeners = new ArrayList<IDBSFileUploadServletEventsListener>();
 
 	private String wLocalPath = "";
