@@ -77,16 +77,21 @@ public class DBSPassword {
 
     /**
      * Retorna String com a senha (de 30 caracteres) criptografada a partir do texto informado adicionando utilizando um <b>salt</b>) padrão.<br/>
-     * Para a validação da senha porteriormente, deve-se utilizar o método<b>validatePassword</b>.
+     * Para a validação da senha porteriormente, deve-se utilizar o método <b>validatePassword</b>.
      * @param pPlainPassword
      * @return
      */
     public static String createPassword(String pPlainPassword) {
+    	if (pPlainPassword==null){return null;}
     	byte[] xHash = pvGetHash(DBSString.toHex(Salt.getBytes()), pPlainPassword);
 		return DBSString.toHex(xHash);
 	}
 
     public static String createPassword(String pSalt, String pPlainPassword, Integer pLength) {
+    	if (pPlainPassword==null
+		 || pSalt==null
+		 || pLength == null
+		 || pLength == 0){return null;}
     	byte[] xHash = pvGetHash(DBSString.toHex(pSalt.getBytes()), pPlainPassword, pLength);
 		return DBSString.toHex(xHash);
 	}
