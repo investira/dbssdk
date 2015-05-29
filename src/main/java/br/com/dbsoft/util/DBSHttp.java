@@ -82,6 +82,18 @@ public class DBSHttp {
 		return FacesContext.getCurrentInstance().getExternalContext().getRealPath(pRelativePath);
 	}
 
+	public static String getHTTPServerPath(){
+		if (FacesContext.getCurrentInstance() == null){return "";}
+		ExternalContext xEC = FacesContext.getCurrentInstance().getExternalContext();
+		StringBuilder xLink = new StringBuilder();
+		xLink.append(xEC.getRequestScheme()).append("://");
+		xLink.append(xEC.getRequestServerName());
+		if (!DBSObject.isEmpty(xEC.getRequestServerPort())){
+			xLink.append(":").append(xEC.getRequestServerPort());
+		}
+//		xLink += xEC.getRequestContextPath();
+		return xLink.toString();
+	}
 	/**
 	 * Retorna String contendo os parametros sepadados por '&' e codificados em UTF-8 para utilização em requests http
 	 * @param pParams
@@ -176,63 +188,4 @@ public class DBSHttp {
 	}
 }
 
-
-///**
-// * Evia um arquivo local para o browser
-// * @param pLocalFilePath Nome do arquivo contendo o caminho completo
-// * @return
-// */
-//public static Boolean sendFile(String pLocalFilePath){
-//	return sendFile(pLocalFilePath, "");
-//}
-//
-///**
-// * Evia um arquivo local para o browser
-// * @param pLocalFilePath Nome do arquivo contendo o caminho completo
-// * @param pRemoteFileName Nome simples do arquivo que será utilizado remotamente.
-// * @return
-// */
-//public static Boolean sendFile(String pLocalFilePath, String pRemoteFileName){
-//	String			xRemoteFileName = pRemoteFileName; 
-//	FacesContext 	xFC = FacesContext.getCurrentInstance();
-//	ExternalContext xEC = xFC.getExternalContext();
-//	
-//	InputStream 	xReportInputStream = null;
-//	File			xFile = new File(pLocalFilePath);
-//	
-//	//Verifica se arquivo existe. Se não existir...
-//	try {
-//		if (DBSFile.exists(pLocalFilePath)){
-//			xReportInputStream = new FileInputStream(xFile);
-//		}
-//		//Se o arquivo já existir apenas entrega-o para o browser
-//		if (!DBSObject.isNull(xReportInputStream)) {
-//			if (xRemoteFileName.equals("")){
-//				xRemoteFileName = xFile.getName();
-//			}
-//			xEC.responseReset();
-//			xEC.setResponseContentType(xEC.getMimeType(pLocalFilePath));
-//			xEC.setResponseContentLength((int) xFile.length());
-//			xEC.setResponseHeader("Content-Disposition", "attachment;filename=\"" + xRemoteFileName + "\"");
-//			OutputStream xOutputStream = xEC.getResponseOutputStream();
-//			if (xOutputStream != null){
-//				IOUtils.copy(xReportInputStream, xOutputStream);
-//			}
-//			xFC.responseComplete();
-//			return true;
-//		}
-//		return false;
-//	} catch (IOException e) {
-//		wLogger.error(e);
-//		return false;
-//	}		
-//}
-//// create new session
-//((HttpServletRequest) ec.getRequest()).getSession(true);
-// 
-//// restore last used user settings because login / logout pages reference "userSettings"
-//FacesAccessor.setValue2ValueExpression(userSettings, "#{userSettings}");
-// 
-//// redirect to the specified logout page
-//ec.redirect(ec.getRequestContextPath() + "/views/logout.jsf");
 
