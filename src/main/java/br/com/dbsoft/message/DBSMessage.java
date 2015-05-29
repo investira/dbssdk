@@ -1,6 +1,5 @@
 package br.com.dbsoft.message;
 
-import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -61,25 +60,38 @@ public class DBSMessage {
 		}
 	}
 	
-	private String			wMessageTextConstructor;
+	private String			wMessageTextOriginal;
 	private String			wMessageText;
 	private Boolean			wValidated = null; 
 	private MESSAGE_TYPE	wMessageType;
 	private Exception		wException;
 	private String			wMessageTooltip = "";
-	private List<String>	wToUserIds;
 	private DateTime		wTime;
 	private String			wMessageKey = null;
+	private Integer			wMessageCode = 0;
 	
 	public DBSMessage(){}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		setMessageKey(pMessageText);
-		setMessageText(pMessageText);
-		setMessageType(pMessageType);
-		wMessageTextConstructor = pMessageText;
+		pvSetMessage(pMessageText, 0, pMessageType, pMessageText);
 	}
 	
+	public DBSMessage(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
+		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText);
+	}
+
+	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText);
+	}
+	
+	public void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText){
+		setMessageKey(pMessageKey);
+		setMessageCode(pMessageCode);
+		setMessageText(pMessageText);
+		setMessageType(pMessageType);
+		wMessageTextOriginal = pMessageText;
+	}
+
 	public String getMessageKey(){
 		return wMessageKey; 
 	}
@@ -103,7 +115,7 @@ public class DBSMessage {
 		return wMessageType;
 	}
 	/**
-	 * Mensagens do tipo ERRO e INFORMAÇÃO 
+	 * Retorna o tipo de mensagem 
 	 * @param pMessageType 
 	 */
 	public void setMessageType(MESSAGE_TYPE pMessageType) {
@@ -111,7 +123,23 @@ public class DBSMessage {
 	}
 	
 	/**
-	 * @return True Null = ainda não validado. True = Validado para verdadeiro. False = Validado para falso 
+	 * Código da mensagem.
+	 * @return
+	 */
+	public Integer getMessageCode() {
+		return wMessageCode;
+	}
+
+	/**
+	 * Retorna o código da mensagem, 
+	 * @param pMessageCode
+	 */
+	public void setMessageCode(Integer pMessageCode) {
+		wMessageCode = pMessageCode;
+	}
+	
+	/**
+	 * @return Null = ainda não validada.<br/> True = Validada para verdadeiro.<br/> False = Validada para falso 
 	 */
 	public Boolean isValidated() {
 		return wValidated;
@@ -143,28 +171,13 @@ public class DBSMessage {
 	 * @param pParameters
 	 */
 	public void setMessageTextParameters(Object... pParameters){
-		if (wMessageTextConstructor != null){
-			this.setMessageText(String.format(wMessageTextConstructor, pParameters));
+		if (wMessageTextOriginal != null){
+			this.setMessageText(String.format(wMessageTextOriginal, pParameters));
 		}else{
 			this.setMessageText(String.format(this.getMessageText(), pParameters));
 		}
 	}
 
-	/**
-	 * Lista dos usuários que irão receber a mensagem
-	 * @return
-	 */
-	public List<String> getToUserIds() {
-		return wToUserIds;
-	}
-
-	/**
-	 * Lista dos usuários que irão receber a mensagem
-	 * @param pToUserIds
-	 */
-	public void setToUserIds(List<String> pToUserIds) {
-		wToUserIds = pToUserIds;
-	}
 
 	/**
 	 * Horário que a mensagem foi criada
@@ -180,4 +193,6 @@ public class DBSMessage {
 	public void setTime(DateTime pTime) {
 		wTime = pTime;
 	}
+
+
 }
