@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.error.DBSIOException;
@@ -18,37 +20,29 @@ import br.com.dbsoft.util.DBSIO;
 
 public abstract class DBSResponseServlet extends DBSServlet {
 
+	protected Logger wLogger = Logger.getLogger(this.getClass());
+	
 	private static final long serialVersionUID = -8443498619129984309L;
 	
 	private ObjectOutputStream 	wObjectOutputStream;
-	private ObjectInputStream 	wObjectInputStream;
+	private ObjectInputStream  	wObjectInputStream;
+
+	public DBSResponseServlet() {
+		setAllowGet(false);
+	}
 
 	public boolean afterRequest() throws DBSIOException {return true;}
 	
 	public void beforeResponse() throws DBSIOException {}
 
+
 	@Override
-	public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) {
-		System.out.println("--- doPOST");
-		try {
-			pvOnRequest(pRequest, pResponse);
-		} catch (DBSIOException e) {
-			wLogger.error(e);
-		}
-	}
-
-	@SuppressWarnings("unused")
-	public void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException, ClassNotFoundException {};
-
-	private void pvOnRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException {
-		System.out.println(("--- ON REQUEST"));
+	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException {
 		try {
 //			pResponse.setContentType(CONTENT_TYPE.APPLICATION_JAVA_SERIALIZED_OBJECT);
 			pResponse.setContentType(CONTENT_TYPE.APPLICATION_JSON); 
 			pResponse.setHeader("Cache-Control", "no-cache");	 
 
-			onRequest(pRequest, pResponse);
-			
 	        try{
 		        InputStream xIS = pRequest.getInputStream();
 		        wObjectInputStream = new ObjectInputStream(xIS);
@@ -56,9 +50,7 @@ public abstract class DBSResponseServlet extends DBSServlet {
 	        	wObjectInputStream = null;
 	        }
 
-	        if (wObjectInputStream!=null){
-		        afterRequest();
-	        }
+	        afterRequest();
 			
 	        try{
 		        OutputStream xOS = pResponse.getOutputStream();
@@ -67,25 +59,30 @@ public abstract class DBSResponseServlet extends DBSServlet {
 	        	wObjectOutputStream = null;
 	        }
 	        
-	        if (wObjectOutputStream != null){
-		        beforeResponse();
-	        }
+	        beforeResponse();
 
 
 	        wObjectOutputStream.flush();
 	        wObjectOutputStream.close();
 
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
 	}
 	
 	public void writeObject(Object pObject) throws DBSIOException{
-		DBSHttp.ObjectOutputStreamWriteObject(wObjectOutputStream, pObject);
+		if (wObjectInputStream!=null){
+			DBSHttp.ObjectOutputStreamWriteObject(wObjectOutputStream, pObject);
+		}
 	}
 	
 	public <T> T readObject(Class<T> pClass) throws DBSIOException{
-		return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
+		if (wObjectInputStream!=null){
+			return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
+		}else{
+			return null;
+		}
 	}
+
 
 }

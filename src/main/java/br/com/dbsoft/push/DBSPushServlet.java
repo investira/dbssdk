@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
+import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSSession;
 
 /**
@@ -49,19 +50,22 @@ public abstract class DBSPushServlet extends DBSServlet {
 		}
 		super.destroy();
 	}
-	
+
+	//	@Override
+//	protected void service(HttpServletRequest pReq, HttpServletResponse pRes)  {
+
 	@Override
-	protected void service(HttpServletRequest pReq, HttpServletResponse pRes)  {
+	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException {
 		try {
-			pRes.setContentType(CONTENT_TYPE.TEXT_EVENT_STREAM);
-			pRes.setCharacterEncoding(ENCODE.UTF_8);
-			pRes.setHeader("Cache-Control", "no-cache");
-			pRes.setHeader("Connection", "keep-alive");
+			pResponse.setContentType(CONTENT_TYPE.TEXT_EVENT_STREAM);
+			pResponse.setCharacterEncoding(ENCODE.UTF_8);
+			pResponse.setHeader("Cache-Control", "no-cache");
+			pResponse.setHeader("Connection", "keep-alive");
 
 			//Vincula o usuário ao request para posteriormente pode identifica o usuário de cada request
-			pReq.setAttribute(USER_ID, getUserId().trim().toUpperCase());
+			pRequest.setAttribute(USER_ID, getUserId().trim().toUpperCase());
 
-			final AsyncContext xAC = pReq.startAsync();
+			final AsyncContext xAC = pRequest.startAsync();
 			
 			xAC.setTimeout(60000); //10 minutos = 600.000 milisegundos
 			xAC.addListener(new AsyncListener() {
@@ -100,8 +104,7 @@ public abstract class DBSPushServlet extends DBSServlet {
 			
 //			super.service(pReq, pRes);
 		} catch(Exception e){
-//				System.out.println("REQUEST EXCEPTION ");
-//				e.printStackTrace();
+//				DBSIO.throwIOException(e);
 		} finally {
 //				System.out.println("REQUEST");
 //			this.destroy();

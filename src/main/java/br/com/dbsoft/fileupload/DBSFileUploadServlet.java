@@ -33,6 +33,11 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 	private String wLocalPath = "";
 	private String wFileName = "";
 	
+	public DBSFileUploadServlet() {
+		super();
+		setAllowGet(false);
+	}
+	
 	@PreDestroy
 	private void finalizeClass(){
 		wEventListeners.clear();
@@ -72,8 +77,8 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 	}
 	
 	// ========================================================================================================
-	@Override
-    protected void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) {
+    @Override
+	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) {
  		try {
  		   //Dispara evento 
  	       if (!pvFireEventBeforeUpload()
