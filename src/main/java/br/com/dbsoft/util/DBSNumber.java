@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
@@ -103,9 +104,7 @@ public class DBSNumber {
 		return DBSNumber.toBigDecimal(xX);
 	}
 
-
 	//------------------------------------------------------------------------------------
-	
 
 	/**
 	 * Exponenciação (pX ^ pY).<br/>
@@ -135,6 +134,43 @@ public class DBSNumber {
 		Double xX = toDouble(pX);
 		return DBSNumber.toBigDecimal(Math.log(xX));
 	}
+	
+	//------------------------------------------------------------------------------------
+	
+	/**
+	 * Rais Quadrada
+	 * @param pX Valor que se deseja calcular a Raiz Quadrada
+	 * @return Retorno da Raiz quadrada de pX
+	 */
+	public static BigDecimal sqrt(Object pX) {
+		return toBigDecimal(Math.sqrt(toDouble(pX)));
+	}
+	
+	//------------------------------------------------------------------------------------
+	
+	public static BigDecimal desvioPadrao(List<Double> pAmostra) {
+		Double 	xDesvioPadrao;
+		Double 	xMedia = 0D;
+		Double	xSoma = 0D;
+		
+		//Calcula a Média da amostra
+		for (Double xValor : pAmostra) {
+			xMedia = add(xMedia,xValor).doubleValue();
+		}
+		xMedia = divide(xMedia, pAmostra.size()).doubleValue(); 
+		
+		//Calcula a soma dos quadrados da diferença entre o valor da amostra e a diferença
+		for (Double xValor : pAmostra) {
+			xSoma = add(xSoma, exp(subtract(xValor, xMedia),2).doubleValue()).doubleValue();
+		}
+		
+		//Desvio Padrão
+		xDesvioPadrao = sqrt(divide(xSoma, subtract(pAmostra.size(),1))).doubleValue();
+		
+		return toBigDecimal(xDesvioPadrao);
+	}
+	
+	//------------------------------------------------------------------------------------
 	
 	/**
      * Emulates Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type)

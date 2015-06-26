@@ -3,6 +3,8 @@ package br.com.dbsoft.util;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -10,7 +12,6 @@ import br.com.dbsoft.util.DBSNumber;
 
 public class TstNumber {
 
-	
 	@Test
 	public void test_toInteger(){
 
@@ -401,5 +402,58 @@ public class TstNumber {
 		assertEquals("-123.45678910123", DBSNumber.toPositive("-123,45678910123", false).toString());
 		assertEquals("123.45678910123", DBSNumber.toPositive("123,45678910123", true).toString());
 		assertEquals("123.45678910123", DBSNumber.toPositive("-123,45678910123", true).toString());
+	}
+
+	@Test
+	public void test_desvioPadrao() {
+		List<Double> 	xAmostra = new ArrayList<Double>(); 
+		BigDecimal		xDesvioPadrao;
+		xAmostra.add(-1.24D);
+		xAmostra.add(11.23D);
+		xAmostra.add(8.08D);
+
+		xDesvioPadrao = DBSNumber.desvioPadrao(xAmostra);
+		assertEquals("6,48", DBSFormat.getFormattedNumber(xDesvioPadrao, 2));
+		
+		xAmostra.add(-2.94D);
+		xAmostra.add(0.80D);
+		xAmostra.add(-8.04D);
+		xAmostra.add(9.05D);
+		xAmostra.add(-5.53D);
+		xAmostra.add(7.68D);
+		xAmostra.add(9.88D);
+		xAmostra.add(-10.44D);
+		xAmostra.add(-8.48D);
+		xAmostra.add(-6.43D);
+		xAmostra.add(-11.03D);
+		xAmostra.add(-24.80D);
+		xAmostra.add(-1.77D);
+		xAmostra.add(2.61D);
+		xAmostra.add(4.66D);
+		
+		xDesvioPadrao = DBSNumber.desvioPadrao(xAmostra);
+		assertEquals("9,35", DBSFormat.getFormattedNumber(xDesvioPadrao, 2));
+		
+		xAmostra.add(-2.84D);
+		xAmostra.add(7.18D);
+		xAmostra.add(15.55D);
+		xAmostra.add(12.49D);
+		xAmostra.add(-3.26D);
+		xAmostra.add(6.41D);
+		xAmostra.add(3.15D);
+		xAmostra.add(8.90D);
+		xAmostra.add(0.05D);
+		xAmostra.add(8.94D);
+		xAmostra.add(2.30D);
+		xAmostra.add(-4.65D);
+		xAmostra.add(1.68D);
+		xAmostra.add(5.28D);
+		xAmostra.add(-4.04D);
+		xAmostra.add(-6.64D);
+		xAmostra.add(-3.35D);
+		xAmostra.add(10.80D);
+		
+		xDesvioPadrao = DBSNumber.desvioPadrao(xAmostra);
+		assertEquals("8,32", DBSFormat.getFormattedNumber(xDesvioPadrao, 2));
 	}
 }
