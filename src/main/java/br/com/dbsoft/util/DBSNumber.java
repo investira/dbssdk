@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.log4j.Logger;
 
 
@@ -148,16 +149,41 @@ public class DBSNumber {
 	
 	//------------------------------------------------------------------------------------
 	
-	public static BigDecimal desvioPadrao(List<Double> pAmostra) {
-		Double 	xDesvioPadrao;
-		Double 	xMedia = 0D;
-		Double	xSoma = 0D;
+	/**
+	 * Média de uma Amostra
+	 * @param pAmostra
+	 * @return Retorna a média da amostra
+	 */
+	public static BigDecimal average(List<Double> pAmostra) {
+		Double xMedia = 0D;
+		
+		if (DBSObject.isNull(pAmostra) || pAmostra.isEmpty()) {
+			return DBSNumber.toBigDecimal(xMedia);
+		}
 		
 		//Calcula a Média da amostra
 		for (Double xValor : pAmostra) {
 			xMedia = add(xMedia,xValor).doubleValue();
 		}
 		xMedia = divide(xMedia, pAmostra.size()).doubleValue(); 
+		
+		return DBSNumber.toBigDecimal(xMedia);
+	}
+	
+	//------------------------------------------------------------------------------------
+	
+	/**
+	 * Desvio Padrão de uma Amostra
+	 * @param pAmostra
+	 * @return Retorna o desvio padrão da amostra
+	 */
+	public static BigDecimal desvioPadrao(List<Double> pAmostra) {
+		Double 	xDesvioPadrao;
+		Double 	xMedia = 0D;
+		Double	xSoma = 0D;
+		
+		//Calcula a Média da amostra
+		xMedia = average(pAmostra).doubleValue(); 
 		
 		//Calcula a soma dos quadrados da diferença entre o valor da amostra e a diferença
 		for (Double xValor : pAmostra) {
@@ -171,6 +197,17 @@ public class DBSNumber {
 	}
 	
 	//------------------------------------------------------------------------------------
+	
+	public static BigDecimal distribuicaoNormalInvertida(Double pValor, Double pMedia, Double pDesvioPadrao) {
+		Double xResultado = 0D;
+
+		NormalDistribution xDistribution = new NormalDistribution(pMedia, pDesvioPadrao);
+		xResultado = xDistribution.inverseCumulativeProbability(pValor);
+		
+		return DBSNumber.toBigDecimal(xResultado);
+	}
+	
+	//
 	
 	/**
      * Emulates Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type)
