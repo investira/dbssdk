@@ -97,7 +97,7 @@ public class DBSNumber {
 				if (xD.compareTo(BigDecimal.ZERO) != 0){
 					xX = xX.divide(xD, 30, RoundingMode.HALF_UP);
 				}else{
-					wLogger.error("Divisão por zero:" + xX.toString());
+//					wLogger.error("Divisão por zero:" + xX.toString());
 					return null;
 				}
 			}

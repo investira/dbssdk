@@ -497,9 +497,6 @@ public class TstNumber {
 		List<Double>	xListaVariacao = new ArrayList<Double>();
 		Double xMedia;
 		Double xDesvioPadrao;
-		Double xDistribuicao1;
-		Double xDistribuicao5;
-		Double xDistribuicao10;
 		Double xVAR1;
 		Double xVAR5;
 		Double xVAR10;
@@ -772,16 +769,55 @@ public class TstNumber {
 		
 		xMedia = DBSNumber.average(xListaVariacao).doubleValue();
 		xDesvioPadrao = DBSNumber.desvioPadrao(xListaVariacao).doubleValue();
-		xDistribuicao1 = DBSNumber.distribuicaoNormalInvertida(0.01D, 0D, 1D).doubleValue();
-		xDistribuicao5 = DBSNumber.distribuicaoNormalInvertida(0.05D, 0D, 1D).doubleValue();
-		xDistribuicao10 = DBSNumber.distribuicaoNormalInvertida(0.1D, 0D, 1D).doubleValue();
+		xVAR1 = DBSNumber.distribuicaoNormalInvertida(0.1D, xMedia, xDesvioPadrao).doubleValue();
+		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.05D, xMedia, xDesvioPadrao).doubleValue();
+		xVAR10 = DBSNumber.distribuicaoNormalInvertida(0.10D, xMedia, xDesvioPadrao).doubleValue();
 		
-		xVAR1 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao1, xDesvioPadrao)).doubleValue();
-		xVAR5 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao5, xDesvioPadrao)).doubleValue();
-		xVAR10 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao10, xDesvioPadrao)).doubleValue();
+//		System.out.println("VAR 1%: "+ xVAR1 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
+//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
+//		System.out.println("VAR 10%: "+ xVAR10 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
 		
-		System.out.println("VAR 1%: "+ xVAR1 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR1, 100), 2) +"%");
-		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR5, 100), 2) +"%");
-		System.out.println("VAR 10%: "+ xVAR10 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR10, 100), 2) +"%");
+//		xMedia = 0.017949D;
+//		xDesvioPadrao = 1.020913D;
+//		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.05D, xMedia, xDesvioPadrao).doubleValue();
+//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
+//		
+//		Double xDistribuicao = DBSNumber.distribuicaoNormalInvertida(0.05D, 0D, 1D).doubleValue();
+//		xVAR5 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao, xDesvioPadrao)).doubleValue();
+//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
+//		
+//		Double xValor = 63774D;
+//		xMedia = 0.17D;
+//		xDesvioPadrao = 1.73D;
+//		xDistribuicao = DBSNumber.distribuicaoNormalInvertida(0.05D, 0D, 1D).doubleValue();
+//		xVAR5 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao, xDesvioPadrao)).doubleValue();
+//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ 
+//					DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"% = "+ 
+//					DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR5, xValor),2));
+		
+		xAmostra = new ArrayList<Double>();
+		xListaVariacao = new ArrayList<Double>();
+		Double xValor = 67459437.27D;
+		xValorAnterior = null;
+		xAmostra.add(67530914.09D);
+		xAmostra.add(67459437.27D);
+		//Calcula a Variação
+		for (Double xValor2 : xAmostra) {
+			if (DBSObject.isNull(xValorAnterior)) {
+				xValorAnterior = xValor2;
+				xVariacao = 0D;
+			} else {
+				//Calcula as variações do Índice
+				xVariacao = DBSNumber.divide(DBSNumber.subtract(xValor2, xValorAnterior), xValorAnterior).doubleValue();
+				xVariacao = DBSNumber.multiply(xVariacao, 100D).doubleValue();
+			}
+			xListaVariacao.add(xVariacao);
+		}
+		xMedia = DBSNumber.average(xListaVariacao).doubleValue();
+		xDesvioPadrao = DBSNumber.desvioPadrao(xListaVariacao).doubleValue();
+		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.95D, xMedia, xDesvioPadrao).doubleValue();
+		System.out.println("VAR 5%: "+ xVAR5 +" = "+ 
+				DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR5, 100D), 4) +"% = "+ 
+				DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.multiply(xVAR5, 100D), xValor),4));
 	}
 }
