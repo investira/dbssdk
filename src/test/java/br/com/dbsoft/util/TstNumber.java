@@ -1,14 +1,14 @@
 package br.com.dbsoft.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-
-import br.com.dbsoft.util.DBSNumber;
 
 public class TstNumber {
 
@@ -492,332 +492,37 @@ public class TstNumber {
 	}
 	
 	@Test
-	public void test_calculaVar() {
-		List<Double> 	xAmostra = new ArrayList<Double>();
-		List<Double>	xListaVariacao = new ArrayList<Double>();
-		Double xMedia;
-		Double xDesvioPadrao;
-		Double xVAR1;
-		Double xVAR5;
-		Double xVAR10;
+	public void test_variance() {
+		List<Double> xAmostra = new ArrayList<Double>();
+		Double 		 xVariancia;
 		
-		xAmostra.add(69962.32D);
-		xAmostra.add(70317.79D);
-		xAmostra.add(71091.03D);
-		xAmostra.add(70578.83D);
-		xAmostra.add(70057.20D);
-		xAmostra.add(70127.04D);
-		xAmostra.add(70423.44D);
-		xAmostra.add(71632.90D);
-		xAmostra.add(70721.44D);
-		xAmostra.add(70940.22D);
-		xAmostra.add(70609.07D);
-		xAmostra.add(70919.75D);
-		xAmostra.add(70058.08D);
-		xAmostra.add(69561.53D);
-		xAmostra.add(69133.09D);
-		xAmostra.add(69426.57D);
-		xAmostra.add(68709.22D);
-		xAmostra.add(68050.71D);
-		xAmostra.add(66697.57D);
-		xAmostra.add(66574.88D);
-		xAmostra.add(67847.34D);
-		xAmostra.add(66688.48D);
-		xAmostra.add(66764.84D);
-		xAmostra.add(65269.15D);
-		xAmostra.add(65362.04D);
-		xAmostra.add(65771.33D);
-		xAmostra.add(64217.52D);
-		xAmostra.add(64577.83D);
-		xAmostra.add(65755.66D);
-		xAmostra.add(66557.55D);
-		xAmostra.add(66341.39D);
-		xAmostra.add(67576.62D);
-		xAmostra.add(67684.99D);
-		xAmostra.add(68066.82D);
-		xAmostra.add(67258.66D);
-		xAmostra.add(66439.83D);
-		xAmostra.add(66910.48D);
-		xAmostra.add(66948.99D);
-		xAmostra.add(66902.53D);
-		xAmostra.add(67383.22D);
-		xAmostra.add(66242.63D);
-		xAmostra.add(67281.51D);
-		xAmostra.add(68145.53D);
-		xAmostra.add(68012.10D);
-		xAmostra.add(67263.75D);
-		xAmostra.add(66040.66D);
-		xAmostra.add(66684.60D);
-		xAmostra.add(67169.25D);
-		xAmostra.add(67005.22D);
-		xAmostra.add(66002.57D);
-		xAmostra.add(66215.93D);
-		xAmostra.add(66879.89D);
-		xAmostra.add(66689.61D);
-		xAmostra.add(67578.33D);
-		xAmostra.add(67795.51D);
-		xAmostra.add(67532.97D);
-		xAmostra.add(67765.94D);
-		xAmostra.add(67192.82D);
-		xAmostra.add(67418.76D);
-		xAmostra.add(67997.06D);
-		xAmostra.add(68586.70D);
-		xAmostra.add(69268.29D);
-		xAmostra.add(69703.80D);
-		xAmostra.add(69837.52D);
-		xAmostra.add(69036.91D);
-		xAmostra.add(69176.12D);
-		xAmostra.add(68718.01D);
-		xAmostra.add(68164.36D);
-		xAmostra.add(66896.23D);
-		xAmostra.add(66486.49D);
-		xAmostra.add(66278.89D);
-		xAmostra.add(66684.21D);
-		xAmostra.add(65415.49D);
-		xAmostra.add(66158.09D);
-		xAmostra.add(67058.02D);
-		xAmostra.add(66972.37D);
-		xAmostra.add(67144.26D);
-		xAmostra.add(66264.47D);
-		xAmostra.add(65673.21D);
-		xAmostra.add(66132.86D);
-		xAmostra.add(65462.75D);
-		xAmostra.add(64318.18D);
-		xAmostra.add(63615.50D);
-		xAmostra.add(63407.01D);
-		xAmostra.add(64417.34D);
-		xAmostra.add(64621.97D);
-		xAmostra.add(64876.88D);
-		xAmostra.add(63775.82D);
-		xAmostra.add(64003.16D);
-		xAmostra.add(63235.30D);
-		xAmostra.add(62829.68D);
-		xAmostra.add(63673.34D);
-		xAmostra.add(62840.61D);
-		xAmostra.add(62367.36D);
-		xAmostra.add(62596.52D);
-		xAmostra.add(62345.18D);
-		xAmostra.add(63336.75D);
-		xAmostra.add(63388.44D);
-		xAmostra.add(64098.57D);
-		xAmostra.add(64294.96D);
-		xAmostra.add(63953.93D);
-		xAmostra.add(64620.08D);
-		xAmostra.add(63411.48D);
-		xAmostra.add(64218.08D);
-		xAmostra.add(64340.50D);
-		xAmostra.add(63067.73D);
-		xAmostra.add(63217.85D);
-		xAmostra.add(63032.97D);
-		xAmostra.add(63468.82D);
-		xAmostra.add(62697.16D);
-		xAmostra.add(62022.92D);
-		xAmostra.add(62204.83D);
-		xAmostra.add(61603.74D);
-		xAmostra.add(60880.62D);
-		xAmostra.add(61059.98D);
-		xAmostra.add(61168.24D);
-		xAmostra.add(61423.61D);
-		xAmostra.add(61194.09D);
-		xAmostra.add(61016.72D);
-		xAmostra.add(61216.98D);
-		xAmostra.add(62303.37D);
-		xAmostra.add(62333.97D);
-		xAmostra.add(62403.64D);
-		xAmostra.add(63394.34D);
-		xAmostra.add(63891.31D);
-		xAmostra.add(63038.81D);
-		xAmostra.add(62565.46D);
-		xAmostra.add(62207.33D);
-		xAmostra.add(61513.24D);
-		xAmostra.add(60223.63D);
-		xAmostra.add(59704.75D);
-		xAmostra.add(60669.89D);
-		xAmostra.add(59679.35D);
-		xAmostra.add(59478.01D);
-		xAmostra.add(58837.61D);
-		xAmostra.add(59082.13D);
-		xAmostra.add(59119.71D);
-		xAmostra.add(60262.95D);
-		xAmostra.add(60270.47D);
-		xAmostra.add(59970.54D);
-		xAmostra.add(59339.90D);
-		xAmostra.add(58288.46D);
-		xAmostra.add(58708.25D);
-		xAmostra.add(58823.45D);
-		xAmostra.add(58535.74D);
-		xAmostra.add(57310.78D);
-		xAmostra.add(56017.22D);
-		xAmostra.add(52811.36D);
-		xAmostra.add(52949.22D);
-		xAmostra.add(48668.29D);
-		xAmostra.add(51150.90D);
-		xAmostra.add(51395.29D);
-		xAmostra.add(53343.11D);
-		xAmostra.add(53473.35D);
-		xAmostra.add(54651.83D);
-		xAmostra.add(54323.61D);
-		xAmostra.add(55073.02D);
-		xAmostra.add(53134.10D);
-		xAmostra.add(52447.63D);
-		xAmostra.add(52440.23D);
-		xAmostra.add(53786.63D);
-		xAmostra.add(53795.70D);
-		xAmostra.add(52953.30D);
-		xAmostra.add(53350.79D);
-		xAmostra.add(54860.73D);
-		xAmostra.add(55385.03D);
-		xAmostra.add(56495.12D);
-		xAmostra.add(58118.20D);
-		xAmostra.add(56531.62D);
-		xAmostra.add(54998.41D);
-		xAmostra.add(56607.30D);
-		xAmostra.add(57623.63D);
-		xAmostra.add(55778.39D);
-		xAmostra.add(55685.47D);
-		xAmostra.add(55543.97D);
-		xAmostra.add(56286.04D);
-		xAmostra.add(56381.46D);
-		xAmostra.add(57210.11D);
-		xAmostra.add(57102.78D);
-		xAmostra.add(56378.63D);
-		xAmostra.add(55981.90D);
-		xAmostra.add(53280.28D);
-		xAmostra.add(53230.36D);
-		xAmostra.add(53747.52D);
-		xAmostra.add(53920.36D);
-		xAmostra.add(53270.36D);
-		xAmostra.add(53384.67D);
-		xAmostra.add(52324.42D);
-		xAmostra.add(50791.53D);
-		xAmostra.add(50686.34D);
-		xAmostra.add(51013.85D);
-		xAmostra.add(52290.37D);
-		xAmostra.add(51243.62D);
-		xAmostra.add(53273.11D);
-		xAmostra.add(53838.47D);
-		xAmostra.add(54601.07D);
-		xAmostra.add(55030.45D);
-		xAmostra.add(53911.33D);
-		xAmostra.add(55031.93D);
-		xAmostra.add(54966.13D);
-		xAmostra.add(54009.98D);
-		xAmostra.add(55255.23D);
-		xAmostra.add(56891.97D);
-		xAmostra.add(56285.99D);
-		xAmostra.add(57143.79D);
-		xAmostra.add(59270.13D);
-		xAmostra.add(59513.13D);
-		xAmostra.add(58338.39D);
-		xAmostra.add(57322.75D);
-		xAmostra.add(58196.30D);
-		xAmostra.add(58669.92D);
-		xAmostra.add(59198.77D);
-		xAmostra.add(59026.13D);
-		xAmostra.add(57549.74D);
-		xAmostra.add(57321.81D);
-		xAmostra.add(58546.97D);
-		xAmostra.add(58258.23D);
-		xAmostra.add(58559.99D);
-		xAmostra.add(56988.90D);
-		xAmostra.add(56731.34D);
-		xAmostra.add(56284.59D);
-		xAmostra.add(55878.44D);
-		xAmostra.add(54972.08D);
-		xAmostra.add(55279.88D);
-		xAmostra.add(54894.49D);
-		xAmostra.add(56017.35D);
-		xAmostra.add(55299.76D);
-		xAmostra.add(56874.98D);
-		xAmostra.add(58143.42D);
-		xAmostra.add(57885.85D);
-		xAmostra.add(58910.48D);
-		xAmostra.add(59536.16D);
-		xAmostra.add(58662.83D);
-		xAmostra.add(57455.02D);
-		xAmostra.add(58236.46D);
-		xAmostra.add(57346.86D);
-		xAmostra.add(57494.85D);
-		xAmostra.add(56646.87D);
-		xAmostra.add(56331.15D);
-		xAmostra.add(56096.93D);
-		xAmostra.add(55298.33D);
-		xAmostra.add(56864.85D);
-		xAmostra.add(56653.37D);
-		xAmostra.add(57347.87D);
-		xAmostra.add(57701.07D);
-		xAmostra.add(57669.48D);
-		xAmostra.add(58005.20D);
-		xAmostra.add(56533.76D);
-		xAmostra.add(56754.08D);
+		xAmostra.add(52343.71D);
+		xAmostra.add(52149.37D);
+		xAmostra.add(52519.4D);
+		xAmostra.add(53106.18D);
 		
-		Double xValorAnterior = null;
-		Double xVariacao;
-		//Calcula a Variação
-		for (Double xValor : xAmostra) {
-			if (DBSObject.isNull(xValorAnterior)) {
-				xValorAnterior = xValor;
-				xVariacao = 0D;
-			} else {
-				//Calcula as variações do Índice
-//				xVariacao = DBSNumber.divide(xValor, xValorAnterior).doubleValue();
-//				xVariacao = DBSNumber.multiply(DBSNumber.subtract(xVariacao, 1), 100).doubleValue();
-				xVariacao = DBSNumber.divide(DBSNumber.subtract(xValor, xValorAnterior), xValorAnterior).doubleValue();
-			}
-			xListaVariacao.add(xVariacao);
-		}
-		
-		xMedia = DBSNumber.average(xListaVariacao).doubleValue();
-		xDesvioPadrao = DBSNumber.desvioPadrao(xListaVariacao).doubleValue();
-		xVAR1 = DBSNumber.distribuicaoNormalInvertida(0.1D, xMedia, xDesvioPadrao).doubleValue();
-		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.05D, xMedia, xDesvioPadrao).doubleValue();
-		xVAR10 = DBSNumber.distribuicaoNormalInvertida(0.10D, xMedia, xDesvioPadrao).doubleValue();
-		
-//		System.out.println("VAR 1%: "+ xVAR1 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
-//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
-//		System.out.println("VAR 10%: "+ xVAR10 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
-		
-//		xMedia = 0.017949D;
-//		xDesvioPadrao = 1.020913D;
-//		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.05D, xMedia, xDesvioPadrao).doubleValue();
-//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
-//		
-//		Double xDistribuicao = DBSNumber.distribuicaoNormalInvertida(0.05D, 0D, 1D).doubleValue();
-//		xVAR5 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao, xDesvioPadrao)).doubleValue();
-//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"%");
-//		
-//		Double xValor = 63774D;
-//		xMedia = 0.17D;
-//		xDesvioPadrao = 1.73D;
-//		xDistribuicao = DBSNumber.distribuicaoNormalInvertida(0.05D, 0D, 1D).doubleValue();
-//		xVAR5 = DBSNumber.add(xMedia, DBSNumber.multiply(xDistribuicao, xDesvioPadrao)).doubleValue();
-//		System.out.println("VAR 5%: "+ xVAR5 +" = "+ 
-//					DBSFormat.getFormattedNumber(DBSNumber.round(xVAR5, 2), 2) +"% = "+ 
-//					DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR5, xValor),2));
-		
-		xAmostra = new ArrayList<Double>();
-		xListaVariacao = new ArrayList<Double>();
-		Double xValor = 67459437.27D;
-		xValorAnterior = null;
-		xAmostra.add(67530914.09D);
-		xAmostra.add(67459437.27D);
-		//Calcula a Variação
-		for (Double xValor2 : xAmostra) {
-			if (DBSObject.isNull(xValorAnterior)) {
-				xValorAnterior = xValor2;
-				xVariacao = 0D;
-			} else {
-				//Calcula as variações do Índice
-				xVariacao = DBSNumber.divide(DBSNumber.subtract(xValor2, xValorAnterior), xValorAnterior).doubleValue();
-				xVariacao = DBSNumber.multiply(xVariacao, 100D).doubleValue();
-			}
-			xListaVariacao.add(xVariacao);
-		}
-		xMedia = DBSNumber.average(xListaVariacao).doubleValue();
-		xDesvioPadrao = DBSNumber.desvioPadrao(xListaVariacao).doubleValue();
-		xVAR5 = DBSNumber.distribuicaoNormalInvertida(0.95D, xMedia, xDesvioPadrao).doubleValue();
-		System.out.println("VAR 5%: "+ xVAR5 +" = "+ 
-				DBSFormat.getFormattedNumber(DBSNumber.multiply(xVAR5, 100D), 4) +"% = "+ 
-				DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.multiply(xVAR5, 100D), xValor),4));
+		xVariancia = DBSNumber.variancia(xAmostra).doubleValue();
+		assertEquals("170.559,49", DBSFormat.getFormattedNumber(xVariancia,2));
 	}
+	
+	@Test
+	public void test_covariance() {
+		List<Double> xAmostra1 = new ArrayList<Double>();
+		List<Double> xAmostra2 = new ArrayList<Double>();
+		Double 		 xCovariancia;
+		
+		xAmostra1.add(52343.71D);
+		xAmostra1.add(52149.37D);
+		xAmostra1.add(52519.4D);
+		xAmostra1.add(53106.18D);
+		
+		xAmostra2.add(52757.53D);
+		xAmostra2.add(53080.88D);
+		xAmostra2.add(53014.21D);
+		xAmostra2.add(54016.97D);
+		
+		xCovariancia = DBSNumber.covariancia(xAmostra1, xAmostra2).doubleValue();
+		assertEquals("150.120,71", DBSFormat.getFormattedNumber(xCovariancia,2));
+	}
+
 }

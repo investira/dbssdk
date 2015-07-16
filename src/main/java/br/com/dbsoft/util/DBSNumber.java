@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.stat.correlation.Covariance;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.apache.log4j.Logger;
-
 
 public class DBSNumber {
 	protected static Logger			wLogger = Logger.getLogger(DBSNumber.class);
@@ -27,12 +29,12 @@ public class DBSNumber {
 		BigDecimal xX = BigDecimal.ZERO;
 		for (int i=0; i < pX.length; i++){
 			if (i==0){
-				xX = DBSNumber.toBigDecimal(pX[i]);
+				xX = toBigDecimal(pX[i]);
 			}else{
-				xX = xX.subtract(DBSNumber.toBigDecimal(pX[i]));
+				xX = xX.subtract(toBigDecimal(pX[i]));
 			}
 		}
-		return DBSNumber.toBigDecimal(xX);
+		return toBigDecimal(xX);
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -48,12 +50,12 @@ public class DBSNumber {
 		BigDecimal xX = BigDecimal.ZERO;
 		for (int i=0; i < pX.length; i++){
 			if (i==0){
-				xX = DBSNumber.toBigDecimal(pX[i]);
+				xX = toBigDecimal(pX[i]);
 			}else{
-				xX = xX.add(DBSNumber.toBigDecimal(pX[i]));
+				xX = xX.add(toBigDecimal(pX[i]));
 			}
 		}
-		return DBSNumber.toBigDecimal(xX);
+		return toBigDecimal(xX);
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -68,14 +70,14 @@ public class DBSNumber {
 		BigDecimal xX = BigDecimal.ZERO;
 		for (int i=0; i < pX.length; i++){
 			if (i==0){
-				xX = DBSNumber.toBigDecimal(pX[i]);
+				xX = toBigDecimal(pX[i]);
 			}else{
-				xX = xX.multiply(DBSNumber.toBigDecimal(pX[i]));
+				xX = xX.multiply(toBigDecimal(pX[i]));
 			}
 		}
-		return DBSNumber.toBigDecimal(xX);
+		return toBigDecimal(xX);
 	}	
-
+	
 	//------------------------------------------------------------------------------------
 
 	/**
@@ -90,9 +92,9 @@ public class DBSNumber {
 		BigDecimal xX = BigDecimal.ZERO;
 		for (int i=0; i < pX.length; i++){
 			if (i==0){
-				xX = DBSNumber.toBigDecimal(pX[i]);
+				xX = toBigDecimal(pX[i]);
 			}else{
-				BigDecimal xD = DBSNumber.toBigDecimal(pX[i]);
+				BigDecimal xD = toBigDecimal(pX[i]);
 				//Teste para evitar exception di division by zero
 				if (xD.compareTo(BigDecimal.ZERO) != 0){
 					xX = xX.divide(xD, 30, RoundingMode.HALF_UP);
@@ -102,7 +104,7 @@ public class DBSNumber {
 				}
 			}
 		}
-		return DBSNumber.toBigDecimal(xX);
+		return toBigDecimal(xX);
 	}
 
 	//------------------------------------------------------------------------------------
@@ -116,9 +118,9 @@ public class DBSNumber {
 	 * @return Resultado
 	 */
 	public static BigDecimal exp(Object pBase, Object pExpoente){
-		Double xX = DBSNumber.toDouble(pBase);
-		Double xY = DBSNumber.toDouble(pExpoente);
-		return DBSNumber.toBigDecimal(Math.pow(xX, xY));
+		Double xX = toDouble(pBase);
+		Double xY = toDouble(pExpoente);
+		return toBigDecimal(Math.pow(xX, xY));
 	}
 
 	//------------------------------------------------------------------------------------
@@ -133,7 +135,7 @@ public class DBSNumber {
 			return null;
 		}
 		Double xX = toDouble(pX);
-		return DBSNumber.toBigDecimal(Math.log(xX));
+		return toBigDecimal(Math.log(xX));
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -158,7 +160,7 @@ public class DBSNumber {
 		Double xMedia = 0D;
 		
 		if (DBSObject.isNull(pAmostra) || pAmostra.isEmpty()) {
-			return DBSNumber.toBigDecimal(xMedia);
+			return toBigDecimal(xMedia);
 		}
 		
 		//Calcula a Média da amostra
@@ -167,7 +169,7 @@ public class DBSNumber {
 		}
 		xMedia = divide(xMedia, pAmostra.size()).doubleValue(); 
 		
-		return DBSNumber.toBigDecimal(xMedia);
+		return toBigDecimal(xMedia);
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -178,36 +180,68 @@ public class DBSNumber {
 	 * @return Retorna o desvio padrão da amostra
 	 */
 	public static BigDecimal desvioPadrao(List<Double> pAmostra) {
-		Double 	xDesvioPadrao;
-		Double 	xMedia = 0D;
-		Double	xSoma = 0D;
-		
-		//Calcula a Média da amostra
-		xMedia = average(pAmostra).doubleValue(); 
-		
-		//Calcula a soma dos quadrados da diferença entre o valor da amostra e a diferença
-		for (Double xValor : pAmostra) {
-			xSoma = add(xSoma, exp(subtract(xValor, xMedia),2).doubleValue()).doubleValue();
+		Double 				xDesvioPadrao = 0D;
+		double[] 			xArray = new double[pAmostra.size()];
+		StandardDeviation 	xSD = new StandardDeviation();
+		if (DBSObject.isNull(pAmostra) || pAmostra.isEmpty()) {
+			return toBigDecimal(xDesvioPadrao);
 		}
-		
-		//Desvio Padrão
-		xDesvioPadrao = sqrt(divide(xSoma, subtract(pAmostra.size(),1))).doubleValue();
+		for (int xI = 0; xI < pAmostra.size(); xI++) {
+			xArray[xI] = pAmostra.get(xI);
+		}
+		xDesvioPadrao = xSD.evaluate(xArray);
 		
 		return toBigDecimal(xDesvioPadrao);
 	}
 	
 	//------------------------------------------------------------------------------------
 	
-	public static BigDecimal distribuicaoNormalInvertida(Double pValor, Double pMedia, Double pDesvioPadrao) {
+	public static BigDecimal distribuicaoNormalInvertida(Double pNivelConfianca, Double pMedia, Double pDesvioPadrao) {
 		Double xResultado = 0D;
 
 		NormalDistribution xDistribution = new NormalDistribution(pMedia, pDesvioPadrao);
-		xResultado = xDistribution.inverseCumulativeProbability(pValor);
+		xResultado = xDistribution.inverseCumulativeProbability(pNivelConfianca);
 		
-		return DBSNumber.toBigDecimal(xResultado);
+		return toBigDecimal(xResultado);
 	}
 	
-	//
+	//------------------------------------------------------------------------------------
+	
+	public static BigDecimal covariancia(List<Double> pAmostra1, List<Double> pAmostra2) {
+		return covariancia(pAmostra1, pAmostra2, false);
+	}
+	public static BigDecimal covariancia(List<Double> pAmostra1, List<Double> pAmostra2, boolean pImparcial) {
+		Double 		xResultado = 0D;
+		double[] 	xArray1 = new double[pAmostra1.size()];
+		double[] 	xArray2 = new double[pAmostra2.size()];
+		Covariance 	xCovariance = new Covariance();
+		
+		for (int xI = 0; xI < pAmostra1.size(); xI++) {
+			xArray1[xI] = pAmostra1.get(xI);
+		}
+		for (int xI = 0; xI < pAmostra2.size(); xI++) {
+			xArray2[xI] = pAmostra2.get(xI);
+		}		
+		
+		xResultado = xCovariance.covariance(xArray1, xArray2, pImparcial);
+		return toBigDecimal(xResultado);
+	}
+	
+	//------------------------------------------------------------------------------------
+	
+	public static BigDecimal variancia(List<Double> pAmostra) {
+		Double 		xResultado = 0D;
+		double[] 	xArray = new double[pAmostra.size()];
+		Variance	xVariancia = new Variance();
+		
+		for (int xI = 0; xI < pAmostra.size(); xI++) {
+			xArray[xI] = pAmostra.get(xI);
+		}
+		xResultado = xVariancia.evaluate(xArray);
+		return toBigDecimal(xResultado);
+	}
+	
+	//------------------------------------------------------------------------------------
 	
 	/**
      * Emulates Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type)
@@ -440,12 +474,12 @@ public class DBSNumber {
 		Double 		xFinOperado;
 		Double 		xFinAtual;
 		
-		BigDecimal 	xPuAtual = DBSNumber.toBigDecimal(pPuAtual);
-		BigDecimal	xPuOperado = DBSNumber.toBigDecimal(pPuOperado);
-		Double 		xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
-		Double 		xQuantidadeOperada = DBSNumber.toDouble(pQuantidadeOperada);
+		BigDecimal 	xPuAtual = toBigDecimal(pPuAtual);
+		BigDecimal	xPuOperado = toBigDecimal(pPuOperado);
+		Double 		xQuantidadeAtual = toDouble(pQuantidadeAtual);
+		Double 		xQuantidadeOperada = toDouble(pQuantidadeOperada);
 		
-		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
+		xSaldo = add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
 		
 		if (xSaldo.equals(0D)){
 			return xPuAtual;
@@ -456,10 +490,10 @@ public class DBSNumber {
 	             * Ocorrer uma nova movimentação com o mesmo sinal da posição ou
 	             * for excluido uma movimentação que mudou a preço médio.
 	             */
-				xFinOperado = DBSNumber.multiply(pQuantidadeOperada, pPuOperado).doubleValue();
-				xFinAtual = DBSNumber.multiply(pQuantidadeAtual, pPuAtual).doubleValue();
+				xFinOperado = multiply(pQuantidadeOperada, pPuOperado).doubleValue();
+				xFinAtual = multiply(pQuantidadeAtual, pPuAtual).doubleValue();
 				
-				return DBSNumber.divide(DBSNumber.add(xFinOperado, xFinAtual), xSaldo);
+				return divide(add(xFinOperado, xFinAtual), xSaldo);
 			} else {
 				if (isPosicaoVirada(pQuantidadeAtual, pQuantidadeOperada)){
 					return xPuOperado;
@@ -488,9 +522,9 @@ public class DBSNumber {
 		}
 		
 		Double xSaldo;
-		Double xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
-		Double xQuantidadeOperada = DBSNumber.toDouble(pQuantidadeOperada);
-		xSaldo = DBSNumber.add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
+		Double xQuantidadeAtual = toDouble(pQuantidadeAtual);
+		Double xQuantidadeOperada = toDouble(pQuantidadeOperada);
+		xSaldo = add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
 		
 		/*
 		 * Posição é considerada virada quando:
@@ -499,7 +533,7 @@ public class DBSNumber {
 	    */
 		
 		if (!xSaldo.equals(0D) 
-		  && (DBSNumber.sign(xSaldo).intValue() != DBSNumber.sign(xQuantidadeAtual).intValue() 
+		  && (sign(xSaldo).intValue() != sign(xQuantidadeAtual).intValue() 
 		   || xQuantidadeAtual.equals(0D))){
 			return true;
 		}
@@ -517,8 +551,8 @@ public class DBSNumber {
 		 || pQuantidadeOperada == null){
 			return false;
 		}
-		Double xQuantidadeAtual = DBSNumber.toDouble(pQuantidadeAtual);
-		Double xQuantidadeOperada= DBSNumber.toDouble(pQuantidadeOperada);		
+		Double xQuantidadeAtual = toDouble(pQuantidadeAtual);
+		Double xQuantidadeOperada= toDouble(pQuantidadeOperada);		
 		
 		if ((xQuantidadeAtual < 0 && xQuantidadeOperada > 0) 
 		 || (xQuantidadeAtual > 0 && xQuantidadeOperada < 0)){
@@ -780,7 +814,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	public static boolean isInteger(Object pValue){
-		Integer xInteiro = DBSNumber.toInteger(pValue);
+		Integer xInteiro = toInteger(pValue);
 		if (xInteiro != null){
 			if (xInteiro.toString().trim().equals(pValue.toString().trim())){
 				return true;
@@ -824,12 +858,12 @@ public class DBSNumber {
 			return null;
 		}
 		BigDecimal xD;
-		BigDecimal xE = DBSNumber.exp(10D, pDecimalPlaces.doubleValue());
+		BigDecimal xE = exp(10D, pDecimalPlaces.doubleValue());
 	
 		if (isNumber(pString)){
 			xD = toBigDecimal(pString);
-			xD = DBSNumber.divide(xD, xE);
-			xD = DBSNumber.round(xD, pDecimalPlaces);
+			xD = divide(xD, xE);
+			xD = round(xD, pDecimalPlaces);
 			return xD;
 		}
 		else{
