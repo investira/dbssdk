@@ -12,6 +12,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
 
 public class DBSNumber {
@@ -238,6 +239,27 @@ public class DBSNumber {
 			xArray[xI] = pAmostra.get(xI);
 		}
 		xResultado = xVariancia.evaluate(xArray);
+		return toBigDecimal(xResultado);
+	}
+	
+	//------------------------------------------------------------------------------------
+	
+	/**
+	 * Retorna o k-ésimo percentil de valores em um intervalo, onde k está no intervalo 0..1, exclusivo.
+	 * Utiliza o método de estimativa Percentile.EstimationType.R_7
+	 * @param pAmostra A matriz ou intervalo de dados que define a posição relativa.
+	 * @param pQuantile O valor do percentil no intervalo 0..1, exclusivo.
+	 * @return
+	 */
+	public static BigDecimal percentil(List<Double> pAmostra, Double pQuantile) {
+		Double 		xResultado = 0D;
+		double[] 	xAmostra = new double[pAmostra.size()];
+		Percentile 	xPercentil = new Percentile().withEstimationType(Percentile.EstimationType.R_7);
+		
+		for (int xI = 0; xI < pAmostra.size(); xI++) {
+			xAmostra[xI] = pAmostra.get(xI);
+		}
+		xResultado = xPercentil.evaluate(xAmostra, pQuantile);
 		return toBigDecimal(xResultado);
 	}
 	

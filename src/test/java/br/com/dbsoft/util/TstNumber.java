@@ -525,4 +525,56 @@ public class TstNumber {
 		assertEquals("150.120,71", DBSFormat.getFormattedNumber(xCovariancia,2));
 	}
 
+	@Test
+	public void test_percentil() {
+		List<Double> xAmostra;
+		Double 		 xPercentil;
+		Double 		 xEnesimo;
+		
+		//TESTE 1
+		xAmostra = new ArrayList<Double>();
+		xAmostra.add(15D);
+		xAmostra.add(20D);
+		xAmostra.add(35D);
+		xAmostra.add(40D);
+		xAmostra.add(50D);
+		xEnesimo = 40D;
+		xPercentil = DBSNumber.percentil(xAmostra, xEnesimo).doubleValue();
+		assertEquals("29,00", DBSFormat.getFormattedNumber(xPercentil,2));
+		
+		//TESTE 2
+		xAmostra = new ArrayList<Double>();
+		xAmostra.add(1D);
+		xAmostra.add(2D);
+		xAmostra.add(3D);
+		xAmostra.add(4D);
+		xEnesimo = 75D;
+		xPercentil = DBSNumber.percentil(xAmostra, xEnesimo).doubleValue();
+		assertEquals("3,25", DBSFormat.getFormattedNumber(xPercentil,2));
+		
+		//TESTE 3
+		xAmostra = new ArrayList<Double>();
+		xAmostra.add(1D);
+		xAmostra.add(2D);
+		xAmostra.add(3D);
+		xAmostra.add(4D);
+		xEnesimo = 30D;
+		xPercentil = DBSNumber.percentil(xAmostra, xEnesimo).doubleValue();
+		assertEquals("1,90", DBSFormat.getFormattedNumber(xPercentil,2));
+		
+		//TESTE 4
+		xAmostra = new ArrayList<Double>();
+		xAmostra.add(1D);
+		xAmostra.add(2D);
+		xAmostra.add(3D);
+		xAmostra.add(4D);
+		xAmostra.add(5D);
+		xAmostra.add(6D);
+		xAmostra.add(7D);
+		xAmostra.add(8D);
+		xAmostra.add(9D);
+		xEnesimo = 25D;
+		xPercentil = DBSNumber.percentil(xAmostra, xEnesimo).doubleValue();
+		assertEquals("3,00", DBSFormat.getFormattedNumber(xPercentil,2));
+	}
 }
