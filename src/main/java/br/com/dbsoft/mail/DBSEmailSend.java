@@ -13,6 +13,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -218,13 +219,13 @@ public class DBSEmailSend {
 			xTransport.sendMessage(xMessage, xMessage.getAllRecipients());
 			xTransport.close();
 			return true;
+		} catch (SendFailedException e) {
+			wLogger.error(e);
 		} catch (AddressException e) {
 			wLogger.error(e);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			wLogger.error(e);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			wLogger.error(e);
 		}
 		return false;
