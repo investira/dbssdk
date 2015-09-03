@@ -21,6 +21,17 @@ public class StringToDoubleAdapter extends XmlAdapter<String, Double> {
 
 	@Override
 	public Double unmarshal(String pValor) {
-		return DBSNumber.toDouble(pValor);
+		String xValue = pValor;
+		if (DBSString.getStringCount(xValue, ",") > 1) {
+			xValue = DBSString.changeStr(xValue, ",", "");
+		}
+		if (xValue.contains(".")) {
+			if (DBSString.getStringCount(xValue, ".") == 1) {
+				xValue = DBSString.changeStr(xValue, ".", ",");
+			} else {
+				xValue = DBSString.changeStr(xValue, ".", "");
+			}
+		}
+		return DBSNumber.toDouble(xValue);
 	}
 }

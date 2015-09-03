@@ -414,6 +414,20 @@ public class DBSDate{
 	 * @param pValue String no formato YYYYMMDD.
 	 * @return Date
 	 */
+	public static Date toDateYYYY_MM_DD(String pValue) {
+		Date xData = null;
+		String xAno = DBSString.getSubString(pValue, 1, 4);
+		String xMes = DBSString.getSubString(pValue, 6, 2);
+		String xDia = DBSString.getSubString(pValue, 9, 2);
+		xData = toDate(xDia, xMes, xAno);
+		return xData;
+	}
+
+	/**
+	 * Parse de string para data.
+	 * @param pValue String no formato YYYYMMDD.
+	 * @return Date
+	 */
 	public static Date toDateYYYYMMDD(String pValue) {
 		Date xData = null;
 		String xAno = DBSString.getSubString(pValue, 1, 4);
@@ -422,7 +436,7 @@ public class DBSDate{
 		xData = toDate(xDia, xMes, xAno);
 		return xData;
 	}
-
+	
 	/**
 	* Parse de string para data.
 	* @param pValue String no formato YYMMDD.
