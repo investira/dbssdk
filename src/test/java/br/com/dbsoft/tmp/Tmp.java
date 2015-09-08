@@ -57,10 +57,11 @@ public class Tmp {
 		}
 	}	
 	
+	//COnta quantas vezes o valor foi seguidamente iqual.
 	@Test
 	public void galtonBoard2(){
 		Random xR = new Random();
-		Integer xTotalBolas = 1000000;
+		Integer xTotalBolas = 1000000000;
 		Integer xSoma = 0;
 		Map<Integer, Integer> xSaldo = new HashMap<Integer, Integer>(); 
 		Integer xZ = 0;
