@@ -139,7 +139,7 @@ public class DBSEmailSend {
 		}
 		Properties 		xProps = new Properties();
 		Session 		xMailSession = Session.getInstance(xProps, new SMTPAuthenticator());
-	    Message 		xMessage = new MimeMessage(xMailSession);
+	    MimeMessage 	xMessage = new MimeMessage(xMailSession);
 		InternetAddress xFromAddress = null;
 		Transport 		xTransport;
 		BodyPart 		xMessageBodyPart = new MimeBodyPart();
@@ -191,10 +191,11 @@ public class DBSEmailSend {
 			}
 			
 			//Texto da mensagem----------
-			xMessage.setSubject(pMessage.getSubject());
+			xMessage.setSubject(pMessage.getSubject(), ENCODE.ISO_8859_1);
 			if (pMessage.getIsHtmlContent()){
-				xMessageBodyPart.setContent(pMessage.getText(), CONTENT_TYPE.TEXT_HTML +  "; charset=" + ENCODE.UTF_8.toLowerCase());			
+				xMessageBodyPart.setContent(pMessage.getText(), CONTENT_TYPE.TEXT_HTML +  "; charset=" + ENCODE.UTF_8);			
 			}else{
+				xMessageBodyPart.setContent(pMessage.getText(), CONTENT_TYPE.TEXT_PLAIN +  "; charset=" + ENCODE.UTF_8);			
 				xMessageBodyPart.setText(pMessage.getText());
 			}
 			xMultipart = new MimeMultipart();
