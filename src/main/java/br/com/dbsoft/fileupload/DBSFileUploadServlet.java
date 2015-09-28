@@ -13,7 +13,6 @@ import javax.servlet.http.Part;
 import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSFile;
-import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
 
@@ -63,13 +62,13 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 	}	
 	
     /**
-	 * Caminho pasta local onde o arquivo recebido será salvo.
+	 * Caminho da pasta local onde o arquivo recebido será salvo.
      * @return
      */
     public String getLocalPath() {return wLocalPath;}
 
 	/**
-	 * Caminho pasta local onde o arquivo recebido será salvo.
+	 * Caminho da pasta local onde o arquivo recebido será salvo.
 	 * @param pLocalPath
 	 */
 	public void setLocalPath(String pLocalPath) {
@@ -79,7 +78,8 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 	// ========================================================================================================
     @Override
 	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) {
- 		try {
+ 		boolean xOk = true;
+    	try {
  		   //Dispara evento 
  	       if (!pvFireEventBeforeUpload()
 	         || DBSObject.isEmpty(getLocalPath())){
@@ -96,29 +96,40 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 			    if (pvFireEventBeforeSave()){
 			        if (!DBSObject.isEmpty(wFileName)){
 			        	//Verifica se a pasta existe
-			        	if (!DBSFile.exists(wLocalPath+wFileName)) {
+			        	if (!DBSFile.existsPath(wLocalPath+wFileName)) {
 			        		//Cria a pasta caso ela não exista
 			        		String xAbsolutePath = wLocalPath+wFileName;
-			        		DBSFile.mkDir(DBSString.getSubString(xAbsolutePath, 1, xAbsolutePath.lastIndexOf(File.separator)));
+			        		xOk = DBSFile.mkDir(DBSString.getSubString(xAbsolutePath, 1, xAbsolutePath.lastIndexOf(File.separator)));
 			        	}
-			            xPart.write(wLocalPath + wFileName);
-			            //Dispara evento 
-			            pvFireEventAfterSave();
+			        	if (xOk){
+			        		xPart.write(wLocalPath + wFileName);
+			        		//Dispara evento 
+			        		pvFireEventAfterSave();
+			        	}else{
+			        		pvFireEventOnError();
+			        	}
 			        }
 			    }
 			}
 			//Dispara evento 
 			pvFireEventAfterUpload();
+// 		} catch (java.io.FileNotFoundException e){
+//			try {
+//				DBSIO.throwIOException(e);
+//				pvFireEventOnError();
+//			} catch (DBSIOException e1) {
+//				wLogger.error(e1);
+//			}
 		} catch (Exception e) { //java.io.FileNotFoundException
 			try {
 //				System.out.println("EXCEPTION:" + e.getMessage());
+				wLogger.error(e);
+				pvFireEventOnError();
 				pResponse.getWriter().print(e.getMessage());
-				pResponse.flushBuffer();
 				pResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				DBSIO.throwIOException(e);
+				pResponse.flushBuffer();
 			} catch (DBSIOException | IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				wLogger.error(e1);
 			}
 		}
 	}
@@ -239,6 +250,25 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 			}
 		}catch(Exception e){
 			wLogger.error("afterSave:", e);
+			throw e;
+		}
+	}
+	
+	private void pvFireEventOnError() throws DBSIOException{
+		DBSFileUploadServletEvent xE = new DBSFileUploadServletEvent(this);
+		xE.setFileName(wFileName);
+		try{
+			onError(xE);
+			if (xE.isOk()){
+				//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+				for (int xX=0; xX<wEventListeners.size(); xX++){
+					wEventListeners.get(xX).onError(xE);
+					//Sai em caso de erro
+					if (!xE.isOk()){break;}
+		        }
+			}
+		}catch(Exception e){
+			wLogger.error("onError:", e);
 			throw e;
 		}
 	}
