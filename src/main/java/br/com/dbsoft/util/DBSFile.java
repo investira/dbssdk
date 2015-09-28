@@ -559,6 +559,15 @@ public class DBSFile {
 		}
 		return xExists;
 	}
+	
+	/**
+	 * Retorna se camimho existe.
+	 * @param pFile path completo do arquivo.
+	 * @return
+	 */
+	public static boolean existsPath(String pFile) {
+		return exists(getPathFromFileName(pFile, false));
+	}
 
 	/**
 	 * Cria diretório a partir do caminho informado.<br/>
@@ -644,7 +653,29 @@ public class DBSFile {
 	 */
 	public static String getPathFromFileName(String pFileName){
 		return pvGetPath(pFileName, true);
+	}
 
+	/**
+	 * Retorna o caminho do arquivo, incluindo "/" ao final ou não conforme parametro <b>pAddSeparator</b> e ao inicio quando não tiver sido informado o <b>procotolo</b>.<br/>
+	 * Exclui a parte do caminho após o último "/".<br/>
+	 * Considera que <b>pFileName</b> pode conter além do caminho, o nome de arquivo.
+	 * <b>pFileName</b> terminado em "/" será considerado integralmente um diretório.<p>
+	 * <b>pFileName</b> não terminado em "/", terá o conteúdo após a última "/" desconsiderado.<p> 
+	 * Exemplos:<br/>
+	 * <b>http://www.acme.com/abc/</b> retornará <b>http://www.acme.com/abc/</b>.<br/>
+	 * <b>http://www.acme.com/abc</b> retornará <b>http://www.acme.com/</b>.<br/>
+	 * <b>http://www.acme.com/</b> retornará <b>http://www.acme.com/</b>.<br/>
+	 * <b>acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>acme</b> retornará <b>/</b>.<br/>
+	 * <b>/acme/</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc.txt</b> retornará <b>/acme/</b>.<br/>
+	 * <b>/acme/abc/xyz</b> retornará <b>/acme/abc/</b>.<br/>
+	 * @param pFileName
+	 * @return
+	 */
+	public static String getPathFromFileName(String pFileName, boolean pAddSeparator){
+		return pvGetPath(pFileName, true, pAddSeparator);
 	}
 	
 	/**
@@ -806,7 +837,7 @@ public class DBSFile {
 	// ===============================================================================================
 	// Private
 	// ===============================================================================================
-	
+
 	/**
 	 * Retorna o caminho do diretório.
 	 * @param pName
@@ -815,6 +846,16 @@ public class DBSFile {
 	 * @return
 	 */
 	private static String pvGetPath(String pName, boolean pHasFile){
+		return pvGetPath(pName, pHasFile, true);
+	}	
+	/**
+	 * Retorna o caminho do diretório.
+	 * @param pName
+	 * @param pHasFile true: Indica se <b>pNome</b> pode ser conter um nome de arquivo.<p>
+	 * false: Indica se <b>pNome</b> contém somente diretório, independentemente se termina ou não com "/"
+	 * @return
+	 */
+	private static String pvGetPath(String pName, boolean pHasFile, boolean pAddSeparator){
 		if (pName != null){
 			try {
 				URI xURI = new URI(pName).normalize();
@@ -840,9 +881,16 @@ public class DBSFile {
 						xPath = DBSObject.getNotNull(xFile.getParent(),""); 
 					}
 				}
-				//Inclui barra final
-				if (!xPath.endsWith(File.separator)){
-					xPath += File.separator;
+				if (pAddSeparator){
+					//Inclui barra final
+					if (!xPath.endsWith(File.separator)){
+						xPath += File.separator;
+					}
+				}else{
+					//Exclui
+					if (xPath.endsWith(File.separator)){
+						xPath = xPath.substring(0, xPath.length());
+					}
 				}
 				return xHost + xPath;
 			} catch (URISyntaxException e) {
