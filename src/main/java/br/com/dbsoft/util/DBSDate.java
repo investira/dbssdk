@@ -525,6 +525,14 @@ public class DBSDate{
 			return (Timestamp) pData;
 		} else if (pData instanceof Integer) {
 			return new Timestamp((Integer) pData);
+		} else if (pData instanceof String) {
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			try {
+				return new Timestamp(xFormat.parse((String) pData).getTime());
+			} catch (ParseException e) {
+				wLogger.error(e);
+				return null;
+			}
 		} else {
 			return (Timestamp) pData;
 		}
@@ -653,6 +661,9 @@ public class DBSDate{
 	 * @return hora
 	 */
 	public static Time toTime(Timestamp pTimestamp){
+		if (DBSObject.isNull(pTimestamp)) {
+    		return null;
+    	}
 		Calendar xC = toCalendar(pTimestamp);
 		return toTime(xC.get(Calendar.HOUR_OF_DAY), xC.get(Calendar.MINUTE), xC.get(Calendar.SECOND));
 	}
@@ -663,6 +674,9 @@ public class DBSDate{
 	 * @return hora
 	 */
 	public static Time toTime(Date pDate){
+		if (DBSObject.isNull(pDate)) {
+    		return null;
+    	}
 		Calendar xC = toCalendar(pDate);
 		return toTime(xC.get(Calendar.HOUR_OF_DAY), xC.get(Calendar.MINUTE), xC.get(Calendar.SECOND));
 	}
