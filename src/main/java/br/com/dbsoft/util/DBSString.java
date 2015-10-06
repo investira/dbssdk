@@ -448,6 +448,23 @@ public class DBSString {
 	}
 
 	/**
+	 * * Retorna um Array a patir de uma String, separado conforme o regex
+	 * @param pTextoBase
+	 * @param pRegex
+	 * @return
+	 */
+	public static ArrayList<String> toArrayListRegex(String pTextoBase, String pRegex){
+		String[] xMatches = pTextoBase.split(pRegex);
+		ArrayList <String> xA = new ArrayList<String>();
+		for (String xMatch:xMatches){
+			if (!DBSObject.isEmpty(xMatch)){
+				xA.add(xMatch.trim());
+			}
+		};
+		return xA;
+	}
+	
+	/**
 	 * Retorna um array a partir dos valores informados.
 	 * @param pValues
 	 * @return
