@@ -23,6 +23,35 @@ public class TstString {
 	}
 	
 	@Test
+	public void toArrayRegex(){
+		ArrayList <String> xA = new ArrayList<String>();
+		ArrayList <String> xB=  new ArrayList<String>();
+		ArrayList <String> xC=  new ArrayList<String>();
+		xA.add("a");
+		xA.add("b");
+		xA.add("c");
+		xA.add("d");
+		xA.add("e");
+		xA.add("f");
+		Assert.assertEquals(xA, DBSString.toArrayListRegex("a b ,c ,d;e;f","[,;\\s]"));
+		Assert.assertEquals(xA, DBSString.toArrayListRegex("a,b;c,;,d;e;f","[,;\\s]"));
+	}
+	
+	@Test
+	public void emails(){
+		assertTrue(DBSEmail.isValidEmailAddress("asdc@asdc.com"));
+		assertTrue(DBSEmail.isValidEmailAddress("asdc@asdc.com.br"));
+		assertTrue(DBSEmail.isValidEmailAddress("asdc@asdc.com.br.asdc"));
+		assertTrue(DBSEmail.isValidEmailAddress("sdc@asdc.com.br.asdc"));
+		assertTrue(DBSEmail.isValidEmailAddress("asdc@asdc.br"));
+		assertFalse(DBSEmail.isValidEmailAddress("asdc.?[asdc@asdc.com.br.asdc"));
+		assertFalse(DBSEmail.isValidEmailAddress("asdcasdc"));
+		assertFalse(DBSEmail.isValidEmailAddress(""));
+		assertFalse(DBSEmail.isValidEmailAddress("123ed\12@qws"));
+		assertFalse(DBSEmail.isValidEmailAddress("asdc@asdc"));
+	}
+	
+	@Test
 	public void test_ascii(){
 //		System.out.println(DBSString.toASCII("É"));
 //		pValue = DBSString.changeStr((String)pValue, "╔", "É");
