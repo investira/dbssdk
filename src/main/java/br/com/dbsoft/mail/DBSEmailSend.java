@@ -176,14 +176,14 @@ public class DBSEmailSend {
 			
 			//TO ---------------------
 			for (DBSEmailAddress xEmailAddress:DBSEmail.validateEmailAddress(pMessage.getTo())){ //ALBERTO: Adicionada validação de lista de E-mails. Em 26/03/2015.
-				pvAddRecipient(xMessage, RecipientType.TO, xEmailAddress);
+				pvAddRecipient(xMessage, RecipientType.TO, xEmailAddress); 
 			}
 			//CC ---------------------
-			for (DBSEmailAddress xEmailAddress:pMessage.getCC()){
+			for (DBSEmailAddress xEmailAddress:DBSEmail.validateEmailAddress(pMessage.getCC())){
 				pvAddRecipient(xMessage, RecipientType.CC, xEmailAddress);
 			}
 			//BCC ---------------------
-			for (DBSEmailAddress xEmailAddress:pMessage.getBCC()){
+			for (DBSEmailAddress xEmailAddress:DBSEmail.validateEmailAddress(pMessage.getBCC())){
 				pvAddRecipient(xMessage, RecipientType.BCC, xEmailAddress);
 			}
 			if (xMessage.getAllRecipients() == null){
