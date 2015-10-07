@@ -698,8 +698,8 @@ public class DBSIO{
 	}	
 	
 	/**
-	 * Copia os valores de uma DataModel para outro, desde que encontre colunas com o mesmo nome.
-	 * Esta rotina ainda não contempla datamodel recursivo
+	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
+	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes estendidas. 
 	 * @param pSourceDataModel DataModel origem
 	 * @param pTargetDataModel DataModel destino
 	 */	
@@ -711,16 +711,13 @@ public class DBSIO{
 				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
 				if (xAnnotationTmp instanceof DBSTableModel){
 				}else{
-					for (Field yField:pTargetDataModel.getClass().getDeclaredFields()){
-						if (xField.getName().toUpperCase().trim().equals(yField.getName().toUpperCase().trim())){
-							try {
-								xField.setAccessible(true);
-								pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
-							} catch (IllegalArgumentException
-									| IllegalAccessException e) {
-								wLogger.error("copyDataModelFieldsValue", e);
-							}
-							break;
+					Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
+					if (yField != null){
+						try {
+							xField.setAccessible(true);
+							pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							wLogger.error("copyDataModelFieldsValue", e);
 						}
 					}
 				}
@@ -3046,6 +3043,25 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			}
 		}
 		return false;
+	}
+	/**
+	 * Busca pelo campo na class ou na superclass se existir.<br/>
+	 * Campos são todas variáveis declaradas.
+	 * @param pClass
+	 * @param pFieldName
+	 * @return
+	 */
+	private static Field pvFindField(Class<?> pClass, String pFieldName) {
+	    pFieldName = pFieldName.toUpperCase().trim();
+		for (Field yField:pClass.getDeclaredFields()){
+			if (pFieldName.equals(yField.getName().toUpperCase().trim())){
+				return yField;
+			}
+		}
+		if (pClass.getSuperclass() != null){
+			return pvFindField(pClass.getSuperclass(), pFieldName);
+		}
+		return null;
 	}
 
 
