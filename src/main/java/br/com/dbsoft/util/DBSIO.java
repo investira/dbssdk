@@ -704,26 +704,25 @@ public class DBSIO{
 	 * @param pTargetDataModel DataModel destino
 	 */	
 	public final static <T, T2> void copyDataModelFieldsValue(T pSourceDataModel, T2 pTargetDataModel){
-		if (pSourceDataModel != null && pTargetDataModel != null){ 
-			for (Field xField:pSourceDataModel.getClass().getDeclaredFields()){
-				//Verifica se o campo é um datamodel (Anotação @DataModel)
-				//Se for irá procurar dentro dos fields do datamodel
-				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
-				if (xAnnotationTmp instanceof DBSTableModel){
-				}else{
-					Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
-					if (yField != null){
-						try {
-							xField.setAccessible(true);
-							pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							wLogger.error("copyDataModelFieldsValue", e);
-						}
-					}
-				}
-			}
-		}
+		pvCopyDataModelFieldsValue(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel);
 	}	
+	
+		
+	
+//	private static Field pvFindField(Class<?> pClass, String pFieldName) {
+//	    pFieldName = pFieldName.toUpperCase().trim();
+//		for (Field yField:pClass.getDeclaredFields()){
+//			System.out.println(yField.getName() + "\t" + pFieldName);
+//			if (pFieldName.equals(yField.getName().toUpperCase().trim())){
+//				return yField;
+//			}
+//		}
+//		if (pClass.getSuperclass() != null){
+//			return pvFindField(pClass.getSuperclass(), pFieldName);
+//		}
+//		return null;
+//	}
+
 	
 	/**
 	 * Copia os valores das colunas de um DAO para outro.
@@ -2767,6 +2766,28 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//## Private Methods                                                                                      #
 	//#########################################################################################################
 
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
 	/**
 	 * Retorna sequence do registro recem incluído
 	 * @param pCn
@@ -3044,8 +3065,43 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		}
 		return false;
 	}
+
+		
 	/**
-	 * Busca pelo campo na class ou na superclass se existir.<br/>
+	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
+	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes estendidas. 
+	 * @param pSourceDataModel DataModel origem
+	 * @param pTargetDataModel DataModel destino
+	 */	
+	private final static <T,T2> void pvCopyDataModelFieldsValue(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
+		if (pSourceDataModel != null && pTargetDataModel != null){ 
+			for (Field xField:pSourceDataModelClass.getDeclaredFields()){
+				// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
+				// Se for irá procurar dentro dos fields do datamodel
+				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+				if (xAnnotationTmp instanceof DBSTableModel){
+					//Chamada recursiva não implementada
+				}else{
+					Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
+					if (yField != null){
+						try {
+							xField.setAccessible(true);
+							pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							wLogger.error("copyDataModelFieldsValue", e);
+						}
+					}
+				}
+			}
+		}
+		//Chamada recurva para procurar campo na superclass, se existir
+		if (pSourceDataModelClass.getSuperclass() != null){
+			pvCopyDataModelFieldsValue(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
+		}
+	}
+	
+	/**
+	 * Busca pelo campo na class ou na superclass recursivamente se existir.<br/>
 	 * Campos são todas variáveis declaradas.
 	 * @param pClass
 	 * @param pFieldName
