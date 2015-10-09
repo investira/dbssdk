@@ -704,7 +704,9 @@ public class DBSIO{
 	 * @param pTargetDataModel DataModel destino
 	 */	
 	public final static <T, T2> void copyDataModelFieldsValue(T pSourceDataModel, T2 pTargetDataModel){
-		pvCopyDataModelFieldsValue(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel);
+		if (pSourceDataModel != null && pTargetDataModel != null){
+			pvCopyDataModelFieldsValue(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel);
+		}
 	}	
 	
 		
@@ -3074,26 +3076,25 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	 * @param pTargetDataModel DataModel destino
 	 */	
 	private final static <T,T2> void pvCopyDataModelFieldsValue(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
-		if (pSourceDataModel != null && pTargetDataModel != null){ 
-			for (Field xField:pSourceDataModelClass.getDeclaredFields()){
-				// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
-				// Se for irá procurar dentro dos fields do datamodel
-				Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
-				if (xAnnotationTmp instanceof DBSTableModel){
-					//Chamada recursiva não implementada
-				}else{
-					Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
-					if (yField != null){
-						try {
-							xField.setAccessible(true);
-							pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							wLogger.error("copyDataModelFieldsValue", e);
-						}
+		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
+			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
+			// Se for irá procurar dentro dos fields do datamodel
+			Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+			if (xAnnotationTmp instanceof DBSTableModel){
+				//Chamada recursiva não implementada
+			}else{
+				Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
+				if (yField != null){
+					try {
+						xField.setAccessible(true);
+						pvSetDataModelFieldValue(pTargetDataModel, yField, xField.get(pSourceDataModel));
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						wLogger.error("copyDataModelFieldsValue", e);
 					}
 				}
 			}
 		}
+
 		//Chamada recurva para procurar campo na superclass, se existir
 		if (pSourceDataModelClass.getSuperclass() != null){
 			pvCopyDataModelFieldsValue(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
