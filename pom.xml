@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.dbsoft</groupId>
 	<artifactId>dbssdk</artifactId> 
-	<version>1.4.0</version>
+	<version>2.0.0</version>
 	<name>DBSoft - SDK</name>
 	<url>http://www.dbsoft.com.br</url>
 	<organization>
@@ -32,7 +32,7 @@
 		<mysql.version>5.1.30</mysql.version>
 		<joda-time.version>2.1</joda-time.version>
 		<caelum-stella.version>2.1.0</caelum-stella.version>
-		<jsf.version>2.1.20</jsf.version>
+		<jsf.version>2.2.11</jsf.version>
 <!-- 		<json.version>20140107</json.version> -->
 		<gson.version>2.3.1</gson.version>
 

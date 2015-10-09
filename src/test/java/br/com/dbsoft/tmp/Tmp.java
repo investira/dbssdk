@@ -25,6 +25,20 @@ public class Tmp {
 	private static Integer Fundo = 8;
 	
 //	@Test
+//	public void aaabv(){
+//		DateTime xD3 = new DateTime(2001,01,01,12,00,00);
+//		DateTime xD4 = new DateTime(2002,01,02,12,00,00);
+//		Date xD1 = DBSDate.toDate(xD3.toDate());
+//		Date xD2 = DBSDate.toDate(xD4.toDate());
+////		Date xD1 = DBSDate.toDateDMYHMS("01/01/2001 12:00:00");
+////		Date xD2 = DBSDate.toDateDMYHMS("01/01/2001 13:00:00");
+//		System.out.println((xD2.getTime() - xD1.getTime()) / 1000);
+//		System.out.println(DBSDate.getTimeDif(xD3, xD4));
+//		
+//	}
+	
+	
+//	@Test
 	public void galtonBoard(){
 		Random xR = new Random();
 		Integer xTotalBolas = 1000000;
@@ -61,33 +75,43 @@ public class Tmp {
 	@Test
 	public void galtonBoard2(){
 		Random xR = new Random();
-		Integer xTotalBolas = 1000000000;
-		Integer xSoma = 0;
-		Map<Integer, Integer> xSaldo = new HashMap<Integer, Integer>(); 
-		Integer xZ = 0;
-		Integer xU = 0;
-		Integer xAnterior = 0;
+		Long xTotalBolas = 1000000000000L;
+//		Long xTotalBolas = 100000L;
+		Long xSoma = 1L;
+		Map<Integer, Long> xSaldo = new HashMap<Integer, Long>(); 
+		Long xZ = 0L;
+		Long xU = 0L;
+		int xAnterior = -1;
+		int xAtual = -1;
 //		Integer[] xInteger = new Integer[xTotalVezes];
-		for (int xA=1;xA <= xTotalBolas;xA++){
-			int xAtual = xR.nextInt(2);
+		for (Long xA=1L;xA <= xTotalBolas;xA++){
+			xAtual = xR.nextInt(2);
 			if (xAtual == 0){
-				xSoma--;
 				xZ++;
 			}else if (xAtual == 1){
-				xSoma++;
 				xU++;
 			}
-			if (xAtual == xAnterior){
-				xSaldo.put(xSoma, DBSObject.getNotNull(xSaldo.get(xSoma),0) + 1);
-			}else{
+			if (xAnterior == -1){
 				xAnterior = xAtual;
-				xSoma = 1;
+			}else{
+				if (xAtual == xAnterior){
+					xSoma++;
+				}else{
+					Long xContador = DBSObject.getNotNull(xSaldo.get(xSoma.intValue()),0L) + 1;
+					xSaldo.put(xSoma.intValue(), xContador);
+					xAnterior = xAtual;
+					xSoma = 1L;
+				}
 			}
+		}
+		if (xAtual == xAnterior){
+			Long xContador = DBSObject.getNotNull(xSaldo.get(xSoma.intValue()),0L) + 1;
+			xSaldo.put(xSoma.intValue(), xContador);
 		}
 		System.out.println("0=" + xZ);
 		System.out.println("1=" + xU);
 		for (Integer xKey: xSaldo.keySet()){
-			System.out.println(xKey + "\t" + xSaldo.get(xKey) + "\t" + DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.divide(xSaldo.get(xKey), xTotalBolas), 100), 4));
+			System.out.println(xKey + "\t" + xSaldo.get(xKey) + "\t" + DBSFormat.getFormattedNumber(DBSNumber.multiply(DBSNumber.divide(xSaldo.get(xKey) * xKey, xTotalBolas), 100), 8) + "%");
 		}
 	}	
 
