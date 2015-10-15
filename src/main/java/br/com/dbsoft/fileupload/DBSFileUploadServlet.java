@@ -19,9 +19,14 @@ import br.com.dbsoft.util.DBSString;
 
 /**
  * @author ricardo.villar
- * Deve-se configura a servlet que herdará esta, com as anotações abaixo.<br/>
+ * Deve-se configurar a servlet que herdará esta, com as anotações abaixo.<br/>
  * <b>MultipartConfig</b><br/>
  * <b>WebServlet(value='caminho e nome da servlet')</b><br/>
+ * 
+ * É necessário também configurar o standalone.xhml inserindo o parametro max-post-size=1000000000 no subitem de:
+ * <subsystem xmlns="urn:jboss:domain:undertow:2.0">
+ * 	..
+ * 	<http-listener name="default" socket-binding="http" redirect-socket="https" max-post-size="1000000000"/>
  */
 public abstract class DBSFileUploadServlet extends DBSServlet{
 
