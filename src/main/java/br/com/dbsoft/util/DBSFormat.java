@@ -514,8 +514,20 @@ public class DBSFormat {
 	 * @param pPhoneNumber
 	 * @return
 	 */
+	public static String getPhoneNumber(Object pDDI, Object pDDD, Object pNumber){
+		return getPhoneNumber(DBSString.toString(pDDI),DBSString.toString(pDDD),DBSString.toString(pNumber));
+	}
+
+	/**
+	 * Retorna número de telefone formatado.
+	 * @param pPhoneNumber
+	 * @return
+	 */
 	public static String getPhoneNumber(String pDDI, String pDDD, String pNumber){
 		StringBuilder xSB = new StringBuilder();
+		if (DBSObject.isEmpty(pNumber)){
+			return "";
+		}
 		if (!DBSObject.isEmpty(pDDI)){
 			xSB.append("(");
 			xSB.append(pDDI);
@@ -526,9 +538,9 @@ public class DBSFormat {
 			xSB.append(pDDD);
 			xSB.append(")");
 		}
-		xSB.append(pNumber);
 		return getPhoneNumber(xSB.toString());
 	}
+	
 	
 	/**
 	 * Retorna número de telefone formatado.
