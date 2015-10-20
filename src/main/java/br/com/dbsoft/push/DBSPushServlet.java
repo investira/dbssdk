@@ -67,7 +67,7 @@ public abstract class DBSPushServlet extends DBSServlet {
 
 			final AsyncContext xAC = pRequest.startAsync();
 			
-			xAC.setTimeout(60000); //10 minutos = 600.000 milisegundos
+			xAC.setTimeout(60000); //1 minuto 60.000 milisegundos
 			xAC.addListener(new AsyncListener() {
 				@Override 
 				public void onComplete(AsyncEvent pEvent) {
