@@ -87,6 +87,7 @@ public class DBSSession {
 			if (xOut.checkError()) { //checkError calls flush, and flush() does not throw IOException
 				return false;
 			}
+			xOut.flush();
 		}catch(Exception e){ 
 			return false;
 		}
