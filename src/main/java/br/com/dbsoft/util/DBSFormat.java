@@ -538,6 +538,7 @@ public class DBSFormat {
 			xSB.append(pDDD);
 			xSB.append(")");
 		}
+		xSB.append(pNumber);
 		return getPhoneNumber(xSB.toString());
 	}
 	
