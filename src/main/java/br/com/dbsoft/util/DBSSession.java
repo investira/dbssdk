@@ -84,6 +84,7 @@ public class DBSSession {
 			}
 			xString += "\n";
 			xOut.write(xString);
+			xOut.flush();
 			if (xOut.checkError()) { //checkError calls flush, and flush() does not throw IOException
 				return false;
 			}
