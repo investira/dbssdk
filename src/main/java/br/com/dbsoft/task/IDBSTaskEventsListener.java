@@ -94,7 +94,7 @@ public interface IDBSTaskEventsListener {
 //	public void scheduleEnabledChanged(DBSTaskEvent pEvent);
 
 	/**
-	 * Evento disparado quando o atributo 'status' foi alterado.<br/>
+	 * Evento disparado quando o atributo <b>Status</b>(Interrupted, Success, Error) foi alterado.<br/>
 	 * Se precisar utilizar a conexão e ela já estiver aberta automaticamente pela terafa, <b>NÃO</b> feche.
 	 * Se ela não estiver aberta, <b>abra e fecha</b> após a utilização.<br/>
 	 * Local onde poderá ser implementado a atualização deste dado no banco de dados, se for o caso.
