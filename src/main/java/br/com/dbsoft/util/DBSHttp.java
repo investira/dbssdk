@@ -74,24 +74,54 @@ public class DBSHttp {
 		}			
 	}
 	
-	public static String getResourcePath(){
-		return getRealPath("WEB-INF" + File.separator + "classes" + File.separator);
+	/**
+	 * Retorna o caminho real do web-info/classes da aplicação
+	 * @param pExternalContext
+	 * @return
+	 */
+	public static String getRealPathWebInfClasses(ExternalContext pExternalContext){
+		return getRealPath(pExternalContext, "WEB-INF" + File.separator + "classes" + File.separator);
 	}
 	
-	public static String getRealPath(String pRelativePath){
-		return FacesContext.getCurrentInstance().getExternalContext().getRealPath(pRelativePath);
+	/**
+	 * Retorna o caminho real a partir de caminho virtual
+	 * @param pRelativePath
+	 * @return
+	 */
+	public static String getRealPath(ExternalContext pExternalContext, String pRelativePath){
+		return pExternalContext.getRealPath(pRelativePath);
 	}
 
-	public static String getHTTPServerPath(){
-		if (FacesContext.getCurrentInstance() == null){return "";}
-		ExternalContext xEC = FacesContext.getCurrentInstance().getExternalContext();
+	/**
+	 * Retorna caminho da URL do servidor local a partir do ExternalContext
+	 * @return
+	 */
+	public static String getHTTPServerPath(ExternalContext pExternalContext){
+		if (pExternalContext == null){return "";}
 		StringBuilder xLink = new StringBuilder();
-		xLink.append(xEC.getRequestScheme()).append("://");
-		xLink.append(xEC.getRequestServerName());
-		if (!DBSObject.isEmpty(xEC.getRequestServerPort())){
-			xLink.append(":").append(xEC.getRequestServerPort());
+		xLink.append(pExternalContext.getRequestScheme()).append("://");
+		xLink.append(pExternalContext.getRequestServerName());
+		if (!DBSObject.isEmpty(pExternalContext.getRequestServerPort())){
+			xLink.append(":").append(pExternalContext.getRequestServerPort());
 		}
 //		xLink += xEC.getRequestContextPath();
+		return xLink.toString();
+	}
+	
+	
+	/**
+	 * Retorna URL do servidor local a partir doe um request
+	 * @param pContext
+	 * @return
+	 */
+	public static String getHTTPServerPath(HttpServletRequest pContext){
+		if (pContext == null){return "";}
+		StringBuilder xLink = new StringBuilder();
+		xLink.append(pContext.getScheme()).append("://");
+		xLink.append(pContext.getServerName());
+		if (!DBSObject.isEmpty(pContext.getServerPort())){
+			xLink.append(":").append(pContext.getServerPort());
+		}
 		return xLink.toString();
 	}
 	/**
