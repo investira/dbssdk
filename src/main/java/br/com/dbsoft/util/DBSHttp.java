@@ -91,12 +91,23 @@ public class DBSHttp {
 	public static String getRealPath(ExternalContext pExternalContext, String pRelativePath){
 		return pExternalContext.getRealPath(pRelativePath);
 	}
-
+	
 	/**
-	 * Retorna caminho da URL do servidor local a partir do ExternalContext
+	 * Retorna caminho da URL do servidor local a partir do ExternalContext corrente
 	 * @return
 	 */
-	public static String getHTTPServerPath(ExternalContext pExternalContext){
+	public static String getServerURLString(){
+		if (FacesContext.getCurrentInstance() == null){
+			return "";
+		}
+		return getServerURLString(FacesContext.getCurrentInstance().getExternalContext());
+	}
+
+	/**
+	 * Retorna caminho da URL do servidor local a partir do ExternalContext informado
+	 * @return
+	 */
+	public static String getServerURLString(ExternalContext pExternalContext){
 		if (pExternalContext == null){return "";}
 		StringBuilder xLink = new StringBuilder();
 		xLink.append(pExternalContext.getRequestScheme()).append("://");
