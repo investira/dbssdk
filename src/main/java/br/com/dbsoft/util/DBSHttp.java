@@ -119,13 +119,12 @@ public class DBSHttp {
 		return xLink.toString();
 	}
 	
-	
 	/**
-	 * Retorna URL do servidor local a partir doe um request
+	 * Retorna URL do servidor local a partir de um request
 	 * @param pContext
 	 * @return
 	 */
-	public static String getHTTPServerPath(HttpServletRequest pContext){
+	public static String getServerURLString(HttpServletRequest pContext){
 		if (pContext == null){return "";}
 		StringBuilder xLink = new StringBuilder();
 		xLink.append(pContext.getScheme()).append("://");
