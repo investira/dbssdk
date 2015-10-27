@@ -75,20 +75,20 @@ public class DBSHttp {
 	}
 	
 	/**
-	 * Retorna o caminho real do web-info/classes da aplicação
+	 * Retorna o caminho local do web-info/classes da aplicação
 	 * @param pExternalContext
 	 * @return
 	 */
-	public static String getRealPathWebInfClasses(ExternalContext pExternalContext){
-		return getRealPath(pExternalContext, "WEB-INF" + File.separator + "classes" + File.separator);
+	public static String getLocalPathWebInfClasses(ExternalContext pExternalContext){
+		return getLocalPath(pExternalContext, "WEB-INF" + File.separator + "classes" + File.separator);
 	}
 	
 	/**
-	 * Retorna o caminho real a partir de caminho virtual
+	 * Retorna o caminho local a partir de caminho virtual
 	 * @param pRelativePath
 	 * @return
 	 */
-	public static String getRealPath(ExternalContext pExternalContext, String pRelativePath){
+	public static String getLocalPath(ExternalContext pExternalContext, String pRelativePath){
 		return pExternalContext.getRealPath(pRelativePath);
 	}
 	
