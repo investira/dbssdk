@@ -8,7 +8,7 @@ import java.util.Random;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.junit.Test;
+
 
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
@@ -23,6 +23,7 @@ public class Tmp {
 	private static Integer Dtvm = 2;
 	private static Integer Ctvm= 4;
 	private static Integer Fundo = 8;
+	
 	
 //	@Test
 //	public void aaabv(){
@@ -72,7 +73,7 @@ public class Tmp {
 	}	
 	
 	//COnta quantas vezes o valor foi seguidamente iqual.
-	@Test
+//	@Test
 	public void galtonBoard2(){
 		Random xR = new Random();
 		Long xTotalBolas = 1000000000000L;

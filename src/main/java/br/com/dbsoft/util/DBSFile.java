@@ -701,7 +701,7 @@ public class DBSFile {
 	 * Retorna caminho local que está o servidor
 	 * @return
 	 */
-	public static String getServerPath(){
+	public static String getServerLocalPath(){
 		return System.getProperty(APP_SERVER_PROPERTY.PATH.JBOSS);
 	}
 
@@ -829,10 +829,26 @@ public class DBSFile {
 			System.out.printf("File: %-20s Last Modified:" + new Date(file.lastModified()) + " size:" + file.length() + "\n", file.getName());
 		}
 	}
-	/*
-	 * 
-	 */
 
+	/**
+	 * Retorna o caminho completo contendo o nome do arquivo, corrigindo eventuais problemas de barras "/".
+	 * @param pPath
+	 * @param pFile
+	 * @return
+	 */
+	public static String getPathNormalized(String pPath, String pFile){
+		if (pPath == null){pPath = "";}
+		if (pFile == null){pFile = "";}
+		pPath = pPath.trim();
+		if (!pPath.endsWith(File.separator)){
+			pPath += File.separator;
+		}
+		pFile = pFile.trim();
+		if (pFile.startsWith(File.separator)){
+			pFile = pFile.substring(1, pFile.length());
+		}
+		return pPath + pFile;
+	}
 	
 	// ===============================================================================================
 	// Private
@@ -848,6 +864,7 @@ public class DBSFile {
 	private static String pvGetPath(String pName, boolean pHasFile){
 		return pvGetPath(pName, pHasFile, true);
 	}	
+	
 	/**
 	 * Retorna o caminho do diretório.
 	 * @param pName

@@ -30,6 +30,11 @@ public class TstFile {
 	}
 
 	@Test
+	public void pathNormalized(){
+		assertEquals(DBSFile.getPathNormalized("http://asdcasdc.com.br", "adc"), "http://asdcasdc.com.br/adc");
+	}
+
+	@Test
 	@Ignore
 	public void testaMoverArquivo() {
 		assertTrue(DBSFile.move("/home/jose_addario/TesteMover/Teste3",
