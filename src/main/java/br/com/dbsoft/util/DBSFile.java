@@ -313,7 +313,7 @@ public class DBSFile {
 		}
 		try (FileSystem xZipFileSystem = pvCreateZipFileSystem(pZipFileName,
 				true)) {
-			final Path xRoot = xZipFileSystem.getPath("/"); //TODO TESTAR ISTO NO WINDOWS.
+			final Path xRoot = xZipFileSystem.getPath(File.separator); //TODO TESTAR ISTO NO WINDOWS.
 
 			for (String xFilename : pFileNames) {
 				final Path xSourcePath = Paths.get(xFilename);
