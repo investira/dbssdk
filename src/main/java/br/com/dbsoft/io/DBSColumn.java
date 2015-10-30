@@ -252,11 +252,11 @@ public class DBSColumn implements Serializable{
 	 */
 
 	public final <T> T getValue() {
-		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValue);
+		return DBSIO.<T>toDataTypeValue(getDataType(), wValue);
 	}
 
 	public final void setValue(Object pValue) {
-		wValue = DBSIO.getDataTypeConvertedValue(getDataType(), pValue);
+		wValue = DBSIO.toDataTypeValue(getDataType(), pValue);
 		this.setChanged(true);//Indica que valor foi setado pelo usuário
 	}
 	
@@ -274,11 +274,11 @@ public class DBSColumn implements Serializable{
 	 * @return
 	 */
 	public final <T> T getValueOriginal() {
-		return DBSIO.<T>getDataTypeConvertedValue(getDataType(), wValueOriginal);
+		return DBSIO.<T>toDataTypeValue(getDataType(), wValueOriginal);
 	}
 
 	public final void setValueOriginal(Object pValueOriginal) {
-		wValueOriginal = DBSIO.getDataTypeConvertedValue(getDataType(), pValueOriginal);
+		wValueOriginal = DBSIO.toDataTypeValue(getDataType(), pValueOriginal);
 		this.setChanged(false);//Indica que valor resetado ao estado inicial
 	}
 
