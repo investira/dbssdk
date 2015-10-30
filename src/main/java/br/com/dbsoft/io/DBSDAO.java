@@ -1339,7 +1339,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	@SuppressWarnings("unchecked")
 	private <A> A pvGetResultDataModelValueConvertedToDataType(String pColumnName, DATATYPE pDataType) throws DBSIOException{
-		return (A) DBSIO.getDataTypeConvertedValue(pDataType, wResultDataModel.getRowData().get(pColumnName)); //TODO
+		return (A) DBSIO.toDataTypeValue(pDataType, wResultDataModel.getRowData().get(pColumnName)); //TODO
 	}
 
 	private boolean pvMove(MOVE_DIRECTION pDirection) throws DBSIOException {
