@@ -127,7 +127,7 @@ public class DBSNumber {
 	//------------------------------------------------------------------------------------
 	
 	/**
-	 * Logaritmo
+	 * Logaritmo Natural
 	 * @param pX Valor que se deseja retornar o Log
 	 * @return Restorna log do pX
 	 */
@@ -177,6 +177,7 @@ public class DBSNumber {
 	
 	/**
 	 * Desvio Padrão de uma Amostra
+	 * Equivale a fórmula STDEV.S do Excel
 	 * @param pAmostra
 	 * @return Retorna o desvio padrão da amostra
 	 */
