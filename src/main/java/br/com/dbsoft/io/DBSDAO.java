@@ -576,7 +576,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @return
 	 */	
 	public final <A> A getValue(String pColumnName, Class<A> pValueClass){
-		return DBSObject.<A>toClass(getValue(pColumnName), pValueClass);
+		return DBSObject.<A>toClassValue(getValue(pColumnName), pValueClass);
 	}
 
 	@Override
@@ -658,7 +658,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 * @return
 	 */	
 	public final <A> A getListValue(String pColumnName, Class<A> pValueClass){
-		return DBSObject.<A>toClass(getListValue(pColumnName), pValueClass);
+		return DBSObject.<A>toClassValue(getListValue(pColumnName), pValueClass);
 	}
 	
 	/**

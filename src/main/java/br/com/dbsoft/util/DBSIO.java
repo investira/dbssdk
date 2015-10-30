@@ -1126,7 +1126,7 @@ public class DBSIO{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getDado(Connection pCn, String pTableName, String pCriterio, String pColumnName, Class<?> pReturnedClass) throws DBSIOException{
-		return (T) DBSObject.toClass(getDado(pCn, pTableName, pCriterio, pColumnName), pReturnedClass);
+		return (T) DBSObject.toClassValue(getDado(pCn, pTableName, pCriterio, pColumnName), pReturnedClass);
 	}
 	
 	/**
@@ -1169,7 +1169,7 @@ public class DBSIO{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getDado(Connection pCn, String pSQL, String pColumnName, Class<?> pReturnedClass) throws DBSIOException{
-		return (T) DBSObject.toClass(getDado(pCn, pSQL, pColumnName), pReturnedClass);
+		return (T) DBSObject.toClassValue(getDado(pCn, pSQL, pColumnName), pReturnedClass);
 	}
 
 	/**
@@ -2899,7 +2899,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 				pField.setAccessible(true);
 				try {
 					//Converte o valor para o tipo de classe do campo que receberá
-					pValue = DBSObject.toClass(pValue, pField.getType()); 
+					pValue = DBSObject.toClassValue(pValue, pField.getType()); 
 					//Move o valor
 					pField.set(pDataModel, pValue);
 					return true;
