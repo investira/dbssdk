@@ -1947,37 +1947,6 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		return true;
 	}
 	/**
-	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
-	 * @param pCn conexão com o banco de dados
-	 * @param pDataType Tipo de dado do valor informado no objeto pValue
-	 * @param pValue Objecto contendo o valor a ser utilizado
-	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
-	 * @throws DBSIOException 
-	 */
-	public static String toSQLValue(Connection pCn, DATATYPE pDataType, Object pValue){
-		if (pDataType == DATATYPE.STRING){
-			return toSQLString(pCn, pValue);
-		}else if (pDataType == DATATYPE.BOOLEAN){
-			return toSQLBoolean(pCn, pValue);
-		}else if (pDataType == DATATYPE.DATE){
-			return toSQLDate(pCn, pValue);
-		}else if (pDataType == DATATYPE.TIME){
-			return toSQLTime(pCn, pValue);
-		}else if (pDataType == DATATYPE.DATETIME){
-			return toSQLDateTime(pCn, pValue);
-		}else if (pDataType == DATATYPE.DECIMAL || 
-				  pDataType == DATATYPE.DOUBLE ||
-				  pDataType == DATATYPE.INT ||
-				  pDataType == DATATYPE.ID) {
-			return toSQLNumber(pCn, pValue);
-		}else if (pDataType == DATATYPE.COMMAND){
-			return DBSString.toString(pValue);
-		}else{
-			return null;
-		}
-	}
-
-	/**
 	 * Substitui o 'Select * ' generico por 'Select tabela.*' com o nome da tabela  
 	 * @param pQuerySQL Query SQL a ser tratada
 	 * @return Query SQL modificada
@@ -2248,6 +2217,36 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		return DATATYPE.STRING;
 	}
 
+	/**
+	 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
+	 * @param pCn conexão com o banco de dados
+	 * @param pDataType Tipo de dado do valor informado no objeto pValue
+	 * @param pValue Objecto contendo o valor a ser utilizado
+	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
+	 * @throws DBSIOException 
+	 */
+	public static String toSQLValue(Connection pCn, DATATYPE pDataType, Object pValue){
+		if (pDataType == DATATYPE.STRING){
+			return toSQLString(pCn, pValue);
+		}else if (pDataType == DATATYPE.BOOLEAN){
+			return toSQLBoolean(pCn, pValue);
+		}else if (pDataType == DATATYPE.DATE){
+			return toSQLDate(pCn, pValue);
+		}else if (pDataType == DATATYPE.TIME){
+			return toSQLTime(pCn, pValue);
+		}else if (pDataType == DATATYPE.DATETIME){
+			return toSQLDateTime(pCn, pValue);
+		}else if (pDataType == DATATYPE.DECIMAL || 
+				  pDataType == DATATYPE.DOUBLE ||
+				  pDataType == DATATYPE.INT ||
+				  pDataType == DATATYPE.ID) {
+			return toSQLNumber(pCn, pValue);
+		}else if (pDataType == DATATYPE.COMMAND){
+			return DBSString.toString(pValue);
+		}else{
+			return null;
+		}
+	}
 	/**
 		 * Retorna string com a sintaxe formatada com o valor adaptada ao padrão do banco da dados 
 		 * @param pCn conexão com o banco da dados
