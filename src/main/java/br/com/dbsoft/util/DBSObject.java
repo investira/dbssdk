@@ -151,7 +151,7 @@ public  class DBSObject {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T toClass(Object pValue, Class<T> pClass, T pNullValue){
+	public static <T> T toClassValue(Object pValue, Class<T> pClass, T pNullValue){
 		if (pValue==null){
 			return pNullValue;
 		}
