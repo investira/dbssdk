@@ -2116,7 +2116,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		 * @throws DBSIOException 
 		 */
 		@SuppressWarnings("unchecked")
-		public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
+		public static <T> T toDataTypeValue(DATATYPE pDataType, Object pValue) {
 			if (pDataType == null
 			 || pValue == null){
 				return null;
