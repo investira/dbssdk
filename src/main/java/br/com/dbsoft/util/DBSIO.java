@@ -1954,7 +1954,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	 * @return String com a sintaxe adaptada a sintaxe padrão do banco informado
 	 * @throws DBSIOException 
 	 */
-	public static String getValueSQLFormated(Connection pCn, DATATYPE pDataType, Object pValue){
+	public static String toSQLValue(Connection pCn, DATATYPE pDataType, Object pValue){
 		if (pDataType == DATATYPE.STRING){
 			return toSQLString(pCn, pValue);
 		}else if (pDataType == DATATYPE.BOOLEAN){
@@ -1977,88 +1977,6 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		}
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
-//		return (T) pValue;
-//	}
-//	
-	/**
-	 * Retorna o valor convertido conforme o DataType
-	 * @param pDataType
-	 * @param pValue
-	 * @return
-	 * @throws DBSIOException 
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
-		if (pDataType == null
-		 || pValue == null){
-			return null;
-		}
-		//Como alguns Bancos de dados o boolean é definido como numérico
-		//converte o valor para 0(false) ou -1(true)
-		if (pValue instanceof Boolean){
-			if (pDataType == DATATYPE.INT || 
-				pDataType == DATATYPE.DECIMAL || 
-				pDataType == DATATYPE.DOUBLE){
-				pValue = DBSIO.toSQLBoolean(pValue);
-			}
-		}
-
-		T xValue = null; 
-		 
-		try{
-			switch (pDataType){
-			case INT:
-				xValue = (T) DBSNumber.toInteger(pValue);
-				break;
-			case BOOLEAN:
-				xValue = (T) DBSBoolean.toBoolean(pValue);
-				break;
-			case COMMAND:
-				xValue = (T) pValue;
-				break;
-			case DATE:
-				xValue = (T) DBSDate.toDate(pValue);
-				break;
-			case DATETIME:
-				xValue = (T) DBSDate.toTimestamp(pValue);
-				break;
-			case DECIMAL:
-				xValue = (T) DBSNumber.toBigDecimal(pValue);
-				break;
-			case DOUBLE:
-				xValue = (T) DBSNumber.toDouble(pValue);
-				break;
-			case ID:
-				xValue = (T) DBSNumber.toInteger(pValue);
-				break;
-			case NONE:
-				xValue = (T) pValue;
-				break;
-			case PICTURE:
-				xValue = (T) pValue;
-				break;
-			case STRING:
-				xValue = (T) pValue;
-				break;
-			case TIME:
-				xValue = (T) DBSDate.toTime((String) pValue);
-				break;
-			default:
-				xValue = (T) pValue;
-			}
-			return xValue;
-		}catch(Exception e){
-			wLogger.error(e);
-			return xValue;
-		}finally{
-			if (!DBSObject.isEmpty(pValue)
-			  && xValue == null){
-				wLogger.error("Conversão não foi possível: Valor[" + pValue + "] não pode ser convertido para [" + pDataType.toString() + "]");
-			}
-		}
-	}	
 	/**
 	 * Substitui o 'Select * ' generico por 'Select tabela.*' com o nome da tabela  
 	 * @param pQuerySQL Query SQL a ser tratada
@@ -2154,7 +2072,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		}
 		String xValueSQLFormated;
 		
-		xValueSQLFormated = getValueSQLFormated(pCn, pDataType, pValue);
+		xValueSQLFormated = toSQLValue(pCn, pDataType, pValue);
 		if (xValueSQLFormated == null
 		 || xValueSQLFormated.toLowerCase().contains("null")){
 			return toSQLNull(pCn, pFieldName);
@@ -2185,6 +2103,88 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		return xData;
 	}
 
+	//	@SuppressWarnings("unchecked")
+	//	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
+	//		return (T) pValue;
+	//	}
+	//	
+		/**
+		 * Retorna o valor convertido conforme o DataType
+		 * @param pDataType
+		 * @param pValue
+		 * @return
+		 * @throws DBSIOException 
+		 */
+		@SuppressWarnings("unchecked")
+		public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
+			if (pDataType == null
+			 || pValue == null){
+				return null;
+			}
+			//Como alguns Bancos de dados o boolean é definido como numérico
+			//converte o valor para 0(false) ou -1(true)
+			if (pValue instanceof Boolean){
+				if (pDataType == DATATYPE.INT || 
+					pDataType == DATATYPE.DECIMAL || 
+					pDataType == DATATYPE.DOUBLE){
+					pValue = DBSIO.toSQLBoolean(pValue);
+				}
+			}
+	
+			T xValue = null; 
+			 
+			try{
+				switch (pDataType){
+				case INT:
+					xValue = (T) DBSNumber.toInteger(pValue);
+					break;
+				case BOOLEAN:
+					xValue = (T) DBSBoolean.toBoolean(pValue);
+					break;
+				case COMMAND:
+					xValue = (T) pValue;
+					break;
+				case DATE:
+					xValue = (T) DBSDate.toDate(pValue);
+					break;
+				case DATETIME:
+					xValue = (T) DBSDate.toTimestamp(pValue);
+					break;
+				case DECIMAL:
+					xValue = (T) DBSNumber.toBigDecimal(pValue);
+					break;
+				case DOUBLE:
+					xValue = (T) DBSNumber.toDouble(pValue);
+					break;
+				case ID:
+					xValue = (T) DBSNumber.toInteger(pValue);
+					break;
+				case NONE:
+					xValue = (T) pValue;
+					break;
+				case PICTURE:
+					xValue = (T) pValue;
+					break;
+				case STRING:
+					xValue = (T) pValue;
+					break;
+				case TIME:
+					xValue = (T) DBSDate.toTime((String) pValue);
+					break;
+				default:
+					xValue = (T) pValue;
+				}
+				return xValue;
+			}catch(Exception e){
+				wLogger.error(e);
+				return xValue;
+			}finally{
+				if (!DBSObject.isEmpty(pValue)
+				  && xValue == null){
+					wLogger.error("Conversão não foi possível: Valor[" + pValue + "] não pode ser convertido para [" + pDataType.toString() + "]");
+				}
+			}
+		}
 	/**
 	 * Retorna o tipo de dado DBSoft que corresponde ao tipo de dado original do banco de dados
 	 * @param pCn conexão a partir do qual serãoverificado o fabricante do bando de dados
@@ -2945,7 +2945,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 					if (xValue==null){
 						xSQLWhere = xSQLWhere + toSQLNull(pDAO.getConnection(), pDAO.getCommandTableName() + "." + xColumn.getColumnName());
 					}else{
-						xSQLWhere = xSQLWhere + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xValue);
+						xSQLWhere = xSQLWhere + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + toSQLValue(pDAO.getConnection(), xColumn.getDataType(), xValue);
 					}
 				}
 			}
@@ -2992,7 +2992,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					  || xColumn.getChanged()){ 
-						xSQLColumns += xVirgula + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
+						xSQLColumns += xVirgula + toSQLValue(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
 						xVirgula = ",";
 					}
 				}
@@ -3014,7 +3014,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 					      || (pDAO.getCurrentRowIndex() != -1 //Ja existe um registro corrente o valor é diferente do anterior, ou se deseja atualizar todas as colunas
 					      	&& (!DBSObject.getNotNull(xColumn.getValue(),"").equals(DBSObject.getNotNull(xColumn.getValueOriginal(),""))
 					      	 || !pDAO.getExecuteOnlyChangedValues()))){ 
-							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + getValueSQLFormated(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
+							xSQLColumns += xVirgula + pDAO.getCommandTableName() + "." + xColumn.getColumnName() + "=" + toSQLValue(pDAO.getConnection(), xColumn.getDataType(), xColumn.getValue());
 							xVirgula = ",";
 						}
 						
