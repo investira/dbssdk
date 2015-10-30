@@ -2054,7 +2054,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	 * @param pCn
 	 * @return
 	 */
-	public static Date getServerDate(Connection pCn) {
+	public static Date getDataBaseDate(Connection pCn) {
 		Date xData = null;
 		if (getDataBaseProduct(pCn) == DB_SERVER.ORACLE) {
 	        try {
