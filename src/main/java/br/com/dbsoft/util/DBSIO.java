@@ -2562,7 +2562,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	 * @param pValue String com o comando apropriado de conversão. 
 	 * @return
 	 */
-	public static String getWhereNullOrValue(Connection pCn, String pColumnName, String pValue){
+	public static String getSQLWhereNullOrValue(Connection pCn, String pColumnName, String pValue){
 		return getSQLWhereNullOrValue(pCn, pColumnName, pValue, "=");
 	}
 	
