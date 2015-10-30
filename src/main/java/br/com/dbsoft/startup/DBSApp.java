@@ -22,6 +22,11 @@ public class DBSApp {
 	public static String AppName = null;
 	
 	/**
+	 * Versão da aplicação
+	 */
+	public static String AppVersion = null;
+	
+	/**
 	 * Caminho raiz da aplicação
 	 */
 	public static String ContextPath = null;
@@ -43,4 +48,32 @@ public class DBSApp {
 	 * @return
 	 */
 	public static URL URLHttps = null;
+	
+	public static String getAppDescription(){
+		StringBuilder xSB = new StringBuilder();
+
+		if (AppName!=null){
+			xSB.append(AppName);
+		}
+		if (AppVersion!=null){
+			xSB.append("-");
+			xSB.append(AppVersion);
+		}
+		if (ProjectStage!=null){
+			xSB.append("[");
+			xSB.append(ProjectStage.toString());
+			xSB.append("]");
+		}
+		if (URLHttp!=null){
+			xSB.append("[");
+			xSB.append(URLHttp.toString());
+			xSB.append("]");
+		}
+		if (URLHttps!=null){
+			xSB.append("[");
+			xSB.append(URLHttps.toString());
+			xSB.append("]");
+		}
+		return xSB.toString();
+	}
 }

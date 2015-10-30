@@ -3,6 +3,7 @@ package br.com.dbsoft.startup;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 
 import javax.management.ObjectName;
@@ -19,8 +21,9 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.startup.DBSApp.PROJECT_STAGE;
 import br.com.dbsoft.util.DBSNumber;
+import br.com.dbsoft.util.DBSString;
+
 
 /**
  * Classe para ser utilizada em substituição ao ServletContextListener como listener inicial da aplicação.<br/>
@@ -32,6 +35,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	protected Logger wLogger =  Logger.getLogger(this.getClass());
 
 	private Integer wDelay = 4;
+	
 	
 	/**
 	 * Tempo antes de efetivamente inicializar o servidor.<br/>
@@ -52,32 +56,55 @@ public abstract class DBSAppStartup implements ServletContextListener{
 		}
 	}
 
+//	private xL xLL = new xL();
+//	private class xL implements ServletContextAttributeListener{
+
+//		@Override
+//		public void contextInitialized(ServletContextEvent pSce) {
+//			System.out.println("contextInitialized");
+//		}
+//
+//		@Override
+//		public void contextDestroyed(ServletContextEvent pSce) {
+//			System.out.println("contextDestroyed");
+//		}
+//
+//		@Override
+//		public void attributeAdded(ServletContextAttributeEvent pEvent) {
+//			System.out.println("attributeAdded\t" + pEvent.getName() + ":" + pEvent.getValue());
+//		}
+//
+//		@Override
+//		public void attributeRemoved(ServletContextAttributeEvent pEvent) {
+//			System.out.println("attributeRemoved\t" + pEvent.getName() + ":" + pEvent.getValue());
+//		}
+//
+//		@Override
+//		public void attributeReplaced(ServletContextAttributeEvent pEvent) {
+//			System.out.println("attributeReplaced\t" + pEvent.getName() + ":" + pEvent.getValue());
+//		}
+//	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
-		if (pSce.getServletContext().getInitParameter("javax.faces.PROJECT_STAGE").toLowerCase().equals("production")){
-			DBSApp.ProjectStage = PROJECT_STAGE.PRODUCTION;
-		}else{
-			DBSApp.ProjectStage = PROJECT_STAGE.DEVELOPMENT;
-		}
-		DBSApp.AppName = pSce.getServletContext().getServletContextName();
-		DBSApp.ContextPath = pSce.getServletContext().getContextPath();
-		wLogger.info("STARTING:" + DBSApp.AppName + "\t" + DBSApp.ProjectStage.toString());
+//		pSce.getServletContext().addListener(xLL);
+		wLogger.info("STARTING:" + DBSApp.getAppDescription());
 		if (beforeStart()){
 			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
-			wScheduler.schedule(wRun, getDelay(), TimeUnit.SECONDS);
+			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS);
 		}else{
 			onError();
 		}
+//		ManagementFactory.getPlatformMBeanServer().addNotificationListener(name, listener, filter, handback);
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent pSce) {
-		wLogger.info("STOPPING:" + DBSApp.AppName);
+		wLogger.info("STOPPING:" + DBSApp.getAppDescription());
 		afterStop();
-		wLogger.info("STOPPED:" + DBSApp.AppName);
+		wLogger.info("STOPPED:" + DBSApp.getAppDescription());
 	}
-
-
+	
 	/**
 	 * Método chamado antes do deploy efetivo. Não havendo serviços ativos ainda.<br/>
 	 * Caso queira efetuar chamadas http para a própria aplicação, por exemplo, utilize o <b>afterStart</b>.
@@ -104,22 +131,24 @@ public abstract class DBSAppStartup implements ServletContextListener{
 
 	
 	//PRIVATE --------------------------------------------------------------------------------------------
-	private Runnable wRun = new Runnable(){
+	private Runnable wGetHost = new Runnable(){
 	
 		@Override
 		public void run() {
+			wLogger.info("STARTING GET INFO:" + DBSApp.getAppDescription());
 			boolean xOk = false;
 			Long xTime = System.currentTimeMillis();
-			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 10 segundos
+			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 30 segundos
 			while (!xOk){
-				if ((System.currentTimeMillis() - xTime) > 10000){
+				if ((System.currentTimeMillis() - xTime) > 30000){
+					wLogger.info("START TIMEOUT:" + DBSApp.getAppDescription());
 					break;
 				}
 				xOk = getInfo();
 			}
 			if (xOk){ 
 				afterStart();
-				wLogger.info("STARTED:" + DBSApp.AppName);
+				wLogger.info("STARTED:" + DBSApp.getAppDescription());
 			}else{
 				onError();
 			}
@@ -130,9 +159,9 @@ public abstract class DBSAppStartup implements ServletContextListener{
 				Object xHttpPort = null;
 				Object xHttpsPort = null;
 				Object xLocalHost = null;
-				xHttpPort = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http"), "port");
-				xHttpsPort = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=https"), "port");
-				xLocalHost = ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+				xHttpPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=http", "port");
+				xHttpsPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=https", "port");
+				xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:interface=public", "inet-address");
 				if (xLocalHost !=null){
 					if (xHttpPort != null){
 						DBSApp.URLHttp = new URL("http",xLocalHost.toString(), DBSNumber.toInteger(xHttpPort.toString()), DBSApp.ContextPath);
@@ -142,15 +171,67 @@ public abstract class DBSAppStartup implements ServletContextListener{
 					}
 				}
 				return true;
-			} catch (AttributeNotFoundException e) {
-				//Ignore
-			} catch (InstanceNotFoundException | MalformedObjectNameException
-					| MBeanException | ReflectionException | MalformedURLException e) {
+			} catch (MalformedURLException e) {
+//				System.out.println("MalformedURLException() ==============");
 				wLogger.error(e);
 			} catch (Exception e) {
+				e.setStackTrace(null);
 				wLogger.error(e);
 			}
 			return false;
 		}
-	};;
+	};
+	
+	public static Object getManagementFactoryPlatformMBeanServerAttribute(String pObjectName, String pAttibuteName){
+		ObjectName xON;
+		Object xMBS = ManagementFactory.getPlatformMBeanServer();
+		try {
+			ArrayList<String> xObjs = DBSString.toArrayList(pObjectName, ",");
+			String xFullName = "";
+			for (String xName:xObjs){
+				xFullName += xName;
+				xON = new ObjectName(xFullName);
+				if (!((MBeanServer)xMBS).isRegistered(xON)){
+					return null;
+				}
+				xFullName += ",";
+			}
+			xON = new ObjectName(pObjectName);
+			if (xON != null){
+				if (((MBeanServer)xMBS).isRegistered(xON)){
+					try {
+	//					String[] attrNames = {pAttibuteName};
+	//					AttributeList list = ManagementFactory.getPlatformMBeanServer().getAttributes(xON, attrNames);
+	//					if (list.size() > 0){
+	//						return list.get(0);
+	//					}
+//						System.out.println(xON.toString());
+//						System.out.println(xON.getDomain());
+//						System.out.println(xON.getKeyPropertyListString());
+//						System.out.println(xON.getKeyPropertyList());
+//						System.out.println(xMBS.getClass()); //PluggableMBeanServerImpl // org.jboss.as.jmx.PluggableMBeanServerImpl cannot be cast to org.jboss.as.server.jmx.PluggableMBeanServer
+						return ((MBeanServer)xMBS).getAttribute(xON, pAttibuteName); 
+					} catch (AttributeNotFoundException e) {
+						e.setStackTrace(null);
+//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 1 ==============");
+					} catch (InstanceNotFoundException e) {
+//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 2 ==============");
+//						e.printStackTrace();
+					} catch (MBeanException e) {
+//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 3 ==============");
+//						e.printStackTrace();
+					} catch (ReflectionException e) {
+//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 4 ==============");
+//						e.printStackTrace();
+					} catch (Exception e) {
+//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 5 ==============");
+						e.setStackTrace(null);
+					}
+				}
+			}
+		} catch (MalformedObjectNameException e1) {
+//			System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 0 ==============");
+		}
+		return null;
+	}
 }
