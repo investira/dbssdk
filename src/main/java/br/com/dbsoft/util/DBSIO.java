@@ -169,8 +169,8 @@ public class DBSIO{
 				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 				xCn.setAutoCommit(false);
 				return xCn;
-			} catch (SQLException e) {
-				wLogger.error("Não foi possível criar conexão:" + e.getLocalizedMessage());
+//			} catch (SQLException e) {
+//				wLogger.error("Não foi possível criar conexão:" + e.getLocalizedMessage());
 			} catch (Throwable e) {
 				wLogger.error("Error getConnection:" + e.getLocalizedMessage()); 
 				pvGetConnectionTimeout(xCn, e, pTimeout, xI); 
