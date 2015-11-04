@@ -136,13 +136,13 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	
 		@Override
 		public void run() {
-			wLogger.info("STARTING GET INFO:" + pvGetDescription());
+			wLogger.info("STARTING (getting Host Info):" + pvGetDescription());
 			boolean xOk = false;
 			Long xTime = System.currentTimeMillis();
 			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 30 segundos
 			while (!xOk){
 				if ((System.currentTimeMillis() - xTime) > 30000){
-					wLogger.info("START TIMEOUT:" + pvGetDescription());
+					wLogger.error("START TIMEOUT:" + pvGetDescription());
 					break;
 				}
 				xOk = getInfo();
