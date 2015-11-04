@@ -187,7 +187,7 @@ public class DBSColumn implements Serializable{
 		return wColumnName;
 	}
 	public final void setColumnName(String pColumnName) {
-		wColumnName = pColumnName.toUpperCase().trim();
+		wColumnName = DBSIO.getNormalizedColumnName(pColumnName);
 	}
     //--------------------------------------------------------------------------------------------------------
 	/**

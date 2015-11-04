@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
+import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSString;
 
 /**
@@ -91,7 +92,7 @@ public class DBSRow implements Serializable {
 	//#########################################################################################################
 	
 	public final boolean containsKey(String pColumnName){
-		pColumnName = pvGetColumnName(pColumnName);
+		pColumnName = DBSIO.getNormalizedColumnName(pColumnName);
 		return wColumns.containsKey(pColumnName);
 	}
 	public final boolean containsValue(DBSColumn pValue){
@@ -106,19 +107,19 @@ public class DBSRow implements Serializable {
 		return wColumns.size();
 	}
 
-	public final DBSColumn put(String pColumnName, DBSColumn pColumn){
-		if (pColumnName == null){
-			return null;
-		}
-		pColumnName = pvGetColumnName(pColumnName);
-		return wColumns.put(pColumnName, pColumn);
-	}
+//	public final DBSColumn put(String pColumnName, DBSColumn pColumn){
+//		if (pColumnName == null){
+//			return null;
+//		}
+//		pColumnName = pvGetColumnName(pColumnName);
+//		return wColumns.put(pColumnName, pColumn);
+//	}
 	
 	public final DBSColumn remove(String pColumnName){
 		if (pColumnName == null){
 			return null;
 		}
-		pColumnName = pvGetColumnName(pColumnName);
+		pColumnName = DBSIO.getNormalizedColumnName(pColumnName);
 		return wColumns.remove(pColumnName);
 	}
 
@@ -130,7 +131,7 @@ public class DBSRow implements Serializable {
 		if (pColumnName == null){
 			return null;
 		}
-		pColumnName = pvGetColumnName(pColumnName);
+		pColumnName = DBSIO.getNormalizedColumnName(pColumnName);
 		if (wColumns.containsKey(pColumnName)){
 			return wColumns.get(pColumnName);
 		}else{
@@ -293,7 +294,6 @@ public class DBSRow implements Serializable {
 	 */
 	public final DBSColumn MergeColumn(String pColumnName, String pColumnValue){
 		DBSColumn xObj = pvGetColumn(pColumnName);
-		xObj.setColumnName(pColumnName);
 		xObj.setValue(pColumnValue,true); //Inicializa conteúdo com valores em branco
 		return xObj;
 	}
@@ -377,33 +377,17 @@ public class DBSRow implements Serializable {
 
 	private final DBSColumn pvGetColumn(String pColumnName){
 		DBSColumn xObj;
-		pColumnName = pvGetColumnName(pColumnName);
+		pColumnName = DBSIO.getNormalizedColumnName(pColumnName);
 		if (wColumns.containsKey(pColumnName)){ //Cria coluna se não existir
 			xObj = wColumns.get(pColumnName); //Retorna coluna existente
 		}else{
 			xObj = new DBSColumn();
+			xObj.setColumnName(pColumnName);
 			wColumns.put(pColumnName, xObj);
 		}			
 		return xObj;
 	}
 	
-	
-	/**
-	 * Retorna o nome da coluna em caixa alta, trim e sem o nome date tabela, se houver.
-	 * @param pColumnName
-	 * @return
-	 */
-	private String pvGetColumnName(String pColumnName){
-		if (pColumnName == null){
-			return "";
-		}
-		pColumnName = pColumnName.toUpperCase().trim();
-		int	xI = pColumnName.indexOf(".");
-		if (xI > 0){
-			return pColumnName.substring(xI + 1);
-		}else{
-			return pColumnName;
-		}
-	}
+
 }
 

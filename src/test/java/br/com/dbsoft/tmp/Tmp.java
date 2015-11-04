@@ -1,14 +1,13 @@
 package br.com.dbsoft.tmp;
 
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-
+import org.junit.Test;
 
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
@@ -38,6 +37,40 @@ public class Tmp {
 //		
 //	}
 	
+//	@Test
+//	public <T> void teste(){
+//		DBSColumn<Integer> xC = new DBSColumn<>(DATATYPE.INT);
+//		xC.setColumnName("TESTE");
+//		DBSRow xR = new DBSRow();
+//		xR.MergeColumn(xC);
+//		xC.setValue(1);
+//		xTeste(xC.getValue().getValue());
+//		xTeste(xR.getColumn("TESTE").getValue().getValue());
+//
+//	}
+	@Test
+	public void teste2(){
+//		DBSColumn xC = new DBSColumn(DATATYPE.INT);
+//		xC.setColumnName("TESTE");
+//		xC.setValue(1);
+//		System.out.println(xC.getValueClass());
+//		xTeste(xC.getValue(Integer.class));
+//		xTeste(xR.getColumn("TESTE").getValue().getValue());
+
+	}
+	public void xTeste(Double pValue){
+		System.out.println("DOUBLE");
+	}
+	public void xTeste(Integer pValue){
+		System.out.println("INTEGER");
+	}
+	public void xTeste(String pValue){
+		System.out.println("string");
+	}
+	public void xTeste(Object pValue){
+		System.out.println("OBJECT");
+	}
+
 	
 //	@Test
 	public void galtonBoard(){

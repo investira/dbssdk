@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -167,6 +169,8 @@ public class DBSIO{
 				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 				xCn.setAutoCommit(false);
 				return xCn;
+			} catch (SQLException e) {
+				wLogger.error("Não foi possível criar conexão:" + e.getLocalizedMessage());
 			} catch (Throwable e) {
 				wLogger.error("Error getConnection:" + e.getLocalizedMessage()); 
 				pvGetConnectionTimeout(xCn, e, pTimeout, xI); 
@@ -631,14 +635,14 @@ public class DBSIO{
 	 * @return 
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <A, T> A getDataModelFieldValue(T pDataModel, String pFieldName){
+	public final static <T> T getDataModelFieldValue(Object pDataModel, String pFieldName){
 		Field xField = null;
 		if (pDataModel != null){
 			xField = getDataModelField(pDataModel, pFieldName);
 			if (xField != null){
 				try {
 					xField.setAccessible(true);
-					return (A) xField.get(pDataModel);
+					return (T) xField.get(pDataModel);
 					//return (A) xField.getGenericType();
 				} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 					wLogger.error("getDataModelFieldValue", e);
@@ -2027,6 +2031,22 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	}
 
 	/**
+	 * Retorna colume da coluna padronizado
+	 * @param pColumnName
+	 * @return
+	 */
+	public static String getNormalizedColumnName(String pColumnName){
+		String wColumnName = null;
+		if (pColumnName != null){
+			wColumnName = pColumnName.toUpperCase().trim();
+			int	xI = wColumnName.indexOf(".");
+			if (wColumnName.indexOf(".") > 0){
+				wColumnName = wColumnName.substring(xI + 1);
+			}
+		}
+		return wColumnName;
+	}
+	/**
 	 * Retorna string com a coluna e o valor formatado com a sintaxe adaptada ao padrão do banco da dados 
 	 * @param pCn Conexão com o banco de dados
 	 * @param pDataType Tipo de dado do valor informado no objeto pValue
@@ -2077,83 +2097,66 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//		return (T) pValue;
 	//	}
 	//	
-		/**
-		 * Retorna o valor convertido conforme o DataType
-		 * @param pDataType
-		 * @param pValue
-		 * @return
-		 * @throws DBSIOException 
-		 */
-		@SuppressWarnings("unchecked")
-		public static <T> T toDataTypeValue(DATATYPE pDataType, Object pValue) {
-			if (pDataType == null
-			 || pValue == null){
-				return null;
-			}
-			//Como alguns Bancos de dados o boolean é definido como numérico
-			//converte o valor para 0(false) ou -1(true)
-			if (pValue instanceof Boolean){
-				if (pDataType == DATATYPE.INT || 
-					pDataType == DATATYPE.DECIMAL || 
-					pDataType == DATATYPE.DOUBLE){
-					pValue = DBSIO.toSQLBoolean(pValue);
-				}
-			}
-	
-			T xValue = null; 
-			 
-			try{
-				switch (pDataType){
-				case INT:
-					xValue = (T) DBSNumber.toInteger(pValue);
-					break;
-				case BOOLEAN:
-					xValue = (T) DBSBoolean.toBoolean(pValue);
-					break;
-				case COMMAND:
-					xValue = (T) pValue;
-					break;
-				case DATE:
-					xValue = (T) DBSDate.toDate(pValue);
-					break;
-				case DATETIME:
-					xValue = (T) DBSDate.toTimestamp(pValue);
-					break;
-				case DECIMAL:
-					xValue = (T) DBSNumber.toBigDecimal(pValue);
-					break;
-				case DOUBLE:
-					xValue = (T) DBSNumber.toDouble(pValue);
-					break;
-				case ID:
-					xValue = (T) DBSNumber.toInteger(pValue);
-					break;
-				case NONE:
-					xValue = (T) pValue;
-					break;
-				case PICTURE:
-					xValue = (T) pValue;
-					break;
-				case STRING:
-					xValue = (T) pValue;
-					break;
-				case TIME:
-					xValue = (T) DBSDate.toTime((String) pValue);
-					break;
-				default:
-					xValue = (T) pValue;
-				}
-				return xValue;
-			}catch(Exception e){
-				wLogger.error(e);
-				return xValue;
-			}finally{
-				if (!DBSObject.isEmpty(pValue)
-				  && xValue == null){
-					wLogger.error("Conversão não foi possível: Valor[" + pValue + "] não pode ser convertido para [" + pDataType.toString() + "]");
-				}
+	/**
+	 * Retorna o valor convertido conforme o DataType
+	 * @param pDataType
+	 * @param pValue
+	 * @return
+	 * @throws DBSIOException 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T toDataTypeValue(DATATYPE pDataType, Object pValue) {
+		if (pDataType == null
+		 || pValue == null){
+			return null;
+		}
+		//Como alguns Bancos de dados o boolean é definido como numérico
+		//converte o valor para 0(false) ou -1(true)
+		if (pValue instanceof Boolean){
+			if (pDataType == DATATYPE.INT || 
+				pDataType == DATATYPE.DECIMAL || 
+				pDataType == DATATYPE.DOUBLE){
+				pValue = DBSIO.toSQLBoolean(pValue);
 			}
 		}
+
+		Object xValue = null;
+		try{
+			Class<?> xClass = pDataType.getJavaClass();
+			if (xClass.isAssignableFrom(Boolean.class)){
+				xValue = DBSBoolean.toBoolean(pValue);
+			}else if (xClass.isAssignableFrom(String.class)){
+				xValue = DBSString.toString(pValue);
+			}else if (xClass.isAssignableFrom(Integer.class)){
+				xValue = DBSNumber.toInteger(pValue);
+			}else if (xClass.isAssignableFrom(Double.class)){
+				xValue = DBSNumber.toDouble(pValue);
+			}else if (xClass.isAssignableFrom(BigDecimal.class)){
+				xValue = DBSNumber.toBigDecimal(pValue);
+			}else if (xClass.isAssignableFrom(Long.class)){
+				xValue = DBSNumber.toLong(pValue);
+			}else if (xClass.isAssignableFrom(Timestamp.class)){
+				xValue = DBSDate.toTimestamp(pValue);
+			}else if (xClass.isAssignableFrom(Date.class)){
+				xValue = DBSDate.toDate(pValue);
+			}else if (xClass.isAssignableFrom(Time.class)){
+				xValue = DBSDate.toTime((String) pValue);
+			}else{
+				xValue = pValue;
+			}
+			return (T) xValue;
+		}catch(Exception e){
+			wLogger.error(e);
+			return (T) xValue;
+		}finally{
+			if (!DBSObject.isEmpty(pValue)
+			  && xValue == null){
+				wLogger.error("Conversão não foi possível: Valor[" + pValue + "] não pode ser convertido para [" + pDataType.toString() + "]");
+			}
+		}
+	}
+
+	
 	/**
 	 * Retorna o tipo de dado DBSoft que corresponde ao tipo de dado original do banco de dados
 	 * @param pCn conexão a partir do qual serãoverificado o fabricante do bando de dados

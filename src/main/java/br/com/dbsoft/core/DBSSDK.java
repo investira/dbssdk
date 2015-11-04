@@ -1,5 +1,10 @@
 package br.com.dbsoft.core;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+
 
 public final class DBSSDK {
 	public static final String DOMAIN = "br.com.dbsoft";
@@ -7,7 +12,7 @@ public final class DBSSDK {
 	public static final int VERDADEIRO = -1;
 	public static final int FALSO = 0;
 	
-	public final static class UI
+	public static final class UI
 	{
 		public static enum ID_PREFIX{
 			APPLICATION 		("ap"),					
@@ -56,8 +61,8 @@ public final class DBSSDK {
 			}
 		}
 		
-		public final static class COMBOBOX{
-			public final static String NULL_VALUE = ""; //Valor do item null na lista. Para mantém conformidade com o JSF que por não se possível enviar NULL, irá considerar o valor 'vázio' como nulo.
+		public static final class COMBOBOX{
+			public static final String NULL_VALUE = ""; //Valor do item null na lista. Para mantém conformidade com o JSF que por não se possível enviar NULL, irá considerar o valor 'vázio' como nulo.
 			
 			public enum NULL_TEXT{
 				NAO_EXIBIR,
@@ -113,14 +118,14 @@ public final class DBSSDK {
 		}
 	}
 
-	public final static class ENCODE{
+	public static final class ENCODE{
 		public static final String US_ASCII = "US-ASCII";
 		public static final String UTF_8 = "UTF-8";
 		public static final String ISO_8859_1 = "ISO-8859-1";
 		public static final String ISO_8859_6 = "ISO-8859-6";
 	}
 	
-	public final static class CONTENT_TYPE{
+	public static final class CONTENT_TYPE{
 		public static final String APPLICATION_JSON = "application/json";
 		public static final String APPLICATION_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
 		public static final String APPLICATION_PDF = "application/pdf";
@@ -134,7 +139,7 @@ public final class DBSSDK {
 	}
 	
 	
-	public final static class FILE{
+	public static final class FILE{
 		public enum TYPE{
 			HTML,
 			XML,
@@ -165,7 +170,7 @@ public final class DBSSDK {
 		}	
 	}
 	
-	public final static class NETWORK{
+	public static final class NETWORK{
 		public static enum PROTOCOL {
 			HTTP		("HTTP"),
 			HTTPS		("HTTPS"),
@@ -215,24 +220,24 @@ public final class DBSSDK {
 		}
 	}
 	
-	public final static class TABLE {
+	public static final class TABLE {
 		public static String FERIADO = "";
 	}
 	
 
 
-	public final static class JDBC_DRIVER {
+	public static final class JDBC_DRIVER {
 	    public static final String MYSQL = "com.mysql.jdbc.Driver";
 	    public static final String ORACLE = "oracle.jdbc.driver.OracleDriver";
 	}
 	
-	public final static class APP_SERVER_PROPERTY{
-		public final static class PATH{
+	public static final class APP_SERVER_PROPERTY{
+		public static final class PATH{
 			public static final String JBOSS = "jboss.server.base.dir";
 		}
 	}
 	
-	public final static class SYS {
+	public static final class SYS {
 		public enum APP_SERVER { //Aplication Server
 			JBOSS,
 			WEBSPHERE,
@@ -275,24 +280,36 @@ public final class DBSSDK {
 	}
 
 	
-	public final static class IO {
+	public static final class IO {
 
 		public static final String VERSION_COLUMN_NAME = "VERSION"; //Nome da coluna que deverá existir na tabela caso queira efetuar o controle de lock otimista;)
 		
 		public static enum DATATYPE {
-	        NONE,     //Tipo NÃO definido
-	        STRING,   //Tipo String, quando vazio(""), converte para Null.       
-	        DECIMAL,  //Tipo Decimal
-	        INT,	  //Tipo Inteiro
-	        DOUBLE,   //Tipo Double
-	        DATE,     //Tipo de dado de Data, contendo somente a data. Desprezando hora, se hourver
-	        DATETIME, //Tipo de dado de Data, contendo data e hora, inclui da hora,minuto e segundo zerado se NÃO informado
-	        TIME,     //Tipo de dado de hora, contendo somente a data. Desprezando hora, se hourver
-	        BOOLEAN,  //Tipo boleano, onde True=-1 e False=0
-	        COMMAND,  //NÃO faz qualquer conversão do dado
-	        PICTURE,  //Imagem
-	        ID;       //Tipo numérico utilizadao como chave. 0(zero) ou -1 será convertido para Null
-	    }
+	        NONE 	(Object.class),   	//Tipo NÃO definido
+	        STRING	(String.class),   	//Tipo String, quando vazio(""), converte para Null.       
+	        DECIMAL	(BigDecimal.class), //Tipo Decimal
+	        INT		(Integer.class),	//Tipo Inteiro
+	        DOUBLE	(Double.class),		//Tipo Double
+	        DATE	(Date.class),     	//Tipo de dado de Data, contendo somente a data. Desprezando hora, se hourver
+	        DATETIME(Timestamp.class), 	//Tipo de dado de Data, contendo data e hora, inclui da hora,minuto e segundo zerado se NÃO informado
+	        TIME	(Time.class),     	//Tipo de dado de hora, contendo somente a data. Desprezando hora, se hourver
+	        BOOLEAN	(Boolean.class),  	//Tipo boleano, onde True=-1 e False=0
+	        COMMAND	(String.class),  	//NÃO faz qualquer conversão do dado
+	        PICTURE	(Object.class),  	//Imagem
+	        ID		(Long.class);       //Tipo numérico utilizadao como chave. 0(zero) ou -1 será convertido para Null
+	    
+			Class<?> wJavaClass;
+			
+			DATATYPE (Class<?> pJavaClass){
+				wJavaClass = pJavaClass;
+			}
+			
+			public Class<?> getJavaClass(){
+				return wJavaClass;
+			}
+			
+		}
+
 
 	    public static enum DB_SERVER{
 	    	ORACLE,
