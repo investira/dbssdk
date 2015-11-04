@@ -56,6 +56,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 		}
 	}
 
+
 //	private xL xLL = new xL();
 //	private class xL implements ServletContextAttributeListener{
 
@@ -88,8 +89,8 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
 //		pSce.getServletContext().addListener(xLL);
-		wLogger.info("STARTING:" + DBSApp.getAppDescription());
-		if (beforeStart()){
+		wLogger.info("STARTING:" + pvGetDescription()); 
+		if (beforeStart()){ 
 			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
 			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS);
 		}else{
@@ -100,9 +101,9 @@ public abstract class DBSAppStartup implements ServletContextListener{
 
 	@Override
 	public void contextDestroyed(ServletContextEvent pSce) {
-		wLogger.info("STOPPING:" + DBSApp.getAppDescription());
+		wLogger.info("STOPPING:" + pvGetDescription());
 		afterStop();
-		wLogger.info("STOPPED:" + DBSApp.getAppDescription());
+		wLogger.info("STOPPED:" + pvGetDescription());
 	}
 	
 	/**
@@ -135,20 +136,20 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	
 		@Override
 		public void run() {
-			wLogger.info("STARTING GET INFO:" + DBSApp.getAppDescription());
+			wLogger.info("STARTING GET INFO:" + pvGetDescription());
 			boolean xOk = false;
 			Long xTime = System.currentTimeMillis();
 			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 30 segundos
 			while (!xOk){
 				if ((System.currentTimeMillis() - xTime) > 30000){
-					wLogger.info("START TIMEOUT:" + DBSApp.getAppDescription());
+					wLogger.info("START TIMEOUT:" + pvGetDescription());
 					break;
 				}
 				xOk = getInfo();
 			}
 			if (xOk){ 
 				afterStart();
-				wLogger.info("STARTED:" + DBSApp.getAppDescription());
+				wLogger.info("STARTED:" + pvGetDescription());
 			}else{
 				onError();
 			}
@@ -233,5 +234,12 @@ public abstract class DBSAppStartup implements ServletContextListener{
 //			System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 0 ==============");
 		}
 		return null;
+	}
+	
+	//Private==================
+	
+	
+	private String pvGetDescription(){
+		return DBSApp.getAppDescription() + ":" + this.getClass().getSimpleName();
 	}
 }
