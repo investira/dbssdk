@@ -160,10 +160,17 @@ public abstract class DBSAppStartup implements ServletContextListener{
 				Object xHttpPort = null;
 				Object xHttpsPort = null;
 				Object xLocalHost = null;
-				xHttpPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=http", "port");
-				xHttpsPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=https", "port");
-				xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:interface=public", "inet-address");
+				//Le o alias do servidor , caso exista para substituir o localhost
+				xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as.expr:subsystem=undertow,server=default-server,host=" + DBSApp.AppName, "alias");
+				if (xLocalHost == null){
+					//Le o localhost padrão
+					xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:interface=public", "inet-address");
+				}else{
+					xLocalHost = ((String[]) xLocalHost)[0]; //Le primeiro item do alias
+				}
 				if (xLocalHost !=null){
+					xHttpPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=http", "port");
+					xHttpsPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=https", "port");
 					if (xHttpPort != null){
 						DBSApp.URLHttp = new URL("http",xLocalHost.toString(), DBSNumber.toInteger(xHttpPort.toString()), DBSApp.ContextPath);
 					}
@@ -184,6 +191,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	};
 	
 	public static Object getManagementFactoryPlatformMBeanServerAttribute(String pObjectName, String pAttibuteName){
+		//ManagementFactory.getPlatformMBeanServer().queryNames(null, null)
 		ObjectName xON;
 		Object xMBS = ManagementFactory.getPlatformMBeanServer();
 		try {
