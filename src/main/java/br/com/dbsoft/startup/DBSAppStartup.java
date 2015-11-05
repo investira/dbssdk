@@ -191,7 +191,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	};
 	
 	public static Object getManagementFactoryPlatformMBeanServerAttribute(String pObjectName, String pAttibuteName){
-		//ManagementFactory.getPlatformMBeanServer().queryNames(null, null)
+		//ManagementFactory.getPlatformMBeanServer().queryNames(null, null) //Le todos as chaves dos atributos do servidor
 		ObjectName xON;
 		Object xMBS = ManagementFactory.getPlatformMBeanServer();
 		try {
