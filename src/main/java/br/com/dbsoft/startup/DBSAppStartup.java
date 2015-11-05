@@ -12,7 +12,6 @@ import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -57,38 +56,8 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	}
 
 
-//	private xL xLL = new xL();
-//	private class xL implements ServletContextAttributeListener{
-
-//		@Override
-//		public void contextInitialized(ServletContextEvent pSce) {
-//			System.out.println("contextInitialized");
-//		}
-//
-//		@Override
-//		public void contextDestroyed(ServletContextEvent pSce) {
-//			System.out.println("contextDestroyed");
-//		}
-//
-//		@Override
-//		public void attributeAdded(ServletContextAttributeEvent pEvent) {
-//			System.out.println("attributeAdded\t" + pEvent.getName() + ":" + pEvent.getValue());
-//		}
-//
-//		@Override
-//		public void attributeRemoved(ServletContextAttributeEvent pEvent) {
-//			System.out.println("attributeRemoved\t" + pEvent.getName() + ":" + pEvent.getValue());
-//		}
-//
-//		@Override
-//		public void attributeReplaced(ServletContextAttributeEvent pEvent) {
-//			System.out.println("attributeReplaced\t" + pEvent.getName() + ":" + pEvent.getValue());
-//		}
-//	}
-	
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
-//		pSce.getServletContext().addListener(xLL);
 		wLogger.info("STARTING:" + pvGetDescription()); 
 		if (beforeStart()){ 
 			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -96,7 +65,6 @@ public abstract class DBSAppStartup implements ServletContextListener{
 		}else{
 			onError();
 		}
-//		ManagementFactory.getPlatformMBeanServer().addNotificationListener(name, listener, filter, handback);
 	}
 
 	@Override
@@ -145,6 +113,11 @@ public abstract class DBSAppStartup implements ServletContextListener{
 					wLogger.error("START TIMEOUT:" + pvGetDescription());
 					break;
 				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				xOk = getInfo();
 			}
 			if (xOk){ 
@@ -156,11 +129,11 @@ public abstract class DBSAppStartup implements ServletContextListener{
 		}
 		
 		private boolean getInfo(){
+			Object xHttpPort = null;
+			Object xHttpsPort = null;
+			Object xLocalHost = null;
+			//Le o alias do servidor , caso exista para substituir o localhost
 			try {
-				Object xHttpPort = null;
-				Object xHttpsPort = null;
-				Object xLocalHost = null;
-				//Le o alias do servidor , caso exista para substituir o localhost
 				xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as.expr:subsystem=undertow,server=default-server,host=" + DBSApp.AppName, "alias");
 				if (xLocalHost == null){
 					//Le o localhost padrão
@@ -177,8 +150,8 @@ public abstract class DBSAppStartup implements ServletContextListener{
 					if (xHttpsPort != null){
 						DBSApp.URLHttps = new URL("https",xLocalHost.toString(), DBSNumber.toInteger(xHttpsPort.toString()), DBSApp.ContextPath);
 					}
+					return true;
 				}
-				return true;
 			} catch (MalformedURLException e) {
 //				System.out.println("MalformedURLException() ==============");
 				wLogger.error(e);
@@ -192,7 +165,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	
 	public static Object getManagementFactoryPlatformMBeanServerAttribute(String pObjectName, String pAttibuteName){
 		//ManagementFactory.getPlatformMBeanServer().queryNames(null, null) //Le todos as chaves dos atributos do servidor
-		ObjectName xON;
+		ObjectName xON = null;
 		Object xMBS = ManagementFactory.getPlatformMBeanServer();
 		try {
 			ArrayList<String> xObjs = DBSString.toArrayList(pObjectName, ",");
@@ -209,16 +182,6 @@ public abstract class DBSAppStartup implements ServletContextListener{
 			if (xON != null){
 				if (((MBeanServer)xMBS).isRegistered(xON)){
 					try {
-	//					String[] attrNames = {pAttibuteName};
-	//					AttributeList list = ManagementFactory.getPlatformMBeanServer().getAttributes(xON, attrNames);
-	//					if (list.size() > 0){
-	//						return list.get(0);
-	//					}
-//						System.out.println(xON.toString());
-//						System.out.println(xON.getDomain());
-//						System.out.println(xON.getKeyPropertyListString());
-//						System.out.println(xON.getKeyPropertyList());
-//						System.out.println(xMBS.getClass()); //PluggableMBeanServerImpl // org.jboss.as.jmx.PluggableMBeanServerImpl cannot be cast to org.jboss.as.server.jmx.PluggableMBeanServer
 						return ((MBeanServer)xMBS).getAttribute(xON, pAttibuteName); 
 					} catch (AttributeNotFoundException e) {
 						e.setStackTrace(null);
@@ -238,15 +201,15 @@ public abstract class DBSAppStartup implements ServletContextListener{
 					}
 				}
 			}
-		} catch (MalformedObjectNameException e1) {
-//			System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 0 ==============");
+		} catch (Exception e) {
+//			e.setStackTrace(null);
+//			System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 6 ==============");
 		}
 		return null;
 	}
 	
+
 	//Private==================
-	
-	
 	private String pvGetDescription(){
 		return DBSApp.getAppDescription() + ":" + this.getClass().getSimpleName();
 	}
