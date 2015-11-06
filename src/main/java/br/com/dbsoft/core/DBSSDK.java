@@ -231,11 +231,20 @@ public final class DBSSDK {
 	    public static final String ORACLE = "oracle.jdbc.driver.OracleDriver";
 	}
 	
-	public static final class APP_SERVER_PROPERTY{
-		public static final class PATH{
-			public static final String JBOSS = "jboss.server.base.dir";
+	/**
+	 * @author ricardo.villar
+	 *
+	 */
+	public static final class SYSTEM_PROPERTY{
+		public static final String SERVER_BASE_DIR = "jboss.server.base.dir";
+		public static final String CONFIG_URL = "jboss.server.config.url";
+		public static final String BIND_ADDRESS = "jboss.bind.address";
+		public static final String USER_LANGUAGE = "user.language";
+		public static final String USER_LANGUAGE_FORMAT = "user.language.format";
+		public static final String USER_TIMEZONE =  "user.timezone";
+		public static final String PATH_SEPARATOR =  "path.separator";
+		public static final String JAVA_VERSION =  "java.version";
 		}
-	}
 	
 	public static final class SYS {
 		public enum APP_SERVER { //Aplication Server

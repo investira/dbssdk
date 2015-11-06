@@ -37,8 +37,8 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.core.DBSSDK.APP_SERVER_PROPERTY;
 import br.com.dbsoft.core.DBSSDK.FILE;
+import br.com.dbsoft.core.DBSSDK.SYSTEM_PROPERTY;
 
 public class DBSFile {
 	
@@ -702,7 +702,7 @@ public class DBSFile {
 	 * @return
 	 */
 	public static String getServerLocalPath(){
-		return System.getProperty(APP_SERVER_PROPERTY.PATH.JBOSS);
+		return System.getProperty(SYSTEM_PROPERTY.SERVER_BASE_DIR);
 	}
 
 	/**

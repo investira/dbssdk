@@ -32,10 +32,21 @@ public class DBSApp {
 	public static String ContextPath = null;
 	
 	/**
+	 * Nome do virtual do host.</br>
+	 * Precisa estar com conformidade com o que está definido no standalone.xml
+	 */
+	public static String VirtualHost = null;
+
+	/**
 	 * Retorna estágio do projeto conforme definição do web.xml.
 	 * @return
 	 */
 	public static PROJECT_STAGE ProjectStage;
+	
+	/**
+	 * Caminho local da aplicação
+	 */
+	public static URL AppLocalPath = null;
 	
 	/**
 	 * URL do servidor HTTP

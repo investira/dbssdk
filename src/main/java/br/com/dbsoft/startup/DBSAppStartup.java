@@ -1,27 +1,18 @@
 package br.com.dbsoft.startup;
 
-import java.lang.management.ManagementFactory;
+import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
 
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.util.DBSNumber;
-import br.com.dbsoft.util.DBSString;
+import br.com.dbsoft.core.DBSSDKInitializer;
 
 
 /**
@@ -34,7 +25,6 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	protected Logger wLogger =  Logger.getLogger(this.getClass());
 
 	private Integer wDelay = 4;
-	
 	
 	/**
 	 * Tempo antes de efetivamente inicializar o servidor.<br/>
@@ -56,9 +46,10 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	}
 
 
+
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
-		wLogger.info("STARTING:" + pvGetDescription()); 
+		pvInitDBSApp(pSce);
 		if (beforeStart()){ 
 			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
 			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS);
@@ -100,6 +91,17 @@ public abstract class DBSAppStartup implements ServletContextListener{
 
 	
 	//PRIVATE --------------------------------------------------------------------------------------------
+	
+	private void pvInitDBSApp(ServletContextEvent pSce){
+		try {
+			DBSApp.AppLocalPath = pSce.getServletContext().getResource(File.separator);
+			DBSSDKInitializer.onStarting();
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private Runnable wGetHost = new Runnable(){
 	
 		@Override
@@ -118,7 +120,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				xOk = getInfo();
+				xOk = DBSSDKInitializer.onStartingGetInfo();
 			}
 			if (xOk){ 
 				afterStart();
@@ -128,89 +130,12 @@ public abstract class DBSAppStartup implements ServletContextListener{
 			}
 		}
 		
-		private boolean getInfo(){
-			Object xHttpPort = null;
-			Object xHttpsPort = null;
-			Object xLocalHost = null;
-			//Le o alias do servidor , caso exista para substituir o localhost
-			try {
-				xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as.expr:subsystem=undertow,server=default-server,host=" + DBSApp.AppName, "alias");
-				if (xLocalHost == null){
-					//Le o localhost padrão
-					xLocalHost = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:interface=public", "inet-address");
-				}else{
-					xLocalHost = ((String[]) xLocalHost)[0]; //Le primeiro item do alias
-				}
-				if (xLocalHost !=null){
-					xHttpPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=http", "port");
-					xHttpsPort = getManagementFactoryPlatformMBeanServerAttribute("jboss.as:socket-binding-group=standard-sockets,socket-binding=https", "port");
-					if (xHttpPort != null){
-						DBSApp.URLHttp = new URL("http",xLocalHost.toString(), DBSNumber.toInteger(xHttpPort.toString()), DBSApp.ContextPath);
-					}
-					if (xHttpsPort != null){
-						DBSApp.URLHttps = new URL("https",xLocalHost.toString(), DBSNumber.toInteger(xHttpsPort.toString()), DBSApp.ContextPath);
-					}
-					return true;
-				}
-			} catch (MalformedURLException e) {
-//				System.out.println("MalformedURLException() ==============");
-				wLogger.error(e);
-			} catch (Exception e) {
-				e.setStackTrace(null);
-				wLogger.error(e);
-			}
-			return false;
-		}
 	};
 	
-	public static Object getManagementFactoryPlatformMBeanServerAttribute(String pObjectName, String pAttibuteName){
-		//ManagementFactory.getPlatformMBeanServer().queryNames(null, null) //Le todos as chaves dos atributos do servidor
-		ObjectName xON = null;
-		Object xMBS = ManagementFactory.getPlatformMBeanServer();
-		try {
-			ArrayList<String> xObjs = DBSString.toArrayList(pObjectName, ",");
-			String xFullName = "";
-			for (String xName:xObjs){
-				xFullName += xName;
-				xON = new ObjectName(xFullName);
-				if (!((MBeanServer)xMBS).isRegistered(xON)){
-					return null;
-				}
-				xFullName += ",";
-			}
-			xON = new ObjectName(pObjectName);
-			if (xON != null){
-				if (((MBeanServer)xMBS).isRegistered(xON)){
-					try {
-						return ((MBeanServer)xMBS).getAttribute(xON, pAttibuteName); 
-					} catch (AttributeNotFoundException e) {
-						e.setStackTrace(null);
-//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 1 ==============");
-					} catch (InstanceNotFoundException e) {
-//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 2 ==============");
-//						e.printStackTrace();
-					} catch (MBeanException e) {
-//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 3 ==============");
-//						e.printStackTrace();
-					} catch (ReflectionException e) {
-//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 4 ==============");
-//						e.printStackTrace();
-					} catch (Exception e) {
-//						System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 5 ==============");
-						e.setStackTrace(null);
-					}
-				}
-			}
-		} catch (Exception e) {
-//			e.setStackTrace(null);
-//			System.out.println("getManagementFactoryPlatformMBeanServerAttribute() 6 ==============");
-		}
-		return null;
-	}
-	
 
-	//Private==================
 	private String pvGetDescription(){
 		return DBSApp.getAppDescription() + ":" + this.getClass().getSimpleName();
 	}
+	
+	
 }
