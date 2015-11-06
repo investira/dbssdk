@@ -2,8 +2,6 @@ package br.com.dbsoft.core;
 
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -18,27 +16,12 @@ import br.com.dbsoft.util.DBSString;
 public class DBSSDKInitializer implements ServletContainerInitializer {
 
 	
-	@PostConstruct
-	public void iii(){
-		System.out.println("DBSSDKINITIALIZER @POSTCONSTRUCT");
-	}
-	
-	@PreDestroy
-	public void ffff(){
-		System.out.println("DBSSDKINITIALIZER @PREDESTROY");
-	}
-
 	@Override
 	public void onStartup(Set<Class<?>> pC, ServletContext pCtx) throws ServletException {
-//		System.out.println("DBSSDK Initilizing");
-		
-//		pCtx.addListener(abc.class);
-//		pCtx.addListener(DBSAppStartup.class);
-
 		pvInitCorretorOrtografico();
 		pvInitSystem();
 		pvInitDBSApp(pCtx);
-		
+	
 		System.out.println("DBSSDK Initialized for " + DBSApp.getAppDescription());
 	}
 
