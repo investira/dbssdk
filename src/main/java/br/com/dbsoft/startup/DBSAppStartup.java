@@ -15,6 +15,24 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.core.DBSSDKInitializer;
 
 
+//public static boolean isServerRunning() throws IOException {
+//    try (final ModelControllerClient client = ModelControllerClient.Factory.create(InetAddress.getLocalHost(), 9990)) {
+//        final ModelNode address = new ModelNode().setEmptyList();
+//        final ModelNode op = Operations.createReadAttributeOperation(address, "server-state");
+//        final ModelNode result = client.execute(op);
+//        if (Operations.isSuccessfulOutcome(result)) {
+//            final String state = Operations.readResult(result).asString();
+//            switch (state) {
+//                case "running":
+//                case "reload-required":
+//                case "restart-required":
+//                    return true;
+//            }
+//        }
+//        return false;
+//    }
+//}
+
 /**
  * Classe para ser utilizada em substituição ao ServletContextListener como listener inicial da aplicação.<br/>
  * Os valores da classe DBSApp serão preenchidos automaticamente partir deste listener.
