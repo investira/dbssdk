@@ -14,25 +14,6 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDKInitializer;
 
-
-//public static boolean isServerRunning() throws IOException {
-//    try (final ModelControllerClient client = ModelControllerClient.Factory.create(InetAddress.getLocalHost(), 9990)) {
-//        final ModelNode address = new ModelNode().setEmptyList();
-//        final ModelNode op = Operations.createReadAttributeOperation(address, "server-state");
-//        final ModelNode result = client.execute(op);
-//        if (Operations.isSuccessfulOutcome(result)) {
-//            final String state = Operations.readResult(result).asString();
-//            switch (state) {
-//                case "running":
-//                case "reload-required":
-//                case "restart-required":
-//                    return true;
-//            }
-//        }
-//        return false;
-//    }
-//}
-
 /**
  * Classe para ser utilizada em substituição ao ServletContextListener como listener inicial da aplicação.<br/>
  * Os valores da classe DBSApp serão preenchidos automaticamente partir deste listener.
@@ -46,7 +27,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	
 	/**
 	 * Tempo antes de efetivamente inicializar o servidor.<br/>
-	 * O tempo mínimo é de 5 segundos, pois tempos menores aumentam o risco de não estar ainda disponível as URLs do servidor
+	 * O tempo mínimo é de 4 segundos, pois tempos menores aumentam o risco de não estar ainda disponível as URLs do servidor
 	 * @return
 	 */
 	public Integer getDelay() {return wDelay;}
@@ -67,10 +48,16 @@ public abstract class DBSAppStartup implements ServletContextListener{
 
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
-		pvInitDBSApp(pSce);
+		wLogger.info(">>> STARTING:" + pvGetDescription());
 		if (beforeStart()){ 
+			try {
+				DBSApp.AppLocalPath = pSce.getServletContext().getResource(File.separator);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
-			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS);
+			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS); 
 		}else{
 			onError();
 		}
@@ -78,9 +65,9 @@ public abstract class DBSAppStartup implements ServletContextListener{
 
 	@Override
 	public void contextDestroyed(ServletContextEvent pSce) {
-		wLogger.info("STOPPING:" + pvGetDescription());
+		wLogger.info(">>> STOPPING:" + pvGetDescription());
 		afterStop();
-		wLogger.info("STOPPED:" + pvGetDescription());
+		wLogger.info(">>> STOPPED:" + pvGetDescription());
 	}
 	
 	/**
@@ -110,44 +97,35 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	
 	//PRIVATE --------------------------------------------------------------------------------------------
 	
-	private void pvInitDBSApp(ServletContextEvent pSce){
-		try {
-			DBSApp.AppLocalPath = pSce.getServletContext().getResource(File.separator);
-			DBSSDKInitializer.onStarting();
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	private Runnable wGetHost = new Runnable(){
 	
 		@Override
 		public void run() {
-			wLogger.info("STARTING (getting Host Info):" + pvGetDescription());
-			boolean xOk = false;
+			wLogger.info(">>> STARTING(getting Host Info):" + pvGetDescription());
+			boolean xOk = (DBSApp.URLHttp != null || DBSApp.URLHttps != null); //Ok se URL's já estiverem configuradas.
+			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 5 minutos
 			Long xTime = System.currentTimeMillis();
-			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 30 segundos
 			while (!xOk){
-				if ((System.currentTimeMillis() - xTime) > 30000){
-					wLogger.error("START TIMEOUT:" + pvGetDescription());
+				if ((System.currentTimeMillis() - xTime) > 300000){
+					wLogger.error("STARTING(getting Host Info) TIMEOUT:" + pvGetDescription());
 					break;
 				}
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				xOk = DBSSDKInitializer.onStartingGetInfo();
+				if (!xOk){
+					try {
+						Thread.sleep(3000);//Aguarda 3 segundo
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			if (xOk){ 
+				wLogger.info(">>> STARTED:" + pvGetDescription());
 				afterStart();
-				wLogger.info("STARTED:" + pvGetDescription());
 			}else{
 				onError();
 			}
 		}
-		
 	};
 	
 

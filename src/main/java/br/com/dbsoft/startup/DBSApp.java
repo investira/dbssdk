@@ -35,7 +35,7 @@ public class DBSApp {
 	 * Nome do virtual do host.</br>
 	 * Precisa estar com conformidade com o que está definido no standalone.xml
 	 */
-	public static String VirtualHost = null;
+	public static String VirtualHostName = null;
 
 	/**
 	 * Retorna estágio do projeto conforme definição do web.xml.
