@@ -23,7 +23,7 @@ public  class DBSObject {
 				return true;
 			}
 		} else if (pObj instanceof List<?>){
-			if (((List) pObj).isEmpty()) {
+			if (((List<?>) pObj).isEmpty()) {
 				return true;
 			}
 		}
