@@ -2,10 +2,7 @@ package br.com.dbsoft.startup;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -19,33 +16,16 @@ import br.com.dbsoft.core.DBSSDKInitializer;
  * Os valores da classe DBSApp serão preenchidos automaticamente partir deste listener.
  * Deve-se utilizar a anotação @WebListener em substuição da definição do listener no web.xml
  */
-public abstract class DBSAppStartup implements ServletContextListener{
+public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKInitializer{
 
-	protected Logger wLogger =  Logger.getLogger(this.getClass());
+	protected Logger wLogger =  Logger.getLogger(DBSAppStartup.class);
 
-	private Integer wDelay = 4;
-	
-	/**
-	 * Tempo antes de efetivamente inicializar o servidor.<br/>
-	 * O tempo mínimo é de 4 segundos, pois tempos menores aumentam o risco de não estar ainda disponível as URLs do servidor
-	 * @return
-	 */
-	public Integer getDelay() {return wDelay;}
-	/**
-	 * Tempo antes de efetivamente inicializar o servidor.<br/>
-	 * O tempo mínimo é de 4 segundos, pois tempos menores aumentam o risco de não estar ainda disponível as URLs do servidor
-	 * @return
-	 */
-	public void setDelay(Integer pDelay) {
-		if (pDelay !=null && pDelay >= 4){
-			wDelay = pDelay;
-		}else{
-			wDelay = 4;
-		}
+	ScheduledExecutorService wScheduler;
+
+	public DBSAppStartup() {
+		DBSSDKInitializer.addEventListener(this);
 	}
-
-
-
+	
 	@Override
 	public void contextInitialized(ServletContextEvent pSce) {
 		wLogger.info(">>> STARTING:" + pvGetDescription());
@@ -53,11 +33,11 @@ public abstract class DBSAppStartup implements ServletContextListener{
 			try {
 				DBSApp.AppLocalPath = pSce.getServletContext().getResource(File.separator);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				wLogger.error(e);
 			}
-			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
-			wScheduler.schedule(wGetHost, getDelay(), TimeUnit.SECONDS); 
+			//Efetua chamada de forma assincrona para evitar que fique travado enquanto aguarda o deploy integral da aplicação
+//			ScheduledExecutorService wScheduler = Executors.newSingleThreadScheduledExecutor();
+//			wScheduler.schedule(wStart, 0, TimeUnit.SECONDS); 
 		}else{
 			onError();
 		}
@@ -66,6 +46,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	@Override
 	public void contextDestroyed(ServletContextEvent pSce) {
 		wLogger.info(">>> STOPPING:" + pvGetDescription());
+		DBSSDKInitializer.removeEventListener(this);
 		afterStop();
 		wLogger.info(">>> STOPPED:" + pvGetDescription());
 	}
@@ -75,6 +56,7 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	 * Caso queira efetuar chamadas http para a própria aplicação, por exemplo, utilize o <b>afterStart</b>.
 	 * @return
 	 */
+	@Override
 	public abstract boolean beforeStart();
 	
 	/**
@@ -83,52 +65,28 @@ public abstract class DBSAppStartup implements ServletContextListener{
 	 * Este delay é necesário para aguardar o deploy total da aplicação.
 	 *
 	 */
+	@Override
 	public abstract void afterStart();
-	
 	
 	/**
 	 * Disparado quando no undeploy da aplicação.<br/>
 	 * Não é disparado caso o servidor de aplicação se ja interrompido. 
 	 */
+	@Override
 	public abstract void afterStop();
 
+	@Override
 	public void onError(){}
 
+	@Override
+	public void fireStarted(){
+		wLogger.info(">>> STARTED:" + pvGetDescription());
+		afterStart();
+	}
 	
 	//PRIVATE --------------------------------------------------------------------------------------------
-	
-	private Runnable wGetHost = new Runnable(){
-	
-		@Override
-		public void run() {
-			wLogger.info(">>> STARTING(getting Host Info):" + pvGetDescription());
-			boolean xOk = (DBSApp.URLHttp != null || DBSApp.URLHttps != null); //Ok se URL's já estiverem configuradas.
-			//Efetua nova tentativa até não ocorrer erro ou ultrapassar timeout de 5 minutos
-			Long xTime = System.currentTimeMillis();
-			while (!xOk){
-				if ((System.currentTimeMillis() - xTime) > 300000){
-					wLogger.error("STARTING(getting Host Info) TIMEOUT:" + pvGetDescription());
-					break;
-				}
-				xOk = DBSSDKInitializer.onStartingGetInfo();
-				if (!xOk){
-					try {
-						Thread.sleep(3000);//Aguarda 3 segundo
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			if (xOk){ 
-				wLogger.info(">>> STARTED:" + pvGetDescription());
-				afterStart();
-			}else{
-				onError();
-			}
-		}
-	};
-	
 
+	
 	private String pvGetDescription(){
 		return DBSApp.getAppDescription() + ":" + this.getClass().getSimpleName();
 	}
