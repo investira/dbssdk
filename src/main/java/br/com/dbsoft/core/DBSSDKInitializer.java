@@ -36,7 +36,6 @@ import org.w3c.dom.Node;
 
 import br.com.dbsoft.startup.DBSApp;
 import br.com.dbsoft.startup.DBSApp.PROJECT_STAGE;
-import br.com.dbsoft.startup.IDBSSDKInitializer;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSString;
 
@@ -107,8 +106,7 @@ public final class DBSSDKInitializer implements ServletContainerInitializer {
 		public void contextInitialized(ServletContextEvent pSce) {
 			//Efetua chamada de forma assincrona para evitar que fique travado enquanto aguarda o deploy integral da aplicação
 			wScheduler = Executors.newSingleThreadScheduledExecutor();
-			wScheduler.scheduleAtFixedRate(wGetHost, 0, 1, TimeUnit.SECONDS);
-			//.schedule(wGetHost, 0, TimeUnit.SECONDS); 
+			wScheduler.scheduleAtFixedRate(wGetHost, 1, 1, TimeUnit.SECONDS);
 		}
 	
 		@Override

@@ -1,4 +1,4 @@
-package br.com.dbsoft.startup;
+package br.com.dbsoft.core;
 
 public interface IDBSSDKInitializer {
 
