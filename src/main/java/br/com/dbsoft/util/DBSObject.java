@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.List;
 
 public  class DBSObject {
 	/**
@@ -19,6 +20,10 @@ public  class DBSObject {
 		if (pObj instanceof String){ 
 			String xObj = pObj.toString();
 			if (xObj.trim().equals("")){
+				return true;
+			}
+		} else if (pObj instanceof List<?>){
+			if (((List) pObj).isEmpty()) {
 				return true;
 			}
 		}
