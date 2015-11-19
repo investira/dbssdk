@@ -10,6 +10,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDKInitializer;
+import br.com.dbsoft.core.IDBSSDKInitializer;
 
 /**
  * Classe para ser utilizada em substituição ao ServletContextListener como listener inicial da aplicação.<br/>
@@ -27,7 +28,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	}
 	
 	@Override
-	public void contextInitialized(ServletContextEvent pSce) {
+	public final void contextInitialized(ServletContextEvent pSce) {
 		wLogger.info(">>> STARTING:" + pvGetDescription());
 		if (beforeStart()){ 
 			try {
@@ -44,7 +45,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent pSce) {
+	public final void contextDestroyed(ServletContextEvent pSce) {
 		wLogger.info(">>> STOPPING:" + pvGetDescription());
 		DBSSDKInitializer.removeEventListener(this);
 		afterStop();
@@ -79,7 +80,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	public void onError(){}
 
 	@Override
-	public void fireStarted(){
+	public final void fireStarted(){
 		wLogger.info(">>> STARTED:" + pvGetDescription());
 		afterStart();
 	}
