@@ -631,6 +631,28 @@ public class DBSFile {
 			return null;
 		}	
 	}
+	
+	/**
+	 * Retorna a data da última modificação do arquivo informado.
+	 * @param pFile Arquivo a ser pesquisado
+	 * @return Data da última modificação se arquivo existir.<br/>
+	 * <i>null</i> Em caso de arquivo não encontrado ou erro.
+	 */
+	public static Long getFileLastModified(String pFile){
+		if (pFile == null){
+			return null;
+		}
+		try{
+			File xFile = new File(pFile);
+			if (xFile.exists()){
+				return xFile.lastModified();
+			}
+			return null;
+		}catch(Exception e){
+			wLogger.error(e);
+			return null;
+		}	
+	}
 
 	/**
 	 * Retorna o caminho do arquivo, incluindo "/" ao final(se não houver) e ao inicio quando não tiver sido informado o <b>procotolo</b>.<br/>
