@@ -8,10 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.junit.Test;
 
+import br.com.dbsoft.core.DBSSDK.NETWORK.METHOD;
 import br.com.dbsoft.file.DBSFileTransfer;
 
 public class TstFileTransfer {
@@ -84,7 +84,7 @@ public class TstFileTransfer {
 	private void getHttpAtr(String pURL) throws IOException {
 		URL xURL = new URL(pURL);
 		HttpURLConnection xConnection = (HttpURLConnection) xURL.openConnection();
-		xConnection.setRequestProperty("Request-Method", "GET");
+		xConnection.setRequestProperty("Request-Method", METHOD.GET.getName());
 		xConnection.setDoInput(true);
 		xConnection.setDoOutput(false);
 		xConnection.connect();
@@ -108,11 +108,11 @@ public class TstFileTransfer {
 //		SPW_INV_ESTRANG - SPW_CIA_INCENT - SPW_REPRES - SPW_ADM_FDO_IMOB
 		
 		String xUrl = "http://www.cvm.gov.br/cadastro/SPW_AUDIT.ZIP";
-		DBSFileTransfer xFileTransfer = new DBSFileTransfer(xUrl, "C:/FNT/Arquivos_Integracao/Teste/CVM_TESTE.zip", null);
+		DBSFileTransfer xFileTransfer = new DBSFileTransfer(xUrl, "C:/FNT/Arquivos_Integracao/Teste/CVM_TESTE.zip");
 		
-		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Timestamp xVersao = new Timestamp(xFormat.parse("2012-09-18 07:01:19.0").getTime());
-		xFileTransfer.setVersion(xVersao);
+//		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		Timestamp xVersao = new Timestamp(xFormat.parse("2012-09-18 07:01:19.0").getTime());
+//		xFileTransfer.setVersion(xVersao);
 		
 		File xFile = xFileTransfer.transfer();
 		System.out.println("Data da ultima Modificação: " + new Timestamp(xFile.lastModified()));
