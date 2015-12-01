@@ -218,6 +218,30 @@ public final class DBSSDK {
 			}
 			
 		}
+		
+		public static enum METHOD {
+			POST	("POST"),
+			GET		("GET");
+		
+			private String 	wName;
+			public String getName() {return wName;}
+			
+			private METHOD(String pName) {
+				wName = pName;
+			}
+
+			public static METHOD get(String pName) {
+				switch (pName) {
+				case "POST":
+					return POST;
+				case "GET":
+					return GET;
+				default:
+					return null;
+				}
+			}
+			
+		}
 	}
 	
 	public static final class TABLE {
