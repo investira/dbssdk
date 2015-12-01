@@ -155,6 +155,9 @@ public class DBSFormat {
 	 * @return String com a data já formatada
 	 */
 	public static String getFormattedDateCustom(Object pDate, String pMask){
+		if (DBSObject.isNull(pDate)) {
+			return "";
+		}
 		SimpleDateFormat xFormat = new SimpleDateFormat(pMask);
 		return xFormat.format(DBSDate.toDate(pDate));
 	}
