@@ -44,7 +44,6 @@ public class DBSServletConnection {
 			wServletConnection.setDoOutput(true);
 			wServletConnection.setUseCaches(false);
 			wServletConnection.setDefaultUseCaches(false);
-//			wServletConnection.setRequestMethod("POST");
 			wServletConnection.setRequestProperty("Content-Type",CONTENT_TYPE.APPLICATION_JSON);
 //			wServletConnection.setRequestProperty("Content-Type","application/x-java-serialized-object");
 	        OutputStream xOutputStream = wServletConnection.getOutputStream();
