@@ -134,7 +134,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private TaskState 				wTaskState = TaskState.STOPPED;
 	private RunStatus				wRunStatus = RunStatus.EMPTY;
 	private RunStatus				wLastRunStatus = RunStatus.EMPTY;
-	private Long					wTimeOut = 0L;
+	private Long					wTimeout = 0L;
 	private Long					wTimeStarted = 0L;
 	private Long					wTimeEnded = 0L;
 	private Date					wScheduleDate;
@@ -250,27 +250,27 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * 0 não há timeout.
 	 * @return
 	 */
-	public Long getTimeOut() {
-		return wTimeOut;
+	public Long getTimeout() {
+		return wTimeout;
 	}
 
 	/**
 	 * Tempo em millisegundos para interromper a tarefa, caso seja ultrapassado.<br/>
 	 * 0 não há timeout.
-	 * @param pTimeOut
+	 * @param pTimeout
 	 */
-	public void setTimeOut(Long pTimeOut) {
-		wTimeOut = pTimeOut;
+	public void setTimeout(Long pTimeout) {
+		wTimeout = pTimeout;
 	}
 	/**
 	 * Retorna se tarefa ultrapassou o tempo permitido.
 	 * @return
 	 */
-	public boolean isTimeOut(){
-		if (wTimeOut == 0L){
+	public boolean isTimeout(){
+		if (wTimeout == 0L){
 			return false;
 		}
-		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
+		return ((System.currentTimeMillis() - wTimeStarted) < wTimeout);
 	}
 	
 	/**
