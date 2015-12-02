@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,6 +22,8 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.core.DBSSDK.ENCODE;
+import br.com.dbsoft.core.DBSSDK.NETWORK.METHOD;
 import br.com.dbsoft.core.DBSSDKMessages;
 import br.com.dbsoft.error.DBSException;
 import br.com.dbsoft.task.IDBSTaskEventsListener;
@@ -35,6 +38,7 @@ import br.com.dbsoft.util.DBSString;
  */
 public class DBSFileTransfer{
 
+	private static Integer wBufferSize  = 153600;
 	
 	public enum TransferState{
 		NOTTRANSFERING 	("Not Transfering", 0),
@@ -138,13 +142,13 @@ public class DBSFileTransfer{
 			}
 		}			
 	}
-	
+
 	
 	protected static Logger					wLogger = Logger.getLogger(DBSFileTransfer.class);
 	
 	private String 							wURL;
-	private String 							wLocalFileName = null;
-	private Timestamp						wVersion;
+	private String 							wLocalFileNameOnly = null;
+	private String 							wLocalPath = null;
 	private List<IDBSFileTransferEvents>	wEventListeners = new ArrayList<IDBSFileTransferEvents>();
 	private boolean							wInterrupted; 
 	private Long							wTimeStarted = 0L;
@@ -152,36 +156,76 @@ public class DBSFileTransfer{
 	private Long							wTimeOut = 0L;
 	private TransferState					wTransferState;
 	private LocalFileNameOrigin				wLocalFileNameOrigin = LocalFileNameOrigin.USER;
+	private Timestamp						wLastModified;
 	private String							wRemoteServer;
 	private String	 						wMsgErro;
-	private String	 						wMethod;
+	private METHOD	 						wMethod = METHOD.GET;
 	private List<String>					wRequestPropertys;
+	private byte[]							wFileContent = null;
+
+	/**
+	 * @param pURLURL do arquivo que se deseja baixar 
+	 */
+	public DBSFileTransfer(String pURL) {
+		setURL(pURL);
+	}
+
+	public DBSFileTransfer(String pURL, METHOD pMethod, List<String> pRequestPropertys) {
+		setURL(pURL);
+		this.wMethod = pMethod;
+		this.wRequestPropertys = pRequestPropertys;
+	}
+
+	/**
+	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pLocalPath Caminho local
+	 */
+	public DBSFileTransfer(String pURL, String pLocalPath) {
+		setURL(pURL);
+		setLocalPath(pLocalPath);
+	}
+
+	
+	/**
+	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pLocalPath Caminho local
+	 * @param pLocalFileNameOnly Nome do arquivo local, caso não desejar alterar o nome original contido ou retornado na URL
+	 */
+	public DBSFileTransfer(String pURL, String pLocalPath, String pLocalFileNameOnly) {
+		setURL(pURL);
+		setLocalPath(pLocalPath);
+		setLocalFileNameOnly(pLocalFileNameOnly);
+	}
+
 
 	/**
 	 * Construtor que configura os parametros para efetuar a transferencia.<br/>
-	 * Para iniciar o download utilize o método <b>transfer<b/>.
-	 * @param pURL
-	 * @param pLocalFileName
-	 * @param pVersion
+	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pLocalPath Caminho local
+	 * @param pMethod
+	 * @param pRequestPropertys
 	 */
-	public DBSFileTransfer(String pURL, String pLocalFileName, Timestamp pVersion, String pMethod, List<String> pRequestPropertys) {
-		this.wLocalFileName = pLocalFileName;
-		this.wURL = pURL;
-		this.wVersion = pVersion;
+	public DBSFileTransfer(String pURL, String pLocalPath, METHOD pMethod, List<String> pRequestPropertys) {
+		setURL(pURL);
+		setLocalPath(pLocalPath);
 		this.wMethod = pMethod;
 		this.wRequestPropertys = pRequestPropertys;
 	}
 	
-	public DBSFileTransfer(String pURL, String pLocalFileName, Timestamp pVersion) {
-		this.wLocalFileName = pLocalFileName;
-		this.wURL = pURL;
-		this.wVersion = pVersion;
-		this.wMethod = "GET";
-	}
-
-	public DBSFileTransfer(String pURL, Timestamp pVersion) {
-		this.wURL = pURL;
-		this.wVersion = pVersion;
+	/**
+	 * Construtor que configura os parametros para efetuar a transferencia.<br/>
+	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pLocalPath Caminho local
+	 * @param pLocalFileName Nome do arquivo local, caso não desejar alterar o nome original contido ou retornado na URL
+	 * @param pMethod
+	 * @param pRequestPropertys
+	 */
+	public DBSFileTransfer(String pURL, String pLocalPath, String pLocalFileNameOnly, METHOD pMethod, List<String> pRequestPropertys) {
+		setURL(pURL);
+		setLocalPath(pLocalPath);
+		setLocalFileNameOnly(pLocalFileNameOnly);
+		this.wMethod = pMethod;
+		this.wRequestPropertys = pRequestPropertys;
 	}
 
 	/**
@@ -263,6 +307,22 @@ public class DBSFileTransfer{
 	}
 
 	/**
+	 * Data e hora da última modificação do arquivo transferido.
+	 * @return
+	 */
+	public Timestamp getLastModified() {
+		return wLastModified;
+	}
+
+	/**
+	 * Data e hora da última modificação do arquivo transferido.
+	 * @return
+	 */
+	private void setLastModified(Timestamp pLastModified) {
+		wLastModified = pLastModified;
+	}
+	
+	/**
 	 * URL remota de onde será efetuado o download.
 	 * @return
 	 */
@@ -279,30 +339,49 @@ public class DBSFileTransfer{
 	}
 
 	/**
-	 * Nome do arquivo local que será criado em função do download, 
+	 * Nome do arquivo local que será criado em função do download.<br/> 
 	 * caso esta informação não seja fornecida do próprio request.  
 	 * @param pLocalFileName
 	 */
-	public final void setLocalFileName(String pLocalFileName) {
-		wLocalFileName = pLocalFileName;
+	public final void setLocalPath(String pLocalPath) {
+		wLocalPath = DBSFile.getPathFromFolderName(pLocalPath);
 	}
 
 	/**
 	 * Nome do arquivo local que será criado em função do download, 
 	 * caso esta informação não seja fornecida do próprio request.  
 	 */
-	public final String getLocalFileName() {
-		return wLocalFileName;
-	}
-
-	public final Timestamp getVersion() {
-		return wVersion;
-	}
-
-	public final void setVersion(Timestamp pVersion) {
-		wVersion = pVersion;
+	public final String getLocalPath() {
+		return wLocalPath;
 	}
 	
+
+	/**
+	 * Nome do arquivo local que será criado em função do download incluido o caminho da pasta.  
+	 */
+	public final String getLocalFileName() {
+		return wLocalPath + wLocalFileNameOnly;
+	}
+	
+	/**
+	 * Nome do arquivo local que será criado em função do download.  
+	 * Para nome do arquivo conténdo a caminho completo, incluido a pasta, 
+	 * utilize <b>getLocalFileNameFullPath</b>  
+	 * @return
+	 */
+	public final String getLocalFileNameOnly() {
+		return wLocalFileNameOnly;
+	}
+
+	/**
+	 * Nome do arquivo local que será criado em função do download.<br/> 
+	 * caso esta informação não seja fornecida do próprio request.  
+	 * @param pLocalFileNameOnly
+	 */
+	public final void setLocalFileNameOnly(String pLocalFileNameOnly) {
+		wLocalFileNameOnly = DBSFile.getFileNameFromPath(pLocalFileNameOnly);
+	}
+
 	/**
 	 * Retorna o servidor utilizado na URL remota
 	 * @return
@@ -311,7 +390,35 @@ public class DBSFileTransfer{
 		return wRemoteServer;
 	}
 
+	/**
+	 * Retorna conteúdo do arquivo.<br/>
+	 * Caso o encode não seja nulo, converte para o encode informado.
+	 * @param pEncode
+	 * @return
+	 */
+	public String getFileContent(ENCODE pEncode){
+		String xValue = null;
+		if (wFileContent != null){
+			try {
+				if (pEncode == null){
+					xValue = new String(wFileContent);
+				}else{
+					xValue = new String(wFileContent, pEncode.toString());
+				}
+			} catch (UnsupportedEncodingException e) {
+				wLogger.error(e);
+			}
+		}
+		return xValue;
+	}
 
+	/**
+	 * Retorna conteúdo do arquivo em bytes.
+	 * @return
+	 */
+	public byte[] getFileContent(){
+		return wFileContent;
+	}
 
 	/**
 	 * Retorna a situação da execução
@@ -381,13 +488,14 @@ public class DBSFileTransfer{
 		}
 
 		//---- chama evento -----------------------
-		pvFireEventStarted(); //Chama evento
+		pvFireEventBeforeFileTransfer(); //Chama evento
 		//-----------------------------------------
 
 		URL xURL = null;
 		File xFile = null;
 		
 		try {
+			wFileContent = null;
 			xURL = new URL(wURL);
 		} catch (MalformedURLException e1) {
 //			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
@@ -411,7 +519,7 @@ public class DBSFileTransfer{
 		
 		//---- chama evento -----------------------
 		
-		pvFireEventEnded();
+		pvFireEventAfterFileTransfer();
 		//-----------------------------------------
 		return xFile;
 	}
@@ -432,9 +540,9 @@ public class DBSFileTransfer{
 	 * @throws DBSException 
 	 */
 	public final boolean addVersionToLocalFile(String pVersion) {
-		if (wLocalFileName.lastIndexOf(".") != -1) {
-			File xArquivoAtual = new File(wLocalFileName);
-			File xArquivoAntigo = new File(wLocalFileName.substring(0, wLocalFileName.lastIndexOf(".")) + "_" + pVersion.trim() + wLocalFileName.substring(wLocalFileName.lastIndexOf(".")));
+		if (wLocalFileNameOnly.lastIndexOf(".") != -1) {
+			File xArquivoAtual = new File(getLocalFileName());
+			File xArquivoAntigo = new File(wLocalPath + wLocalFileNameOnly.substring(0, wLocalFileNameOnly.lastIndexOf(".")) + "_" + pVersion.trim() + wLocalFileNameOnly.substring(wLocalFileNameOnly.lastIndexOf(".")));
 			xArquivoAtual.renameTo(xArquivoAntigo);
 			return true;
 		} else {
@@ -462,9 +570,12 @@ public class DBSFileTransfer{
 	private final File pvDownloadFile(URL pURL) throws IOException {
 		setTransferState(TransferState.TRANSFERING);
 		
+		String 			 xFileFullName;
+		File 			 xInputFile = null;
+		FileOutputStream xDownloadedFile = null;
 		HttpURLConnection xConnection = (HttpURLConnection) pURL.openConnection();
-		xConnection.setRequestMethod(wMethod);
-//		xConnection.setAllowUserInteraction(false);
+		//REQUEST===================================
+		xConnection.setRequestMethod(wMethod.getName());
 		xConnection.setDoInput(true);
 		xConnection.setDoOutput(true);
 		if (!DBSObject.isNull(wRequestPropertys) && !wRequestPropertys.isEmpty()) {
@@ -479,12 +590,12 @@ public class DBSFileTransfer{
 		        } else {
 		            xParams.append("&");
 		        }
-		        xParams.append(URLEncoder.encode(xKey, "UTF-8"));
+		        xParams.append(URLEncoder.encode(xKey, ENCODE.UTF_8));
 		        xParams.append("=");
-		        xParams.append(URLEncoder.encode(xValue, "UTF-8"));
+		        xParams.append(URLEncoder.encode(xValue, ENCODE.UTF_8));
 			}
 			OutputStream xOs = xConnection.getOutputStream();
-			BufferedWriter xWriter = new BufferedWriter(new OutputStreamWriter(xOs, "UTF-8"));
+			BufferedWriter xWriter = new BufferedWriter(new OutputStreamWriter(xOs, ENCODE.UTF_8));
 			xWriter.write(xParams.toString());
 			xWriter.flush();
 			xWriter.close();
@@ -494,10 +605,12 @@ public class DBSFileTransfer{
 		xConnection.connect();
 		setMsgErro(null);
 		
+		//READ RESPONSE=====================================
 		//Recupera nome do arquivo
-		String xContent = xConnection.getHeaderField("Content-Disposition");
+		String xContent = xConnection.getHeaderField("Content-Disposition"); 
 		
-		String xRemoteFileName = DBSFile.getFileNameFromPath(wLocalFileName);
+		//Como default, define o nome remoto como sendo iqual ao local
+		String xRemoteFileName = wLocalFileNameOnly;
 
 		//Recupera nome do arquivo enviado pela conexão
 		if(xContent != null 
@@ -515,58 +628,74 @@ public class DBSFileTransfer{
 				}
 			}
 		}
-		
+		//Não foi encontrado o nome do arquivo a ser baixado
 		if (DBSObject.isEmpty(xRemoteFileName)){
-//			wLogger.info("Nome do arquivo local não foi informado.");
 			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado);
 			xConnection.disconnect();
 			setTransferState(TransferState.NOTTRANSFERING);
 			return null;
 		}
 		
+		//READ FILE=====================================
 		if (xConnection.getResponseCode() == 200) {
-			//Reconstroi o nome do arquivo local
-	    	wLocalFileName = DBSFile.getPathFromFileName(wLocalFileName) + xRemoteFileName;
 			//Salva qual o servidor utilizado
 			wRemoteServer = xConnection.getHeaderField("Server"); 
 			if (wRemoteServer == null){
 				wRemoteServer = xConnection.getHeaderField("X-Powered-By");
 			}
-			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
-				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getVersion().getTime()) {
-//					wLogger.info("Arquivo não baixado. Versão atual já é a mais nova.");
-					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
-					setTransferState(TransferState.NOTTRANSFERING);
-					return null;
-				}
-			} 
-			setVersion(new Timestamp(xConnection.getLastModified()));
+//			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
+//				//Verifica se arquivo a ser baixado contém e mesma data e hora do arquivo local, se existir. 
+//				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getLastModified().getTime()) {
+//					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
+//					setTransferState(TransferState.NOTTRANSFERING);
+//					return null;
+//				}
+//			} 
+			setLastModified(new Timestamp(xConnection.getLastModified()));
+			
+			if (!pvFireEventBeforeSave()){
+				return null;
+			}
+			
+//			InputStreamReader xReader = new InputStreamReader(xConnection.getInputStream(), Charset.forName(ENCODE.ISO_8859_1));
 			InputStream xReader = xConnection.getInputStream();
 			
-			File xInputFile = new File(wLocalFileName);
-			if (!xInputFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
-				DBSFile.mkDir(xInputFile);
-			}
-			FileOutputStream xDownloadedFile = new FileOutputStream(xInputFile); 
-			
-			byte[] xBuffer = new byte[153600];
+			byte[] xBufferRead = new byte[wBufferSize];
 
-			int xBytesReaded = 0;
-			
 			wInterrupted = false;
 			try {
-				while ((xBytesReaded = xReader.read(xBuffer)) != -1 && 
-						!isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
-						!wInterrupted) {
-					xDownloadedFile.write(xBuffer, 0, xBytesReaded);
-					xBuffer = new byte[153600];
-					//xBytesReadedTotal += xBytesReaded;
-					pvFireEventTransferring();//EVENTO
+				//Le arquivo integralmente
+				int xBytesRead = 0;
+				 
+				while ((xBytesRead = xReader.read(xBufferRead)) != -1 && 
+					   !isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
+					   !wInterrupted) {
+					wFileContent = DBSString.appendByteArrays(wFileContent, xBufferRead, xBytesRead);
+					//Recria buffer vazio
+					xBufferRead = new byte[wBufferSize];
+					pvFireEventTransferring();
+				}
+				
+				//Grava arquivo localmente
+				if (wLocalPath != null){
+					//Defini o nome do arquivo local
+					wLocalFileNameOnly = xRemoteFileName;
+					//Reconstroi o nome do arquivo local
+					xFileFullName = DBSFile.getPathFromFileName(wLocalPath, true) + xRemoteFileName;
+	
+					xInputFile = new File(xFileFullName);
+					if (!xInputFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
+						DBSFile.mkDir(xInputFile);
+					}
+					xDownloadedFile = new FileOutputStream(xInputFile);
+					xDownloadedFile.write(wFileContent, 0, wFileContent.length);
 				}
 			} catch (IOException e) {
 				wLogger.warn(e);
 			} finally{
-				xDownloadedFile.close();
+				if (xDownloadedFile != null){
+					xDownloadedFile.close();
+				}
 				xReader.close();
 				xConnection.disconnect();
 				setTransferState(TransferState.NOTTRANSFERING);
@@ -575,14 +704,16 @@ public class DBSFileTransfer{
 			if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
 //				wLogger.warn("Erro de Timeout.");
 				setMsgErro(DBSSDKMessages.ErroTimeout, Level.WARN);
-				return null;
+				xInputFile = null;
 			} else if (wInterrupted) {
 //				wLogger.warn("Processo interrompido pelo usuário.");
 				setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
-				return null;
-			} else {
-				return xInputFile;
+				xInputFile = null;
+			}else{
+				pvFireEventAfterSave();
 			}
+
+			return xInputFile;
 		} else {
 //			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
 			setMsgErro(DBSSDKMessages.ErroGenerico + xConnection.getResponseMessage(), Level.ERROR);
@@ -592,10 +723,13 @@ public class DBSFileTransfer{
 	
 	private File pvDownloadFile(String pURL) throws IOException {
 
+		if (!pvFireEventBeforeSave()){
+			return null;
+		}
 		File xSource = new File(pURL);
-		File xLocalFile = new File(wLocalFileName);
+		File xLocalFile = new File(wLocalFileNameOnly);
 		setMsgErro(null);
-		
+		setLastModified(null);
 		if (!xLocalFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
 			DBSFile.mkDir(xLocalFile);
 		}
@@ -606,77 +740,122 @@ public class DBSFileTransfer{
 		xLocalFile.createNewFile();
 	  
 		FileChannel xSourceChannel = null;   
-		FileChannel xDestinationChannel = null;   
+		FileChannel xDestinationChannel = null;  
+		FileInputStream xFileSourceStream = null;
+		FileOutputStream xFileDestinationStream = null;
 		try {   
-			xSourceChannel = new FileInputStream(xSource).getChannel();   
-			xDestinationChannel = new FileOutputStream(xLocalFile).getChannel();   
-
+			xFileSourceStream = new FileInputStream(xSource);
+			xFileDestinationStream = new FileOutputStream(xLocalFile);
+	    	if (xFileSourceStream != null){   
+	    		xSourceChannel = xFileSourceStream.getChannel();   
+	    	}
+	    	if (xFileDestinationStream != null){
+	    		xDestinationChannel = xFileDestinationStream.getChannel();   
+	    	}
 			xSourceChannel.transferTo(0, xSourceChannel.size(), xDestinationChannel);
 //	         destinationChannel.transferFrom(sourceChannel, 0, Long.MAX_VALUE);
 			pvFireEventTransferring(); //EVENTO
 	    }finally {   
-	    	if (xSourceChannel != null && xSourceChannel.isOpen()){   
-	    		xSourceChannel.close();   
+	    	if (xFileSourceStream != null){   
+		    	if (xSourceChannel != null && xSourceChannel.isOpen()){   
+		    		xSourceChannel.close();   
+		    	}
+	    		xFileSourceStream.close();   
 	    	}
-	    	if (xDestinationChannel != null && xDestinationChannel.isOpen()){   
-	             xDestinationChannel.close();   
+	    	if (xFileDestinationStream != null){   
+		    	if (xDestinationChannel != null && xDestinationChannel.isOpen()){   
+		             xDestinationChannel.close();   
+		    	}
+	    		xFileDestinationStream.close();   
 	    	}
 	    }   
+		
 		
 		if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
 //			wLogger.warn("Erro de Timeout.");
 			setMsgErro(DBSSDKMessages.ErroTimeout);
-			return null;
+			xLocalFile = null;
 		} else {
-			setVersion(new Timestamp(xSource.lastModified()));
-			return xLocalFile;
+			setLastModified(new Timestamp(xSource.lastModified()));
 		}
 
+		pvFireEventAfterSave();
+		
+		return xLocalFile;
 	}
 	
 	//EVENTOS =======================================================================
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
-	private void pvFireEventStarted(){
+	private void pvFireEventBeforeFileTransfer(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
+		
 		wTimeStarted = System.currentTimeMillis();
 		wTimeEnded = wTimeStarted;
 
 		setTransferState(TransferState.TRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).started(this);
+			wEventListeners.get(xX).beforeFileTransfer(xE);
         }		
 	}
 
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
-	private void pvFireEventEnded(){
+	private void pvFireEventAfterFileTransfer(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
+		
 		wTimeEnded = System.currentTimeMillis();
 
 		setTransferState(TransferState.NOTTRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).ended(this);
+			wEventListeners.get(xX).afterFileTransfer(xE);
         }		
 	}
 
 	/**
+	 * Chamada antes de salvar o arquivo
+	 */
+	private boolean pvFireEventBeforeSave(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).beforeSave(xE);
+			if (!xE.isOk()){break;}
+        }
+		return xE.isOk();
+	}
+
+	/**
+	 * Chamada após arquivo salvo
+	 */
+	private void pvFireEventAfterSave(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
+		for (int xX=0; xX<wEventListeners.size(); xX++){
+			wEventListeners.get(xX).afterSave(xE);
+        }		
+	}
+	
+	/**
 	 * Chamada durante a execução
 	 */
-	private void pvFireEventTransferring(){
-		getTimeEnded();
+	private boolean pvFireEventTransferring(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
 		setTransferState(TransferState.TRANSFERING);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).transferring(this);
+			wEventListeners.get(xX).transferring(xE);
+			if (!xE.isOk()){break;}
         }		
+		return xE.isOk();
 	}
 
 	/**
 	 * Chamada quando é iniciada a execução
 	 */
 	private void pvFireEventInterrupted(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).interrupted(this);
+			wEventListeners.get(xX).interrupted(xE);
         }		
 	}
 
@@ -685,9 +864,12 @@ public class DBSFileTransfer{
 	 * Local onde deverá ser implementado a atualização deste dado no banco de dados, se for o caso
 	 */
 	private void pvFireEventTransferStateChanged(){
+		DBSFileTransferEvent xE = new DBSFileTransferEvent(this);
 		for (int xX=0; xX<wEventListeners.size(); xX++){
-			wEventListeners.get(xX).transferStateChanged(this);
+			wEventListeners.get(xX).transferStateChanged(xE);
         }		
 	}
+
+
 
 }
