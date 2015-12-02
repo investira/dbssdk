@@ -319,6 +319,38 @@ public class DBSString {
 			return null;
 		}
 	}
+	
+	/**
+	 * Adiciona um ByteArray a outro e retorna o resultado.<br/>
+	 * Utiliza o <b>pByteArrayToAppendLenght</b> para informar a quantidade de 
+	 * bytes válidos de <b>pByteArrayToAppend</b> que serão copiados no append.<br/>
+	 * @param pByteArrayBase
+	 * @param pByteArrayToAppend
+	 * @param pByteArrayToAppendLenght 
+	 * @return
+	 */
+	public static byte[] appendByteArrays(byte[] pByteArrayBase, byte[] pByteArrayToAppend, Integer pByteArrayToAppendLenght) {
+		int xBaseLength = 0;
+		int xAppendLength = 0;
+		if (pByteArrayBase != null){
+			xBaseLength = pByteArrayBase.length;
+		}
+		if (pByteArrayToAppend != null){
+			if (pByteArrayToAppendLenght == null){
+				xAppendLength = pByteArrayToAppend.length;
+			}else{
+				xAppendLength = pByteArrayToAppendLenght;
+			}
+		}
+	    byte[] xResult = new byte[xBaseLength + xAppendLength]; 
+		if (pByteArrayBase != null){
+			System.arraycopy(pByteArrayBase, 0, xResult, 0, xBaseLength); 
+		}
+		if (pByteArrayToAppend != null){
+			System.arraycopy(pByteArrayToAppend, 0, xResult, xBaseLength, xAppendLength); 
+		}
+	    return xResult;
+	} 
 
 	/**
 	 * Converte um valor numérico para string, excluido a separação decimal e fixando o tamanho das casas decimais
@@ -531,19 +563,20 @@ public class DBSString {
 	}
 	
 	/**
-		 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
-		 * @param pTextoBase
-		 * @return
-		 */
-		public static String[] CSVtoArray(String pTextoBase){
-			String[] xArray;
-			pTextoBase = DBSString.changeStr(pTextoBase, ",", " ");
-			xArray = pTextoBase.split("\\s+");
-	//		for (int xI = 0; xI < xArray.length; xI++){
-	//			xPKs[xI] = xPKs[xI].substring(xN+1).trim();
-	//		}
-			return xArray;
-		}
+	 * Retorn array a partir de uma string CSV(Campos separados po vírgula/Comma separated values)
+	 * @param pTextoBase
+	 * @return
+	 */
+	public static String[] CSVtoArray(String pTextoBase){
+		String[] xArray;
+		pTextoBase = DBSString.changeStr(pTextoBase, ",", " ");
+		xArray = pTextoBase.split("\\s+");
+//		for (int xI = 0; xI < xArray.length; xI++){
+//			xPKs[xI] = xPKs[xI].substring(xN+1).trim();
+//		}
+		return xArray;
+	}
+	
 	/**
 	 * Retorna uma String com os itens contidos em <b>pList</b>, separados por vírgula.
 	 * @param pList
@@ -842,76 +875,77 @@ public class DBSString {
 	}
 
 	/**
-		 * Retorna array incluindo os itens informados
-		 * @param pArray
-		 * @param pValues
-		 * @return
-		 */
-		@SuppressWarnings("unchecked")
-		private static <T> T[] pvAddToArray(int pTipo, T[] pArray, T... pValues){
-			if (pValues == null){return null;}
-			
-			//Armazena lista recebida
-			List<T> xList;
-			T[] 	xArray = null;
-	
-			if (pArray == null){
-				xList = new ArrayList<T>();
-			}else{
-		 		xList = new ArrayList<T>(Arrays.asList(pArray));
-			}
-			
-			//Adiciona os valores recebidos a lista
-			for (T xValue:pValues){
-				if (pTipo == 2){
-					if(!DBSObject.isEmpty(xValue)){
-						xList.add(xValue);
-					}
-				}else if (pTipo == 1){
-					if (xValue != null){
-						xList.add(xValue);
-					}
-				}else{
+	 * Retorna array incluindo os itens informados
+	 * @param pArray
+	 * @param pValues
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private static <T> T[] pvAddToArray(int pTipo, T[] pArray, T... pValues){
+		if (pValues == null){return null;}
+		
+		//Armazena lista recebida
+		List<T> xList;
+		T[] 	xArray = null;
+
+		if (pArray == null){
+			xList = new ArrayList<T>();
+		}else{
+	 		xList = new ArrayList<T>(Arrays.asList(pArray));
+		}
+		
+		//Adiciona os valores recebidos a lista
+		for (T xValue:pValues){
+			if (pTipo == 2){
+				if(!DBSObject.isEmpty(xValue)){
 					xList.add(xValue);
 				}
-			}
-	
-			//Também busca por item com valor válido para se identificar a class T
-			for (T xValue:xList){
-				if (xValue !=null){
-					xArray = (T[]) Array.newInstance(xValue.getClass(), xList.size());
-					break;
+			}else if (pTipo == 1){
+				if (xValue != null){
+					xList.add(xValue);
 				}
+			}else{
+				xList.add(xValue);
 			}
-			//Se não consegui cria um novo array por não haver valores válidos, retorna o próprio array enviado.
-			if (xArray == null){
-				return null;
-			}
-	
-			//Copia valores da lista para o array
-			for (int xI=0; xI < xList.size(); xI++){
-				xArray[xI] = xList.get(xI);
-			}
-	
-			return xArray;
-			
-	//		if (pArray == null){return null;}
-	//		//Salva lista inicial
-	//		List<T> xList = new ArrayList<T>(Arrays.asList(pArray));
-	//		//Adiciona valores enviadoa a lista inicial
-	//		xList.addAll(Arrays.asList(toArray(pValues)));
-	//		//Retorna lista como array
-	//		if (xList.size() > 0){
-	//			T[] xArray = (T[]) Array.newInstance(xList.get(0).getClass(), xList.size());
-	//			for (int xI=0; xI <= xList.size()-1; xI++){
-	//				if (xList.get(xI) != null){
-	//					xArray[xI] =  xList.get(xI);
-	//				}
-	//			}
-	//			return xArray;
-	//		}
-	//		return pArray;
 		}
+
+		//Também busca por item com valor válido para se identificar a class T
+		for (T xValue:xList){
+			if (xValue !=null){
+				xArray = (T[]) Array.newInstance(xValue.getClass(), xList.size());
+				break;
+			}
+		}
+		//Se não consegui cria um novo array por não haver valores válidos, retorna o próprio array enviado.
+		if (xArray == null){
+			return null;
+		}
+
+		//Copia valores da lista para o array
+		for (int xI=0; xI < xList.size(); xI++){
+			xArray[xI] = xList.get(xI);
+		}
+
+		return xArray;
+		
+//		if (pArray == null){return null;}
+//		//Salva lista inicial
+//		List<T> xList = new ArrayList<T>(Arrays.asList(pArray));
+//		//Adiciona valores enviadoa a lista inicial
+//		xList.addAll(Arrays.asList(toArray(pValues)));
+//		//Retorna lista como array
+//		if (xList.size() > 0){
+//			T[] xArray = (T[]) Array.newInstance(xList.get(0).getClass(), xList.size());
+//			for (int xI=0; xI <= xList.size()-1; xI++){
+//				if (xList.get(xI) != null){
+//					xArray[xI] =  xList.get(xI);
+//				}
+//			}
+//			return xArray;
+//		}
+//		return pArray;
+	}
+	
 	/**
 	 * Converte a primeira letra para maiúscula e o restante minúscula
 	 * @param pString
