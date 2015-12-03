@@ -34,6 +34,8 @@
 		<joda-time.version>2.1</joda-time.version>
 		<caelum-stella.version>2.1.0</caelum-stella.version>
 		<jsf.version>2.2.11</jsf.version>
+		<apache-poi.version>3.10.1</apache-poi.version>
+		
 <!-- 		<json.version>20140107</json.version> -->
 
 	</properties>
@@ -223,12 +225,12 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10.1</version>
+			<version>${apache-poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10.1</version>
+			<version>${apache-poi.version}</version>
 		</dependency>
 		
 		<!-- MATH3 APACHE -->
