@@ -1336,6 +1336,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private final void pvInterrupt(RunStatus pRunStatus) throws DBSIOException{
 		if (isRunning()){
 			pvSetRunStatus(pRunStatus);
+			pvSetTaskStateToNotRunnig();
 			//Eventos ----------------------------
 			if (pRunStatus == RunStatus.ERROR){
 				pvFireEventError();
