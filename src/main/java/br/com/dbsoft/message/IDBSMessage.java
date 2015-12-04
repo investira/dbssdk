@@ -94,12 +94,12 @@ public interface IDBSMessage {
 	 * Horário que a mensagem foi criada
 	 * @return
 	 */
-	public DateTime getTime();
+	public DateTime getMessageTime();
 
 	/**
 	 * Horário que a mensagem foi criada
 	 */
-	public void setTime(DateTime pTime);
+	public void setMessageTime(DateTime pTime);
 
 
 }

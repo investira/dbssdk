@@ -63,7 +63,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 			xM.setMessageType(pMessageType);
 			xM.setMessageText(pMessageText);
 			xM.setMessageTooltip(DBSObject.getNotNull(pMessageTooltip, ""));
-			xM.setTime(pTime);
+			xM.setMessageTime(pTime);
 			wMessages.put(pMessageKey, xM);
 			pvFindNextMessage();
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -75,7 +75,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * @param pMessage
 	 */
 	public void add(MessageClass pMessage){
-		this.add(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip(), pMessage.getTime());
+		this.add(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip(), pMessage.getMessageTime());
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	public synchronized <M extends DBSMessages<?>> void addAll(M pMessages){
 		for (Object xM : pMessages.getMessages().values()) {
 			DBSMessage xMsg = (DBSMessage) xM;
-			add(xMsg.getMessageText(), xMsg.getMessageType(), xMsg.getMessageText(), xMsg.getMessageTooltip(), xMsg.getTime());
+			add(xMsg.getMessageText(), xMsg.getMessageType(), xMsg.getMessageText(), xMsg.getMessageTooltip(), xMsg.getMessageTime());
 		}
 	}
 

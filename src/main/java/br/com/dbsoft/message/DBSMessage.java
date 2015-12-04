@@ -37,19 +37,14 @@ public class DBSMessage implements IDBSMessage{
 	//=========================================
 	
 	@Override
-	public String getMessageKey(){
-		return wMessageKey; 
-	}
+	public String getMessageKey(){return wMessageKey; }
 
 	@Override
-	public void setMessageKey(String pMessageKey){
-		wMessageKey = pMessageKey; 
-	}
+	public void setMessageKey(String pMessageKey){wMessageKey = pMessageKey; }
 	
 	@Override
-	public String getMessageText() {
-		return wMessageText;
-	}
+	public String getMessageText() {return wMessageText;}
+	
 	@Override
 	public void setMessageText(String pMessageText) {
 		//Seta a chave como o próprio texto caso não tenha seja nula.
@@ -60,68 +55,50 @@ public class DBSMessage implements IDBSMessage{
 	}
 
 	@Override
-	public MESSAGE_TYPE getMessageType() {
-		return wMessageType;
-	}
+	public MESSAGE_TYPE getMessageType() {return wMessageType;}
+	
 	/**
 	 * Retorna o tipo de mensagem 
 	 * @param pMessageType 
 	 */
 	@Override
-	public void setMessageType(MESSAGE_TYPE pMessageType) {
-		wMessageType = pMessageType;
-	}
+	public void setMessageType(MESSAGE_TYPE pMessageType) {wMessageType = pMessageType;}
 	
 	/**
 	 * Código da mensagem.
 	 * @return
 	 */
 	@Override
-	public Integer getMessageCode() {
-		return wMessageCode;
-	}
+	public Integer getMessageCode() {return wMessageCode;}
 
 	/**
 	 * Retorna o código da mensagem, 
 	 * @param pMessageCode
 	 */
 	@Override
-	public void setMessageCode(Integer pMessageCode) {
-		wMessageCode = pMessageCode;
-	}
+	public void setMessageCode(Integer pMessageCode) {wMessageCode = pMessageCode;}
 	
 	/**
 	 * @return Null = ainda não validada.<br/> True = Validada para verdadeiro.<br/> False = Validada para falso 
 	 */
 	@Override
-	public Boolean isValidated() {
-		return wValidated;
-	}
-	
+	public Boolean isValidated() {return wValidated;}
 	@Override
-	public void setValidated(Boolean validated) {
-		wValidated = validated;
-	}
+	public void setValidated(Boolean validated) {wValidated = validated;}
+
 	@Override
-	public Exception getException() {
-		return wException;
-	}
+	public Exception getException() {return wException;}
 	/**
 	 * Configura a exception vinculada a mensagem caso exista
 	 * @param pException
 	 */
 	@Override
-	public void setException(Exception pException) {
-		this.wException = pException;
-	}
+	public void setException(Exception pException) {this.wException = pException;}
+	
 	@Override
-	public String getMessageTooltip() {
-		return wMessageTooltip;
-	}
+	public String getMessageTooltip() {return wMessageTooltip;}
 	@Override
-	public void setMessageTooltip(String pMessageTooltip) {
-		this.wMessageTooltip = pMessageTooltip;
-	}
+	public void setMessageTooltip(String pMessageTooltip) {this.wMessageTooltip = pMessageTooltip;}
 	
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
@@ -142,17 +119,13 @@ public class DBSMessage implements IDBSMessage{
 	 * @return
 	 */
 	@Override
-	public DateTime getTime() {
-		return wTime;
-	}
+	public DateTime getMessageTime() {return wTime;}
 
 	/**
 	 * Horário que a mensagem foi criada
 	 */
 	@Override
-	public void setTime(DateTime pTime) {
-		wTime = pTime;
-	}
+	public void setMessageTime(DateTime pTime) {wTime = pTime;}
 
 
 	//PRIVATE =========================
