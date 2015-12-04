@@ -5,6 +5,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 
 public final class DBSSDK {
 	public static final String DOMAIN = "br.com.dbsoft";
@@ -359,6 +362,33 @@ public final class DBSSDK {
 	    }
 	}
 	
+	/**
+	 * Procura por um nó recursivamente que inicie com o valor do atributo informado
+	 * @param pNodes
+	 * @param pAttributeName
+	 * @param pAttributeValue
+	 * @return
+	 */
+	public static Node NodeListFindNode(NodeList pNodes, String pAttributeName, String pAttributeValue){
+		Node xNodeReturn = null;
+		for (int xI=0; xI < pNodes.getLength() -1; xI++){
+			Node xNode = pNodes.item(xI);
+			if (xNode.getAttributes() != null){
+				Node xNodeAtt = xNode.getAttributes().getNamedItem(pAttributeName);
+				if (xNodeAtt != null){
+					String xValue = xNodeAtt.getNodeValue();
+					if (xValue.startsWith(pAttributeValue)){
+						return xNode;
+					}
+				}
+			}
+			xNodeReturn = NodeListFindNode(xNode.getChildNodes(), pAttributeName, pAttributeValue);
+			if (xNodeReturn != null){
+				return xNodeReturn;
+			}
+		}
+		return null;
+	}
 }
 
 
