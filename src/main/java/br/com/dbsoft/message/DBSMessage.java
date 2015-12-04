@@ -3,14 +3,12 @@ package br.com.dbsoft.message;
 
 import org.joda.time.DateTime;
 
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
-
 
 /**
  * @author ricardo.villar
  *
  */
-public class DBSMessage {
+public class DBSMessage implements IDBSMessage{
 
 	private String			wMessageTextOriginal;
 	private String			wMessageText;
@@ -22,6 +20,7 @@ public class DBSMessage {
 	private String			wMessageKey = null;
 	private Integer			wMessageCode = 0;
 	
+	//Construtores============================
 	public DBSMessage(){}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
@@ -35,26 +34,23 @@ public class DBSMessage {
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
 		pvSetMessage(pMessageKey,0, pMessageType, pMessageText);
 	}
+	//=========================================
 	
-	public void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText){
-		setMessageKey(pMessageKey);
-		setMessageCode(pMessageCode);
-		setMessageText(pMessageText);
-		setMessageType(pMessageType);
-		wMessageTextOriginal = pMessageText;
-	}
-
+	@Override
 	public String getMessageKey(){
 		return wMessageKey; 
 	}
 
+	@Override
 	public void setMessageKey(String pMessageKey){
 		wMessageKey = pMessageKey; 
 	}
 	
+	@Override
 	public String getMessageText() {
 		return wMessageText;
 	}
+	@Override
 	public void setMessageText(String pMessageText) {
 		//Seta a chave como o próprio texto caso não tenha seja nula.
 		if (wMessageKey == null){
@@ -63,6 +59,7 @@ public class DBSMessage {
 		wMessageText = pMessageText;
 	}
 
+	@Override
 	public MESSAGE_TYPE getMessageType() {
 		return wMessageType;
 	}
@@ -70,6 +67,7 @@ public class DBSMessage {
 	 * Retorna o tipo de mensagem 
 	 * @param pMessageType 
 	 */
+	@Override
 	public void setMessageType(MESSAGE_TYPE pMessageType) {
 		wMessageType = pMessageType;
 	}
@@ -78,6 +76,7 @@ public class DBSMessage {
 	 * Código da mensagem.
 	 * @return
 	 */
+	@Override
 	public Integer getMessageCode() {
 		return wMessageCode;
 	}
@@ -86,6 +85,7 @@ public class DBSMessage {
 	 * Retorna o código da mensagem, 
 	 * @param pMessageCode
 	 */
+	@Override
 	public void setMessageCode(Integer pMessageCode) {
 		wMessageCode = pMessageCode;
 	}
@@ -93,13 +93,16 @@ public class DBSMessage {
 	/**
 	 * @return Null = ainda não validada.<br/> True = Validada para verdadeiro.<br/> False = Validada para falso 
 	 */
+	@Override
 	public Boolean isValidated() {
 		return wValidated;
 	}
 	
+	@Override
 	public void setValidated(Boolean validated) {
 		wValidated = validated;
 	}
+	@Override
 	public Exception getException() {
 		return wException;
 	}
@@ -107,12 +110,15 @@ public class DBSMessage {
 	 * Configura a exception vinculada a mensagem caso exista
 	 * @param pException
 	 */
+	@Override
 	public void setException(Exception pException) {
 		this.wException = pException;
 	}
+	@Override
 	public String getMessageTooltip() {
 		return wMessageTooltip;
 	}
+	@Override
 	public void setMessageTooltip(String pMessageTooltip) {
 		this.wMessageTooltip = pMessageTooltip;
 	}
@@ -122,6 +128,7 @@ public class DBSMessage {
 	 * A mensagem padrão deverá conter o simbolo %s nas posições que se deseja incluir os parametros informados.
 	 * @param pParameters
 	 */
+	@Override
 	public void setMessageTextParameters(Object... pParameters){
 		if (wMessageTextOriginal != null){
 			this.setMessageText(String.format(wMessageTextOriginal, pParameters));
@@ -130,11 +137,11 @@ public class DBSMessage {
 		}
 	}
 
-
 	/**
 	 * Horário que a mensagem foi criada
 	 * @return
 	 */
+	@Override
 	public DateTime getTime() {
 		return wTime;
 	}
@@ -142,8 +149,19 @@ public class DBSMessage {
 	/**
 	 * Horário que a mensagem foi criada
 	 */
+	@Override
 	public void setTime(DateTime pTime) {
 		wTime = pTime;
+	}
+
+
+	//PRIVATE =========================
+	private void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText){
+		setMessageKey(pMessageKey);
+		setMessageCode(pMessageCode);
+		setMessageText(pMessageText);
+		setMessageType(pMessageType);
+		wMessageTextOriginal = pMessageText;
 	}
 
 

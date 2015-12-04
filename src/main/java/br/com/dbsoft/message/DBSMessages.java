@@ -16,7 +16,7 @@ import br.com.dbsoft.util.DBSObject;
  *Armazenar e controlar uma lista de mensagem(class DBSMessage)
  * @param <MessageClass> Classe de mensagem
  */
-public class DBSMessages<MessageClass extends DBSMessage>  {
+public class DBSMessages<MessageClass extends IDBSMessage>  {
 
 	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
@@ -86,7 +86,6 @@ public class DBSMessages<MessageClass extends DBSMessage>  {
 	 * @param pMessageText Texto da mensagem
 	 */
 	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-//		add(pMessageKey, pMessageType, pMessageText, pMessageTooltip, null);
 		add(pMessageKey, pMessageType, pMessageText, pMessageTooltip, null);
 	}
 
