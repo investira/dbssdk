@@ -54,6 +54,9 @@ public class DBSMessage implements IDBSMessage{
 		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null,  pMessageTime);
 	}
 
+	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
+	}
 
 	//=========================================
 	
