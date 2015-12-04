@@ -3,7 +3,6 @@ package br.com.dbsoft.message;
 
 import org.joda.time.DateTime;
 
-
 /**
  * @author ricardo.villar
  *
@@ -22,18 +21,40 @@ public class DBSMessage implements IDBSMessage{
 	
 	//Construtores============================
 	public DBSMessage(){}
-	
+
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		pvSetMessage(pMessageText, 0, pMessageType, pMessageText);
+		pvSetMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);
 	}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
-		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText);
+		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null,  null);
+	}
+
+	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  null);
+	}
+
+	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, null,  pMessageTime);
+	}
+
+	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
 	}
 
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null,  null);
 	}
+	
+	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  null);
+	}
+	
+	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null,  pMessageTime);
+	}
+
+
 	//=========================================
 	
 	@Override
@@ -129,11 +150,13 @@ public class DBSMessage implements IDBSMessage{
 
 
 	//PRIVATE =========================
-	private void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText){
+	private void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
 		setMessageKey(pMessageKey);
 		setMessageCode(pMessageCode);
-		setMessageText(pMessageText);
 		setMessageType(pMessageType);
+		setMessageText(pMessageText);
+		setMessageTooltip(pMessageTooltip);
+		setMessageTime(pMessageTime);
 		wMessageTextOriginal = pMessageText;
 	}
 
