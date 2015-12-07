@@ -123,6 +123,21 @@ public class DBSNumber {
 		Double xY = toDouble(pExpoente);
 		return toBigDecimal(Math.pow(xX, xY));
 	}
+	
+	//------------------------------------------------------------------------------------
+
+	/**
+	 * Exponenciação com base e (2.71828182845904)
+	 * Números acima de 16 digitos poderão ter os digitos mais a direita ignorados.<br/>
+	 * Valores nulos zerão considerados como <b>zero</b>.
+	 * @param pBase Base
+	 * @param pExpoente Expoente
+	 * @return Resultado
+	 */
+	public static BigDecimal exp(Object pExpoente){
+		Double xBase = 2.71828182845904D;
+		return exp(xBase, pExpoente);
+	}
 
 	//------------------------------------------------------------------------------------
 	
@@ -204,6 +219,20 @@ public class DBSNumber {
 		NormalDistribution xDistribution = new NormalDistribution(pMedia, pDesvioPadrao);
 		xResultado = xDistribution.inverseCumulativeProbability(pNivelConfianca);
 		
+		return toBigDecimal(xResultado);
+	}
+	
+	//------------------------------------------------------------------------------------
+	
+	public static BigDecimal distribuicaoNormal(Double pValor, Double pMedia, Double pDesvioPadrao, boolean pCumulativo) {
+		Double xResultado = 0D;
+
+		NormalDistribution xDistribution = new NormalDistribution(pMedia, pDesvioPadrao);
+		if (pCumulativo) {
+			xResultado = xDistribution.cumulativeProbability(pValor);
+		} else {
+			xResultado = xDistribution.density(pValor);
+		}
 		return toBigDecimal(xResultado);
 	}
 	

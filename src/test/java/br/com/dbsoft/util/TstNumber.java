@@ -492,6 +492,22 @@ public class TstNumber {
 	}
 	
 	@Test
+	public void test_distribuicaoNormal() {
+		Double xValor;
+		xValor = DBSNumber.distribuicaoNormal(0.1D, 0D, 1D, true).doubleValue();
+		assertEquals("0,539827837", DBSFormat.getFormattedNumber(xValor, 9));
+		
+		xValor = DBSNumber.distribuicaoNormal(42D, 40D, 1.5D, true).doubleValue();
+		assertEquals("0,9087888", DBSFormat.getFormattedNumber(xValor, 7));
+		
+		xValor = DBSNumber.distribuicaoNormal(0.1D, 0D, 1D, false).doubleValue();
+		assertEquals("0,396952547", DBSFormat.getFormattedNumber(xValor, 9));
+		
+		xValor = DBSNumber.distribuicaoNormal(42D, 40D, 1.5D, false).doubleValue();
+		assertEquals("0,10934", DBSFormat.getFormattedNumber(xValor, 5));
+	}
+	
+	@Test
 	public void test_variance() {
 		List<Double> xAmostra = new ArrayList<Double>();
 		Double 		 xVariancia;
