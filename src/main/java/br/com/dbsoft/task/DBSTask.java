@@ -17,7 +17,10 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
+//import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSBoolean;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
@@ -116,11 +119,11 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		}		
 	}
 
-	protected Logger			wLogger = Logger.getLogger(this.getClass());
-	protected Connection 		wConnection;
-	protected static DBSMessage	wMessageError = new DBSMessage(MESSAGE_TYPE.ERROR,"Erro: %s");
+	protected Logger				wLogger = Logger.getLogger(this.getClass());
+	protected Connection 			wConnection;
+	protected static IDBSMessage	wMessageError = new DBSMessage(MESSAGE_TYPE.ERROR,"Erro: %s");
 	
-	protected DBSMessages<DBSMessage>		wMessages = new DBSMessages<DBSMessage>(DBSMessage.class);
+	protected IDBSMessages<IDBSMessage>		wMessages = new DBSMessages<IDBSMessage>();
 	
 	private List<IDBSTaskEventsListener>	wEventListeners = new ArrayList<IDBSTaskEventsListener>();
 	
@@ -947,7 +950,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	public DBSMessages<DBSMessage> getMessages(){
+	@SuppressWarnings("rawtypes")
+	public IDBSMessages getMessages(){
 		return wMessages;
 	}
 
@@ -1015,14 +1019,14 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @param pMessageText Texto da mensagem
 	 */
 	protected void addMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		wMessages.add(pMessageType, pMessageText);
+		wMessages.add(new DBSMessage(pMessageType, pMessageText));
 	}
 
 	/**
 	 * Adiciona uma mensagem a fila
 	 * @param pMessage
 	 */
-	protected void addMessage(DBSMessage pMessage){
+	protected void addMessage(IDBSMessage pMessage){
 		addMessage(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip());
 	}
 
@@ -1033,7 +1037,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
 		//Configura o icone do dialog confome o tipo de mensagem
-		wMessages.add(pMessageKey, pMessageType, pMessageText, pMessageTooltip);
+		wMessages.add(new DBSMessage(pMessageKey, pMessageType, pMessageText, pMessageTooltip));
 	}
 	/**
 	 * Remove uma mensagem da fila
@@ -1052,7 +1056,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 		return wMessages.isValidated(pMessageKey);
 	}
 	
-	protected boolean isMessageValidated(DBSMessage pMessage){
+	protected boolean isMessageValidated(IDBSMessage pMessage){
 		return isMessageValidated(pMessage.getMessageText());
 	}
 

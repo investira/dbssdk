@@ -19,7 +19,7 @@ import javax.servlet.jsp.jstl.sql.ResultSupport;
 import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSIO.MOVE_DIRECTION;
 import br.com.dbsoft.util.DBSObject;
@@ -611,7 +611,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	}
 	
 	@Override
-	public DBSMessage getMessage(String pColumnName) {
+	public IDBSMessage getMessage(String pColumnName) {
 		if (pColumnName==null){return null;}
 		String xColumnName = pvGetColumnName(pColumnName);
 		

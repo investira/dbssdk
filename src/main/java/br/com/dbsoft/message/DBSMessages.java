@@ -5,9 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 
-import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSObject;
 
@@ -16,157 +14,163 @@ import br.com.dbsoft.util.DBSObject;
  *Armazenar e controlar uma lista de mensagem(class DBSMessage)
  * @param <MessageClass> Classe de mensagem
  */
-public class DBSMessages<MessageClass extends IDBSMessage>  {
+public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessages<MessageClass> {
 
 	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
 	protected LinkedHashMap<String, MessageClass> 	wMessages =  new LinkedHashMap<String, MessageClass>(); 
 	protected String 								wCurrentMessageKey;
-	private Class<MessageClass>						wMessageClass;
+//	private Class<MessageClass>						wMessageClass;
 	private String									wFromUserId;
 	
-	public DBSMessages(Class<MessageClass> pMessageClass){
-		//Salva class para ser utilizada na criação de uma nova instancia
-		wMessageClass = pMessageClass;
-	}
+//	public DBSMessages(Class<MessageClass> pMessageClass){
+//		//Salva class para ser utilizada na criação de uma nova instancia
+//		wMessageClass = pMessageClass;
+//	}
 
+	@Override
 	public LinkedHashMap<String, MessageClass> getMessages(){
 		return wMessages;
 	}
 	
+	@Override
 	public Iterator<Entry<String, MessageClass>> iterator(){
 		return wMessages.entrySet().iterator();
-	}
-	
-	public void add(DBSIOException e){
-		add(MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), e.getOriginalException().getLocalizedMessage());
-	}
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 * @param pMessageTooltip Texto adicional a mensagem para se utilizado como diga
-	 */
-	public synchronized void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime){
-		//Caso a mensagem já exista, o que indica que já pode ter sido exibida(validada)...
-		if (wMessages.containsKey(pMessageKey)){
-			//Exclui ela da fila
-			wMessages.remove(pMessageKey);
-		}
-		try {
-			//Cria nova mensagem do tipo informado
-			MessageClass xM = wMessageClass.newInstance();
-			xM.setMessageKey(pMessageKey);
-			xM.setMessageType(pMessageType);
-			xM.setMessageText(pMessageText);
-			xM.setMessageTooltip(DBSObject.getNotNull(pMessageTooltip, ""));
-			xM.setMessageTime(pTime);
-			wMessages.put(pMessageKey, xM);
-			pvFindNextMessage();
-		} catch (InstantiationException | IllegalAccessException e) {
-			wLogger.error(e);
-		}
 	}
 	
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
 	 */
-	public void add(MessageClass pMessage){
-		this.add(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip(), pMessage.getMessageTime());
-	}
-
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		add(pMessageKey, pMessageType, pMessageText, pMessageTooltip, null);
-	}
-
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-		add(pMessageKey, pMessageType, pMessageText, "", null);
-	}
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime){
-		add(pMessageKey, pMessageType, pMessageText, "", pTime);
+	@SuppressWarnings("unchecked")
+	@Override
+	public MessageClass add(MessageClass pMessage){
+		MessageClass xM = null;
+		try {
+			if (pMessage == null){return null;}
+			if (wMessages.containsKey(pMessage.getMessageKey())){
+				//Exclui ela da fila
+				wMessages.remove(pMessage.getMessageKey());
+			}
+			//Cria nova mensagem do tipo informado
+			xM = (MessageClass) pMessage.getClass().newInstance();
+			xM.setMessageKey(pMessage.getMessageKey());
+			xM.setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
+			xM.setMessageType(pMessage.getMessageType());
+			xM.setMessageText(pMessage.getMessageText());
+			xM.setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(), ""));
+			xM.setMessageTime(pMessage.getMessageTime());
+			wMessages.put(pMessage.getMessageKey(), xM);
+			pvFindNextMessage();
+			return xM;
+		} catch (InstantiationException | IllegalAccessException e) {
+			wLogger.error(e);
+		}
+		return xM;
+//		return pvCreateMessage(pMessage.getMessageKey(), pMessage.getMessageCode(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip(), pMessage.getMessageTime());
 	}
 	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText){
-		add(pMessageType, pMessageText, null, null);
-	}
 
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		add(pMessageType, pMessageText, pMessageTooltip, null);
-	}
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(DBSIOException pMessage) {
+//		return pvCreateMessage(pMessage.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, pMessage.getLocalizedMessage(), pMessage.getOriginalException().getLocalizedMessage(), null);
+//	}
+//
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText){
+//		return pvCreateMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);
+//	}
+//	
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
+//		return pvCreateMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null,  null);
+//	}
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  null);
+//	}
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
+//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, null,  pMessageTime);
+//	}
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
+//	}
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
+//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, null,  null);
+//	}
+//	
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
+//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  null);
+//	}
+//	
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
+//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, null,  pMessageTime);
+//	}
+//
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	@Override
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
+//	}
 
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime){
-		add(pMessageType, pMessageText, null, pTime);
-	}
-
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime){
-		add(pMessageText, pMessageType, pMessageText, pMessageTooltip, pTime);
-	}
-	
 
 	/**
 	 * Adiciona todas as mensagems a fila
 	 * @param pMessages
 	 */
-	public synchronized <M extends DBSMessages<?>> void addAll(M pMessages){
-		for (Object xM : pMessages.getMessages().values()) {
-			DBSMessage xMsg = (DBSMessage) xM;
-			add(xMsg.getMessageText(), xMsg.getMessageType(), xMsg.getMessageText(), xMsg.getMessageTooltip(), xMsg.getMessageTime());
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addAll(IDBSMessages<MessageClass> pMessages) {
+		for (Object xMessage : pMessages.getMessages().values()) {
+			add((MessageClass) xMessage);
 		}
 	}
+
+
 
 	/**
 	 * Remove uma mensagem da fila e reposiciona da próxima
 	 * @param pMessageKey
 	 */
+	@Override
 	public void remove(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
 			wMessages.remove(pMessageKey);
@@ -174,10 +178,16 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 		pvFindNextMessage();
 	}
 	
+	@Override
+	public void remove(MessageClass pMessage) {
+		remove(pMessage.getMessageKey());
+	}
+
 	
 	/**
 	 * Apaga todas as mensagem da fila 
 	 */
+	@Override
 	public void clear(){
 		wMessages.clear();
 		pvFindNextMessage();
@@ -188,6 +198,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna a chave da mensagem corrente
 	 * @return
 	 */
+	@Override
 	public String getCurrentMessageKey(){
 		return wCurrentMessageKey;
 	}
@@ -196,6 +207,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna o texto mensagem corrente
 	 * @return
 	 */
+	@Override
 	public String getCurrentMessageText(){
 		if (wCurrentMessageKey== null){
 			return "mensagem não definida";
@@ -209,6 +221,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna o tipo mensagem corrente
 	 * @return
 	 */
+	@Override
 	public MESSAGE_TYPE getCurrentMessageType(){
 		if (wCurrentMessageKey== null){
 			return null;
@@ -221,6 +234,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna o tooltip da mensagem corrente
 	 * @return
 	 */
+	@Override
 	public String getCurrentMessageTooltip(){
 		if (wCurrentMessageKey== null){
 			return null;
@@ -233,6 +247,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna a mensagem corrente
 	 * @return
 	 */
+	@Override
 	public MessageClass getCurrentMessage(){
 		if (wCurrentMessageKey== null){
 			return null;
@@ -246,6 +261,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna se existe mensagem de erro
 	 * @return
 	 */
+	@Override
 	public boolean hasErrors(){
 		return pvFindMessageType(MESSAGE_TYPE.ERROR);
 	}
@@ -254,6 +270,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna se existe alguma mensagem de alerta
 	 * @return
 	 */
+	@Override
 	public boolean hasWarnings(){
 		return pvFindMessageType(MESSAGE_TYPE.WARNING);
 	}
@@ -262,6 +279,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna se existe mensagem de informação
 	 * @return
 	 */
+	@Override
 	public boolean hasInformations(){
 		return pvFindMessageType(MESSAGE_TYPE.INFORMATION);
 	}
@@ -270,6 +288,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna se existe alguma mensagem
 	 * @return
 	 */
+	@Override
 	public boolean hasMessages(){
 		if (wMessages.size() > 0){
 			return true;
@@ -286,6 +305,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * </ul>
 	 * 
 	 */
+	@Override
 	public Boolean isValidated(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
 			return wMessages.get(pMessageKey).isValidated();
@@ -300,6 +320,7 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Se não for mensagem de warning, automaticamente retira mensagem da fila 
 	 * @param pButtonPressed
 	 */
+	@Override
 	public void setValidated(Boolean pIsValidated){
 		if (wCurrentMessageKey !=null){
 			String xCurrentMessageKey = wCurrentMessageKey;
@@ -322,12 +343,14 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * @param pMessageKey
 	 * @param pIsValidated
 	 */
+	@Override
 	public void validated(String pMessageKey, Boolean pIsValidated){}
 	
 	/**
 	 * Usuário que criou as mensagens
 	 * @return
 	 */
+	@Override
 	public String getFromUserId() {
 		return wFromUserId;
 	}
@@ -336,10 +359,12 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 	 * Usuário que criou as mensagens
 	 * @param pFromUserId
 	 */
+	@Override
 	public void setFromUserId(String pFromUserId) {
 		wFromUserId = pFromUserId.trim().toUpperCase();
 	}
-
+	
+	//PRIVATE =======================================================================================
 	/**
 	 * Busca a próxima mensagem que não foi setada a validação
 	 */
@@ -366,5 +391,34 @@ public class DBSMessages<MessageClass extends IDBSMessage>  {
 		}	
 		return false;
 	}
+
+//	protected MessageClass pvCreateMessage(String pMessageKey, 
+//							  Integer pMessageCode, 
+//							  MESSAGE_TYPE pMessageType, 
+//							  String pMessageText, 
+//							  String pMessageTooltip, 
+//							  DateTime pMessageTime){
+//		if (pMessageKey == null){return null;}
+//		MessageClass xM = null;
+//		if (wMessages.containsKey(pMessageKey)){
+//			//Exclui ela da fila
+//			wMessages.remove(pMessageKey);
+//		}
+//		try {
+//			//Cria nova mensagem do tipo informado
+//			xM = wMessageClass.newInstance();
+//			xM.setMessageKey(pMessageKey);
+//			xM.setMessageCode(DBSObject.getNotNull(pMessageCode,0));
+//			xM.setMessageType(pMessageType);
+//			xM.setMessageText(pMessageText);
+//			xM.setMessageTooltip(DBSObject.getNotNull(pMessageTooltip, ""));
+//			xM.setMessageTime(pMessageTime);
+//			wMessages.put(pMessageKey, xM);
+//			pvFindNextMessage();
+//		} catch (InstantiationException | IllegalAccessException e) {
+//			wLogger.error(e);
+//		}
+//		return xM;
+//	}
 
 }

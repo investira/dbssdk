@@ -3,6 +3,8 @@ package br.com.dbsoft.message;
 
 import org.joda.time.DateTime;
 
+import br.com.dbsoft.error.DBSIOException;
+
 /**
  * @author ricardo.villar
  *
@@ -21,6 +23,10 @@ public class DBSMessage implements IDBSMessage{
 	
 	//Construtores============================
 	public DBSMessage(){}
+
+	public DBSMessage(DBSIOException e){
+		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null,  null);
+	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
 		pvSetMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);
@@ -153,7 +159,7 @@ public class DBSMessage implements IDBSMessage{
 
 
 	//PRIVATE =========================
-	private void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
 		setMessageKey(pMessageKey);
 		setMessageCode(pMessageCode);
 		setMessageType(pMessageType);

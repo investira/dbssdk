@@ -4,9 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import org.joda.time.DateTime;
-
-import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 
 
@@ -16,100 +13,54 @@ import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
  */
 public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 
-
 	public LinkedHashMap<String, MessageClass> getMessages();
 	
 	public Iterator<Entry<String, MessageClass>> iterator();
 	
-	public void add(DBSIOException e);
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 * @param pMessageTooltip Texto adicional a mensagem para se utilizado como diga
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime);
-	
-	/** Inclui uma mensagem na fila para ser exibida.
-	 * @param pMessage
-	 */
-	public void add(MessageClass pMessage);
 
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
+//	/** Inclui uma mensagem na fila para ser exibida.
+//	 * @param pMessage
+//	 */
+//	public MessageClass add(DBSIOException pMessage);
 
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText);
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A exibição se derá na mesma ondem da inclusão
-	 * @param pMessageKey Chave da mensagem que será utilizada para verificar a resposta do usuário
-	 * @param pMessageType pTipo de mensaagem
-	 * @param pMessageText Texto da mensagem
-	 */
-	public void add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime);
-	
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText);
+	public MessageClass add(MessageClass pMessage);
 
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
-
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pTime);
-
-	/**
-	 * Inclui uma mensagem na fila para ser exibida.
-	 * A chave da mensagem é o próprio texto
-	 * @param pMessageType
-	 * @param pMessageText
-	 */
-	public void add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pTime);
-	
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText);
+//	
+//	public MessageClass add(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText);
+//
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
+//
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime);
+//
+//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime);
+//
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText);
+//	
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
+//	
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime);
+//
+//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime);
 
 	/**
 	 * Adiciona todas as mensagems a fila
 	 * @param pMessages
 	 */
-	public void addAll(IDBSMessages<IDBSMessage> pMessages);
+	public void addAll(IDBSMessages<MessageClass> pMessages);
 
 	/**
 	 * Remove uma mensagem da fila e reposiciona da próxima
 	 * @param pMessageKey
 	 */
-	public void remove(String pMessageKey);
+	public void remove(MessageClass pMessage);
 	
+	/**
+	 * Remove uma mensagem da fila e reposiciona da próxima
+	 * @param pMessageKey
+	 */
+	public void remove(String pMessageKey);
+
 	
 	/**
 	 * Apaga todas as mensagem da fila 
@@ -208,5 +159,6 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * @param pFromUserId
 	 */
 	public void setFromUserId(String pFromUserId);
+	
 
 }

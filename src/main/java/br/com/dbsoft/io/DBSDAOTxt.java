@@ -17,7 +17,7 @@ import java.util.List;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
@@ -276,7 +276,7 @@ public class DBSDAOTxt<DataModelClass> extends DBSDAOBase<DataModelClass>{
 	}
 	
 	@Override
-	public DBSMessage getMessage(String pColumnName) {
+	public IDBSMessage getMessage(String pColumnName) {
 		if (wDataModel == null){
 			return null;
 		}else{

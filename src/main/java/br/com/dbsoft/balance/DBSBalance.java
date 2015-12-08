@@ -9,7 +9,9 @@ import org.apache.log4j.Logger;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -24,7 +26,7 @@ public abstract class DBSBalance<OperationDataClass> {
 	protected Connection 				wConnection;
 	protected OperationDataClass 		wOperationData;
 	protected Date						wDate;
-	protected DBSMessages<DBSMessage>	wMessages = new DBSMessages<DBSMessage>(DBSMessage.class);
+	protected IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
 	
 	public DBSBalance(Connection pConnection) {
 		wConnection = pConnection;
@@ -200,7 +202,8 @@ public abstract class DBSBalance<OperationDataClass> {
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	public DBSMessages<DBSMessage> getMessages(){
+	@SuppressWarnings("rawtypes")
+	public IDBSMessages getMessages(){
 		return wMessages;
 	}
 
@@ -268,14 +271,14 @@ public abstract class DBSBalance<OperationDataClass> {
 	 * @param pMessageText Texto da mensagem
 	 */
 	protected void addMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		wMessages.add(pMessageType, pMessageText);
+		wMessages.add(new DBSMessage(pMessageType, pMessageText));
 	}
 
 	/**
 	 * Adiciona uma mensagem a fila
 	 * @param pMessage
 	 */
-	protected void addMessage(DBSMessage pMessage){
+	protected void addMessage(IDBSMessage pMessage){
 		addMessage(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip());
 	}
 
@@ -286,7 +289,7 @@ public abstract class DBSBalance<OperationDataClass> {
 	 */
 	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
 		//Configura o icone do dialog confome o tipo de mensagem
-		wMessages.add(pMessageKey, pMessageType, pMessageText, pMessageTooltip);
+		wMessages.add(new DBSMessage(pMessageKey, pMessageType, pMessageText, pMessageTooltip));
 	}
 	/**
 	 * Remove uma mensagem da fila
@@ -305,7 +308,7 @@ public abstract class DBSBalance<OperationDataClass> {
 		return wMessages.isValidated(pMessageKey);
 	}
 	
-	protected boolean isMessageValidated(DBSMessage pMessage){
+	protected boolean isMessageValidated(IDBSMessage pMessage){
 		return isMessageValidated(pMessage.getMessageText());
 	}
 

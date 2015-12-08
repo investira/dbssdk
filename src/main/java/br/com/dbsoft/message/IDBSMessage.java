@@ -9,7 +9,7 @@ import br.com.dbsoft.util.DBSNumber;
  * @author ricardo.villar
  *
  */
-public interface IDBSMessage {
+public interface IDBSMessage extends Cloneable{
 
 	public static enum MESSAGE_TYPE{
 	   	SUCESS		(1, "-sucess"),

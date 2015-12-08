@@ -13,7 +13,7 @@ import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSRow;
-import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -486,7 +486,7 @@ public abstract class DBSDAOBase<DataModelClass> implements Serializable, IDBSDA
 	 * Será retornado o valor nulo quando não houve mensagem.<br/>
 	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
 	 */
-	public abstract DBSMessage getMessage(String pColumnName);
+	public abstract IDBSMessage getMessage(String pColumnName);
 
 
 	/**

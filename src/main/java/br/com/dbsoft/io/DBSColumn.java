@@ -8,6 +8,7 @@ import br.com.dbsoft.core.DBSSDK.COLUMN.HORIZONTALALIGNMENT;
 import br.com.dbsoft.core.DBSSDK.COLUMN.VERTICALALIGNMENT;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
 import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSIO;
 
@@ -55,7 +56,7 @@ public class DBSColumn implements Serializable{
     private boolean 				wReadOnly;
     private boolean  				wComboBox;
     private boolean  				wAllowSort;
-    private DBSMessage				wMessage;
+    private IDBSMessage				wMessage;
 
     
     DBSColumn(){
@@ -88,7 +89,7 @@ public class DBSColumn implements Serializable{
 	 * Será retornado o valor nulo quando não houve mensagem.<br/>
 	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
 	 */
-    public DBSMessage getMessage() {
+    public IDBSMessage getMessage() {
 		return wMessage;
 	}
 	/**
@@ -98,7 +99,7 @@ public class DBSColumn implements Serializable{
 	 * A mensagem sempre será apagada após o valor da coluna ter sido alterado.
 	 * @param pMessage
 	 */
-	public void setMessage(DBSMessage pMessage) {
+	public void setMessage(IDBSMessage pMessage) {
 		if (pMessage == null){
 	    	wMessage = null;
 	    	return;
@@ -118,7 +119,7 @@ public class DBSColumn implements Serializable{
     		wMessage = null;
 	    	return;
 		}
-		wMessage = new DBSMessage(pMessageType, pMessageText);
+//		wMessage = new DBSMessage(pMessageType, pMessageText);
 	}
 
 	/**
