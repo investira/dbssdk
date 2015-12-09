@@ -7,10 +7,8 @@ import java.sql.Savepoint;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSIO;
 
@@ -212,9 +210,6 @@ public abstract class DBSBalance<OperationDataClass> {
 	 * Retorna se há alguma mensagem na fila
 	 * @return
 	 */
-	/**
-	 * @return
-	 */
 	public Boolean getHasMessage(){
 		if (wMessages.getCurrentMessageKey()!=null){
 			return true;
@@ -256,41 +251,13 @@ public abstract class DBSBalance<OperationDataClass> {
 	
 	/**
 	 * Adiciona uma mensagem a fila
-	 * @param pMessageKey Chave da mensagem para ser utilizada quando se quer saber se a mensagem foi ou não confirmada pelo usuário
-	 * @param pMessageType Tipo de mensagem. Messagem do tipo warning requerem a confirmação do usuário
-	 * @param pMessageText Texto da mensagem
-	 */
-	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-		addMessage(pMessageKey, pMessageType, pMessageText, "");
-	}
-
-	/**
-	 * Adiciona uma mensagem a fila
-	 * @param pMessageKey Chave da mensagem para ser utilizada quando se quer saber se a mensagem foi ou não confirmada pelo usuário
-	 * @param pMessageType Tipo de mensagem. Messagem do tipo warning requerem a confirmação do usuário
-	 * @param pMessageText Texto da mensagem
-	 */
-	protected void addMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		wMessages.add(new DBSMessage(pMessageType, pMessageText));
-	}
-
-	/**
-	 * Adiciona uma mensagem a fila
 	 * @param pMessage
 	 */
 	protected void addMessage(IDBSMessage pMessage){
-		addMessage(pMessage.getMessageText(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip());
+		wMessages.add(pMessage);
 	}
 
 	
-	/**
-	 * Adiciona uma mensagem a fila
-	 * @param pMessage
-	 */
-	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		//Configura o icone do dialog confome o tipo de mensagem
-		wMessages.add(new DBSMessage(pMessageKey, pMessageType, pMessageText, pMessageTooltip));
-	}
 	/**
 	 * Remove uma mensagem da fila
 	 * @param pMessageKey
