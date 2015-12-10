@@ -1,6 +1,6 @@
 package br.com.dbsoft.file;
 
-public interface IDBSFileTransferEvents {
+public interface IDBSFileTransferEventsListener {
 
 	/**
 	 * Evento ocorre antes de iniciar o filetransfer.<br/>

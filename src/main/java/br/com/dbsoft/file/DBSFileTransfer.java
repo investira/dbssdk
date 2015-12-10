@@ -149,7 +149,7 @@ public class DBSFileTransfer{
 	private String 							wURL;
 	private String 							wLocalFileNameOnly = null;
 	private String 							wLocalPath = null;
-	private List<IDBSFileTransferEvents>	wEventListeners = new ArrayList<IDBSFileTransferEvents>();
+	private List<IDBSFileTransferEventsListener>	wEventListeners = new ArrayList<IDBSFileTransferEventsListener>();
 	private boolean							wInterrupted; 
 	private Long							wTimeStarted = 0L;
 	private Long							wTimeEnded = 0L;
@@ -234,7 +234,7 @@ public class DBSFileTransfer{
 	 * @param pEventListener 
 	 * Para isso, classe deverá implementar a interface DBSTarefa.TarefaEventos
 	 */
-	public final void addEventListener(IDBSFileTransferEvents pEventListener) {
+	public final void addEventListener(IDBSFileTransferEventsListener pEventListener) {
 		wEventListeners.add(pEventListener);
 	}
 
