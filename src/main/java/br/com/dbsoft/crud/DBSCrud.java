@@ -56,12 +56,12 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	@Override
-	public Action getAction() {
+	public final Action getAction() {
 		return wAction;
 	}
 	
 	@Override
-	public boolean isOk() {
+	public final boolean isOk() {
 		return wOk;
 	}
 
@@ -97,6 +97,13 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		pvFinalizeAction();
 		return xCount;
 	}
+	
+	@Override
+	@SuppressWarnings("rawtypes")
+	public final IDBSMessages getMessages(){
+		return wMessages;
+	}
+
 	
 	@Override
 	public void beforeEdit(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
@@ -139,20 +146,15 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public IDBSMessages getMessages(){
-		return wMessages;
-	}
 
 	//MÉTODOS PRINCIPAIS =======================================================================================
-	protected void pvInitializeAction(Action pAction){
+	protected final void pvInitializeAction(Action pAction){
 		wAction = pAction;
 		getMessages().clear();
 		pvSetOk(true);
 	}
 	
-	protected void pvFinalizeAction(){
+	protected final void pvFinalizeAction(){
 		try {
 			//Efetua o commit caso esteja ok e tenha sido configurado como autocommit
 			if (isOk() 
@@ -166,7 +168,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 	}
 
-	protected void pvSetOk(boolean pOk){
+	protected final void pvSetOk(boolean pOk){
 		wOk = pOk;
 	}
 	
