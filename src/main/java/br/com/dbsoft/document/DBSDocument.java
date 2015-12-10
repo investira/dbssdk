@@ -51,7 +51,7 @@ public class DBSDocument implements Document {
 		} 
 	}
 	
-	public boolean open(File pFile){
+	public boolean read(File pFile){
 		try {
 			wDoc = wDocBuilder.parse(pFile);
 			return true;
