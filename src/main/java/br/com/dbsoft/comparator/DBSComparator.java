@@ -6,8 +6,17 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
-
-public class DBSComparator<T> implements Comparator<T>{
+/**
+ * Class para ordenar uma lista a partir dos atributos e respectivos valores.<br/>
+ * Deve-se utilizar o <b>Collections.sort</b>.<br/> 
+ * ex:Collections.sort(wLista, new DBSComparator<IListModel>("Volume", ORDER.DESCENDING));<br/>
+ * Onde: <b>wList<b/> é um <b>List<b/> de objetos do tipo <b>IListModel<b/> e <b>Volume<b/> e o nome da atributo a partir de qual será efetuado a ordenação.
+ * 
+ * @author ricardo.villar
+ *
+ * @param <DataModelClass>
+ */
+public class DBSComparator<DataModelClass> implements Comparator<DataModelClass>{
 
 	public enum ORDER{
 		ASCENDING,
@@ -16,18 +25,22 @@ public class DBSComparator<T> implements Comparator<T>{
 	private String  wFieldName;
 	private ORDER	wOrder;
 	
+	/**
+	 * @param pFieldName Nome do campos que será ordenado
+	 * @param pOrder Direção da ordenação
+	 */
 	public DBSComparator(String pFieldName, ORDER pOrder) {
 		wFieldName = pFieldName;
 		wOrder = pOrder;
 	}
 	
 	@Override
-	public int compare(T pObject1, T pObject2) {
+	public int compare(DataModelClass pDataModel1, DataModelClass pDataModel2) {
 		try {
-			Method xMethod1 = pObject1.getClass().getDeclaredMethod("get" + wFieldName);
-			Method xMethod2 = pObject2.getClass().getDeclaredMethod("get" + wFieldName);
-			Object xValue1 = xMethod1.invoke(pObject1);
-			Object xValue2 = xMethod2.invoke(pObject2);
+			Method xMethod1 = pDataModel1.getClass().getDeclaredMethod("get" + wFieldName);
+			Method xMethod2 = pDataModel2.getClass().getDeclaredMethod("get" + wFieldName);
+			Object xValue1 = xMethod1.invoke(pDataModel1);
+			Object xValue2 = xMethod2.invoke(pDataModel2);
 			if (xValue1 == null &&
 				xValue2 == null){
 				return 0;
