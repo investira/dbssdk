@@ -18,30 +18,10 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	public Iterator<Entry<String, MessageClass>> iterator();
 	
 
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	public MessageClass add(DBSIOException pMessage);
-
+	/** Inclui uma mensagem na fila para ser exibida.
+	 * @param pMessage
+	 */
 	public MessageClass add(MessageClass pMessage);
-
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText);
-//	
-//	public MessageClass add(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText);
-//
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
-//
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime);
-//
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime);
-//
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText);
-//	
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip);
-//	
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime);
-//
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime);
 
 	/**
 	 * Adiciona todas as mensagems a fila
