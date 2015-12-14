@@ -3,6 +3,7 @@ package br.com.dbsoft.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -714,22 +715,145 @@ public class DBSIO{
 	}	
 	
 		
-	
-//	private static Field pvFindField(Class<?> pClass, String pFieldName) {
-//	    pFieldName = pFieldName.toUpperCase().trim();
-//		for (Field yField:pClass.getDeclaredFields()){
-//			System.out.println(yField.getName() + "\t" + pFieldName);
-//			if (pFieldName.equals(yField.getName().toUpperCase().trim())){
-//				return yField;
-//			}
-//		}
-//		if (pClass.getSuperclass() != null){
-//			return pvFindField(pClass.getSuperclass(), pFieldName);
-//		}
-//		return null;
-//	}
+	/**
+	 * Retorna se dois datamodels contém os mesmos valores
+	 * @param pSourceDataModelClass
+	 * @param pSourceDataModel
+	 * @param pTargetDataModel
+	 * @return
+	 */
+	public final static <T,T2> boolean isEqualDataModelFieldsValues(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
+		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
+			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
+			// Se for irá procurar dentro dos fields do datamodel
+			Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+			if (xAnnotationTmp instanceof DBSTableModel){
+				//Chamada recursiva não implementada
+			}else{
+				Field yField = findDataModelField(pTargetDataModel.getClass(), xField.getName());
+				xField.setAccessible(true);
+				if (yField != null){
+					try {
+						yField.setAccessible(true);
+						Object xValue = DBSObject.toClassValue(xField.get(pSourceDataModel), xField.getType());
+						Object yValue = DBSObject.toClassValue(yField.get(pSourceDataModel), yField.getType());
+						if (!DBSObject.isEqual(xValue, yValue)){
+							return false;
+						}
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						wLogger.error("copyDataModelFieldsValue", e);
+					}
+				}
+			}
+			return true;
+		}
 
+		//Chamada recurva para procurar campo na superclass, se existir
+		if (pSourceDataModelClass.getSuperclass() != null){
+			return isEqualDataModelFieldsValues(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
+		}
+		return false;
+	}
 	
+	/**
+	 * Retorna se dois datamodels contém os mesmos valores
+	 * @param pSourceDataModelClass
+	 * @param pSourceDataModel
+	 * @param pTargetDataModel
+	 * @return
+	 */
+//	public final static <T,T2> boolean isEqualDataModelMethodValues(Class<T> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
+//		for (Method xMethod:pSourceDataModelClass.getDeclaredMethods()){
+//			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
+//			// Se for irá procurar dentro dos fields do datamodel
+//				Method yMethod = findDataModelMethod(pTargetDataModel.getClass(), xMethod.getName());
+//				if (yMethod != null){
+//					try {
+//						//Executa o método para retornar o valor
+//						Object xValue = xMethod.invoke(xMethod);
+//						Object yValue = xMethod.invoke(yMethod);
+//						if (!DBSObject.isEqual(xValue, yValue)){
+//							return false;
+//						}
+//					} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+//						wLogger.error("isEqualDataModelMethodValues", e);
+//					}
+//				}
+//			return true;
+//		}
+//
+//		//Chamada recurva para procurar campo na superclass, se existir
+//		if (pSourceDataModelClass.getSuperclass() != null){
+//			return isEqualDataModelMethodValues(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
+//		}
+//		return false;
+//	}
+	
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+	
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
+	/**
+	 * Busca pelo campo na class ou na superclass recursivamente se existir.<br/>
+	 * Campos são todas variáveis declaradas.
+	 * @param pClass
+	 * @param pFieldName
+	 * @return
+	 */
+	public static Field findDataModelField(Class<?> pClass, String pFieldName) {
+	    pFieldName = pFieldName.toUpperCase().trim();
+		for (Field yField:pClass.getDeclaredFields()){
+			if (pFieldName.equals(yField.getName().toUpperCase().trim())){
+				return yField;
+			}
+		}
+		if (pClass.getSuperclass() != null){
+			return findDataModelField(pClass.getSuperclass(), pFieldName);
+		}
+		return null;
+	}
+	
+	/**
+	 * Busca pelo campo na class ou na superclass recursivamente se existir.<br/>
+	 * Campos são todas variáveis declaradas.
+	 * @param pClass
+	 * @param pMethodName
+	 * @return
+	 */
+	public static Method findDataModelMethod(Class<?> pClass, String pMethodName) {
+	    pMethodName = pMethodName.trim().toUpperCase();
+		for (Method yMethod:pClass.getDeclaredMethods()){
+			if (pMethodName.equals(yMethod.getName().trim().toUpperCase())){
+				return yMethod;
+			}
+		}
+		if (pClass.getSuperclass() != null){
+			return findDataModelMethod(pClass.getSuperclass(), pMethodName);
+		}
+		return null;
+	}
 	/**
 	 * Copia os valores das colunas de um DAO para outro.
 	 * @param pDaoSource Origem dos dados
@@ -830,6 +954,32 @@ public class DBSIO{
 		}
 	}
 	
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+	
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
 	/**
 	 * Objetivo: Indica ao Banco de Dados o inicio do processo de transação.
 	 * @param pCn conexão com o Banco de dados;
@@ -1326,6 +1476,32 @@ public class DBSIO{
 		return xSQL;
 	}
 
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+	
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
 	/**
 	 * Retorna os registros conforme a QuerySQL informada.<br/>
 	 * As colunas poderão ser acessadas como atributos de uma classe diretamente. 
@@ -1814,6 +1990,32 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, String pTableName, String pPK) throws DBSIOException{
 		return executeDataModelCommand(pCn, pDataModel, COMMAND.UPDATE, pTableName, pPK); //Insere novo registro
 	}	
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+	
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
 	public static <T> int executeDataModelUpdate(Connection pCn, T pDataModel, T pDataModelValueOriginal) throws DBSIOException{
 		return executeDataModelCommand(pCn, pDataModel, pDataModelValueOriginal, COMMAND.UPDATE); //Insere novo registro
 	}	
@@ -2092,6 +2294,32 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		return xData;
 	}
 
+	//######################################################################################################### 
+	//## Private Methods                                                                                      #
+	//#########################################################################################################
+	
+	//	/**
+	//	 * Executa o comando informado(Isert, Update ou Delete) dos dados contidos no DataModel
+	//	 * O DataModel deverá conter a anotação @DataModel com a informação do nome da tabela 
+	//	 * @param pDataModel DataModel com os atributos e respectivos valores
+	//	 * @param pCn Conexão com o banco
+	//	 * @param pDAOCommand Comando(Insert, Update ou Delete)
+	//	 * @return Quantidade de registros afetados
+	//	 * @throws DBSIOException
+	//	 */
+	//	public static <T> int executeDataModelCommand(T pDataModel, T pDataModelValueOriginal, Connection pCn, COMMAND pDAOCommand) throws DBSIOException{
+	//		//Procura pela anotação DataModel para posteriomente ler o nome da tabela 
+	//		Annotation xAnnotationTmp = pDataModel.getClass().getAnnotation(DataModel.class);
+	//		if (xAnnotationTmp instanceof DataModel){
+	//			DataModel xAnnotation = (DataModel) xAnnotationTmp;
+	//			//Se o nome da tabela foi informado
+	//			if (!DBSObject.isEmpty(xAnnotation.tablename())){
+	//				return executeDataModelCommand(pDataModel, pDataModelValueOriginal, pCn, pDAOCommand, xAnnotation.tablename(), "");
+	//			}
+	//		}
+	//		return -1;
+	//	}
+		
 	//	@SuppressWarnings("unchecked")
 	//	public static <T> T getDataTypeConvertedValue(DATATYPE pDataType, Object pValue) {
 	//		return (T) pValue;
@@ -3085,7 +3313,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			if (xAnnotationTmp instanceof DBSTableModel){
 				//Chamada recursiva não implementada
 			}else{
-				Field yField = pvFindField(pTargetDataModel.getClass(), xField.getName());
+				Field yField = findDataModelField(pTargetDataModel.getClass(), xField.getName());
 				if (yField != null){
 					try {
 						xField.setAccessible(true);
@@ -3101,26 +3329,6 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		if (pSourceDataModelClass.getSuperclass() != null){
 			pvCopyDataModelFieldsValue(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
 		}
-	}
-	
-	/**
-	 * Busca pelo campo na class ou na superclass recursivamente se existir.<br/>
-	 * Campos são todas variáveis declaradas.
-	 * @param pClass
-	 * @param pFieldName
-	 * @return
-	 */
-	private static Field pvFindField(Class<?> pClass, String pFieldName) {
-	    pFieldName = pFieldName.toUpperCase().trim();
-		for (Field yField:pClass.getDeclaredFields()){
-			if (pFieldName.equals(yField.getName().toUpperCase().trim())){
-				return yField;
-			}
-		}
-		if (pClass.getSuperclass() != null){
-			return pvFindField(pClass.getSuperclass(), pFieldName);
-		}
-		return null;
 	}
 
 
