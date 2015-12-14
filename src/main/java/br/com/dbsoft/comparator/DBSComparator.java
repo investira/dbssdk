@@ -6,6 +6,10 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
+import org.apache.log4j.Logger;
+
+import br.com.dbsoft.util.DBSIO;
+
 /**
  * Class para ordenar uma lista a partir dos atributos e respectivos valores.<br/>
  * Deve-se utilizar o <b>Collections.sort</b>.<br/> 
@@ -17,7 +21,9 @@ import java.util.Comparator;
  * @param <DataModelClass>
  */
 public class DBSComparator<DataModelClass> implements Comparator<DataModelClass>{
-
+	
+	protected Logger	wLogger = Logger.getLogger(this.getClass());
+	
 	public enum ORDER{
 		ASCENDING,
 		DESCENDING;
@@ -37,8 +43,10 @@ public class DBSComparator<DataModelClass> implements Comparator<DataModelClass>
 	@Override
 	public int compare(DataModelClass pDataModel1, DataModelClass pDataModel2) {
 		try {
-			Method xMethod1 = pDataModel1.getClass().getDeclaredMethod("get" + wFieldName);
-			Method xMethod2 = pDataModel2.getClass().getDeclaredMethod("get" + wFieldName);
+			//Retorna o método para posterioemente executar-lo para retornar o valor
+			Method xMethod1 = DBSIO.findDataModelMethod(pDataModel1.getClass(), "get" + wFieldName);
+			Method xMethod2 = DBSIO.findDataModelMethod(pDataModel2.getClass(), "get" + wFieldName);
+			//Executa o método para retornar o valor
 			Object xValue1 = xMethod1.invoke(pDataModel1);
 			Object xValue2 = xMethod2.invoke(pDataModel2);
 			if (xValue1 == null &&
@@ -95,7 +103,7 @@ public class DBSComparator<DataModelClass> implements Comparator<DataModelClass>
 					return ((Timestamp) xValue2).compareTo((Timestamp) xValue1);
 				}
 			}
-		} catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return 0;
