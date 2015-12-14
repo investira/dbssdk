@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -871,6 +872,32 @@ public class DBSFile {
 		}
 		return pPath + pFile;
 	}
+	
+	/**
+	 * Retorna quantidade de arquivos dentro da lista de pastas informadas.<br/>
+	 * Utiliza <b>pFileExtension</b> como filtro dos arquivos que serão considerados.
+	 * Caso não seja informado, irá considerar todos arquivos.<br/>
+	 * Só serão considerados arquivos visíveis.
+	 * @param pFolders
+	 * @param pFileExtension
+	 * @return
+	 */
+	public static Integer getFilesCount(List<File> pFolders, String pFileExtension){
+		Integer xCount = 0;
+		for (File xFolder:pFolders){
+			for (File xFile:xFolder.listFiles()){
+				if (xFile.isFile()
+				&& !xFile.isHidden()){
+					if (DBSObject.isEmpty(pFileExtension) 
+					 || xFile.getName().toLowerCase().endsWith(pFileExtension)){
+						xCount ++;
+					}
+				}
+			}
+		}
+		return xCount;
+	}
+
 	
 	// ===============================================================================================
 	// Private
