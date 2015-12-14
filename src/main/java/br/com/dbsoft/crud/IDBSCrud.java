@@ -8,9 +8,18 @@ import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 
 public interface IDBSCrud<DataModelClass> {
 
-	public interface Action{}
+	public interface ICrudAction{
+		CrudAction NONE = CrudAction.NONE;
+		CrudAction READING = CrudAction.READING;
+		CrudAction MERGING = CrudAction.MERGING;
+		CrudAction DELETING = CrudAction.DELETING;
+
+		public String getName();
+		public int getCode();
+		public ICrudAction get(int pCode);
+	}
 	
-	public enum CrudAction implements Action {
+	public enum CrudAction implements ICrudAction {
 		NONE 			("Not Editing", 0),
 		READING			("Reading", 1),
 		MERGING 		("Merging", 2),
@@ -24,15 +33,18 @@ public interface IDBSCrud<DataModelClass> {
 			this.wCode = pCode;
 		}
 
+		@Override
 		public String getName() {
 			return wName;
 		}
 
+		@Override
 		public int getCode() {
 			return wCode;
 		}
 		
-		public Action get(int pCode) {
+		@Override
+		public ICrudAction get(int pCode) {
 			switch (pCode) {
 			case 0:
 				return NONE;
@@ -45,13 +57,14 @@ public interface IDBSCrud<DataModelClass> {
 			default:
 				return NONE;
 			}
-		}		
+		}
 	}
+	
 	// Mensagens
 	IDBSMessage MsgErroNoPadrao					= new DBSMessage(MESSAGE_TYPE.ERROR, "Erro");
 
 	
-	public Action getAction();
+	public ICrudAction getCrudAction();
 	
 	public boolean isOk();
 	
@@ -75,11 +88,11 @@ public interface IDBSCrud<DataModelClass> {
 	 * para evitar que seja efetuado o update, caso a chave exista.
 	 * <ul><b>Eventos disparados</b>
 	 * <li>beforeEdit</li>
-	 * <li>validate</li>
-	 * <li>beforeRead(registro antigo se houver)</li>
-	 * <li>onRead(registro antigo se houver)</li>
-	 * <li>afterRead(registro antigo se houver)</li>
 	 * <li>beforeMerge</li>
+	 * <li>validate</li>
+	 * <li>beforeRead(dados da chave do registro)</li>
+	 * <li>onRead(dados da chave do registro)</li>
+	 * <li>afterRead(dados do registro se for encontrado)</li>
 	 * <li>onMerge</li>
 	 * <li>afterMerge(merge efetuado com sucesso)</li>
 	 * <li>onError(merge não efetuado)</li>
@@ -96,10 +109,11 @@ public interface IDBSCrud<DataModelClass> {
 	 * Excluir registro a partir das informações enviadas.<br/>
 	 * <ul><b>Eventos disparados</b>
 	 * <li>beforeEdit</li>
-	 * <li>beforeRead(registro antigo se houver)</li>
-	 * <li>onRead(registro antigo se houver)</li>
-	 * <li>afterRead(registro antigo se houver)</li>
 	 * <li>beforeDelete</li>
+	 * <li>validate</li>
+	 * <li>beforeRead(dados da chave do registro)</li>
+	 * <li>onRead(dados da chave do registro)</li>
+	 * <li>afterRead(dados do registro se for encontrado)</li>
 	 * <li>onDelete</li>
 	 * <li>afterDelete(quando delete efetuado com sucesso)</li>
 	 * <li>onError(delete não efetuado)</li>

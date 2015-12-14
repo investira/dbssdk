@@ -1,39 +1,46 @@
-package br.com.dbsoft.balance;
+package br.com.dbsoft.crudbalance;
 
 import br.com.dbsoft.crud.IDBSCrud;
+
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 
-public interface IDBSBalance<DataModelClass> extends IDBSCrud<DataModelClass> {
+public interface IDBSCrudBalance<DataModelClass> extends IDBSCrud<DataModelClass> {
 	
-	public enum BalanceAction implements Action {
-		REPROCESSING	("Reprocessing", 7);
+	public interface ICrudBalanceAction extends ICrudAction{
+		CrudBalanceAction REPROCESSING = CrudBalanceAction.REPROCESSING;
+	}
+	public enum CrudBalanceAction implements ICrudAction {
+		REPROCESSING	("Reprocessing", 10);
 		
 		private String 	wName;
 		private int 	wCode;
 		
-		private BalanceAction(String pName, int pCode) {
+		private CrudBalanceAction(String pName, int pCode) {
 			this.wName = pName;
 			this.wCode = pCode;
 		}
 
+		@Override
 		public String getName() {
 			return wName;
 		}
 
+		@Override
 		public int getCode() {
 			return wCode;
 		}
 		
-		public BalanceAction get(int pCode) {
+		@Override
+		public CrudBalanceAction get(int pCode) {
 			switch (pCode) {
-			case 7:
+			case 10:
 				return REPROCESSING;
 			}
 			return null;
-		}		
+		}
 	}
 
 	// Mensagens

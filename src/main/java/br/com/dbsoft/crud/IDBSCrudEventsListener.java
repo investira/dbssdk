@@ -31,7 +31,7 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 	public void beforeDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
 	/**
-	 * Neste evento deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>
+	 * Neste evento deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
 	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.
 	 * Deve-se retornar a quantidade de registros afetados.
 	 * @param pEvent
@@ -70,47 +70,10 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 
 	
 	/**
-	 * Neste evento deve-se implementar a leitura integralno banco de dados do registro a partir das informações passadas no <b>DataModelClass</b>.
-	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorna-lo.
-	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.
-	 * @param pEvent
-	 * @return Dados lidos
-	 * @throws DBSIOException
-	 */
-	public DataModelClass onRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
-
-	/**
-	 * Neste evento deve-se implementar a exclusão no banco de dados das informações passadas no <b>DataModelClass</b>
-	 * Deve-se retornar a quantidade de registros afetados.
+	 * Evento disparado em caso de erro.<br/>
 	 * @param pEvent
 	 * @return Quantidade de registros efetados.
 	 */
-	public Integer onDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
+	public void afterError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
-	/**
-	 * Neste evento deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>
-	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.
-	 * Deve-se retornar a quantidade de registros afetados.
-	 * @param pEvent
-	 * @return Quantidade de registros efetados.
-	 */
-	public Integer onMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
-
-	/**
-	 * Neste evento deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>
-	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.
-	 * Deve-se retornar a quantidade de registros afetados.
-	 * @param pEvent
-	 * @return Quantidade de registros efetados.
-	 */
-	public void onError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
-
-	/**
-	 * Evento para validação dos dados.<br/>
-	 * Para indicar problemas na validação deve-se setar <b>pEvent.setOk(false)</b>.<br/>
-	 * @param pEvent
-	 * @throws DBSIOException
-	 */
-//	@SuppressWarnings("rawtypes")
-	public void onValidate(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 }

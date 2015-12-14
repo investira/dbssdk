@@ -1,4 +1,4 @@
-package br.com.dbsoft.balance;
+package br.com.dbsoft.crudbalance;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,11 +14,11 @@ import br.com.dbsoft.util.DBSIO;
  *
  * @param <DataModelClass>
  */
-public abstract class DBSBalance<DataModelClass> extends DBSCrud<DataModelClass> implements IDBSBalance<DataModelClass> {
+public abstract class DBSCrudBalance<DataModelClass> extends DBSCrud<DataModelClass> implements IDBSCrudBalance<DataModelClass> {
 	
 	protected Date						wDate;
 	
-	public DBSBalance(Connection pConnection, boolean pAutoCommit) {
+	public DBSCrudBalance(Connection pConnection, boolean pAutoCommit) {
 		super(pConnection, pAutoCommit);
 	}
 	
@@ -39,8 +39,8 @@ public abstract class DBSBalance<DataModelClass> extends DBSCrud<DataModelClass>
 	@SuppressWarnings("unchecked")
 	@Override
 	public final void afterRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
-		if (getAction() == CrudAction.MERGING
-		 || getAction() == CrudAction.DELETING){
+		if (getCrudAction() == CrudAction.MERGING
+		 || getCrudAction() == CrudAction.DELETING){
 			//Retira lançamento antigo do saldo
 			if (!onSaveBalance(pEvent.getDataModel(), false)){
 				pEvent.getMessages().add(MsgErroCalculandoSaldo);
@@ -51,7 +51,7 @@ public abstract class DBSBalance<DataModelClass> extends DBSCrud<DataModelClass>
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public final void beforeMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
+	public final void afterMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 		//Inclui lançamento novo no saldo
 		if (!onSaveBalance(pEvent.getDataModel(), true)){
 			pEvent.getMessages().add(MsgErroCalculandoSaldo);
@@ -67,7 +67,7 @@ public abstract class DBSBalance<DataModelClass> extends DBSCrud<DataModelClass>
 	 */
 	@Override
 	public final boolean reprocessBalance(DataModelClass pDataModel) throws DBSIOException{
-		pvInitializeAction(BalanceAction.REPROCESSING);
+		pvInitializeAction(CrudBalanceAction.REPROCESSING);
 		boolean xOk = pvReprocessBalance(pDataModel);
 		pvFinalizeAction();
 		return xOk;

@@ -8,9 +8,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.io.DBSDAO;
+import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -23,11 +26,18 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected Logger	wLogger = Logger.getLogger(this.getClass());
 	
 	protected Connection 				wConnection;
-	protected Action					wAction = CrudAction.NONE; 
 	protected boolean					wOk = true;
+	
+	protected DBSDAO<Object> wDAO;
+
+	protected IDBSMessage	   			wMsgCampoNaoInformado = new DBSMessage(MESSAGE_TYPE.ERROR, "%s não infomado. %s");	 
+
+	private   ICrudAction				wCrudAction = CrudAction.NONE; 
 	private   IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
 	private	  boolean					wAutoCommit = false;	  
 	
+	
+
 	@SuppressWarnings("rawtypes")
 	private List<IDBSCrudEventsListener>	wEventListeners = new ArrayList<IDBSCrudEventsListener>();
 	
@@ -35,6 +45,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		wConnection = pConnection;
 		wAutoCommit = pAutoCommit;
 	}
+
 	/**
 	 * Classe que receberá as chamadas dos eventos quando ocorrerem.<br/>
 	 * Para isso, classe deverá implementar a interface DBSTarefa.TarefaEventos<br/>
@@ -56,8 +67,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	@Override
-	public final Action getAction() {
-		return wAction;
+	public final ICrudAction getCrudAction() {
+		return wCrudAction;
 	}
 	
 	@Override
@@ -103,8 +114,45 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	public final IDBSMessages getMessages(){
 		return wMessages;
 	}
+	//Abstract methods=============================================================
+	/**
+	 * Neste método deve-se implementar a leitura integral do registro no banco de dados, a partir das informações passadas no <b>DataModelClass</b>.<br/>
+	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorna-lo.<br/>
+	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.
+	 * @param pEvent
+	 * @return Novo <b>DataModelClass</b> com os dados lidos
+	 * @throws DBSIOException
+	 */
+	protected abstract DataModelClass onRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
+
+	/**
+	 * Neste método deve-se implementar a exclusão no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
+	 * Deve-se retornar a quantidade de registros afetados.
+	 * @param pEvent
+	 * @return Quantidade de registros efetados.
+	 */
+	protected abstract Integer onDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
+
+	/**
+	 * Neste método deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
+	 * Lembrando que para efetuar <b>insert</b> em campos autoincrement a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.<br/>
+	 * Deve-se retornar a quantidade de registros afetados.
+	 * @param pEvent
+	 * @return Quantidade de registros efetados.
+	 */
+	protected abstract Integer onMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
 	
+	/**
+	 * Evento para validação dos dados.<br/>
+	 * Para indicar problemas na validação deve-se setar <b>pEvent.setOk(false)</b>.<br/>
+	 * @param pEvent
+	 * @throws DBSIOException
+	 */
+	protected abstract void onValidate(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
+
+	
+	//Eventos ====================================================================
 	@Override
 	public void beforeEdit(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
@@ -138,7 +186,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	@Override
-	public void onError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
+	public void afterError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
 
@@ -148,8 +196,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	 */
 
 	//MÉTODOS PRINCIPAIS =======================================================================================
-	protected final void pvInitializeAction(Action pAction){
-		wAction = pAction;
+	protected final void pvInitializeAction(ICrudAction pAction){
+		wCrudAction = pAction;
 		getMessages().clear();
 		pvSetOk(true);
 	}
@@ -164,7 +212,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		} catch (DBSIOException e) {
 			pvSetOk(false);
 		}finally {
-			wAction = CrudAction.NONE;
+			wCrudAction = CrudAction.NONE;
 		}
 	}
 
@@ -175,7 +223,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	//MÉTODOS PRINCIPAIS ACTION =======================================================================================
 	private DataModelClass pvRead(DataModelClass pDataModel) throws DBSIOException{
 		if (pDataModel==null){
-			pvFireEventOnError(pDataModel);
+			pvFireEventAfterError(pDataModel);
 			return null;
 		}
 		DataModelClass xDataModel = null;
@@ -190,68 +238,72 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	private Integer pvMerge(DataModelClass pDataModel) throws DBSIOException{
 		if (pDataModel==null){
-			pvFireEventOnError(pDataModel);
+			pvFireEventAfterError(pDataModel);
 			return 0;
 		}
-		boolean xOk = false;
 		Integer	xCount = 0;
 		//Retira lançamento anterior do saldo se lançamento existir
 		//Le lançamento
 		//Cria savepoint para retornar em caso de erro
 		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "balance");
 
-		if (pvFireEventValidate(pDataModel)){
-			//Lê dado anterior se existir e dispara eventos beforeRead e afterRead para dar a oportunidade do cliente efetuar alguma procedimento com os dados anteriores
-			pvRead(pDataModel);
-			if (isOk()
-			 && pvFireEventBeforeMerge(pDataModel)){
-				//Insere lançamento
-				xCount = pvFireEventOnMerge(pDataModel);
+		if (pvFireEventBeforeMerge(pDataModel)){
+			if (pvFireEventOnValidate(pDataModel)){
+				//Lê dado anterior se existir e dispara eventos beforeRead e afterRead para dar a oportunidade do cliente efetuar alguma procedimento com os dados anteriores
+				pvRead(pDataModel);
 				if (isOk()){
-					pvFireEventAfterMerge(pDataModel);
+					//Insere lançamento
+					xCount = pvFireEventOnMerge(pDataModel);
+					if (isOk()){
+						pvFireEventAfterMerge(pDataModel);
+					}
 				}
 			}
 		}
 		if (!isOk()){
 			//Desfaz qualquer modificação no banco de dados efetuada a partir do save point
-			DBSIO.endTrans(wConnection, xOk, xSavePoint);
-			pvFireEventOnError(pDataModel);
+			DBSIO.endTrans(wConnection, false, xSavePoint);
+			pvFireEventAfterError(pDataModel);
 		}
 		return xCount;
 	}
 	
 	private Integer pvDelete(DataModelClass pDataModel) throws DBSIOException{
 		if (pDataModel==null){
-			pvFireEventOnError(pDataModel);
+			pvFireEventAfterError(pDataModel);
 			return 0;
 		}
-		boolean xOk = false;
+
 		Integer xCount = 0;
 		
 		//Cria savepoint para retornar em caso de erro
 		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "balance");
 
 		//Retira do saldo lançamento antigo
-		pDataModel = pvRead(pDataModel);
-		if (isOk()){
-			if (pvFireEventBeforeDelete(pDataModel)){
-				xCount = pvFireEventOnDelete(pDataModel);
+		if (pvFireEventBeforeDelete(pDataModel)){
+			if (pvFireEventOnValidate(pDataModel)){
+				pDataModel = pvRead(pDataModel);
 				if (isOk()){
-					pvFireEventAfterDelete(pDataModel);
+					xCount = pvFireEventOnDelete(pDataModel);
+					if (isOk()){
+						pvFireEventAfterDelete(pDataModel);
+					}
 				}
 			}
 		}
 		if (!isOk()){
 			//Desfaz qualquer modificação no banco de dados efetuada a partir do save point
-			DBSIO.endTrans(wConnection, xOk, xSavePoint);
-			pvFireEventOnError(pDataModel);
+			DBSIO.endTrans(wConnection, false, xSavePoint);
+			pvFireEventAfterError(pDataModel);
 		}
 		return xCount;
 	}
 
 	@SuppressWarnings("unchecked")
 	private void pvAfterEventFire(IDBSCrudEvent<DataModelClass> pEvent){
+		//Seta set o crud está ok.
 		pvSetOk(pEvent.isOk());
+		//Adiciona as messagens recebidos do evento(caso existam), as mesagens do crud.
 		getMessages().addAll(pEvent.getMessages());
 	}
 	
@@ -390,35 +442,40 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	@SuppressWarnings("unchecked")
+	private void pvFireEventAfterError(DataModelClass pDataModel) throws DBSIOException{
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		try{
+			//Chame o metodo(evento) local para quando esta classe for extendida
+			afterError(xE);
+			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
+			for (int xX=0; xX<wEventListeners.size(); xX++){
+				wEventListeners.get(xX).afterError(xE); 
+	        }
+		}catch(Exception e){
+			DBSIO.throwIOException(e);
+		}
+		pvAfterEventFire(xE);
+	}
+
 	private DataModelClass pvFireEventOnRead(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
 		DataModelClass xDataModel = null;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			xDataModel = onRead(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).onRead(xE); 
-	        }
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
 		pvAfterEventFire(xE);
-		if (xE.isOk()){pvSetOk(xDataModel != null);}
 		return xDataModel;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Integer pvFireEventOnMerge(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
 		Integer xCount = 0;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			xCount = onMerge(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).onMerge(xE); 
-	        }
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
@@ -427,17 +484,12 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xCount;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Integer pvFireEventOnDelete(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
 		Integer xCount = 0;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			xCount = onDelete(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).onDelete(xE); 
-	        }
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
@@ -446,32 +498,11 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xCount;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void pvFireEventOnError(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
-		try{
-			//Chame o metodo(evento) local para quando esta classe for extendida
-			onError(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).onError(xE); 
-	        }
-		}catch(Exception e){
-			DBSIO.throwIOException(e);
-		}
-		pvAfterEventFire(xE);
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Boolean pvFireEventValidate(DataModelClass pDataModel) throws DBSIOException{
+	private Boolean pvFireEventOnValidate(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			onValidate(xE);
-			//Chama a metodo(evento) dentro das classe foram adicionadas na lista que possuem a implementação da respectiva interface
-			for (int xX=0; xX<wEventListeners.size(); xX++){
-				wEventListeners.get(xX).onValidate(xE); 
-	        }
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
