@@ -527,7 +527,8 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	}
 
 	/**
-	 * Indica a finalização do subStep atual para passar para o próximo subSteps
+	 * Indica a finalização do subStep atual para passar para o próximo subSteps.<br/>
+	 * Incrementa o atualiza o <b>PercentageCompleted</b>. 
 	 * @throws DBSIOException 
 	 */
 	public final void endSubStep() throws DBSIOException{
