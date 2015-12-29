@@ -155,7 +155,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private int						wRetryOnErrorCount = 0;
 	private	boolean					wTransactionEnabled = true;
 	private boolean					wRunningScheduled = false; 
-	private Integer					wTaskUpdateMilliseconds = 2000;
+	private Integer					wTaskUpdateMilliseconds = 2000; //Dois segundos
 	private Long					wTaskUpdateLastTime = 0L;
 
 
@@ -1613,7 +1613,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	private void pvFireEventTaskUpdated(Boolean pIgnoreTaskUpdateMillisecondsLimit) throws DBSIOException{
 		Long xCurrentTime = Calendar.getInstance().getTimeInMillis();
 		if (wTaskUpdateMilliseconds != 0){
-			//De intervalor entre o evento o disparo do evento anterior for maior que o definido, salva o tempo e dispara o evento em seguida
+			//Se intervalo entre o disparo do evento anterior for maior que o definido, salva o tempo e dispara o evento em seguida
 			if (pIgnoreTaskUpdateMillisecondsLimit 
 			 || (xCurrentTime - wTaskUpdateLastTime > wTaskUpdateMilliseconds)){
 				wTaskUpdateLastTime = xCurrentTime;
