@@ -90,8 +90,8 @@ public interface IDBSCrud<DataModelClass> {
 	 * <li>beforeEdit</li>
 	 * <li>beforeMerge</li>
 	 * <li>validate</li>
-	 * <li>beforeRead(dados da chave do registro)</li>
-	 * <li>onRead(dados da chave do registro)</li>
+	 * <li>beforeRead(recebe:dados da chave do registro)</li>
+	 * <li>onRead(recebe:dados da chave do registro / retorna:dados do registro se for encontrado)</li>
 	 * <li>afterRead(dados do registro se for encontrado)</li>
 	 * <li>onMerge</li>
 	 * <li>afterMerge(merge efetuado com sucesso)</li>
@@ -112,7 +112,7 @@ public interface IDBSCrud<DataModelClass> {
 	 * <li>beforeDelete</li>
 	 * <li>validate</li>
 	 * <li>beforeRead(dados da chave do registro)</li>
-	 * <li>onRead(dados da chave do registro)</li>
+	 * <li>onRead(recebe:dados da chave do registro / retorna:dados do registro se for encontrado)</li>
 	 * <li>afterRead(dados do registro se for encontrado)</li>
 	 * <li>onDelete</li>
 	 * <li>afterDelete(quando delete efetuado com sucesso)</li>
