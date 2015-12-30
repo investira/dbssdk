@@ -44,13 +44,13 @@ public class DBSException extends Exception {
 	public DBSException(String pMessage, Exception e){
 		super(pMessage, e);
 		this.addSuppressed(e);
-		wLogger.error(pMessage, e);
+		wLogger.error(pMessage + "\n" + e.getStackTrace()[0].toString(), e);
 	}
 
 	public DBSException(Exception e){
 		super(e);
 		this.addSuppressed(e);
-		wLogger.error(e);
+		wLogger.error(e.getMessage() + "\n" + e.getStackTrace()[0].toString());
 	}
 
 	public DBSException(String pMessage){
