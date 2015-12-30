@@ -1,5 +1,7 @@
 package br.com.dbsoft.core;
 
+import javax.servlet.ServletContextEvent;
+
 public interface IDBSSDKInitializer {
 
 	/**
@@ -7,7 +9,7 @@ public interface IDBSSDKInitializer {
 	 * Caso queira efetuar chamadas http para a própria aplicação, por exemplo, utilize o <b>afterStart</b>.
 	 * @return
 	 */
-	public abstract boolean beforeStart();
+	public abstract boolean beforeStart(ServletContextEvent pSCE);
 	
 	/**
 	 * Método chamado após o deploy.<br/>
