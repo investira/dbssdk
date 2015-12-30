@@ -103,14 +103,14 @@ public final class DBSSDKInitializer implements ServletContainerInitializer {
 
 	private static ServletContextListener wServletContextListener = new ServletContextListener(){
 		@Override
-		public void contextInitialized(ServletContextEvent pSce) {
+		public void contextInitialized(ServletContextEvent pSCE) {
 			//Efetua chamada de forma assincrona para evitar que fique travado enquanto aguarda o deploy integral da aplicação
 			wScheduler = Executors.newSingleThreadScheduledExecutor();
 			wScheduler.scheduleAtFixedRate(wGetHost, 1, 1, TimeUnit.SECONDS);
 		}
 	
 		@Override
-		public void contextDestroyed(ServletContextEvent pSce) {}
+		public void contextDestroyed(ServletContextEvent pSCE) {}
 	};
 
 	/**
