@@ -118,9 +118,11 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 	//Abstract methods=============================================================
 	/**
-	 * Neste método deve-se implementar a leitura integral do registro no banco de dados, a partir das informações passadas no <b>DataModelClass</b>.<br/>
+	 * Neste método deve-se implementar a leitura integral do registro no banco de dados 
+	 * a partir das informações passadas no <b>DataModelClass</b>.<br/>
 	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorna-lo.<br/>
-	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.
+	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.<br/>
+	 * Para indicar problemas e parar a execução deve-se setar <b>pEvent.setOk(false)</b>.
 	 * @param pEvent
 	 * @return Novo <b>DataModelClass</b> com os dados lidos
 	 * @throws DBSIOException
@@ -129,7 +131,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	/**
 	 * Neste método deve-se implementar a exclusão no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
-	 * Deve-se retornar a quantidade de registros afetados.
+	 * Deve-se retornar a quantidade de registros afetados.<br/>
+	 * Para indicar problemas e parar a execução deve-se setar <b>pEvent.setOk(false)</b>.
 	 * @param pEvent
 	 * @return Quantidade de registros efetados.
 	 */
@@ -138,7 +141,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	/**
 	 * Neste método deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
 	 * Lembrando que para efetuar <b>insert</b> em campos autoincrement a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.<br/>
-	 * Deve-se retornar a quantidade de registros afetados.
+	 * Deve-se retornar a quantidade de registros afetados.<br/>
+	 * Para indicar problemas e parar a execução deve-se setar <b>pEvent.setOk(false)</b>.
 	 * @param pEvent
 	 * @return Quantidade de registros efetados.
 	 */
@@ -461,10 +465,10 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	private DataModelClass pvFireEventOnRead(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
-		DataModelClass xDataModel = null;
+		DataModelClass xDataModel = null ;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
-			xDataModel = onRead(xE);
+			xDataModel = onRead(xE); 
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
