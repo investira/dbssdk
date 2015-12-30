@@ -7,35 +7,26 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 	/**
 	 * Disparado antes de inicar uma edição, seja, insert, update ou delete.
 	 * @param pEvent
-	 * @return
 	 * @throws DBSIOException
 	 */
 	public void beforeEdit(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
 	/**
-	 * Neste evento deve-se implementar a leitura integralno banco de dados do registro a partir das informações passadas no <b>DataModelClass</b>.
-	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorna-lo.
-	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.
+	 * Disparado antes do <b>onRead</b> sejá na execução do <b>merge</b> ou do próprio <b>read</b>.
 	 * @param pEvent
-	 * @return Dados lidos
 	 * @throws DBSIOException
 	 */
 	public void beforeRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
 	/**
-	 * Neste evento deve-se implementar a exclusão no banco de dados das informações passadas no <b>DataModelClass</b>
-	 * Deve-se retornar a quantidade de registros afetados.
+	 * Disparado antes do <b>onDelete</b>.
 	 * @param pEvent
-	 * @return Quantidade de registros efetados.
 	 */
 	public void beforeDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
 	/**
-	 * Neste evento deve-se implementar o merge no banco de dados das informações passadas no <b>DataModelClass</b>.<br/>
-	 * Para efetuar <b>insert</b> a <b>PK</b> deve estar nula, caso contrário será efetuado um <b>update</b>.
-	 * Deve-se retornar a quantidade de registros afetados.
+	 * Disparado antes do <b>onMerge</b>.
 	 * @param pEvent
-	 * @return Quantidade de registros efetados.
 	 */
 	public void beforeMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException;
 
