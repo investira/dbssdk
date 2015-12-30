@@ -31,6 +31,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected DBSDAO<Object> wDAO;
 
 	protected IDBSMessage	   			wMsgCampoNaoInformado = new DBSMessage(MESSAGE_TYPE.ERROR, "%s não infomado. %s");	 
+	protected IDBSMessage	   			wMsgErroGenerico = new DBSMessage(MESSAGE_TYPE.ERROR, "%s");
+	protected IDBSMessage	   			wMsgWarningGenerico = new DBSMessage(MESSAGE_TYPE.WARNING, "%s");
 
 	private   ICrudAction				wCrudAction = CrudAction.NONE; 
 	private   IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
