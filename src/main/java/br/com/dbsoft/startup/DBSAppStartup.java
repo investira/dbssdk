@@ -28,11 +28,11 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	}
 	
 	@Override
-	public final void contextInitialized(ServletContextEvent pSce) {
+	public final void contextInitialized(ServletContextEvent pSCE) {
 		wLogger.info(">>> STARTING:" + pvGetDescription());
-		if (beforeStart()){ 
+		if (beforeStart(pSCE)){ 
 			try {
-				DBSApp.AppLocalPath = pSce.getServletContext().getResource(File.separator);
+				DBSApp.AppLocalPath = pSCE.getServletContext().getResource(File.separator);
 			} catch (MalformedURLException e) {
 				wLogger.error(e);
 			}
@@ -45,7 +45,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	}
 
 	@Override
-	public final void contextDestroyed(ServletContextEvent pSce) {
+	public final void contextDestroyed(ServletContextEvent pSCE) {
 		wLogger.info(">>> STOPPING:" + pvGetDescription());
 		DBSSDKInitializer.removeEventListener(this);
 		afterStop();
@@ -58,7 +58,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 	 * @return
 	 */
 	@Override
-	public abstract boolean beforeStart();
+	public abstract boolean beforeStart(ServletContextEvent pSCE);
 	
 	/**
 	 * Método chamado após o deploy.<br/>
