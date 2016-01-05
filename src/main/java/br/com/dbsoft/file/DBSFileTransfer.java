@@ -164,20 +164,37 @@ public class DBSFileTransfer{
 	private byte[]							wFileContent = null;
 
 	/**
-	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pURL do arquivo que se deseja baixar 
 	 */
 	public DBSFileTransfer(String pURL) {
 		setURL(pURL);
 	}
 
+	/**
+	 * @param pURL 
+	 * @param pMethod
+	 * @param pRequestPropertys
+	 */
+	public DBSFileTransfer(String pURL, METHOD pMethod) {
+		setURL(pURL);
+		this.wMethod = pMethod;
+		this.wRequestPropertys = null;
+	}
+
+	/**
+	 * @param pURL
+	 * @param pMethod
+	 * @param pRequestPropertys
+	 */
 	public DBSFileTransfer(String pURL, METHOD pMethod, List<String> pRequestPropertys) {
 		setURL(pURL);
 		this.wMethod = pMethod;
 		this.wRequestPropertys = pRequestPropertys;
 	}
 
+
 	/**
-	 * @param pURLURL do arquivo que se deseja baixar 
+	 * @param pURL do arquivo que se deseja baixar 
 	 * @param pLocalPath Caminho local
 	 */
 	public DBSFileTransfer(String pURL, String pLocalPath) {
@@ -581,6 +598,7 @@ public class DBSFileTransfer{
 		if (!DBSObject.isNull(wRequestPropertys) && !wRequestPropertys.isEmpty()) {
 			StringBuilder xParams = new StringBuilder();
 			boolean first = true;
+			//Configura parametros para a request
 			for (String xProperty : wRequestPropertys) {
 				String xKey = DBSString.getSubString(xProperty, 1, xProperty.indexOf("="));
 				String xValue = DBSString.getSubString(xProperty, xProperty.indexOf("=")+2, xProperty.length());
@@ -594,6 +612,7 @@ public class DBSFileTransfer{
 		        xParams.append("=");
 		        xParams.append(URLEncoder.encode(xValue, ENCODE.UTF_8));
 			}
+			//Efetua o request
 			OutputStream xOs = xConnection.getOutputStream();
 			BufferedWriter xWriter = new BufferedWriter(new OutputStreamWriter(xOs, ENCODE.UTF_8));
 			xWriter.write(xParams.toString());
