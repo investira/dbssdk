@@ -162,6 +162,7 @@ public class DBSFileTransfer{
 	private METHOD	 						wMethod = METHOD.GET;
 	private List<String>					wRequestPropertys;
 	private byte[]							wFileContent = null;
+	private Boolean							wOk = true;
 
 	/**
 	 * @param pURL do arquivo que se deseja baixar 
@@ -290,6 +291,11 @@ public class DBSFileTransfer{
 		}
 		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
 	}
+	
+	public boolean isOk(){
+		return wOk;
+	}
+	
 	/**
 	 * Retorna date/hora que foi iniciado o transfer
 	 * @return
@@ -413,14 +419,14 @@ public class DBSFileTransfer{
 	 * @param pEncode
 	 * @return
 	 */
-	public String getFileContent(ENCODE pEncode){
+	public String getFileContent(String pEncode){
 		String xValue = null;
 		if (wFileContent != null){
 			try {
 				if (pEncode == null){
 					xValue = new String(wFileContent);
 				}else{
-					xValue = new String(wFileContent, pEncode.toString());
+					xValue = new String(wFileContent, pEncode);
 				}
 			} catch (UnsupportedEncodingException e) {
 				wLogger.error(e);
@@ -468,16 +474,18 @@ public class DBSFileTransfer{
 	* Configura a mensagem de erro a ser recuperada por quem executar o download.
 	* @param pMsgErro
 	*/
-	public void setMsgErro(String pMsgErro) {
-		wMsgErro = pMsgErro;
-	}
+//	public void setMsgErro(String pMsgErro) {
+//	}
 	public void setMsgErro(String pMsgErro, Level pLevel) {
-		setMsgErro(pMsgErro);
+//		setMsgErro(pMsgErro);
+		wMsgErro = pMsgErro;
 		if (!DBSObject.isEmpty(pLevel)) {
 			if (pLevel == Level.ERROR) {
 				wLogger.error(pMsgErro);
+				wOk = false;
 			} else if (pLevel == Level.WARN) {
 				wLogger.warn(pMsgErro);
+				wOk = false;
 			} else if (pLevel == Level.INFO) {
 				wLogger.info(pMsgErro);
 			} else if (pLevel == Level.DEBUG) {
@@ -495,13 +503,19 @@ public class DBSFileTransfer{
 	}
 	
 	/**
-	 * Executa o download do arquivo,
+	 * Executa o download do arquivo.<br/>
+	 * Quando não for informado o <b>LocalPath</b> o arquivo será salvo somente em memória
+	 * Nesta situação deve-se consultar seu conteúdo através do método <b>getFileContent()</b>.<br/>
+	 * Para consultar se houve sucesso na transferência, deve-se consultar o atributo <b>isOk()</b>.
 	 * 
-	 * @return boolean True se conseguir realizar a operação.
+	 * @return File Arquivo se conseguir realizar a operação.
 	 */
 	public final synchronized File transfer() {
+		wOk = true;
+		wMsgErro = null;
 		if (wURL == null){
 			setMsgErro(DBSSDKMessages.URLRemotaNaoInformada, Level.ERROR);
+			return null;
 		}
 
 		//---- chama evento -----------------------
@@ -515,7 +529,6 @@ public class DBSFileTransfer{
 			wFileContent = null;
 			xURL = new URL(wURL);
 		} catch (MalformedURLException e1) {
-//			wLogger.error("Não foi possível converter a URL: " + wURL, e1);
 			setMsgErro(DBSSDKMessages.ErroConvertendoURL + wURL, Level.ERROR);
 			xURL = null;
 		}
@@ -527,10 +540,8 @@ public class DBSFileTransfer{
 				xFile = pvDownloadFile(wURL);
 			}
 		} catch (FileNotFoundException e) {
-//			wLogger.error("Arquivo não encontrado:" + wURL);
 			setMsgErro(DBSSDKMessages.ArquivoNaoEncontrado + wURL, Level.ERROR);
 		} catch (IOException e) {
-//			wLogger.error("Erro ao tentar efetuar o Download do arquivo", e);
 			setMsgErro(DBSSDKMessages.ErroGenerico + e.getLocalizedMessage(), Level.ERROR);
 		}
 		
@@ -622,7 +633,6 @@ public class DBSFileTransfer{
 		}
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
-		setMsgErro(null);
 		
 		//READ RESPONSE=====================================
 		//Recupera nome do arquivo
@@ -649,7 +659,7 @@ public class DBSFileTransfer{
 		}
 		//Não foi encontrado o nome do arquivo a ser baixado
 		if (DBSObject.isEmpty(xRemoteFileName)){
-			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado);
+			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado, Level.ERROR);
 			xConnection.disconnect();
 			setTransferState(TransferState.NOTTRANSFERING);
 			return null;
@@ -695,7 +705,7 @@ public class DBSFileTransfer{
 					pvFireEventTransferring();
 				}
 				
-				//Grava arquivo localmente
+				//Grava arquivo local
 				if (wLocalPath != null){
 					//Defini o nome do arquivo local
 					wLocalFileNameOnly = xRemoteFileName;
@@ -711,7 +721,9 @@ public class DBSFileTransfer{
 				}
 			} catch (IOException e) {
 				wLogger.warn(e);
+				wOk = false;
 			} finally{
+				//Fecha o arquivo local
 				if (xDownloadedFile != null){
 					xDownloadedFile.close();
 				}
@@ -721,11 +733,9 @@ public class DBSFileTransfer{
 			}
 			
 			if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
-//				wLogger.warn("Erro de Timeout.");
-				setMsgErro(DBSSDKMessages.ErroTimeout, Level.WARN);
+				setMsgErro(DBSSDKMessages.ErroTimeout, Level.ERROR);
 				xInputFile = null;
 			} else if (wInterrupted) {
-//				wLogger.warn("Processo interrompido pelo usuário.");
 				setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
 				xInputFile = null;
 			}else{
@@ -747,7 +757,7 @@ public class DBSFileTransfer{
 		}
 		File xSource = new File(pURL);
 		File xLocalFile = new File(wLocalFileNameOnly);
-		setMsgErro(null);
+
 		setLastModified(null);
 		if (!xLocalFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
 			DBSFile.mkDir(xLocalFile);
@@ -791,8 +801,10 @@ public class DBSFileTransfer{
 		
 		
 		if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
-//			wLogger.warn("Erro de Timeout.");
-			setMsgErro(DBSSDKMessages.ErroTimeout);
+			setMsgErro(DBSSDKMessages.ErroTimeout, Level.ERROR);
+			xLocalFile = null;
+		} else if (wInterrupted) {
+			setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
 			xLocalFile = null;
 		} else {
 			setLastModified(new Timestamp(xSource.lastModified()));
