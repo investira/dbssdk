@@ -72,9 +72,9 @@ public interface IDBSCrud<DataModelClass> {
 	/**
 	 * Lê registro a partir das informações enviadas.<br/>
 	 * <ul><b>Eventos disparados</b>
-	 * <li>beforeRead</li>
-	 * <li>onRead</li>
-	 * <li>afterRead</li>
+	 * <li>beforeRead(recebe:dados da chave do registro)</li>
+	 * <li>onRead(recebe:dados da chave do registro e dados do registro se for encontrado / retorna:dados do registro se for encontrado)</li>
+	 * <li>afterRead(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
 	 * </ul>
 	 * @param pDataModelClass
 	 * @return Dados do registro lido
@@ -87,16 +87,16 @@ public interface IDBSCrud<DataModelClass> {
 	 * Em caso de crud com autoincrement, deve-se enviar campo autoincrement com valor nulo
 	 * para evitar que seja efetuado o update, caso a chave exista.
 	 * <ul><b>Eventos disparados</b>
-	 * <li>beforeEdit</li>
-	 * <li>beforeMerge</li>
-	 * <li>validate</li>
+	 * <li>beforeEdit(recebe:dados da chave do registro)</li>
+	 * <li>beforeMerge(recebe:dados da chave do registro)</li>
+	 * <li>validate(recebe:dados da chave do registro)</li>
 	 * <li>beforeRead(recebe:dados da chave do registro)</li>
-	 * <li>onRead(recebe:dados da chave do registro / retorna:dados do registro se for encontrado)</li>
-	 * <li>afterRead(dados do registro se for encontrado)</li>
-	 * <li>onMerge</li>
-	 * <li>afterMerge(merge efetuado com sucesso)</li>
-	 * <li>onError(merge não efetuado)</li>
-	 * <li>afterEdit</li>
+	 * <li>onRead(recebe:dados da chave do registro e dados do registro se for encontrado / retorna:dados do registro se for encontrado)</li>
+	 * <li>afterRead(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>onMerge(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>afterMerge(merge efetuado com sucesso)(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>onError(merge não efetuado)(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>afterEdit(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
 	 * </ul>
 	 * @param pDataModelClass
 	 * @return Quantidade de registros efetados.
@@ -108,16 +108,16 @@ public interface IDBSCrud<DataModelClass> {
 	/**
 	 * Excluir registro a partir das informações enviadas.<br/>
 	 * <ul><b>Eventos disparados</b>
-	 * <li>beforeEdit</li>
-	 * <li>beforeDelete</li>
-	 * <li>validate</li>
-	 * <li>beforeRead(dados da chave do registro)</li>
-	 * <li>onRead(recebe:dados da chave do registro / retorna:dados do registro se for encontrado)</li>
-	 * <li>afterRead(dados do registro se for encontrado)</li>
-	 * <li>onDelete</li>
-	 * <li>afterDelete(quando delete efetuado com sucesso)</li>
-	 * <li>onError(delete não efetuado)</li>
-	 * <li>afterEdit</li>
+	 * <li>beforeEdit(recebe:dados da chave do registro)</li>
+	 * <li>beforeDelete(recebe:dados da chave do registro)</li>
+	 * <li>validate(recebe:dados da chave do registro)</li>
+	 * <li>beforeRead(recebe:dados da chave do registro)</li>
+	 * <li>onRead(recebe:dados da chave do registro e dados do registro se for encontrado / retorna:dados do registro se for encontrado)</li>
+	 * <li>afterRead(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>onDelete(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>afterDelete(deletee efetuado com sucesso)(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>onError(merge não efetuado)(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
+	 * <li>afterEdit(recebe:dados da chave do registro e dados do registro se for encontrado)</li>
 	 * </ul>
 	 * @param pDataModelClass
 	 * @return Quantidade de registros efetados.

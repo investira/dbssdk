@@ -36,8 +36,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	private   ICrudAction				wCrudAction = CrudAction.NONE; 
 	private   IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
-	private	  boolean					wAutoCommit = false;	  
-	
+	private	  boolean					wAutoCommit = false;
+	private   DataModelClass			wDataModelRead = null;
 	
 
 	@SuppressWarnings("rawtypes")
@@ -81,9 +81,9 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	@Override
 	public final DataModelClass read(DataModelClass pDataModel) throws DBSIOException{
 		pvInitializeAction(CrudAction.READING);
-		DataModelClass xDataModel = pvRead(pDataModel);
+		pvRead(pDataModel);
 		pvFinalizeAction();
-		return xDataModel;
+		return wDataModelRead;
 	}
 
 	
@@ -120,7 +120,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	/**
 	 * Neste método deve-se implementar a leitura integral do registro no banco de dados 
 	 * a partir das informações passadas no <b>DataModelClass</b>.<br/>
-	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorna-lo.<br/>
+	 * Deve-se criar <b>novo</b> objeto do tipo <b>DataModelClass</b>, setar seus valores e retorná-lo.<br/>
 	 * Deve-se retornar <b>null</b> caso o registro não seja encontrado.<br/>
 	 * Para indicar problemas e parar a execução deve-se setar <b>pEvent.setOk(false)</b>.
 	 * @param pEvent
@@ -227,19 +227,17 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 	
 	//MÉTODOS PRINCIPAIS ACTION =======================================================================================
-	private DataModelClass pvRead(DataModelClass pDataModel) throws DBSIOException{
+	private void pvRead(DataModelClass pDataModel) throws DBSIOException{
+		wDataModelRead = null;
 		if (pDataModel==null){
 			pvFireEventAfterError(pDataModel);
-			return null;
 		}
-		DataModelClass xDataModel = null;
 		if (pvFireEventBeforeRead(pDataModel)){
-			xDataModel = pvFireEventOnRead(pDataModel);
-			if (xDataModel != null){
-				pvFireEventAfterRead(xDataModel);
+			pvFireEventOnRead(pDataModel);
+			if (wDataModelRead != null){
+				pvFireEventAfterRead(pDataModel);
 			}
 		}
-		return xDataModel;
 	}
 
 	private Integer pvMerge(DataModelClass pDataModel) throws DBSIOException{
@@ -288,11 +286,11 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		//Retira do saldo lançamento antigo
 		if (pvFireEventBeforeDelete(pDataModel)){
 			if (pvFireEventOnValidate(pDataModel)){
-				pDataModel = pvRead(pDataModel);
+				pvRead(pDataModel);
 				if (isOk()){
-					xCount = pvFireEventOnDelete(pDataModel);
+					xCount = pvFireEventOnDelete(wDataModelRead);
 					if (isOk()){
-						pvFireEventAfterDelete(pDataModel);
+						pvFireEventAfterDelete(wDataModelRead);
 					}
 				}
 			}
@@ -401,7 +399,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	
 	@SuppressWarnings("unchecked")
 	private void pvFireEventAfterEdit(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterEdit(xE);
@@ -417,7 +415,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	@SuppressWarnings("unchecked")
 	private void pvFireEventAfterDelete(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterDelete(xE);
@@ -433,7 +431,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	@SuppressWarnings("unchecked")
 	private void pvFireEventAfterMerge(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterMerge(xE);
@@ -449,7 +447,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	@SuppressWarnings("unchecked")
 	private void pvFireEventAfterError(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterError(xE);
@@ -465,19 +463,19 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	private DataModelClass pvFireEventOnRead(DataModelClass pDataModel) throws DBSIOException{
 		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
-		DataModelClass xDataModel = null ;
+		wDataModelRead = null ;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
-			xDataModel = onRead(xE); 
+			wDataModelRead = onRead(xE); 
 		}catch(Exception e){
 			DBSIO.throwIOException(e);
 		}
 		pvAfterEventFire(xE);
-		return xDataModel;
+		return wDataModelRead;
 	}
 
 	private Integer pvFireEventOnMerge(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		Integer xCount = 0;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
@@ -491,7 +489,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	private Integer pvFireEventOnDelete(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		Integer xCount = 0;
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida

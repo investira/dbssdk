@@ -42,7 +42,7 @@ public abstract class DBSCrudBalance<DataModelClass> extends DBSCrud<DataModelCl
 		if (getCrudAction() == CrudAction.MERGING
 		 || getCrudAction() == CrudAction.DELETING){
 			//Retira lançamento antigo do saldo
-			if (!onSaveBalance(pEvent.getDataModel(), false)){
+			if (!onSaveBalance(pEvent.getDataModelRead(), false)){
 				pEvent.getMessages().add(MsgErroCalculandoSaldo);
 				pEvent.setOk(false);
 			}
@@ -76,12 +76,12 @@ public abstract class DBSCrudBalance<DataModelClass> extends DBSCrud<DataModelCl
 	//PRIVATE ==========================================================================
 	private final boolean pvReprocessBalance(DataModelClass pDataModel) throws DBSIOException{
 		boolean xOk = false;
-		DataModelClass wDataModel = read(pDataModel);
-		if (wDataModel!=null){
+		DataModelClass xDataModelRead = read(pDataModel);
+		if (xDataModelRead!=null){
 			//Cria savepoint para retornar em caso de erro
 			Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "balance");
-			//Retira do saldo lançamento antigo
-			xOk = onSaveBalance(wDataModel, true);
+			//Retira do saldo o lançamento antigo
+			xOk = onSaveBalance(xDataModelRead, true);
 			DBSIO.endTrans(wConnection, xOk, xSavePoint);
 		}
 		return xOk;
