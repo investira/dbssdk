@@ -383,7 +383,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	@SuppressWarnings("unchecked")
 	private void pvFireEventAfterRead(DataModelClass pDataModel) throws DBSIOException{
-		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel);
+		IDBSCrudEvent<DataModelClass> xE = new DBSCrudEvent<DataModelClass>(this, pDataModel, wDataModelRead);
 		try{
 			//Chame o metodo(evento) local para quando esta classe for extendida
 			afterRead(xE);
