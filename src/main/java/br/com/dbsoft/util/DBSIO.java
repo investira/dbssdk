@@ -72,6 +72,45 @@ public class DBSIO{
     	LAST;
     } 
 	
+	public static enum SORT_DIRECTION {
+		ASCENDING 			("A", "ASC", " -i_sort_asc"),
+		DESCENDING			("D", "DESC", " -i_sort_des"),
+		NONE 				("", "", " -i_sort");
+		
+		private String 	wCode;
+		private String 	wSQL;
+		private String 	wIcon;
+		
+		private SORT_DIRECTION(String pCode, String pSQL, String pIcon) {
+			this.wCode = pCode;
+			this.wSQL = pSQL;
+			this.wIcon = pIcon;
+		}
+
+		public String getCode() {
+			return wCode;
+		}
+
+		public String getSQL() {
+			return wSQL;
+		}
+		
+		public String getIcon() {
+			return wIcon;
+		}
+		public static SORT_DIRECTION get(String pName) {
+			pName = DBSObject.getNotEmpty(pName, " ").toUpperCase().substring(0, 1);
+			switch (pName) {
+			case "A":
+				return ASCENDING;
+			case "D":
+				return DESCENDING;
+			default:
+				return NONE;
+			}
+		}
+	}
+	
 	
 	//ABRINDO conexão - DIRETA		
 	//	try {
