@@ -43,6 +43,12 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	@SuppressWarnings("rawtypes")
 	private List<IDBSCrudEventsListener>	wEventListeners = new ArrayList<IDBSCrudEventsListener>();
 	
+	/**
+	 * É aconselhável que qualquer DBSCrud dentro de outro DBSCrud seja instanciado com <b>AutoCommit = false</b>, 
+	 * para evitar conflito com o DBSCrud pai.
+	 * @param pConnection Cone
+	 * @param pAutoCommit
+	 */
 	public DBSCrud(Connection pConnection, boolean pAutoCommit) {
 		wConnection = pConnection;
 		wAutoCommit = pAutoCommit;
