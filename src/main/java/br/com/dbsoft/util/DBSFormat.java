@@ -111,7 +111,7 @@ public class DBSFormat {
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
-	public static String getFormattedDateTime(Long pLong){
+	public static String getFormattedDateTimes(Long pLong){
 		if (pLong == null){
 			return "";
 		}else{
@@ -126,7 +126,7 @@ public class DBSFormat {
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
-	public static String getFormattedDateTime(Date pDate){
+	public static String getFormattedDateTimes(Date pDate){
 		SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		return xFormat.format(pDate);
 	}
@@ -136,19 +136,65 @@ public class DBSFormat {
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
-	public static String getFormattedDateTime(Timestamp pDate){
+	public static String getFormattedDateTimes(Timestamp pDate){
 		Date xDate = DBSDate.toDate(pDate);
-		return getFormattedDateTime(xDate);
+		return getFormattedDateTimes(xDate);
 	}
 	/**
 	 * Retorna string contendo a data formatada contendo hora, minutos e segundos
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
-	public static String getFormattedTime(Date pDate){
+	public static String getFormattedTimes(Date pDate){
 		SimpleDateFormat xFormat = new SimpleDateFormat("HH:mm:ss");
 		return xFormat.format(pDate.getTime());
 	}
+	
+	/**
+	 * Retorna string contendo a data formatada contendo data, hora e minutos
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedDateTime(Long pLong){
+		if (pLong == null){
+			return "";
+		}else{
+	
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return xFormat.format(pLong);
+		}
+	}
+
+	/**
+	 * Retorna string contendo a data formatada contendo data, hora e minutos
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedDateTime(Date pDate){
+		SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		return xFormat.format(pDate);
+	}
+
+	/**
+	 * Retorna string contendo a data formatada contendo data, hora e minutos
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedDateTime(Timestamp pDate){
+		Date xDate = DBSDate.toDate(pDate);
+		return getFormattedDateTime(xDate);
+	}
+	/**
+	 * Retorna string contendo a data formatada contendo hora e minutos
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedTime(Date pDate){
+		SimpleDateFormat xFormat = new SimpleDateFormat("HH:mm");
+		return xFormat.format(pDate.getTime());
+	}
+	
+	
 	/**
 	 * Retorna string contendo a data formatada de acordo com a mascara escolida
 	 * @param pData Data a ser formatado
@@ -168,7 +214,7 @@ public class DBSFormat {
 	 */
 	public static String getFormattedTime(Timestamp pDate){
 		Date xDate = DBSDate.toDate(pDate);
-		return getFormattedTime(xDate);
+		return getFormattedTimes(xDate);
 	}
 
 	
