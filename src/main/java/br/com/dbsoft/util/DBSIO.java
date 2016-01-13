@@ -2610,7 +2610,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "''";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "To_Date('" + DBSFormat.getFormattedDateTime(DBSDate.toTimestamp(pValue)) + "','dd/mm/yyyy hh24:mi:ss')";
+					return "To_Date('" + DBSFormat.getFormattedDateTimes(DBSDate.toTimestamp(pValue)) + "','dd/mm/yyyy hh24:mi:ss')";
 				}else{
 					return "''";
 				}
@@ -2619,7 +2619,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "''";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "To_Date('" + DBSFormat.getFormattedDateTime(DBSDate.toTimestamp(pValue)) + "','dd/mm/yyyy hh24:mi:ss')";
+					return "To_Date('" + DBSFormat.getFormattedDateTimes(DBSDate.toTimestamp(pValue)) + "','dd/mm/yyyy hh24:mi:ss')";
 				}else{
 					return "''";
 				}
@@ -2628,7 +2628,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "DateValue('" + DBSFormat.getFormattedDateTime(DBSDate.toTimestamp(pValue)) + "')";
+					return "DateValue('" + DBSFormat.getFormattedDateTimes(DBSDate.toTimestamp(pValue)) + "')";
 				}else{
 					return "0";
 				}
@@ -2665,7 +2665,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "''";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "To_Date('" + DBSFormat.getFormattedTime((Date)pValue) + "','hh24:mi:ss')";
+					return "To_Date('" + DBSFormat.getFormattedTimes((Date)pValue) + "','hh24:mi:ss')";
 				}else{
 					return "''";
 				}
@@ -2674,7 +2674,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "''";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "To_Date('" + DBSFormat.getFormattedTime((Date)pValue) + "','hh24:mi:ss')";
+					return "To_Date('" + DBSFormat.getFormattedTimes((Date)pValue) + "','hh24:mi:ss')";
 				}else{
 					return "''";
 				}
@@ -2683,7 +2683,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "DateValue('" + DBSFormat.getFormattedTime((Date)pValue) + "')";
+					return "DateValue('" + DBSFormat.getFormattedTimes((Date)pValue) + "')";
 				}else{
 					return "0";
 				}
@@ -2692,7 +2692,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "STR_TO_DATE('" + DBSFormat.getFormattedTime((Date)pValue) + "',%T')";
+					return "STR_TO_DATE('" + DBSFormat.getFormattedTimes((Date)pValue) + "',%T')";
 				}else{
 					return "0";
 				}

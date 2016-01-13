@@ -246,19 +246,19 @@ public class TstString {
 	public void test_getFormattedDateTime() {
 		
 		Date xxDate = DBSDate.toDateDMYHMS("12/11/2011 22:14:00");
-		assertEquals("12/11/2011 22:14:00", DBSFormat.getFormattedDateTime(xxDate));
+		assertEquals("12/11/2011 22:14:00", DBSFormat.getFormattedDateTimes(xxDate));
 
 		xxDate = DBSDate.toDateDMYHMS("22/04/2011 16:34:12");
-		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTime(xxDate));
+		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTimes(xxDate));
 
 		xxDate = DBSDate.toDateDMYHMS("22/4/2011 16:34:12");
-		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTime(xxDate));
+		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTimes(xxDate));
 
 		xxDate = DBSDate.toDateYMDHMS("2011/04/22 16:34:12");
-		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTime(xxDate));
+		assertEquals("22/04/2011 16:34:12", DBSFormat.getFormattedDateTimes(xxDate));
 
 		xxDate = DBSDate.toDateDMYHMS("22/04/2011 00:00:00");
-		assertEquals("22/04/2011 00:00:00", DBSFormat.getFormattedDateTime(xxDate));
+		assertEquals("22/04/2011 00:00:00", DBSFormat.getFormattedDateTimes(xxDate));
 	}
 
 

@@ -67,7 +67,7 @@ public class TstFormat extends TestCase {
 		assertEquals("01/02/2003", DBSFormat.getFormattedDateCustom(DBSDate.toDateDMYHMS("01/02/2003 04:05:06"), "dd/MM/yyyy"));
 		assertEquals("01/02/2003", DBSFormat.getFormattedDate(DBSDate.toDateDMYHMS("01/02/2003 04:05:06")));
 		assertEquals("04:05", DBSFormat.getFormattedDateCustom(DBSDate.toDateDMYHMS("01/02/2003 04:05:06"), "HH:mm"));
-		assertEquals("04:05:06", DBSFormat.getFormattedTime(DBSDate.toDateDMYHMS("01/02/2003 04:05:06")));
+		assertEquals("04:05:06", DBSFormat.getFormattedTimes(DBSDate.toDateDMYHMS("01/02/2003 04:05:06")));
 	}
 	
 	@Test

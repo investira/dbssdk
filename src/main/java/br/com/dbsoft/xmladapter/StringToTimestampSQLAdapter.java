@@ -18,7 +18,7 @@ public class StringToTimestampSQLAdapter extends XmlAdapter<String, Timestamp> {
 
 	@Override
 	public String marshal(Timestamp pValue) {
-		return DBSFormat.getFormattedDateTime(pValue);
+		return DBSFormat.getFormattedDateTimes(pValue);
 	}
 
 	@Override

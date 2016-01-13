@@ -1217,10 +1217,10 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 				wTimer.schedule(new RunByTimer(), wScheduleDate);
 				//COnfigura como agendado.
 				pvSetTaskState(TaskState.SCHEDULED);
-				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTime(wScheduleDate));
+				wLogger.info(getName() + " agendada para: " + DBSFormat.getFormattedDateTimes(wScheduleDate));
 			}else{
-				wLogger.error(getName() + ":Data/Hora[" + DBSFormat.getFormattedDateTime(wScheduleDate) + "]" +
-											" menor que a data/hora[" + DBSFormat.getFormattedDateTime(xNow) + "] atual.");
+				wLogger.error(getName() + ":Data/Hora[" + DBSFormat.getFormattedDateTimes(wScheduleDate) + "]" +
+											" menor que a data/hora[" + DBSFormat.getFormattedDateTimes(xNow) + "] atual.");
 			}
 		}
 	}
