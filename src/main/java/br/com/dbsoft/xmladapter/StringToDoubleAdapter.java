@@ -27,7 +27,11 @@ public class StringToDoubleAdapter extends XmlAdapter<String, Double> {
 		}
 		if (xValue.contains(".")) {
 			if (DBSString.getStringCount(xValue, ".") == 1) {
-				xValue = DBSString.changeStr(xValue, ".", ",");
+				if (DBSString.getStringCount(xValue, ",") == 0) {
+					xValue = DBSString.changeStr(xValue, ".", ",");
+				} else {
+					xValue = DBSString.changeStr(xValue, ".", "");
+				}
 			} else {
 				xValue = DBSString.changeStr(xValue, ".", "");
 			}
