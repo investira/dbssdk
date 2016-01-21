@@ -66,91 +66,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 			wLogger.error(e);
 		}
 		return xM;
-//		return pvCreateMessage(pMessage.getMessageKey(), pMessage.getMessageCode(), pMessage.getMessageType(), pMessage.getMessageText(), pMessage.getMessageTooltip(), pMessage.getMessageTime());
 	}
-	
-
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(DBSIOException pMessage) {
-//		return pvCreateMessage(pMessage.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, pMessage.getLocalizedMessage(), pMessage.getOriginalException().getLocalizedMessage(), null);
-//	}
-//
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText){
-//		return pvCreateMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);
-//	}
-//	
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
-//		return pvCreateMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null,  null);
-//	}
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  null);
-//	}
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, null,  pMessageTime);
-//	}
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-//		return pvCreateMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
-//	}
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, null,  null);
-//	}
-//	
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  null);
-//	}
-//	
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, null,  pMessageTime);
-//	}
-//
-//	/** Inclui uma mensagem na fila para ser exibida.
-//	 * @param pMessage
-//	 */
-//	@Override
-//	public MessageClass add(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-//		return pvCreateMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
-//	}
-
 
 	/**
 	 * Adiciona todas as mensagems a fila
@@ -392,33 +308,5 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 		return false;
 	}
 
-//	protected MessageClass pvCreateMessage(String pMessageKey, 
-//							  Integer pMessageCode, 
-//							  MESSAGE_TYPE pMessageType, 
-//							  String pMessageText, 
-//							  String pMessageTooltip, 
-//							  DateTime pMessageTime){
-//		if (pMessageKey == null){return null;}
-//		MessageClass xM = null;
-//		if (wMessages.containsKey(pMessageKey)){
-//			//Exclui ela da fila
-//			wMessages.remove(pMessageKey);
-//		}
-//		try {
-//			//Cria nova mensagem do tipo informado
-//			xM = wMessageClass.newInstance();
-//			xM.setMessageKey(pMessageKey);
-//			xM.setMessageCode(DBSObject.getNotNull(pMessageCode,0));
-//			xM.setMessageType(pMessageType);
-//			xM.setMessageText(pMessageText);
-//			xM.setMessageTooltip(DBSObject.getNotNull(pMessageTooltip, ""));
-//			xM.setMessageTime(pMessageTime);
-//			wMessages.put(pMessageKey, xM);
-//			pvFindNextMessage();
-//		} catch (InstantiationException | IllegalAccessException e) {
-//			wLogger.error(e);
-//		}
-//		return xM;
-//	}
 
 }

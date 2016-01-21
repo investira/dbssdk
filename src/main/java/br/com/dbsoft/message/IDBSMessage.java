@@ -81,6 +81,9 @@ public interface IDBSMessage extends Cloneable{
 	public String getMessageTooltip();
 	public void setMessageTooltip(String pMessageTooltip);
 	
+	public DateTime getMessageTime();
+	public void setMessageTime(DateTime pTime);
+
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
 	 * A mensagem padrão deverá conter o simbolo %s nas posições que se deseja incluir os parametros informados.
@@ -88,16 +91,6 @@ public interface IDBSMessage extends Cloneable{
 	 */
 	public void setMessageTextParameters(Object... pParameters);
 
-	/**
-	 * Horário que a mensagem foi criada
-	 * @return
-	 */
-	public DateTime getMessageTime();
-
-	/**
-	 * Horário que a mensagem foi criada
-	 */
-	public void setMessageTime(DateTime pTime);
 
 
 }
