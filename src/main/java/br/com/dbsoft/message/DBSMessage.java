@@ -112,9 +112,9 @@ public class DBSMessage implements IDBSMessage{
 	 * @return Null = ainda não validada.<br/> True = Validada para verdadeiro.<br/> False = Validada para falso 
 	 */
 	@Override
-	public Boolean isValidated() {return wValidated;}
+	public Boolean isMessageValidated() {return wValidated;}
 	@Override
-	public void setValidated(Boolean validated) {wValidated = validated;}
+	public void setMessageValidated(Boolean validated) {wValidated = validated;}
 
 	@Override
 	public Exception getException() {return wException;}

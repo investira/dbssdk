@@ -111,7 +111,7 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * </ul>
 	 * 
 	 */
-	public Boolean isValidated(String pMessageKey);
+	public Boolean isMessageValidated(String pMessageKey);
 	
 
 	/**
@@ -119,14 +119,14 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * Se não for mensagem de warning, automaticamente retira mensagem da fila 
 	 * @param pButtonPressed
 	 */
-	public void setValidated(Boolean pIsValidated);
+	public void setMessageValidated(Boolean pIsValidated);
 	
 	/**
 	 * Método após a validação de qualquer mensagem
 	 * @param pMessageKey
 	 * @param pIsValidated
 	 */
-	public void validated(String pMessageKey, Boolean pIsValidated);
+	public void onMessageValidate(String pMessageKey, Boolean pIsValidated);
 	
 	/**
 	 * Usuário que criou as mensagens

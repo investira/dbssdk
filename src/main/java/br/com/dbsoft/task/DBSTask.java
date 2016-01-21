@@ -982,7 +982,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	public void setMessageValidated(Boolean pIsValidated){
 		if (wMessages!=null){
 			String xMessageKey = wMessages.getCurrentMessageKey();
-			wMessages.setValidated(pIsValidated);
+			wMessages.setMessageValidated(pIsValidated);
 			messageValidated(xMessageKey, pIsValidated);
 		}
 	}
@@ -1054,7 +1054,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	protected boolean isMessageValidated(String pMessageKey){
-		return wMessages.isValidated(pMessageKey);
+		return wMessages.isMessageValidated(pMessageKey);
 	}
 	
 	protected boolean isMessageValidated(IDBSMessage pMessage){

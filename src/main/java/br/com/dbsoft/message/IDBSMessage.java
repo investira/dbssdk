@@ -64,7 +64,6 @@ public interface IDBSMessage extends Cloneable{
 	public void setMessageKey(String pMessageKey);
 	
 	public String getMessageText();
-	
 	public void setMessageText(String pMessageText);
 
 	public MESSAGE_TYPE getMessageType();
@@ -73,14 +72,13 @@ public interface IDBSMessage extends Cloneable{
 	public Integer getMessageCode();
 	public void setMessageCode(Integer pMessageCode);
 	
-	public Boolean isValidated();
-	
-	public void setValidated(Boolean validated);
+	public Boolean isMessageValidated();
+	public void setMessageValidated(Boolean validated);
+
 	public Exception getException();
-	
 	public void setException(Exception pException);
+
 	public String getMessageTooltip();
-	
 	public void setMessageTooltip(String pMessageTooltip);
 	
 	/**

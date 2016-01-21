@@ -306,9 +306,9 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * 
 	 */
 	@Override
-	public Boolean isValidated(String pMessageKey){
+	public Boolean isMessageValidated(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
-			return wMessages.get(pMessageKey).isValidated();
+			return wMessages.get(pMessageKey).isMessageValidated();
 		}
 		return false;
 	}
@@ -321,7 +321,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * @param pButtonPressed
 	 */
 	@Override
-	public void setValidated(Boolean pIsValidated){
+	public void setMessageValidated(Boolean pIsValidated){
 		if (wCurrentMessageKey !=null){
 			String xCurrentMessageKey = wCurrentMessageKey;
 			//Se não for mensagem de warning, automaticamente retira mensagem da fila
@@ -329,9 +329,9 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 				wMessages.remove(wCurrentMessageKey);
 			}else {
 				//Seta se foi validada e mantém para ser verificada posteriormente pelo usuário
-				wMessages.get(wCurrentMessageKey).setValidated(pIsValidated);
+				wMessages.get(wCurrentMessageKey).setMessageValidated(pIsValidated);
 			}
-			validated(xCurrentMessageKey, pIsValidated);
+			onMessageValidate(xCurrentMessageKey, pIsValidated);
 			//Procura a próxima mensagem que ainda não foi setada a validação
 			pvFindNextMessage();
 		}
@@ -344,7 +344,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * @param pIsValidated
 	 */
 	@Override
-	public void validated(String pMessageKey, Boolean pIsValidated){}
+	public void onMessageValidate(String pMessageKey, Boolean pIsValidated){}
 	
 	/**
 	 * Usuário que criou as mensagens
@@ -371,7 +371,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	private void pvFindNextMessage(){
 		wCurrentMessageKey = null;
 		for (Entry<String, MessageClass> xM : wMessages.entrySet()) {
-			if (xM.getValue().isValidated() == null){
+			if (xM.getValue().isMessageValidated() == null){
 				wCurrentMessageKey =  xM.getKey();
 				break;
 			}

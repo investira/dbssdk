@@ -230,7 +230,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	public void setMessageValidated(Boolean pIsValidated){
 		if (wMessages!=null){
 			String xMessageKey = wMessages.getCurrentMessageKey();
-			wMessages.setValidated(pIsValidated);
+			wMessages.setMessageValidated(pIsValidated);
 			messageValidated(xMessageKey, pIsValidated);
 		}
 	}
@@ -274,7 +274,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @return
 	 */
 	protected boolean isMessageValidated(String pMessageKey){
-		return wMessages.isValidated(pMessageKey);
+		return wMessages.isMessageValidated(pMessageKey);
 	}
 	
 	protected boolean isMessageValidated(IDBSMessage pMessage){
