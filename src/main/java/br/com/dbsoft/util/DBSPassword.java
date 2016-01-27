@@ -37,7 +37,10 @@ public class DBSPassword {
      * @throws NoSuchAlgorithmException
      */
     public static String createRandomSalt(){
-		byte[] xSalt = new byte[SaltLenghtInBytes];
+    	return createRandomSalt(SaltLenghtInBytes);
+    }
+	public static String createRandomSalt(int pTamanho){
+		byte[] xSalt = new byte[pTamanho];
 		try {
 			SecureRandom.getInstance("SHA1PRNG").nextBytes(xSalt);
 		} catch (NoSuchAlgorithmException e) {
