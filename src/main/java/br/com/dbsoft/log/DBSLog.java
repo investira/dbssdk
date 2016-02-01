@@ -59,10 +59,10 @@ public class DBSLog implements Serializable {
 			}
 			xLog = new DBSLogModel();
 			xLog.setData(DBSFormat.getFormattedDateCustom(DBSDate.toDateDMYHMS(xDAOTxt.getValue(0).toString()), "dd/MM HH:mm:ss"));
-			xLog.setNivel(xDAOTxt.getValue(1).toString());
-			xLog.setClasse(xDAOTxt.getValue(2).toString());
-			xLog.setMetodo(xDAOTxt.getValue(3).toString());
-			xLog.setMensagem(xDAOTxt.getValue(4).toString());
+			xLog.setNivel(DBSString.toString(xDAOTxt.getValue(1), ""));
+			xLog.setClasse(DBSString.toString(xDAOTxt.getValue(2), ""));
+			xLog.setMetodo(DBSString.toString(xDAOTxt.getValue(3), ""));
+			xLog.setMensagem(DBSString.toString(xDAOTxt.getValue(4), ""));
 			xLista.add(xLog);
 //			System.out.println(xLog.toString());
 		}
