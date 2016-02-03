@@ -12,7 +12,7 @@ import br.com.dbsoft.util.DBSNumber;
 public interface IDBSMessage extends Cloneable{
 
 	public static enum MESSAGE_TYPE{
-	   	SUCESS		(1, "-sucess"),
+	   	SUCCESS		(1, "-success"),
 	   	INFORMATION	(10, "-information"),
 	    WARNING		(20, "-warning"),
 	    IMPORTANT	(30, "-important"),
@@ -33,7 +33,7 @@ public interface IDBSMessage extends Cloneable{
 		public static MESSAGE_TYPE get(Integer pCode) {
 			switch (pCode) {
 			case 1:
-				return MESSAGE_TYPE.SUCESS;
+				return MESSAGE_TYPE.SUCCESS;
 			case 10:
 				return MESSAGE_TYPE.INFORMATION;
 			case 20:
