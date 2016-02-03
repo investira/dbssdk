@@ -73,6 +73,7 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 */
 	public String getCurrentMessageTooltip();
 	
+
 	/**
 	 * Retorna a mensagem corrente
 	 * @return

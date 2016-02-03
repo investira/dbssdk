@@ -169,5 +169,4 @@ public class DBSMessage implements IDBSMessage{
 		wMessageTextOriginal = pMessageText;
 	}
 
-
 }

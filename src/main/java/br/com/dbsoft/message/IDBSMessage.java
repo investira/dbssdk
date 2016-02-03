@@ -3,60 +3,73 @@ package br.com.dbsoft.message;
 
 import org.joda.time.DateTime;
 
-import br.com.dbsoft.util.DBSNumber;
-
 /**
  * @author ricardo.villar
  *
  */
 public interface IDBSMessage extends Cloneable{
+   	
+//	SUCESS		(1, "-sucess"),
+//   	INFORMATION	(10, "-information"),
+//    WARNING		(20, "-warning"),
+//    IMPORTANT	(30, "-important"),
+//    ERROR		(40, "-error");
+//   	
+	public static enum MESSAGE_TYPE
+	{
+	    ABOUT 		("a", "Sobre", "-i_about", false, 1),
+	    SUCCESS		("s", "Sucesso", "-i_success -green", false, 1),
+	    INFORMATION	("i", "Informação", "-i_information", false, 10),
+	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
+	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
+	    CONFIRM		("c", "Confirmar", "-i_question_confirm", true, 20),
+	    IGNORE 		("g", "Ignorar", "-i_question_ignore -yellow", true, 20),
+	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", false, 30),
+	    ERROR 		("e", "Erro", "-i_error -red", false, 40);
 
-	public static enum MESSAGE_TYPE{
-	   	SUCCESS		(1, "-success"),
-	   	INFORMATION	(10, "-information"),
-	    WARNING		(20, "-warning"),
-	    IMPORTANT	(30, "-important"),
-	    ERROR		(40, "-error");
-
-	    Integer wCode;
-	    String wName;
-		
-	    public static MESSAGE_TYPE get(Object pCode) {
-			Integer xI = DBSNumber.toInteger(pCode);
-			if (xI != null){
-				return get(xI);
-			}else{
-				return null;
-			}
-		}
+	    String 	wCode;
+	    String 	wName;
+	    String 	wIconClass;
+	    Boolean wRequireConfirmation;
+	    Integer wSeverity; 
 	    
-		public static MESSAGE_TYPE get(Integer pCode) {
-			switch (pCode) {
-			case 1:
-				return MESSAGE_TYPE.SUCCESS;
-			case 10:
-				return MESSAGE_TYPE.INFORMATION;
-			case 20:
-				return MESSAGE_TYPE.WARNING;
-			case 30:
-				return MESSAGE_TYPE.IMPORTANT;
-			case 40:
-				return MESSAGE_TYPE.ERROR;
-			}
-			return null;
-		}
-	    
-	    MESSAGE_TYPE (Integer pCode, String pName){
+	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pRequireConfirmation, Integer pSeverity){
 	    	wCode = pCode;
 	    	wName = pName;
+	    	wIconClass = pIconClass;
+	    	wRequireConfirmation = pRequireConfirmation;
+	    	wSeverity = pSeverity; 
+	    }
+	
+	    public String getCode(){
+	    	return wCode;
 	    }
 	    
-		public String getName() {
-			return wName;
-		}
-	
-		public int getCode() {
-			return wCode;
+	    public String getName(){
+	    	return wName;
+	    }
+	    
+	    public String getIconClass(){
+	    	return wIconClass;
+	    }
+
+	    public Boolean getRequireConfirmation(){
+	    	return wRequireConfirmation;
+	    }
+
+	    public Integer getSeverity(){
+	    	return wSeverity;
+	    }
+
+	    public static MESSAGE_TYPE get(String pType){
+			if (pType == null){return null;}
+			pType = pType.trim().toLowerCase();
+	    	for (MESSAGE_TYPE xCT:MESSAGE_TYPE.values()) {
+	    		if (xCT.getCode().equals(pType)){
+	    			return xCT;
+	    		}
+	    	}
+	    	return null;
 		}
 	}
 	
@@ -71,7 +84,7 @@ public interface IDBSMessage extends Cloneable{
 	
 	public Integer getMessageCode();
 	public void setMessageCode(Integer pMessageCode);
-	
+
 	public Boolean isMessageValidated();
 	public void setMessageValidated(Boolean validated);
 
