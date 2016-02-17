@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -321,9 +320,10 @@ public class DBSFormat {
 			return null;
 		}
 		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols();
-		xOtherSymbols.setDecimalSeparator(',');
-		xOtherSymbols.setGroupingSeparator('.');
+		xOtherSymbols.setDecimalSeparator(getDecimalSeparator().charAt(0));
+		xOtherSymbols.setGroupingSeparator(getGroupSeparator().charAt(0));
 		DecimalFormat xDF = new DecimalFormat(pNumberMask, xOtherSymbols);
+//		DecimalFormat xDF = new DecimalFormat(pNumberMask); xDF.get
 		xDF.setRoundingMode(RoundingMode.HALF_UP);
 		switch (pSign) {
 			case NONE:
@@ -466,17 +466,20 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getDecimalSeparator(){
-		java.text.DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
-		char xDecimalPoint = xD.getDecimalSeparator();
-		return Character.toString(xDecimalPoint); 
+		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance();
+		DecimalFormatSymbols xD = xFormat.getDecimalFormatSymbols();
+//		DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
+//		char xDecimalSeparatorPoint = xD.getDecimalSeparator();
+		return Character.toString(xD.getDecimalSeparator()); 
 	}
 	
 	public static String getGroupSeparator(){
-		java.text.DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
-		char xDecimalPoint = xD.getGroupingSeparator();
-		return Character.toString(xDecimalPoint); 
+		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance();
+		DecimalFormatSymbols xD = xFormat.getDecimalFormatSymbols();
+//		DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
+//		char xDecimalPoint = xD.getGroupingSeparator();
+		return Character.toString(xD.getGroupingSeparator()); 
 	}
-
 
 	/**
 	 * Retorna uma string com o valor formatado conforme a máscara.<br/>

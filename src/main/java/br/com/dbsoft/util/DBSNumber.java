@@ -6,7 +6,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.correlation.Covariance;
@@ -1286,7 +1285,8 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static Number pvStringToNumberFormat(String pValue){
-		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(new Locale("pt","BR"));
+//		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(new Locale("pt","BR"));
+		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance();
 //		NumberFormat xNF = DecimalFormat.geti
 		xNF.setParseBigDecimal(true);
 		xNF.setMaximumFractionDigits(30);
