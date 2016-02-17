@@ -1285,9 +1285,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static Number pvStringToNumberFormat(String pValue){
-//		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(new Locale("pt","BR"));
-		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance();
-//		NumberFormat xNF = DecimalFormat.geti
+		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(DBSFormat.getLocale());
 		xNF.setParseBigDecimal(true);
 		xNF.setMaximumFractionDigits(30);
 		xNF.setRoundingMode(RoundingMode.HALF_UP);

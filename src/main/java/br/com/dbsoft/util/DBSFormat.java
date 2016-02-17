@@ -7,8 +7,11 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.faces.context.FacesContext;
 
 public class DBSFormat {
 
@@ -319,9 +322,9 @@ public class DBSFormat {
 		if (DBSObject.isEmpty(pValor)) {
 			return null;
 		}
-		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols();
-		xOtherSymbols.setDecimalSeparator(getDecimalSeparator().charAt(0));
-		xOtherSymbols.setGroupingSeparator(getGroupSeparator().charAt(0));
+		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols(getLocale());
+//		xOtherSymbols.setDecimalSeparator(getDecimalSeparator().charAt(0));
+//		xOtherSymbols.setGroupingSeparator(getGroupSeparator().charAt(0));
 		DecimalFormat xDF = new DecimalFormat(pNumberMask, xOtherSymbols);
 //		DecimalFormat xDF = new DecimalFormat(pNumberMask); xDF.get
 		xDF.setRoundingMode(RoundingMode.HALF_UP);
@@ -466,18 +469,14 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getDecimalSeparator(){
-		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance();
+		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance(getLocale()); 
 		DecimalFormatSymbols xD = xFormat.getDecimalFormatSymbols();
-//		DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
-//		char xDecimalSeparatorPoint = xD.getDecimalSeparator();
-		return Character.toString(xD.getDecimalSeparator()); 
+		return Character.toString(xD.getDecimalSeparator());  
 	}
 	
 	public static String getGroupSeparator(){
-		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance();
+		DecimalFormat xFormat = (DecimalFormat) DecimalFormat.getInstance(getLocale()); 
 		DecimalFormatSymbols xD = xFormat.getDecimalFormatSymbols();
-//		DecimalFormatSymbols xD = new DecimalFormatSymbols(new Locale("pt","BR"));
-//		char xDecimalPoint = xD.getGroupingSeparator();
 		return Character.toString(xD.getGroupingSeparator()); 
 	}
 
@@ -737,5 +736,18 @@ public class DBSFormat {
 		return pvPhoneNumber(pFormattedNumber, pGroup, pValue, pIsNumber);
 	}
 
+	/**
+	 * Retorna o Locale corrente, dando prioridade ao locale da view e depois do sistema.
+	 * @return
+	 */
+	public static Locale getLocale(){
+		Locale xLocale;
+		if (FacesContext.getCurrentInstance() != null){
+			xLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		}else{
+			xLocale = Locale.getDefault();
+		}
+		return xLocale;
+	}
 
 }
