@@ -206,7 +206,8 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 */
 	@Override
 	public boolean hasMessages(){
-		if (wMessages.size() > 0){
+//		if (wMessages.size() > 0){
+		if (getCurrentMessageKey() != null){
 			return true;
 		}
 		return false;
@@ -252,6 +253,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 			pvFindNextMessage();
 		}
 	}
+	
 
 	
 	/**
