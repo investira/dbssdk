@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.correlation.Covariance;
@@ -960,7 +961,7 @@ public class DBSNumber {
 					xValue = BigDecimal.ZERO;
 				}
 			} else if (pValue instanceof String) {	
-				Number xN = pvStringToNumberFormat((String) pValue);
+				Number xN = pvStringToNumberFormat((String) pValue, DBSFormat.getLocale());
 				if (xN != null){
 					xValue = new BigDecimal(DBSString.getSubString(xN.toString(), 1, 90), MathContext.UNLIMITED);
 				}else{
@@ -1022,7 +1023,7 @@ public class DBSNumber {
 				return -1L;
 			}
 		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue);
+			Number xN = pvStringToNumberFormat((String) pValue, DBSFormat.getLocale());
 			if (xN != null){
 				return xN.longValue();
 			}
@@ -1072,7 +1073,7 @@ public class DBSNumber {
 				return -1;
 			}
 		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue);
+			Number xN = pvStringToNumberFormat((String) pValue, DBSFormat.getLocale());
 			if (xN != null){
 				return xN.intValue();
 			}
@@ -1101,6 +1102,10 @@ public class DBSNumber {
 	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 */
 	public static Double toDouble(Object pValue, Double pDefaultValue) {
+		return toDouble(pValue, pDefaultValue, DBSFormat.getLocale());
+	}
+	
+	public static Double toDouble(Object pValue, Double pDefaultValue, Locale pLocale) {
 		if (DBSObject.isEmpty(pValue) || pValue.equals("")) {
 			return pDefaultValue;
 		}
@@ -1113,14 +1118,13 @@ public class DBSNumber {
 		} else if (pValue instanceof Long) {
 			return ((Long)pValue).doubleValue();
 		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue);
+			Number xN = pvStringToNumberFormat((String) pValue, pLocale);
 			if (xN != null){
 				return xN.doubleValue();
 			}
 		} 
 		return null;
 	}
-
 
 	/**
 	 * Retorna o mesmo valor informado quando este não for zero.<br/> 
@@ -1284,8 +1288,8 @@ public class DBSNumber {
 	 * @param pValue
 	 * @return
 	 */
-	private static Number pvStringToNumberFormat(String pValue){
-		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(DBSFormat.getLocale());
+	private static Number pvStringToNumberFormat(String pValue, Locale pLocale){
+		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(pLocale);
 		xNF.setParseBigDecimal(true);
 		xNF.setMaximumFractionDigits(30);
 		xNF.setRoundingMode(RoundingMode.HALF_UP);
