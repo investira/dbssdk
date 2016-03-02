@@ -16,9 +16,9 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.log4j.Logger;
 
 public class DBSNumber {
-	protected static Logger			wLogger = Logger.getLogger(DBSNumber.class);
+	protected static Logger		wLogger = Logger.getLogger(DBSNumber.class);
 	
-	private static Locale wLocalePTBR = new Locale("pt", "BR");
+	public static Locale 		LOCALE_PTBR = new Locale("pt", "BR");
 	
 	//------------------------------------------------------------------------------------
 	/**
@@ -963,7 +963,7 @@ public class DBSNumber {
 					xValue = BigDecimal.ZERO;
 				}
 			} else if (pValue instanceof String) {	
-				Number xN = pvStringToNumberFormat((String) pValue, wLocalePTBR);
+				Number xN = pvStringToNumberFormat((String) pValue, LOCALE_PTBR);
 				if (xN != null){
 					xValue = new BigDecimal(DBSString.getSubString(xN.toString(), 1, 90), MathContext.UNLIMITED);
 				}else{
@@ -1025,7 +1025,7 @@ public class DBSNumber {
 				return -1L;
 			}
 		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue, wLocalePTBR);
+			Number xN = pvStringToNumberFormat((String) pValue, LOCALE_PTBR);
 			if (xN != null){
 				return xN.longValue();
 			}
@@ -1075,7 +1075,7 @@ public class DBSNumber {
 				return -1;
 			}
 		} else if (pValue instanceof String) {	
-			Number xN = pvStringToNumberFormat((String) pValue, wLocalePTBR);
+			Number xN = pvStringToNumberFormat((String) pValue, LOCALE_PTBR);
 			if (xN != null){
 				return xN.intValue();
 			}
@@ -1104,7 +1104,7 @@ public class DBSNumber {
 	 * @return Retorna o valor convertido ou o valor informado em pDefaultValue caso o valor a ser convertido seja nulo
 	 */
 	public static Double toDouble(Object pValue, Double pDefaultValue) {
-		return toDouble(pValue, pDefaultValue, wLocalePTBR);
+		return toDouble(pValue, pDefaultValue, LOCALE_PTBR);
 	}
 	
 	public static Double toDouble(Object pValue, Double pDefaultValue, Locale pLocale) {

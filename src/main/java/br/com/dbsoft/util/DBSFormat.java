@@ -219,11 +219,18 @@ public class DBSFormat {
 		return getFormattedTimes(xDate);
 	}
 
+	//NUMBER ============================================================================================================
 	
-	
+	/**
+	 * Formata número sem sinal.
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
 	public static String getFormattedNumberUnsigned(Double pValue, Object pDecimalPlaces){
-		return getFormattedNumber(pValue, NUMBER_SIGN.NONE, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
+		return getFormattedNumberUnsigned(pValue, pDecimalPlaces, getLocale());
 	}
+	
 	/**
 	 * Formata número sem sinal.
 	 * @param pValue
@@ -231,27 +238,18 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedNumberUnsigned(Object pValue, Object pDecimalPlaces){
-		return getFormattedNumber(DBSNumber.toDouble(pValue), NUMBER_SIGN.NONE, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
+		return getFormattedNumberUnsigned(pValue, pDecimalPlaces, getLocale());
 	}
-
+	
 	/**
-	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
+	 * Formata número sem sinal de acordo com o Local.
 	 * @param pValue
 	 * @param pDecimalPlaces
+	 * @param pLocale
 	 * @return
 	 */
-	public static String getFormattedNumber(Object pValue, Object pDecimalPlaces){
-		return getFormattedNumber(DBSNumber.toDouble(pValue), NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
-	}
-
-	/**
-	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
-	 * @param pValue
-	 * @param pDecimalPlaces
-	 * @return
-	 */
-	public static String getFormattedNumber(Double pValue, Object pDecimalPlaces){
-		return getFormattedNumber(pValue, NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)));
+	public static String getFormattedNumberUnsigned(Object pValue, Object pDecimalPlaces, Locale pLocale){
+		return getFormattedNumber(DBSNumber.toDouble(pValue, 0D, pLocale), NUMBER_SIGN.NONE, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)), pLocale);
 	}
 
 	/**
@@ -261,7 +259,50 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedNumber(BigDecimal pValue, Object pDecimalPlaces){
-		return getFormattedNumber(DBSNumber.toDouble(pValue), pDecimalPlaces);
+		return getFormattedNumber(pValue, pDecimalPlaces, getLocale());
+	}
+	public static String getFormattedNumber(BigDecimal pValue, Object pDecimalPlaces, Locale pLocale){
+		return getFormattedNumber(DBSNumber.toDouble(pValue, 0D, pLocale), pDecimalPlaces, pLocale);
+	}
+	
+	/**
+	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
+	public static String getFormattedNumber(Double pValue, Object pDecimalPlaces){
+		return getFormattedNumber(pValue, NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)), getLocale());
+	}
+	public static String getFormattedNumber(Double pValue, Object pDecimalPlaces, Locale pLocale){
+		return getFormattedNumber(pValue, NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)), pLocale);
+	}
+	
+	/**
+	 * Formata número com sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValue
+	 * @param pDecimalPlaces
+	 * @return
+	 */
+	public static String getFormattedNumber(Object pValue, Object pDecimalPlaces){
+		return getFormattedNumber(pValue, pDecimalPlaces, getLocale());
+	}
+	
+	public static String getFormattedNumber(Object pValue, Object pDecimalPlaces, Locale pLocale){
+		return getFormattedNumber(DBSNumber.toDouble(pValue, 0D, pLocale), NUMBER_SIGN.MINUS_PREFIX, getNumberMask(DBSNumber.toInteger(pDecimalPlaces)), pLocale);
+	}
+
+	/**
+	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
+	 * @param pValor
+	 * @return
+	 */
+	public static String getFormattedCurrency(Object pValor){
+		return getFormattedCurrency(DBSNumber.toDouble(pValor, 0D, getLocale()));
+	}
+	
+	public static String getFormattedCurrency(Object pValor, Locale pLocale){
+		return getFormattedCurrency(DBSNumber.toDouble(pValor, 0D, pLocale), pLocale);
 	}
 	
 	/**
@@ -272,14 +313,9 @@ public class DBSFormat {
 	public static String getFormattedCurrency(Double pValor){
 		return getFormattedCurrency(pValor, NUMBER_SIGN.MINUS_PREFIX);
 	}
-
-	/**
-	 * Formata número com duas casas decimais e sinal negativo no prefixo(caso seja número negativo).
-	 * @param pValor
-	 * @return
-	 */
-	public static String getFormattedCurrency(Object pValor){
-		return getFormattedCurrency(DBSNumber.toDouble(pValor));
+	
+	public static String getFormattedCurrency(Double pValor, Locale pLocale){
+		return getFormattedCurrency(pValor, NUMBER_SIGN.MINUS_PREFIX, pLocale);
 	}
 
 	/**
@@ -288,7 +324,10 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedCurrency(Object pValor, NUMBER_SIGN pSign){
-		return getFormattedCurrency(DBSNumber.toDouble(pValor), pSign);
+		return getFormattedCurrency(DBSNumber.toDouble(pValor, 0D, getLocale()), pSign, getLocale());
+	}
+	public static String getFormattedCurrency(Object pValor, NUMBER_SIGN pSign, Locale pLocale){
+		return getFormattedCurrency(DBSNumber.toDouble(pValor, 0D, pLocale), pSign, pLocale);
 	}
 
 	/**
@@ -297,7 +336,11 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedCurrency(Double pValor, NUMBER_SIGN pSign){
-		return getFormattedNumber(pValor, pSign, MASK.CURRENCY);
+		return getFormattedNumber(pValor, pSign, MASK.CURRENCY, getLocale());
+	}
+	
+	public static String getFormattedCurrency(Double pValor, NUMBER_SIGN pSign, Locale pLocale){
+		return getFormattedNumber(pValor, pSign, MASK.CURRENCY, pLocale);
 	}
 
 	/**
@@ -308,7 +351,11 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedNumber(Object pValor, NUMBER_SIGN pSign, String pNumberMask){
-		return getFormattedNumber(DBSNumber.toDouble(pValor), pSign, pNumberMask);
+		return getFormattedNumber(DBSNumber.toDouble(pValor, 0D, getLocale()), pSign, pNumberMask, getLocale());
+	}
+	
+	public static String getFormattedNumber(Object pValor, NUMBER_SIGN pSign, String pNumberMask, Locale pLocale){
+		return getFormattedNumber(DBSNumber.toDouble(pValor, 0D, pLocale), pSign, pNumberMask, pLocale);
 	}
 
 	/**
@@ -319,10 +366,22 @@ public class DBSFormat {
 	 * @return
 	 */
 	public static String getFormattedNumber(Double pValor, NUMBER_SIGN pSign, String pNumberMask){
+		return getFormattedNumber(pValor, pSign, pNumberMask, getLocale());
+	}
+	
+	/**
+	 * Retorna valor formatado conforme a indicação do sinal, máscara e Local.
+	 * @param pValor
+	 * @param pSign
+	 * @param pNumberMask
+	 * @param pLocale
+	 * @return
+	 */
+	public static String getFormattedNumber(Double pValor, NUMBER_SIGN pSign, String pNumberMask, Locale pLocale){
 		if (DBSObject.isEmpty(pValor)) {
 			return null;
 		}
-		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols(getLocale());
+		DecimalFormatSymbols xOtherSymbols = new DecimalFormatSymbols(pLocale);
 //		xOtherSymbols.setDecimalSeparator(getDecimalSeparator().charAt(0));
 //		xOtherSymbols.setGroupingSeparator(getGroupSeparator().charAt(0));
 		DecimalFormat xDF = new DecimalFormat(pNumberMask, xOtherSymbols);
@@ -745,7 +804,7 @@ public class DBSFormat {
 		if (FacesContext.getCurrentInstance() != null){
 			xLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		}else{
-			xLocale = Locale.getDefault();
+			xLocale = DBSNumber.LOCALE_PTBR; //Locale.getDefault();
 		}
 		return xLocale;
 	}
