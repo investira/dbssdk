@@ -1291,14 +1291,19 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static Number pvStringToNumberFormat(String pValue, Locale pLocale){
+		Boolean xPerc = (pValue !=null && pValue.indexOf("%") > 0); //Verifica se valor é um percentual
 		DecimalFormat xNF =  (DecimalFormat) DecimalFormat.getInstance(pLocale);
 		xNF.setParseBigDecimal(true);
 		xNF.setMaximumFractionDigits(30);
 		xNF.setRoundingMode(RoundingMode.HALF_UP);
-		xNF.setDecimalSeparatorAlwaysShown(false);
+		xNF.setDecimalSeparatorAlwaysShown(false); 
 		try {
 			if (pValue!=null){
-				return xNF.parse(pValue);
+				if (xPerc){
+					return (xNF.parse(pValue).doubleValue() / 100D);
+				}else{
+					return xNF.parse(pValue);
+				}
 			}else{
 				return null;
 			}
