@@ -395,7 +395,6 @@ public class DBSFormat {
 			case CRDB_PREFIX:
 				xDF.setPositivePrefix("CR ");
 				xDF.setNegativePrefix("DB ");
-				xDF.setNegativeSuffix("");
 				break;
 			case CRDB_SUFFIX:
 				xDF.setPositiveSuffix(" CR");
@@ -405,7 +404,6 @@ public class DBSFormat {
 			case MINUS_PREFIX:
 				xDF.setPositivePrefix("");
 				xDF.setNegativePrefix("-");
-				xDF.setNegativeSuffix("");
 				break;
 			case MINUS_SUFFIX:
 				xDF.setPositivePrefix("");
@@ -420,7 +418,6 @@ public class DBSFormat {
 			default:
 				xDF.setPositivePrefix("");
 				xDF.setNegativePrefix("-");
-				xDF.setNegativeSuffix("");
 				break;
 		}
 		return xDF.format(pValor);
