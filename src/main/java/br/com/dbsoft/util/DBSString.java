@@ -3,6 +3,9 @@ package br.com.dbsoft.util;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -783,7 +786,39 @@ public class DBSString {
 	}
 	
     
-    
+//	public static String UTF8toISO(String pTexto){
+//		Charset xUTF8charset = Charset.forName("UTF-8");
+//        Charset xISO88591charset = Charset.forName("ISO-8859-1");
+//
+//        //Buffer
+//        ByteBuffer xInputBuffer = ByteBuffer.wrap(pTexto.getBytes());
+//
+//        // decode UTF-8
+//        CharBuffer xData = xUTF8charset.decode(xInputBuffer);
+//
+//        // encode ISO-8559-1
+//        ByteBuffer xOutputBuffer = xISO88591charset.encode(xData);
+//        byte[] xOutputData = xOutputBuffer.array();
+//
+//        return new String(xOutputData);
+//    }
+//	
+//	public static String ISOtoUTF8(String pTexto){
+//        Charset xUTF8charset = Charset.forName("UTF-8");
+//        Charset xISO88591charset = Charset.forName("ISO-8859-1");
+//
+//        //Buffer
+//        ByteBuffer xInputBuffer = ByteBuffer.wrap(pTexto.getBytes());
+//
+//        // decode ISO-8559-1
+//        CharBuffer xData = xISO88591charset.decode(xInputBuffer);
+//
+//        // encode UTF-8
+//        ByteBuffer xOutputBuffer = xUTF8charset.encode(xData);
+//        byte[] xOutputData = xOutputBuffer.array();
+//
+//        return new String(xOutputData);
+//    }
 	
 	
 	//*******************************************************************************************************
