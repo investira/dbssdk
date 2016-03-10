@@ -3,7 +3,6 @@ package br.com.dbsoft.log;
 import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,6 +110,7 @@ public class DBSDailyRollingFileAppender extends FileAppender {
 		return datePattern;
 	}
 
+	@Override
 	public void activateOptions() {
 		super.activateOptions();
 		if (datePattern != null && fileName != null) {
@@ -250,6 +250,7 @@ public class DBSDailyRollingFileAppender extends FileAppender {
 	 * a rollover. If it is, it will schedule the next rollover time and then
 	 * rollover.
 	 */
+	@Override
 	protected void subAppend(LoggingEvent event) {
 		long n = System.currentTimeMillis();
 		if (n >= nextCheck) {
@@ -380,7 +381,7 @@ class RollingCalendar extends GregorianCalendar {
 /**
  * Classe auxiliar
  */
-class ModifiedTimeSortableFile extends File implements Serializable, Comparable<File> {
+class ModifiedTimeSortableFile extends File{
 	private static final long serialVersionUID = -1007951320022546144L;
 
 	public ModifiedTimeSortableFile(String pParent, String pChild) {
@@ -399,6 +400,7 @@ class ModifiedTimeSortableFile extends File implements Serializable, Comparable<
 		super(pString);
 	}
 
+	@Override
 	public int compareTo(File pAnotherPathName) {
 		long xThisVal = this.lastModified();
 		long xAnotherVal = pAnotherPathName.lastModified();
