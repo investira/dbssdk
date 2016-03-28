@@ -243,8 +243,8 @@ public final class DBSSDK {
 					return null;
 				}
 			}
-			
 		}
+		
 	}
 	
 	public static final class TABLE {
@@ -299,6 +299,41 @@ public final class DBSSDK {
 			OBJC,
 			JAVA;
 		}
+
+		public static enum WEB_CLIENT {
+			DEFAULT		("Defaut", ""),
+			CHROME		("Chrome", "-webkit-"),
+			FIREFOX		("Mozilla", "-moz-"),
+			OPERA		("Opera", "-o-"),
+			SAFARI		("Webkit", "-webkit-"),
+			MICROSOFT	("Microsoft", "-ms-");
+		
+			private String 	wCSSPrefix;
+			private String 	wUserAgent;
+			public String getCSSPrefix() {return wCSSPrefix;}
+			public String getUserAgent() {return wUserAgent;}
+			
+			private WEB_CLIENT(String pUserAgent, String pCSSPrefix) {
+				wUserAgent = pUserAgent;
+				wCSSPrefix = pCSSPrefix;
+			}
+
+			public static WEB_CLIENT get(String pCSSPrefix) {
+				switch (pCSSPrefix) {
+				case "-webkit-":
+					return CHROME;
+				case "-moz-":
+					return FIREFOX;
+				case "-o-":
+					return OPERA;
+				case "-ms-":
+					return MICROSOFT;
+				default:
+					return DEFAULT;
+				}
+			}
+		}
+
 	}
 
 	public static class COLUMN {
