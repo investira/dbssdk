@@ -1,415 +1,620 @@
 package br.com.dbsoft.document;
 import java.io.File;
 import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMConfiguration;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
-import org.w3c.dom.UserDataHandler;
-import org.xml.sax.SAXException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.*;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+import org.jsoup.select.NodeVisitor;
 
-import br.com.dbsoft.core.DBSSDK;
+public class DBSDocument extends Document {
+	
 
-public class DBSDocument implements Document {
 	protected Logger	wLogger = Logger.getLogger(this.getClass());
-	
-	private DocumentBuilderFactory 	wDocFactory = DocumentBuilderFactory.newInstance();
-	private DocumentBuilder 		wDocBuilder;
-	private Document 				wDoc;
-	
+	private Document 	wDoc;
+
 	public DBSDocument() {
-		try {
-			//Desabilita validações padrão para que a Parse seja executado mais rápido
-			wDocFactory.setNamespaceAware(false);
-			wDocFactory.setValidating(false);
-			wDocFactory.setFeature("http://xml.org/sax/features/namespaces", false);
-			wDocFactory.setFeature("http://xml.org/sax/features/validation", false);
-			wDocFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-			wDocFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			//------------------------
-			wDocBuilder = wDocFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			wLogger.error(e);
-		} 
+		super("/");
 	}
-	
+
 	public boolean read(File pFile){
 		try {
-			wDoc = wDocBuilder.parse(pFile);
+			wDoc = Jsoup.parse(pFile, "UTF-8");
 			return true;
-		} catch (SAXException | IOException e) {
+		} catch (IOException e) {
 			wLogger.error(e);
 			return false;
 		}
 	}
 	
-	/**
-	 * Procura por um nó recursivamente que inicie com o valor do atributo informado
-	 * @param pNodes
-	 * @param pAttributeName
-	 * @param pAttributeValue
-	 * @return
-	 */
-	public Node findNode(NodeList pNodes, String pAttributeName, String pAttributeValue){
-		return DBSSDK.NodeListFindNode(pNodes, pAttributeName, pAttributeValue);
+	public boolean read(URL pUrl){
+		try {
+			wDoc = Jsoup.parse(pUrl, 3000);
+			return true;
+		} catch (IOException e) {
+			wLogger.error(e);
+			return false;
+		}
 	}
+	
+	@Override
+	public String location() {
+		return wDoc.location();
+	}
+
+	@Override
+	public Element head() {
+		return wDoc.head();
+	}
+
+	@Override
+	public Element body() {
+		return wDoc.body();
+	}
+
+	@Override
+	public String title() {
+		return wDoc.title();
+	}
+
+	@Override
+	public void title(String title) {
+		wDoc.title(title);
+	}
+
+	@Override
+	public Element createElement(String tagName) {
+		return wDoc.createElement(tagName);
+	}
+
+	@Override
+	public Document normalise() {
+		return wDoc.normalise();
+	}
+
+	@Override
+	public String outerHtml() {
+		return wDoc.outerHtml();
+	}
+
+	@Override
+	public Element text(String text) {
+		return wDoc.text(text);
+	}
+
+	@Override
+	public String nodeName() {
+		return wDoc.nodeName();
+	}
+
+	@Override
+	public void charset(Charset charset) {
+		wDoc.charset(charset);
+	}
+
+	@Override
+	public Charset charset() {
+		return wDoc.charset();
+	}
+
+	@Override
+	public void updateMetaCharsetElement(boolean update) {
+		wDoc.updateMetaCharsetElement(update);
+	}
+
+	@Override
+	public boolean updateMetaCharsetElement() {
+		return wDoc.updateMetaCharsetElement();
+	}
+
+	@Override
+	public Document clone() {
+		return wDoc.clone();
+	}
+
+	@Override
+	public OutputSettings outputSettings() {
+		return wDoc.outputSettings();
+	}
+
+	@Override
+	public Document outputSettings(OutputSettings outputSettings) {
+		return wDoc.outputSettings(outputSettings);
+	}
+
+	@Override
+	public QuirksMode quirksMode() {
+		return wDoc.quirksMode();
+	}
+
+	@Override
+	public Document quirksMode(QuirksMode quirksMode) {
+		return wDoc.quirksMode(quirksMode);
+	}
+
+	@Override
+	public String tagName() {
+		return wDoc.tagName();
+	}
+
+	@Override
+	public Element tagName(String tagName) {
+		return wDoc.tagName(tagName);
+	}
+
+	@Override
+	public Tag tag() {
+		return wDoc.tag();
+	}
+
+	@Override
+	public boolean isBlock() {
+		return wDoc.isBlock();
+	}
+
+	@Override
+	public String id() {
+		return wDoc.id();
+	}
+
+	@Override
+	public Element attr(String attributeKey, String attributeValue) {
+		return wDoc.attr(attributeKey, attributeValue);
+	}
+
+	@Override
+	public Element attr(String attributeKey, boolean attributeValue) {
+		return wDoc.attr(attributeKey, attributeValue);
+	}
+
+	@Override
+	public Map<String, String> dataset() {
+		return wDoc.dataset();
+	}
+
+	@Override
+	public Elements parents() {
+		return wDoc.parents();
+	}
+
+	@Override
+	public Element child(int index) {
+		return wDoc.child(index);
+	}
+
+	@Override
+	public Elements children() {
+		return wDoc.children();
+	}
+
+	@Override
+	public List<TextNode> textNodes() {
+		return wDoc.textNodes();
+	}
+
+	@Override
+	public List<DataNode> dataNodes() {
+		return wDoc.dataNodes();
+	}
+
+	@Override
+	public Elements select(String cssQuery) {
+		return wDoc.select(cssQuery);
+	}
+
+	@Override
+	public Element appendChild(Node child) {
+		return wDoc.appendChild(child);
+	}
+
+	@Override
+	public Element prependChild(Node child) {
+		return wDoc.prependChild(child);
+	}
+
+	@Override
+	public Element insertChildren(int index, Collection<? extends Node> children) {
+		return wDoc.insertChildren(index, children);
+	}
+
+	@Override
+	public Element appendElement(String tagName) {
+		return wDoc.appendElement(tagName);
+	}
+
+	@Override
+	public Element prependElement(String tagName) {
+		return wDoc.prependElement(tagName);
+	}
+
+	@Override
+	public Element appendText(String text) {
+		return wDoc.appendText(text);
+	}
+
+	@Override
+	public Element prependText(String text) {
+		return wDoc.prependText(text);
+	}
+
+	@Override
+	public Element append(String html) {
+		return wDoc.append(html);
+	}
+
+	@Override
+	public Element prepend(String html) {
+		return wDoc.prepend(html);
+	}
+
+	@Override
+	public Element before(String html) {
+		return wDoc.before(html);
+	}
+
+	@Override
+	public Element before(Node node) {
+		return wDoc.before(node);
+	}
+
+	@Override
+	public Element after(String html) {
+		return wDoc.after(html);
+	}
+
+	@Override
+	public Element after(Node node) {
+		return wDoc.after(node);
+	}
 
 	@Override
-	public String getNodeName() {
-		return wDoc.getNodeName();
+	public Element empty() {
+		return wDoc.empty();
 	}
 
 	@Override
-	public String getNodeValue() throws DOMException {
-		return wDoc.getNodeValue();
+	public Element wrap(String html) {
+		return wDoc.wrap(html);
 	}
 
 	@Override
-	public void setNodeValue(String pNodeValue) throws DOMException {
-		wDoc.setNodeValue(pNodeValue);
+	public String cssSelector() {
+		return wDoc.cssSelector();
 	}
 
 	@Override
-	public short getNodeType() {
-		return wDoc.getNodeType();
+	public Elements siblingElements() {
+		return wDoc.siblingElements();
 	}
 
 	@Override
-	public Node getParentNode() {
-		return wDoc.getParentNode();
+	public Element nextElementSibling() {
+		return wDoc.nextElementSibling();
 	}
 
 	@Override
-	public NodeList getChildNodes() {
-		return wDoc.getChildNodes();
+	public Element previousElementSibling() {
+		return wDoc.previousElementSibling();
 	}
 
 	@Override
-	public Node getFirstChild() {
-		return wDoc.getFirstChild();
+	public Element firstElementSibling() {
+		return wDoc.firstElementSibling();
 	}
 
 	@Override
-	public Node getLastChild() {
-		return wDoc.getLastChild();
+	public Integer elementSiblingIndex() {
+		return wDoc.elementSiblingIndex();
 	}
 
 	@Override
-	public Node getPreviousSibling() {
-		return wDoc.getPreviousSibling();
+	public Element lastElementSibling() {
+		return wDoc.lastElementSibling();
 	}
 
 	@Override
-	public Node getNextSibling() {
-		return wDoc.getNextSibling();
+	public Elements getElementsByTag(String tagName) {
+		return wDoc.getElementsByTag(tagName);
 	}
 
 	@Override
-	public NamedNodeMap getAttributes() {
-		return wDoc.getAttributes();
+	public Element getElementById(String id) {
+		return wDoc.getElementById(id);
 	}
 
 	@Override
-	public Document getOwnerDocument() {
-		return wDoc.getOwnerDocument();
+	public Elements getElementsByClass(String className) {
+		return wDoc.getElementsByClass(className);
 	}
 
 	@Override
-	public Node insertBefore(Node pNewChild, Node pRefChild) throws DOMException {
-		return wDoc.insertBefore(pNewChild, pRefChild);
+	public Elements getElementsByAttribute(String key) {
+		return wDoc.getElementsByAttribute(key);
 	}
 
 	@Override
-	public Node replaceChild(Node pNewChild, Node pOldChild) throws DOMException {
-		return wDoc.replaceChild(pNewChild, pOldChild);
+	public Elements getElementsByAttributeStarting(String keyPrefix) {
+		return wDoc.getElementsByAttributeStarting(keyPrefix);
 	}
 
 	@Override
-	public Node removeChild(Node pOldChild) throws DOMException {
-		return wDoc.removeChild(pOldChild);
+	public Elements getElementsByAttributeValue(String key, String value) {
+		return wDoc.getElementsByAttributeValue(key, value);
 	}
 
 	@Override
-	public Node appendChild(Node pNewChild) throws DOMException {
-		return wDoc.appendChild(pNewChild);
+	public Elements getElementsByAttributeValueNot(String key, String value) {
+		return wDoc.getElementsByAttributeValueNot(key, value);
 	}
 
 	@Override
-	public boolean hasChildNodes() {
-		return wDoc.hasChildNodes();
+	public Elements getElementsByAttributeValueStarting(String key, String valuePrefix) {
+		return wDoc.getElementsByAttributeValueStarting(key, valuePrefix);
 	}
 
 	@Override
-	public Node cloneNode(boolean pDeep) {
-		return wDoc.cloneNode(pDeep);
+	public Elements getElementsByAttributeValueEnding(String key, String valueSuffix) {
+		return wDoc.getElementsByAttributeValueEnding(key, valueSuffix);
 	}
 
 	@Override
-	public void normalize() {
-		wDoc.normalize();
+	public Elements getElementsByAttributeValueContaining(String key, String match) {
+		return wDoc.getElementsByAttributeValueContaining(key, match);
 	}
 
 	@Override
-	public boolean isSupported(String pFeature, String pVersion) {
-		return wDoc.isSupported(pFeature, pVersion);
+	public Elements getElementsByAttributeValueMatching(String key, Pattern pattern) {
+		return wDoc.getElementsByAttributeValueMatching(key, pattern);
 	}
 
 	@Override
-	public String getNamespaceURI() {
-		return wDoc.getNamespaceURI();
+	public Elements getElementsByAttributeValueMatching(String key, String regex) {
+		return wDoc.getElementsByAttributeValueMatching(key, regex);
 	}
 
 	@Override
-	public String getPrefix() {
-		return wDoc.getPrefix();
+	public Elements getElementsByIndexLessThan(int index) {
+		return wDoc.getElementsByIndexLessThan(index);
 	}
 
 	@Override
-	public void setPrefix(String pPrefix) throws DOMException {
-		wDoc.setPrefix(pPrefix);
+	public Elements getElementsByIndexGreaterThan(int index) {
+		return wDoc.getElementsByIndexGreaterThan(index);
 	}
 
 	@Override
-	public String getLocalName() {
-		return wDoc.getLocalName();
+	public Elements getElementsByIndexEquals(int index) {
+		return wDoc.getElementsByIndexEquals(index);
 	}
 
 	@Override
-	public boolean hasAttributes() {
-		return wDoc.hasAttributes();
+	public Elements getElementsContainingText(String searchText) {
+		return wDoc.getElementsContainingText(searchText);
 	}
 
 	@Override
-	public String getBaseURI() {
-		return wDoc.getBaseURI();
+	public Elements getElementsContainingOwnText(String searchText) {
+		return wDoc.getElementsContainingOwnText(searchText);
 	}
 
 	@Override
-	public short compareDocumentPosition(Node pOther) throws DOMException {
-		return wDoc.compareDocumentPosition(pOther);
+	public Elements getElementsMatchingText(Pattern pattern) {
+		return wDoc.getElementsMatchingText(pattern);
 	}
 
 	@Override
-	public String getTextContent() throws DOMException {
-		return wDoc.getTextContent();
+	public Elements getElementsMatchingText(String regex) {
+		return wDoc.getElementsMatchingText(regex);
 	}
 
 	@Override
-	public void setTextContent(String pTextContent) throws DOMException {
-		wDoc.setTextContent(pTextContent);
+	public Elements getElementsMatchingOwnText(Pattern pattern) {
+		return wDoc.getElementsMatchingOwnText(pattern);
 	}
 
 	@Override
-	public boolean isSameNode(Node pOther) {
-		return wDoc.isSameNode(pOther);
+	public Elements getElementsMatchingOwnText(String regex) {
+		return wDoc.getElementsMatchingOwnText(regex);
 	}
 
 	@Override
-	public String lookupPrefix(String pNamespaceURI) {
-		return wDoc.lookupPrefix(pNamespaceURI);
+	public Elements getAllElements() {
+		return wDoc.getAllElements();
 	}
 
 	@Override
-	public boolean isDefaultNamespace(String pNamespaceURI) {
-		return wDoc.isDefaultNamespace(pNamespaceURI);
+	public String text() {
+		return wDoc.text();
 	}
 
 	@Override
-	public String lookupNamespaceURI(String pPrefix) {
-		return wDoc.lookupNamespaceURI(pPrefix);
+	public String ownText() {
+		return wDoc.ownText();
 	}
 
 	@Override
-	public boolean isEqualNode(Node pArg) {
-		return wDoc.isEqualNode(pArg);
+	public boolean hasText() {
+		return wDoc.hasText();
 	}
 
 	@Override
-	public Object getFeature(String pFeature, String pVersion) {
-		return wDoc.getFeature(pFeature, pVersion);
+	public String data() {
+		return wDoc.data();
 	}
 
 	@Override
-	public Object setUserData(String pKey, Object pData, UserDataHandler pHandler) {
-		return wDoc.setUserData(pKey, pData, pHandler);
+	public String className() {
+		return wDoc.className();
 	}
 
 	@Override
-	public Object getUserData(String pKey) {
-		return wDoc.getUserData(pKey);
+	public Set<String> classNames() {
+		return wDoc.classNames();
 	}
 
 	@Override
-	public DocumentType getDoctype() {
-		return wDoc.getDoctype();
+	public Element classNames(Set<String> classNames) {
+		return wDoc.classNames(classNames);
 	}
 
 	@Override
-	public DOMImplementation getImplementation() {
-		return wDoc.getImplementation();
+	public boolean hasClass(String className) {
+		return wDoc.hasClass(className);
 	}
 
 	@Override
-	public Element getDocumentElement() {
-		return wDoc.getDocumentElement();
+	public Element addClass(String className) {
+		return wDoc.addClass(className);
 	}
 
 	@Override
-	public Element createElement(String pTagName) throws DOMException {
-		return wDoc.createElement(pTagName);
+	public Element removeClass(String className) {
+		return wDoc.removeClass(className);
 	}
 
 	@Override
-	public DocumentFragment createDocumentFragment() {
-		return wDoc.createDocumentFragment();
+	public Element toggleClass(String className) {
+		return wDoc.toggleClass(className);
 	}
 
 	@Override
-	public Text createTextNode(String pData) {
-		return wDoc.createTextNode(pData);
+	public String val() {
+		return wDoc.val();
 	}
 
 	@Override
-	public Comment createComment(String pData) {
-		return wDoc.createComment(pData);
+	public Element val(String value) {
+		return wDoc.val(value);
 	}
 
 	@Override
-	public CDATASection createCDATASection(String pData) throws DOMException {
-		return wDoc.createCDATASection(pData);
+	public String html() {
+		return wDoc.html();
 	}
 
 	@Override
-	public ProcessingInstruction createProcessingInstruction(String pTarget, String pData) throws DOMException {
-		return wDoc.createProcessingInstruction(pTarget, pData);
+	public Element html(String html) {
+		return wDoc.html(html);
 	}
 
 	@Override
-	public Attr createAttribute(String pName) throws DOMException {
-		return wDoc.createAttribute(pName);
+	public String toString() {
+		return wDoc.toString();
 	}
 
 	@Override
-	public EntityReference createEntityReference(String pName) throws DOMException {
-		return wDoc.createEntityReference(pName);
+	public boolean equals(Object o) {
+		return wDoc.equals(o);
 	}
 
 	@Override
-	public NodeList getElementsByTagName(String pTagname) {
-		return wDoc.getElementsByTagName(pTagname);
+	public int hashCode() {
+		return wDoc.hashCode();
 	}
 
 	@Override
-	public Node importNode(Node pImportedNode, boolean pDeep) throws DOMException {
-		return wDoc.importNode(pImportedNode, pDeep);
+	public String attr(String attributeKey) {
+		return wDoc.attr(attributeKey);
 	}
 
 	@Override
-	public Element createElementNS(String pNamespaceURI, String pQualifiedName) throws DOMException {
-		return wDoc.createElementNS(pNamespaceURI, pQualifiedName);
+	public Attributes attributes() {
+		return wDoc.attributes();
 	}
 
 	@Override
-	public Attr createAttributeNS(String pNamespaceURI, String pQualifiedName) throws DOMException {
-		return wDoc.createAttributeNS(pNamespaceURI, pQualifiedName);
+	public boolean hasAttr(String attributeKey) {
+		return wDoc.hasAttr(attributeKey);
 	}
 
 	@Override
-	public NodeList getElementsByTagNameNS(String pNamespaceURI, String pLocalName) {
-		return wDoc.getElementsByTagNameNS(pNamespaceURI, pLocalName);
+	public Node removeAttr(String attributeKey) {
+		return wDoc.removeAttr(attributeKey);
 	}
 
 	@Override
-	public Element getElementById(String pElementId) {
-		return wDoc.getElementById(pElementId);
+	public String baseUri() {
+		return wDoc.baseUri();
 	}
 
 	@Override
-	public String getInputEncoding() {
-		return wDoc.getInputEncoding();
+	public void setBaseUri(String baseUri) {
+		wDoc.setBaseUri(baseUri);
 	}
 
 	@Override
-	public String getXmlEncoding() {
-		return wDoc.getXmlEncoding();
+	public String absUrl(String attributeKey) {
+		return wDoc.absUrl(attributeKey);
 	}
 
 	@Override
-	public boolean getXmlStandalone() {
-		return wDoc.getXmlStandalone();
+	public Node childNode(int index) {
+		return wDoc.childNode(index);
 	}
 
 	@Override
-	public void setXmlStandalone(boolean pXmlStandalone) throws DOMException {
-		wDoc.setXmlStandalone(pXmlStandalone);
+	public List<Node> childNodes() {
+		return wDoc.childNodes();
 	}
 
 	@Override
-	public String getXmlVersion() {
-		return wDoc.getXmlVersion();
+	public List<Node> childNodesCopy() {
+		return wDoc.childNodesCopy();
 	}
 
 	@Override
-	public void setXmlVersion(String pXmlVersion) throws DOMException {
-		wDoc.setXmlVersion(pXmlVersion);
+	public Document ownerDocument() {
+		return wDoc.ownerDocument();
 	}
 
 	@Override
-	public boolean getStrictErrorChecking() {
-		return wDoc.getStrictErrorChecking();
+	public void remove() {
+		wDoc.remove();
 	}
 
 	@Override
-	public void setStrictErrorChecking(boolean pStrictErrorChecking) {
-		wDoc.setStrictErrorChecking(pStrictErrorChecking);
+	public Node unwrap() {
+		return wDoc.unwrap();
 	}
 
 	@Override
-	public String getDocumentURI() {
-		return wDoc.getDocumentURI();
+	public void replaceWith(Node in) {
+		wDoc.replaceWith(in);
 	}
 
 	@Override
-	public void setDocumentURI(String pDocumentURI) {
-		wDoc.setDocumentURI(pDocumentURI);
+	public List<Node> siblingNodes() {
+		return wDoc.siblingNodes();
 	}
 
 	@Override
-	public Node adoptNode(Node pSource) throws DOMException {
-		return wDoc.adoptNode(pSource);
+	public Node nextSibling() {
+		return wDoc.nextSibling();
 	}
 
 	@Override
-	public DOMConfiguration getDomConfig() {
-		return wDoc.getDomConfig();
+	public Node previousSibling() {
+		return wDoc.previousSibling();
 	}
 
 	@Override
-	public void normalizeDocument() {
-		wDoc.normalizeDocument();
+	public int siblingIndex() {
+		return wDoc.siblingIndex();
 	}
 
 	@Override
-	public Node renameNode(Node pN, String pNamespaceURI, String pQualifiedName) throws DOMException {
-		return wDoc.renameNode(pN, pNamespaceURI, pQualifiedName);
+	public Node traverse(NodeVisitor nodeVisitor) {
+		return wDoc.traverse(nodeVisitor);
 	}
+
 
 }
