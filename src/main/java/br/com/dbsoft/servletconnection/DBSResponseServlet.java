@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
+import br.com.dbsoft.core.DBSServlet;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSHttp;
 import br.com.dbsoft.util.DBSIO;
@@ -26,9 +26,14 @@ public abstract class DBSResponseServlet extends DBSServlet {
 	
 	private ObjectOutputStream 	wObjectOutputStream;
 	private ObjectInputStream  	wObjectInputStream;
+	private String 				wIPAddress;
 
 	public DBSResponseServlet() {
 		setAllowGet(false);
+	}
+	
+	public String getIPAddress() {
+		return wIPAddress;
 	}
 
 	public boolean afterRequest() throws DBSIOException {return true;}
@@ -43,6 +48,7 @@ public abstract class DBSResponseServlet extends DBSServlet {
 			pResponse.setContentType(CONTENT_TYPE.APPLICATION_JSON); 
 			pResponse.setHeader("Cache-Control", "no-cache");	 
 
+			wIPAddress = pvGetIpRequest(pRequest);
 	        try{
 		        InputStream xIS = pRequest.getInputStream();
 		        wObjectInputStream = new ObjectInputStream(xIS);
@@ -84,5 +90,13 @@ public abstract class DBSResponseServlet extends DBSServlet {
 		}
 	}
 
+	public static String pvGetIpRequest(HttpServletRequest pRequest) {
+        String xIPAddress = pRequest.getHeader("X-FORWARDED-FOR");
+        
+        if (xIPAddress == null) {
+            xIPAddress = pRequest.getRemoteAddr();
+        }
 
+        return xIPAddress;
+	}
 }
