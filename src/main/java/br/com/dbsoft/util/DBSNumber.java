@@ -1,5 +1,6 @@
 package br.com.dbsoft.util;
 
+import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -18,7 +19,9 @@ import org.apache.log4j.Logger;
 public class DBSNumber {
 	protected static Logger		wLogger = Logger.getLogger(DBSNumber.class);
 	
-	public static Locale 		LOCALE_PTBR = new Locale("pt", "BR");
+	public static Locale 	LOCALE_PTBR = new Locale("pt", "BR");
+	public static Double 	PIDiameter = Math.PI * 2;
+	public static Double 	PIDiameterFactor = PIDiameter / 100;
 	
 	//------------------------------------------------------------------------------------
 	/**
@@ -192,6 +195,33 @@ public class DBSNumber {
 	
 	//------------------------------------------------------------------------------------
 	
+	/**
+	 * Retorna coordenada a partir do ráio e percentual do arco. 100 = 360.
+	 * @param pRadius
+	 * @param p2PIPercentual Percentual o valor ((Math.PI * 2) / 100);
+	 * @return
+	 */
+	
+	public static Point2D circlePoint(Point2D pCenter, Double pRadius, Double p2PIPercentual){
+		Point2D xX = new Point2D.Double();
+		xX.setLocation(DBSNumber.round(pCenter.getX() + (pRadius * Math.sin(p2PIPercentual)), 2), 
+				   	   DBSNumber.round(pCenter.getY() - (pRadius * Math.cos(p2PIPercentual)), 2));
+		return xX;
+	}
+
+	/**
+	 * Retorna centro a partir da altura e largura
+	 * @param pWidth
+	 * @param pHeight
+	 * @return
+	 */
+	public static Point2D centerPoint(Double pWidth, Double pHeight){
+		Point2D xCentro = new Point2D.Double();
+		xCentro.setLocation((pWidth / 2),
+			    			(pHeight / 2));
+		return xCentro;
+	}
+
 	/**
 	 * Desvio Padrão de uma Amostra
 	 * Equivale a fórmula STDEV.S do Excel
