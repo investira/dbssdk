@@ -598,6 +598,36 @@ public class DBSFormat {
 		}
 		return xFV;
 	}
+	
+	/**
+	 * Retorna o número simplificado com mil, mi, bi, tri, quatri.
+	 * @param pValue
+	 * @return
+	 */
+	public static String numberSimplify(Number pValue){
+		Double 	xVal = pValue.doubleValue();
+		Integer xIntVal = pValue.intValue();
+		Integer xLength = xIntVal.toString().length();
+		if (xLength == 0){return "";}
+		Double xSimple = (xVal / Math.pow(10, ((xLength -1) - ((xLength -1) % 3))));
+		String xSuf = "";
+		String xFormated = "";
+		if (xLength > 15){
+			xSuf = "quatri";
+		}else if (xLength > 12){
+			xSuf = "tri";
+		}else if (xLength > 9){
+			xSuf = "bi";
+		}else if (xLength > 6){
+			xSuf = "mi";
+		}else if (xLength > 3){
+			xSuf = "mil";
+		}else{
+			xSimple = xVal;
+		}
+		xFormated = getFormattedNumber(xSimple, 0) + xSuf;
+		return xFormated;
+	}
 
 	//====================================================
 	//Validation
