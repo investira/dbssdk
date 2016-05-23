@@ -82,6 +82,13 @@ public abstract class DBSResponseServlet extends DBSServlet {
 		}
 	}
 	
+	/**
+	 * Retorna objeto a partir do objeto JSON lido do inputstream.<br/>
+	 * A classe do retornada deverá conter variáveis com os mesmos nomes dos campos contidos no objeto JSON lido. Não são necessários <i>setter e getter</i>.<br/>
+	 * @param pClass
+	 * @return
+	 * @throws DBSIOException
+	 */
 	public <T> T readObject(Class<T> pClass) throws DBSIOException{
 		if (wObjectInputStream!=null){
 			return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
