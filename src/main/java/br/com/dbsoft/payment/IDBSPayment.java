@@ -5,6 +5,7 @@ import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
 import urn.ebay.apis.eBLBaseComponents.RecurringPaymentsProfileStatusType;
 
@@ -33,7 +34,10 @@ public interface IDBSPayment {
 			return wCode;
 		}
 		
-		public static PROFILE_STATUS get(int pCode) {
+		public static PROFILE_STATUS get(Integer pCode) {
+			if (DBSObject.isNull(pCode)) {
+				return null;
+			}
 			switch (pCode) {
 			case 0:
 				return ACTIVE;

@@ -2,7 +2,6 @@ package br.com.dbsoft.payment.implementations;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,50 +65,48 @@ import urn.ebay.apis.eBLBaseComponents.SetExpressCheckoutRequestDetailsType;
 @SuppressWarnings("unchecked")
 public class DBSPayPal extends DBSPayment{
 	
-	private static final String CHECKOUT_EXPRESS_TESTE = "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="; //TODO URL PARA TESTES. TROCAR QUANDO FOR PRA PRODUÇÃO
-	private static final String VERSION = "124"; //"104.0";
-	private String 		wToken = null;
+	private static final String CHECKOUT_EXPRESS_TESTE = "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="; //URL PARA TESTES. TROCAR QUANDO FOR PRA PRODUÇÃO
+	private static final String CHECKOUT_EXPRESS = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&useraction=commit&token="; //URL PARA PRODUÇÃO
 	
+	private static final String VERSION = "124"; //"104.0";
+	private String 				wToken = null;
+	private String				wUrlIPN;
+	private Map<String, String> wConfigMap;
+	
+	/**
+	 * URL do servidor de IPN (Instant Payment Notification).
+	 * Utilizando o padrão null, o PayPal utilizará a URL de IPN geral configurada na conta do PayPal.
+	 * Utilize esta propriedade apenas se quiser utilizar uma URL específica para uma transação.
+	 * @return
+	 */
+	public String getUrlIPN() {
+		return wUrlIPN;
+	}
+	public void setUrlIPN(String pUrlIPN) {
+		wUrlIPN = pUrlIPN;
+	}
+	
+	public Map<String, String> getConfigMap() {
+		return wConfigMap;
+	}
+	public void setConfigMap(Map<String, String> pConfigMap) {
+		wConfigMap = pConfigMap;
+	}
+	
+	//CONTRUTORES ====================================================================================================
 	/**
 	 * Construtor Padrão.
-	 * As configurações do pagamento deverão ser feitas através dos Setters.
+	 * As definições do item a ser paga deverão ser feitas através dos Setters.
 	 */
 	public DBSPayPal() {}
+
 	/**
-	 * Construtor para Pagamento Único
-	 * @param pItemName Nome do Item
-	 * @param pQuantity Quantidade de Itens
-	 * @param pValue Valor de cada Item
-	 * @param pSucessURL URL de retorno em caso de sucesso
-	 * @param pCancelURL URL de retorno em caso de cancelamento
+	 * Construtor Padrão com mapa de configurações.
+	 * As definições do item a ser paga deverão ser feitas através dos Setters.
 	 */
-	public DBSPayPal(String pItemName, Integer pQuantity, Double pValue, String pSucessURL, String pCancelURL) {
-		setItemName(pItemName);
-		setQuantity(pQuantity);
-		setValue(pValue);
-		setSucessURL(pSucessURL);
-		setCancelURL(pCancelURL);
+	public DBSPayPal(Map<String, String> pConfigMap) {
+		setConfigMap(pConfigMap);
 	}
-	/**
-	 * Construtor para Pagamento Recorrente
-	 * @param pItemName Nome do Item
-	 * @param pQuantity Quantidade de Itens
-	 * @param pValue Valor de cada Item
-	 * @param pSucessURL URL de retorno em caso de sucesso
-	 * @param pCancelURL URL de retorno em caso de cancelamento
-	 * @param pFrequency Frequência do pagamento dentro da periodicidade selecionada
-	 * @param pPeriod Periodicidade do ciclo de pagamento
-	 */
-	public DBSPayPal(String pItemName, Integer pQuantity, Double pValue, String pSucessURL, String pCancelURL, Integer pFrequency, PERIODICIDADE pPeriod) {
-		setItemName(pItemName);
-		setQuantity(pQuantity);
-		setValue(pValue);
-		setSucessURL(pSucessURL);
-		setCancelURL(pCancelURL);
-		setFrequency(pFrequency);
-		setPeriod(pPeriod);
-	}
-	
 	//Overrides =====================================================================================================================================
 	
 	@Override
@@ -137,7 +134,7 @@ public class DBSPayPal extends DBSPayment{
 
 		xSetExpressCheckoutReq.setSetExpressCheckoutRequest(xSetExpressCheckoutRequest);
 
-		xService = new PayPalAPIInterfaceServiceService(pvSetConfiguracaoDB());
+		xService = new PayPalAPIInterfaceServiceService(getConfigMap());
 		try {
 			setOk(true);
 			xSetExpressCheckoutResponse = xService.setExpressCheckout(xSetExpressCheckoutReq);
@@ -166,7 +163,10 @@ public class DBSPayPal extends DBSPayment{
 
 	@Override
 	public String onRedirect() throws DBSIOException {
-		return CHECKOUT_EXPRESS_TESTE + wToken;
+		if (getConfigMap().get("mode").equals("sandbox")) {
+			return CHECKOUT_EXPRESS_TESTE + wToken;
+		}
+		return CHECKOUT_EXPRESS + wToken;
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class DBSPayPal extends DBSPayment{
 		boolean xOk = false;
 		GetExpressCheckoutDetailsResponseType xPaymentDetails = pvGetPaymentDetails(wToken);
 		DoExpressCheckoutPaymentResponseType xExpressCheckout = pvDoExpressCheckout(wToken, 
-			xPaymentDetails.getGetExpressCheckoutDetailsResponseDetails().getPayerInfo().getPayerID(), getItemName(), getValue(), getQuantity());
+			xPaymentDetails.getGetExpressCheckoutDetailsResponseDetails().getPayerInfo().getPayerID(), getItemName(), getValue(), getQuantity(), getUrlIPN());
 		if (xExpressCheckout.getAck().equals(AckCodeType.SUCCESS)){
 			xOk = true;
 		}
@@ -193,7 +193,7 @@ public class DBSPayPal extends DBSPayment{
 	public PROFILE_STATUS onReadProfileStatus() throws DBSIOException {
 		GetRecurringPaymentsProfileDetailsRequestType 	xRequestType = new GetRecurringPaymentsProfileDetailsRequestType(getProfileId());
 		GetRecurringPaymentsProfileDetailsReq 			xRequest = new GetRecurringPaymentsProfileDetailsReq();
-		PayPalAPIInterfaceServiceService 				xService = new PayPalAPIInterfaceServiceService(pvSetConfiguracaoDB());
+		PayPalAPIInterfaceServiceService 				xService = new PayPalAPIInterfaceServiceService(getConfigMap());
 		GetRecurringPaymentsProfileDetailsResponseType 	xRecurringPaymentsProfileDetails = null;
 		
 		xRequestType.setVersion(VERSION);
@@ -223,7 +223,7 @@ public class DBSPayPal extends DBSPayment{
 	private GetExpressCheckoutDetailsResponseType pvGetPaymentDetails(String pToken) throws DBSIOException{
 		GetExpressCheckoutDetailsRequestType 	xGetExpressCheckoutDetailsRequest = new GetExpressCheckoutDetailsRequestType(pToken);
 		GetExpressCheckoutDetailsReq 			xGetExpressCheckoutDetailsReq = new GetExpressCheckoutDetailsReq();
-		PayPalAPIInterfaceServiceService 		xService = new PayPalAPIInterfaceServiceService(pvSetConfiguracaoDB());
+		PayPalAPIInterfaceServiceService 		xService = new PayPalAPIInterfaceServiceService(getConfigMap());
 		GetExpressCheckoutDetailsResponseType 	xGetExpressCheckoutDetailsResponse = null;
 		
 		xGetExpressCheckoutDetailsRequest.setVersion(VERSION);
@@ -253,16 +253,16 @@ public class DBSPayPal extends DBSPayment{
 		return xGetExpressCheckoutDetailsResponse;
 	}
 	
-	private DoExpressCheckoutPaymentResponseType pvDoExpressCheckout(String pToken, String pPayerId, String pItemName, Double pValue, Integer pQuantity) throws DBSIOException {
+	private DoExpressCheckoutPaymentResponseType pvDoExpressCheckout(String pToken, String pPayerId, String pItemName, Double pValue, Integer pQuantity, String pUrlIPN) throws DBSIOException {
 		DoExpressCheckoutPaymentRequestDetailsType xDoExpressCheckoutPaymentRequestDetails = new DoExpressCheckoutPaymentRequestDetailsType();
 		DoExpressCheckoutPaymentRequestType xDoExpressCheckoutPaymentRequest;
 		DoExpressCheckoutPaymentReq xDoExpressCheckoutPaymentReq = new DoExpressCheckoutPaymentReq();
-		PayPalAPIInterfaceServiceService xService = new PayPalAPIInterfaceServiceService(pvSetConfiguracaoDB());
+		PayPalAPIInterfaceServiceService xService = new PayPalAPIInterfaceServiceService(getConfigMap());
 		DoExpressCheckoutPaymentResponseType xDoExpressCheckoutPaymentResponse = null;
 		
 		xDoExpressCheckoutPaymentRequestDetails.setToken(pToken);
 		xDoExpressCheckoutPaymentRequestDetails.setPayerID(pPayerId);
-		xDoExpressCheckoutPaymentRequestDetails.setPaymentDetails(pvSetPaymentDetails(pItemName, pValue, pQuantity, "http://replaceIpnUrl.com"));
+		xDoExpressCheckoutPaymentRequestDetails.setPaymentDetails(pvSetPaymentDetails(pItemName, pValue, pQuantity, pUrlIPN));
 
 		xDoExpressCheckoutPaymentRequest = new DoExpressCheckoutPaymentRequestType(xDoExpressCheckoutPaymentRequestDetails);
 		xDoExpressCheckoutPaymentRequest.setVersion(VERSION);
@@ -298,7 +298,7 @@ public class DBSPayPal extends DBSPayment{
 		CreateRecurringPaymentsProfileRequestDetailsType 	xCreateRPProfileRequestDetails = new CreateRecurringPaymentsProfileRequestDetailsType();
 		CreateRecurringPaymentsProfileRequestType 			xCreateRPProfileRequest = new CreateRecurringPaymentsProfileRequestType();
 		CreateRecurringPaymentsProfileReq 					xCreateRPPProfileReq = new CreateRecurringPaymentsProfileReq();
-		PayPalAPIInterfaceServiceService 					xService = new PayPalAPIInterfaceServiceService(pvSetConfiguracaoDB());
+		PayPalAPIInterfaceServiceService 					xService = new PayPalAPIInterfaceServiceService(getConfigMap());
 		CreateRecurringPaymentsProfileResponseType 			xCreateRPProfileResponse = null;
 		
 		xProfileDetails.setBillingStartDate(DBSFormat.getFormattedDateCustom(DBSDate.getNowDate(), "yyyy-MM-dd")+"T00:00:00:000Z");
@@ -333,19 +333,6 @@ public class DBSPayPal extends DBSPayment{
 			return null;
 		}
 		return xCreateRPProfileResponse.getCreateRecurringPaymentsProfileResponseDetails();
-	}
-	
-	/**
-	 * TODO PEGAR DO DADOSCONFIG OU DE UM OUTRO ARQUIVO DE CONFIGURACAO
-	 * @return
-	 */
-	private Map<String, String> pvSetConfiguracaoDB() {
-		Map<String, String> xSdkConfig = new HashMap<String, String>();
-		xSdkConfig.put("mode", "sandbox");
-		xSdkConfig.put("acct1.UserName", "contabilidade-facilitator_api1.dbsoft.com.br");
-		xSdkConfig.put("acct1.Password", "5FMZQN48DF7JZ4XR");
-		xSdkConfig.put("acct1.Signature","AFcWxV21C7fd0v3bYYYRCpSSRl31A1pFuZuM3MbPXgVnYYnBejr7xAjh");
-		return xSdkConfig;
 	}
 	
 	private BasicAmountType pvSetAmount(Double pValue) {
@@ -416,6 +403,5 @@ public class DBSPayPal extends DBSPayment{
 			return BillingPeriodType.NOBILLINGPERIODTYPE;
 		}
 	}
-
 
 }

@@ -119,7 +119,7 @@ public abstract class DBSPayment implements IDBSPayment {
 	public void setProfileId(String pProfileId) {
 		wProfileId = pProfileId;
 	}
-
+	
 	//EVENTOS ===============================================================================================
 	@Override
 	public String preparePayment() throws DBSIOException {
@@ -222,4 +222,5 @@ public abstract class DBSPayment implements IDBSPayment {
 	protected boolean pvIsRecurring() {
 		return !DBSObject.isNull(wPeriod) && DBSObject.isIdValid(wFrequency);
 	}
+
 }
