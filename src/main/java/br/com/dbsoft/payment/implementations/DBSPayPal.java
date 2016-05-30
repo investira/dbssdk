@@ -71,6 +71,9 @@ public class DBSPayPal extends DBSPayment{
 	private static final String VERSION = "124"; //"104.0";
 	private String 				wToken = null;
 	private String				wUrlIPN;
+	private String				wPayerID;
+	private String				wTransactionID;
+	private PAYMENT_STATUS		wPaymentStatus;
 	private Map<String, String> wConfigMap;
 	
 	/**
@@ -93,6 +96,15 @@ public class DBSPayPal extends DBSPayment{
 		wConfigMap = pConfigMap;
 	}
 	
+	public String getPayerID() {
+		return wPayerID;
+	}
+	public String getTransactionID() {
+		return wTransactionID;
+	}
+	public PAYMENT_STATUS getPaymentStatus() {
+		return wPaymentStatus;
+	}
 	//CONTRUTORES ====================================================================================================
 	/**
 	 * Construtor Padrão.
@@ -172,9 +184,17 @@ public class DBSPayPal extends DBSPayment{
 	@Override
 	public boolean onPay() throws DBSIOException {
 		boolean xOk = false;
-		GetExpressCheckoutDetailsResponseType xPaymentDetails = pvGetPaymentDetails(wToken);
-		DoExpressCheckoutPaymentResponseType xExpressCheckout = pvDoExpressCheckout(wToken, 
-			xPaymentDetails.getGetExpressCheckoutDetailsResponseDetails().getPayerInfo().getPayerID(), getItemName(), getValue(), getQuantity(), getUrlIPN());
+		GetExpressCheckoutDetailsResponseType 	xPaymentDetails;
+		DoExpressCheckoutPaymentResponseType 	xExpressCheckout; 
+		
+		xPaymentDetails = pvGetPaymentDetails(wToken);
+		wPayerID = xPaymentDetails.getGetExpressCheckoutDetailsResponseDetails().getPayerInfo().getPayerID();
+		xExpressCheckout = pvDoExpressCheckout(wToken, wPayerID, getItemName(), getValue(), getQuantity(), getUrlIPN());
+		
+		if (!DBSObject.isEmpty(xExpressCheckout.getDoExpressCheckoutPaymentResponseDetails().getPaymentInfo())) {
+			wTransactionID = xExpressCheckout.getDoExpressCheckoutPaymentResponseDetails().getPaymentInfo().get(0).getTransactionID();
+			wPaymentStatus = PAYMENT_STATUS.getFromPayPal(xExpressCheckout.getDoExpressCheckoutPaymentResponseDetails().getPaymentInfo().get(0).getPaymentStatus());
+		}
 		if (xExpressCheckout.getAck().equals(AckCodeType.SUCCESS)){
 			xOk = true;
 		}

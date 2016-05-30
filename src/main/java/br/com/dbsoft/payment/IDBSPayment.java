@@ -5,8 +5,9 @@ import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
-import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
+import br.com.dbsoft.util.DBSObject;
+import urn.ebay.apis.eBLBaseComponents.PaymentStatusCodeType;
 import urn.ebay.apis.eBLBaseComponents.RecurringPaymentsProfileStatusType;
 
 public interface IDBSPayment {
@@ -67,6 +68,58 @@ public interface IDBSPayment {
 				return EXPIRED;
 			} else {
 				return null;
+			}
+			
+		}
+	}
+	
+	public static enum PAYMENT_STATUS {
+		COMPLETE		("Complete",	0),
+		PENDING			("Pending", 	1),
+		FAILED			("Failed", 		2);
+		
+		private String 	wName;
+		private int 	wCode;
+		
+		private PAYMENT_STATUS(String pName, int pCode) {
+			this.wName = pName;
+			this.wCode = pCode;
+		}
+
+		public String getName() {
+			return wName;
+		}
+
+		public int getCode() {
+			return wCode;
+		}
+		
+		public static PAYMENT_STATUS get(Integer pCode) {
+			if (DBSObject.isNull(pCode)) {
+				return null;
+			}
+			switch (pCode) {
+			case 0:
+				return COMPLETE;
+			case 1:
+				return PENDING;
+			case 2:
+				return FAILED;
+			default:
+				return null;
+			}
+		}
+		
+		public static PAYMENT_STATUS getFromPayPal(PaymentStatusCodeType pPayPalStatusType) {
+			if (DBSObject.isNull(pPayPalStatusType)) {
+				return null;
+			}
+			if (pPayPalStatusType.equals(PaymentStatusCodeType.COMPLETED)) {
+				return COMPLETE;
+			} else if (pPayPalStatusType.equals(PaymentStatusCodeType.PENDING)) {
+				return PENDING;
+			} else {
+				return FAILED;
 			}
 			
 		}
