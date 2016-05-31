@@ -2,6 +2,7 @@ package br.com.dbsoft.payment;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.enums.DBSSDKEnums.PROFILE_STATUS;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;

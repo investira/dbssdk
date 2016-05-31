@@ -7,9 +7,9 @@ import javax.servlet.AsyncListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSServlet;
-import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.util.DBSSession;
 

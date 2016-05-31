@@ -6,7 +6,6 @@ package br.com.dbsoft.task;
 import java.sql.Date;
 import java.util.Comparator;
 
-import br.com.dbsoft.task.DBSTask;
 import br.com.dbsoft.util.DBSObject;
 
 /**
