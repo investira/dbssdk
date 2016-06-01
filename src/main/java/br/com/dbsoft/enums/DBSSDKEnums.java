@@ -125,16 +125,16 @@ public class DBSSDKEnums {
 	}
 	
 	public static enum PAYMENT_FROM {
-		PAYPAL		(0, "PayPal", "http://www.paypal.com");
+		PAYPAL		(0, "PayPal", "173.0.81.33");
 		
 		private int 	wCode;
 		private String 	wName;
-		private String 	wFrom;
+		private String 	wAddress;
 		
-		private PAYMENT_FROM(int pCode, String pName, String pFrom) {
+		private PAYMENT_FROM(int pCode, String pName, String pAddress) {
 			this.wCode = pCode;
 			this.wName = pName;
-			this.wFrom = pFrom;
+			this.wAddress = pAddress;
 		}
 
 		public int getCode() {
@@ -143,8 +143,8 @@ public class DBSSDKEnums {
 		public String getName() {
 			return wName;
 		}
-		public String getFrom() {
-			return wFrom;
+		public String getAddress() {
+			return wAddress;
 		}
 		
 		public static PAYMENT_FROM get(Integer pCode) {
@@ -159,11 +159,11 @@ public class DBSSDKEnums {
 			}
 		}
 		
-		public static PAYMENT_FROM getFrom(String pFrom) {
-			if (DBSObject.isNull(pFrom)) {
+		public static PAYMENT_FROM getFromAddress(String pAddress) {
+			if (DBSObject.isNull(pAddress)) {
 				return null;
 			}
-			if (PAYPAL.getFrom().equals(pFrom)) {
+			if (PAYPAL.getAddress().equals(pAddress)) {
 				return PAYPAL;
 			} else {
 				return null;
