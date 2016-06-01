@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -286,7 +289,8 @@ public class DBSFileTransfer{
 	 * @return
 	 */
 	public boolean isTimeOut(){
-		if (wTimeOut == 0L){
+		if (wTimeOut == null
+		 || wTimeOut == 0L){
 			return false;
 		}
 		return ((System.currentTimeMillis() - wTimeStarted) < wTimeOut);
@@ -601,15 +605,26 @@ public class DBSFileTransfer{
 		String 			 xFileFullName;
 		File 			 xInputFile = null;
 		FileOutputStream xDownloadedFile = null;
-		HttpURLConnection xConnection = (HttpURLConnection) pURL.openConnection();
+		HttpURLConnection xConnection = null;
+		try{
+			//Força a criação de cookie para evitar erro em sites que obriguem um sessionid no request para o download. 
+			if (CookieHandler.getDefault() == null){
+				CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+			}
+			//Abre conexão 
+			xConnection = (HttpURLConnection) pURL.openConnection();
+		}catch(Exception e){
+			wLogger.error(e);
+			return null;
+		}
 		//REQUEST===================================
 		xConnection.setRequestMethod(wMethod.getName());
 		xConnection.setDoInput(true);
 		xConnection.setDoOutput(true);
+		//Configura parametros para a request
 		if (!DBSObject.isNull(wRequestPropertys) && !wRequestPropertys.isEmpty()) {
 			StringBuilder xParams = new StringBuilder();
 			boolean first = true;
-			//Configura parametros para a request
 			for (String xProperty : wRequestPropertys) {
 				String xKey = DBSString.getSubString(xProperty, 1, xProperty.indexOf("="));
 				String xValue = DBSString.getSubString(xProperty, xProperty.indexOf("=")+2, xProperty.length());
@@ -666,7 +681,7 @@ public class DBSFileTransfer{
 		}
 		
 		//READ FILE=====================================
-		if (xConnection.getResponseCode() == 200) {
+		if (xConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 			//Salva qual o servidor utilizado
 			wRemoteServer = xConnection.getHeaderField("Server"); 
 			if (wRemoteServer == null){
