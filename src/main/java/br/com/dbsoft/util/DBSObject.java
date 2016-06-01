@@ -1,11 +1,18 @@
 package br.com.dbsoft.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 public  class DBSObject {
 	/**
@@ -209,5 +216,20 @@ public  class DBSObject {
 		}
 	}
 
-
+	//Serialize e Deserialize
+	public static String serialize(Object pObject) throws IOException { 
+        ByteArrayOutputStream xBaos = new ByteArrayOutputStream(); 
+        ObjectOutputStream xOOS = new ObjectOutputStream(xBaos); 
+        xOOS.writeObject(pObject); 
+        xOOS.close(); 
+        return DatatypeConverter.printBase64Binary(xBaos.toByteArray()); 
+	} 
+	
+	public static Object deserialize(String pString) throws IOException, ClassNotFoundException { 
+        ByteArrayInputStream xBais = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(pString)); 
+        ObjectInputStream xOIS = new ObjectInputStream(xBais); 
+        Object xObject = xOIS.readObject(); 
+        xOIS.close(); 
+        return xObject; 
+	}
 }

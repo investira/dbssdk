@@ -2,6 +2,7 @@ package br.com.dbsoft.payment;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.enums.DBSSDKEnums.PROFILE_STATUS;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
@@ -119,7 +120,7 @@ public abstract class DBSPayment implements IDBSPayment {
 	public void setProfileId(String pProfileId) {
 		wProfileId = pProfileId;
 	}
-
+	
 	//EVENTOS ===============================================================================================
 	@Override
 	public String preparePayment() throws DBSIOException {
@@ -222,4 +223,5 @@ public abstract class DBSPayment implements IDBSPayment {
 	protected boolean pvIsRecurring() {
 		return !DBSObject.isNull(wPeriod) && DBSObject.isIdValid(wFrequency);
 	}
+
 }

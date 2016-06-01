@@ -2,6 +2,7 @@ package br.com.dbsoft.cdi;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;

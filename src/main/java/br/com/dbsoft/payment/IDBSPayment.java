@@ -1,72 +1,14 @@
 package br.com.dbsoft.payment;
 
+import br.com.dbsoft.enums.DBSSDKEnums.PROFILE_STATUS;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
-import urn.ebay.apis.eBLBaseComponents.RecurringPaymentsProfileStatusType;
 
 public interface IDBSPayment {
-
-	public static enum PROFILE_STATUS {
-		ACTIVE			("Active", 		0),
-		CANCELED		("Canceled", 	1),
-		PENDING			("Pending", 	2),
-		SUSPENDED		("Suspended", 	3),
-		EXPIRED			("Expired", 	4);
-		
-		private String 	wName;
-		private int 	wCode;
-		
-		private PROFILE_STATUS(String pName, int pCode) {
-			this.wName = pName;
-			this.wCode = pCode;
-		}
-
-		public String getName() {
-			return wName;
-		}
-
-		public int getCode() {
-			return wCode;
-		}
-		
-		public static PROFILE_STATUS get(int pCode) {
-			switch (pCode) {
-			case 0:
-				return ACTIVE;
-			case 1:
-				return CANCELED;
-			case 2:
-				return PENDING;
-			case 3:
-				return SUSPENDED;
-			case 4:
-				return EXPIRED;
-			default:
-				return null;
-			}
-		}
-		
-		public static PROFILE_STATUS getFromPayPal(RecurringPaymentsProfileStatusType pPayPalStatusType) {
-			if (RecurringPaymentsProfileStatusType.ACTIVEPROFILE.equals(pPayPalStatusType)) {
-				return ACTIVE;
-			} else if (RecurringPaymentsProfileStatusType.CANCELLEDPROFILE.equals(pPayPalStatusType)) {
-				return CANCELED;
-			} else if (RecurringPaymentsProfileStatusType.PENDINGPROFILE.equals(pPayPalStatusType)) {
-				return PENDING;
-			} else if (RecurringPaymentsProfileStatusType.SUSPENDEDPROFILE.equals(pPayPalStatusType)) {
-				return SUSPENDED;
-			} else if (RecurringPaymentsProfileStatusType.EXPIREDPROFILE.equals(pPayPalStatusType)) {
-				return EXPIRED;
-			} else {
-				return null;
-			}
-			
-		}
-	}
 
 	// Mensagens
 	IDBSMessage MsgErroDefault	= new DBSMessage(MESSAGE_TYPE.ERROR, "Error");

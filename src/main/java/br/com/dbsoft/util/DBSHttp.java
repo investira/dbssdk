@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.util.DBSObject;
 
 public class DBSHttp {
 

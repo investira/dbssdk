@@ -10,6 +10,7 @@ import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
@@ -21,15 +22,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.Message.RecipientType;
 
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSSDK.NETWORK.PROTOCOL;
-import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSEmail;
+import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSObject;
 
 

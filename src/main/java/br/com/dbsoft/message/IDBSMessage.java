@@ -18,7 +18,7 @@ public interface IDBSMessage extends Cloneable{
 	public static enum MESSAGE_TYPE
 	{
 	    ABOUT 		("a", "Sobre", "-i_about", false, 1),
-	    SUCCESS		("s", "Sucesso", "-i_success -green", false, 1),
+	    SUCCESS		("s", "Sucesso", "-i_sucess -green", false, 1),
 	    INFORMATION	("i", "Informação", "-i_information", false, 10),
 	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
 	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
