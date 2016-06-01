@@ -727,6 +727,14 @@ public class DBSFile {
 	public static String getServerLocalPath(){
 		return System.getProperty(SYSTEM_PROPERTY.SERVER_BASE_DIR);
 	}
+	
+	/**
+	 * Retorna caminho da aplicação
+	 * @return
+	 */
+	public static String getAppLocalPath(){
+		 return System.getProperty("user.dir");
+	}
 
 	/**
 	 * Retorna somente o nome do arquivo a partir da caminho informado.<p>
