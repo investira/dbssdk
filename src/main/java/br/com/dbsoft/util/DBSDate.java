@@ -953,6 +953,9 @@ public class DBSDate{
 			return null;
 		}
 	}
+	public static Timestamp addDays(Timestamp pDataBase, int pPrazo){
+		return toTimestamp(addDays(toDate(pDataBase), pPrazo));
+	}
 
 	/**
 	 * Calcula a data a partir da database adicionada de dias.<br/>
@@ -1136,6 +1139,9 @@ public class DBSDate{
 	public static boolean isBusinessDay(Connection pConexao, Date pData){
 		return isBusinessDay(pConexao, pData, -1);
 	}
+	public static boolean isBusinessDay(Connection pConexao, Timestamp pData){
+		return isBusinessDay(pConexao, toDate(pData), -1);
+	}
 	
 	/**
 	 * Retorna a quantidade de feriados entre duas datas.<br/>
@@ -1250,6 +1256,9 @@ public class DBSDate{
 	 */
 	public static Date getNextDate(Connection pConexao, Date pDataBase, int pPrazo, boolean pUtil){
 		return getNextDate(pConexao, pDataBase, pPrazo, pUtil, -1, null);
+	}
+	public static Timestamp getNextDate(Connection pConexao, Timestamp pDataBase, int pPrazo, boolean pUtil){
+		return toTimestamp(getNextDate(pConexao, toDate(pDataBase), pPrazo, pUtil, -1, null));
 	}
 	
 	/**
@@ -1539,6 +1548,9 @@ public class DBSDate{
 		}	
 	    xCalendar.setTime(pData); 
 		return xCalendar.get(Calendar.DAY_OF_WEEK);
+	}
+	public static int getWeekdayNumber(Timestamp pData){
+		return getWeekdayNumber(toDate(pData));
 	}
 	
 	/**
