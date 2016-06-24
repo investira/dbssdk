@@ -89,6 +89,9 @@ public class DBSServletConnection {
 		}
 	}
 	
+	public Integer getResponseCode() throws IOException {
+		return wServletConnection.getResponseCode();
+	}
 	
 //	public void teste() throws ClassNotFoundException{
 //		URL xURL = null;
