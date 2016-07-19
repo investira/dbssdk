@@ -2,6 +2,7 @@ package br.com.dbsoft.core;
 
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,21 +19,37 @@ public abstract class DBSServlet extends HttpServlet {
 
 	protected Logger wLogger = Logger.getLogger(this.getClass());
 	
-	private HttpServletRequest 	wHttpServletRequest;
-	private HttpServletResponse wHttpServletResponse;
 	private Boolean 			wAllowPost = true;
 	private Boolean 			wAllowGet = true;
 
+	/**
+	 * Se permite chamada POST. O padrão é <b>true</b>.
+	 * @return
+	 */
 	public Boolean getAllowPost() {return wAllowPost;}
+	/**
+	 * Se permite chamada POST. O padrão é <b>true</b>.
+	 * @return
+	 */
 	public void setAllowPost(Boolean pAllowPost) {wAllowPost = pAllowPost;}
 
+	/**
+	 * Se permite chamada GET. O padrão é <b>true</b>.
+	 * @return
+	 */
 	public Boolean getAllowGet() {return wAllowGet;}
+	/**
+	 * Se permite chamada GET. O padrão é <b>true</b>.
+	 * @param pAllowGet
+	 */
 	public void setAllowGet(Boolean pAllowGet) {wAllowGet = pAllowGet;}
 	
-	public HttpServletRequest getHttpServletRequest() {return wHttpServletRequest;}
-	
-	public HttpServletResponse getHttpServletResponse() {return wHttpServletResponse;}
-
+	/**
+	 * Chamado em qualquer request, seja <b>post</b> ou <b>get</b>.
+	 * @param pRequest
+	 * @param pResponse
+	 * @throws DBSIOException
+	 */
 	protected abstract void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException;
 	
 	@Override
@@ -41,10 +58,13 @@ public abstract class DBSServlet extends HttpServlet {
 		try {
 			if (wAllowPost){
 				pvOnRequest(pRequest, pResponse);
+//				xContext.complete();
 			}else{
 				super.doPost(pRequest, pResponse);
 			}
-		} catch (ServletException | IOException | DBSIOException e) {
+		} catch (ServletException | StreamCorruptedException | DBSIOException e) {
+			wLogger.error(e);
+		} catch (IOException e) {
 			wLogger.error(e);
 		}
 	}
@@ -65,8 +85,6 @@ public abstract class DBSServlet extends HttpServlet {
 	
 	private void pvOnRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException {
 //		System.out.println(("--- ON REQUEST"));
-		wHttpServletRequest = pRequest;
-		wHttpServletResponse = pResponse;
 		onRequest(pRequest, pResponse);
 	}
 

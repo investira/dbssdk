@@ -23,81 +23,111 @@ public abstract class DBSResponseServlet extends DBSServlet {
 	protected Logger wLogger = Logger.getLogger(this.getClass());
 	
 	private static final long serialVersionUID = -8443498619129984309L;
-	
-	private ObjectOutputStream 	wObjectOutputStream;
-	private ObjectInputStream  	wObjectInputStream;
+//	private InputStream			wInputStream;
+//	private OutputStream		wOutputStream;
+//	private ObjectOutputStream 	wObjectOutputStream = null;
+//	private ObjectInputStream  	wObjectInputStream = null;
+
 	private String 				wIPAddress;
 
 	public DBSResponseServlet() {
 		setAllowGet(false);
 	}
 	
+	/**
+	 * Retorna IP do chamador.
+	 * @return
+	 */
 	public String getIPAddress() {
 		return wIPAddress;
 	}
 
-	public boolean afterRequest() throws DBSIOException {return true;}
+	/**
+	 * Implementar leitura dos dados recebido utilizando readObject.
+	 * @return
+	 * @throws DBSIOException
+	 */
+	public abstract void readInputStream(ObjectInputStream pOutputStream) throws DBSIOException;
 	
-	public void beforeResponse() throws DBSIOException {}
+	/**
+	 * Implementar escrita dos dados para serem enviados utilizando writeObject.
+	 * @throws DBSIOException
+	 */
+	public abstract void writeOutputStream(ObjectOutputStream pInputStream) throws DBSIOException;
 
 
 	@Override
 	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) throws DBSIOException {
 		try {
+			
+			InputStream			wInputStream = null;
+			OutputStream		wOutputStream = null;
+			ObjectOutputStream 	wObjectOutputStream = null;
+			ObjectInputStream  	wObjectInputStream = null;
+//			System.out.println("-------------------onRequest START \t" + pRequest.getHeaderNames().toString());
 //			pResponse.setContentType(CONTENT_TYPE.APPLICATION_JAVA_SERIALIZED_OBJECT);
 			pResponse.setContentType(CONTENT_TYPE.APPLICATION_JSON); 
-			pResponse.setHeader("Cache-Control", "no-cache");	 
+			pResponse.setHeader("Cache-Control", "no-cache");	
 
 			wIPAddress = pvGetIpRequest(pRequest);
 	        try{
-		        InputStream xIS = pRequest.getInputStream();
-		        wObjectInputStream = new ObjectInputStream(xIS);
+		        wInputStream = pRequest.getInputStream();
+		        wObjectInputStream = new ObjectInputStream(wInputStream);
 	        }catch(EOFException e){
 	        	wObjectInputStream = null;
 	        }
 
-	        afterRequest();
-			
+	        readInputStream(wObjectInputStream);
+
 	        try{
-		        OutputStream xOS = pResponse.getOutputStream();
-		        wObjectOutputStream = new ObjectOutputStream(xOS);
+	        	wOutputStream = pResponse.getOutputStream();
+		        wObjectOutputStream = new ObjectOutputStream(wOutputStream);
 	        }catch(EOFException e){
 	        	wObjectOutputStream = null;
 	        }
 	        
-	        beforeResponse();
+	        writeOutputStream(wObjectOutputStream);
 
-
-	        wObjectOutputStream.flush();
-	        wObjectOutputStream.close();
+	        if (wObjectOutputStream !=null){
+		        wObjectOutputStream.flush();
+	        	wObjectOutputStream.close();
+	        	wOutputStream.close();
+	        }
+	        
+	        if (wObjectInputStream !=null){
+	        	wObjectInputStream.close();
+	        	wInputStream.close();
+	        }
+//			System.out.println("-----------------------onRequest END \t" + pRequest.getRequestedSessionId());
 
 		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
 	}
 	
-	public void writeObject(Object pObject) throws DBSIOException{
-		if (wObjectInputStream!=null){
-			DBSHttp.ObjectOutputStreamWriteObject(wObjectOutputStream, pObject);
-		}
+	
+	/**
+	 * Escreve objeto no OutputStream.
+	 * @param pObject
+	 * @throws DBSIOException
+	 */
+	public void writeObject(ObjectOutputStream pOutputStream, Object pObject) throws DBSIOException{
+		DBSHttp.ObjectOutputStreamWriteObject(pOutputStream, pObject);
 	}
 	
 	/**
-	 * Retorna objeto a partir do objeto JSON lido do inputstream.<br/>
+	 * Retorna objeto a partir do objeto JSON lido do InputStream.<br/>
 	 * A classe do retornada deverá conter variáveis com os mesmos nomes dos campos contidos no objeto JSON lido. Não são necessários <i>setter e getter</i>.<br/>
 	 * @param pClass
 	 * @return
 	 * @throws DBSIOException
 	 */
-	public <T> T readObject(Class<T> pClass) throws DBSIOException{
-		if (wObjectInputStream!=null){
-			return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
-		}else{
-			return null;
-		}
+	public <T> T readObject(ObjectInputStream pInputStream, Class<T> pClass) throws DBSIOException{
+//		System.out.println("---readObject START");
+       	return DBSHttp.ObjectInputStreamReadObject(pInputStream, pClass);
 	}
 
-	public static String pvGetIpRequest(HttpServletRequest pRequest) {
+	private static String pvGetIpRequest(HttpServletRequest pRequest) {
         String xIPAddress = pRequest.getHeader("X-FORWARDED-FOR");
         
         if (xIPAddress == null) {

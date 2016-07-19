@@ -27,6 +27,7 @@ public class DBSServletConnection {
 	private HttpURLConnection 	wServletConnection;
 	private ObjectOutputStream 	wObjectOutputStream;
 	private ObjectInputStream 	wObjectInputStream;
+	private OutputStream 		wOutputStream;
 	private InputStream 		wInputStream;
 	
 	public String getURL() {return wURL;}
@@ -46,17 +47,28 @@ public class DBSServletConnection {
 			wServletConnection.setDefaultUseCaches(false);
 			wServletConnection.setRequestProperty("Content-Type",CONTENT_TYPE.APPLICATION_JSON);
 //			wServletConnection.setRequestProperty("Content-Type","application/x-java-serialized-object");
-	        OutputStream xOutputStream = wServletConnection.getOutputStream();
-	        wObjectOutputStream = new ObjectOutputStream(xOutputStream);
+	        wOutputStream = wServletConnection.getOutputStream();
+	        wObjectOutputStream = new ObjectOutputStream(wOutputStream);
 		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
 	}
 	
+	/**
+	 * Escreve objeto no OutputStream.<br/>
+	 * @param pObject
+	 * @throws DBSIOException
+	 */
 	public void writeObject(Object pObject) throws DBSIOException{
 		DBSHttp.ObjectOutputStreamWriteObject(wObjectOutputStream, pObject);
 	}
 	
+	/**
+	 * Retorna objeto a partir do objeto JSON lido do InputStream.<br/>
+	 * @param pClass
+	 * @return
+	 * @throws DBSIOException
+	 */
 	public <T> T readObject(Class<T> pClass) throws DBSIOException{
 		return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
 	}
@@ -77,68 +89,18 @@ public class DBSServletConnection {
 	}
 	
 	/**
-	 * Disconecta com a servlet
+	 * Desconecta com a servlet
 	 * @throws DBSIOException
 	 */
 	public void disconnect() throws DBSIOException{
         try {
+//        	wObjectOutputStream.close();
+//        	wOutputStream.close();
 	        wObjectInputStream.close();
 	        wInputStream.close();
         } catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
 	}
-	
-	
-//	public void teste() throws ClassNotFoundException{
-//		URL xURL = null;
-//	    try {
-//	        xURL = new URL("http://localhost:8080/dbsusrapp/login");
-//	        HttpURLConnection xServletConnection = (HttpURLConnection) xURL.openConnection();
-//	        xServletConnection.setDoInput(true);
-//	        xServletConnection.setDoOutput(true);
-//	        xServletConnection.setUseCaches(false);
-//	        xServletConnection.setDefaultUseCaches(false);
-////	        xServletConnection.setRequestMethod("POST");
-//	        xServletConnection.setRequestProperty("Content-Type","application/json");
-////	        xServletConnection.setRequestProperty("Content-Type","application/x-java-serialized-object");
-//	        DBSUser xUser = new DBSUser();
-//	        xUser.setUser("Ricardo Avião Áções");
-//	        xUser.setPassword("teste");
-////	        xUser.setData(DBSDate.getNowDate());
-////	        Gson xJSON = new Gson();
-//
-//	        OutputStream xOutputStream = xServletConnection.getOutputStream();
-//	        ObjectOutputStream xOOS = new ObjectOutputStream(xOutputStream);
-//	        
-//	        xOOS.writeObject(xUser);
-////	        xOOS.writeObject(xJSON.toJson(xUser));
-//	        xOOS.flush();
-//	        xOOS.close();
-//	        
-//	        InputStream xInputStream = xServletConnection.getInputStream();
-//	        ObjectInputStream xOIS = new ObjectInputStream(xInputStream);
-//	        DBSUser xUser2 = (DBSUser) xOIS.readObject();
-////	        String xJSon2 = (String) xOIS.readObject();
-////	        DBSUser xUser2 = xJSON.fromJson(xJSon2, DBSUser.class);
-//	        		
-//	        if (xUser2 != null){
-//	            System.out.println(xUser2.getUser());
-//	            System.out.println(xUser2.getPassword());
-//	            System.out.println(xUser2.getToken());
-//	        }else{
-//	        	System.out.println("sem parametros");
-//	        }
-//	        //JOptionPane.showMessageDialog(null, result);
-//	        xOIS.close();
-//	        xInputStream.close();
-//
-//	    } catch (MalformedURLException e) {
-//	        // TODO Auto-generated catch block
-//	        e.printStackTrace();
-//	    } catch (IOException e) {
-//	        // TODO Auto-generated catch block
-//	        e.printStackTrace();
-//	    }
-//	}	
+
 }

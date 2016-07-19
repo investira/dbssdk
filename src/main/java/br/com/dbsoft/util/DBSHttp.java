@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.StreamCorruptedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
@@ -126,8 +128,10 @@ public class DBSHttp {
 	public static String getServerURLString(HttpServletRequest pContext){
 		if (pContext == null){return "";}
 		StringBuilder xLink = new StringBuilder();
+		
 		xLink.append(pContext.getScheme()).append("://");
 		xLink.append(pContext.getServerName());
+		
 		if (!DBSObject.isEmpty(pContext.getServerPort())){
 			xLink.append(":").append(pContext.getServerPort());
 		}
@@ -147,8 +151,8 @@ public class DBSHttp {
 				xString.append("&");
 				xString.append(xParametro.trim());
 				xString.append("=");
-					String xValue = DBSString.toString(pParams.get(xParametro),"").trim();
-					xString.append(URLEncoder.encode(xValue, ENCODE.ISO_8859_1));
+				String xValue = DBSString.toString(pParams.get(xParametro),"").trim();
+				xString.append(URLEncoder.encode(xValue, ENCODE.ISO_8859_1));
 			}
 			return xString.toString();
 		} catch (UnsupportedEncodingException e) {
@@ -186,7 +190,7 @@ public class DBSHttp {
 	
 	
 	/**
-	 * Grava objeto JSON do outputstream.<br/>
+	 * Escreve objeto JSON do OutputStream.<br/>
 	 * @param pObjectOutputStream
 	 * @param pObject
 	 * @throws DBSIOException
@@ -196,7 +200,6 @@ public class DBSHttp {
 		try {
 			Gson xJSON = new Gson();
 			pObjectOutputStream.writeObject(xJSON.toJson(pObject));
-//			wObjectOutputStream.writeObject(pObject);
 		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
@@ -204,7 +207,7 @@ public class DBSHttp {
 	
 
 	/**
-	 * Retorna objeto a partir do objeto JSON lido do inputstream.<br/>
+	 * Retorna objeto a partir do objeto JSON lido do InputStream.<br/>
 	 * A classe do retornada deverá conter variáveis com os mesmos nomes dos campos contidos no objeto JSON lido. Não são necessários <i>setter e getter</i>.<br/>
 	 * Os objetos são lidos sequencialmente(FIFO/PEPS). O primeiro objeto enviado, será o primeiro lido.
 	 * @param pObjectInputStream
@@ -215,13 +218,17 @@ public class DBSHttp {
 	public static <T> T ObjectInputStreamReadObject(ObjectInputStream pObjectInputStream, Class<T> pClass) throws DBSIOException{
 		if (pObjectInputStream == null){return null;}
 		try {
-			Gson 	xJSON = new Gson();
-			String 	xS = pObjectInputStream.readObject().toString();
+			Object xObject = pObjectInputStream.readObject();
+			if (xObject == null) {return null;}
+			Gson   xJSON = new Gson();
+			String xS = xObject.toString();
 			return xJSON.fromJson(xS, pClass);
-//			return (T) wObjectInputStream.readObject();
-		} catch (EOFException e){
+		} catch (EOFException | StreamCorruptedException e){
 			return null;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (JsonSyntaxException | ClassNotFoundException e) {
+			DBSIO.throwIOException(e);
+			return null;
+		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 			return null;
 		}
