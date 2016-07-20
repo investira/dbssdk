@@ -94,13 +94,18 @@ public class DBSServletConnection {
 	 */
 	public void disconnect() throws DBSIOException{
         try {
-//        	wObjectOutputStream.close();
-//        	wOutputStream.close();
+        	wObjectOutputStream.close();
+        	wOutputStream.close();
 	        wObjectInputStream.close();
 	        wInputStream.close();
         } catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
 	}
+	
+	public Integer getResponseCode() throws IOException {
+		return wServletConnection.getResponseCode();
+	}
+	
 
 }
