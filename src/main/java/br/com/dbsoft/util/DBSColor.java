@@ -16,7 +16,7 @@ public class DBSColor {
 	private float wHue;
 	private float wSaturation;
 	private float wLightness;
-	private double wAlpha;
+	private double wAlpha= 1D;
 
 	private static final Converter[] CONVERTERS = { 
 			new RgbConverter(), 
@@ -206,7 +206,7 @@ public class DBSColor {
 			Matcher xMatcher = getPattern().matcher(pString);
 			if (xMatcher.find()) {
 				double xAlpha = 1.0;
-				if (xMatcher.groupCount() == 4) {
+				if (xMatcher.groupCount() >= 4) {
 					xAlpha = Double.parseDouble(xMatcher.group(4));
 				}
 				return createColor(xMatcher, xAlpha);
@@ -226,10 +226,10 @@ public class DBSColor {
 	}
 
 	private static class RgbConverter extends Converter {
-		private static final Pattern RGB_PATTERN = Pattern.compile("^\\s*rgb\\(\\s*" + 
-																	"(\\d{1,3})\\s*,\\s*" + 
-																	"(\\d{1,3})\\s*,\\s*" + 
-																	"(\\d{1,3})\\s*\\)\\s*$");
+		private static final Pattern RGB_PATTERN = Pattern.compile("^\\s*rgb\\(" + 
+																	"\\s*(\\d{1,3})\\s*," + 
+																	"\\s*(\\d{1,3})\\s*," + 
+																	"\\s*(\\d{1,3})\\s*\\)\\s*$");
 
 		@Override
 		protected Pattern getPattern() {
@@ -238,10 +238,10 @@ public class DBSColor {
 	}
 
 	private static class RgbPctConverter extends Converter {
-		private static final Pattern RGBPCT_PATTERN = Pattern.compile("^\\s*rgb\\(\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*\\)\\s*$");
+		private static final Pattern RGBPCT_PATTERN = Pattern.compile("^\\s*rgb\\(" + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*\\)\\s*$");
 
 		@Override
 		protected Pattern getPattern() {
@@ -256,11 +256,11 @@ public class DBSColor {
 	}
 
 	private static class RgbaConverter extends RgbConverter {
-		private static final Pattern RGBA_PATTERN = Pattern.compile("^\\s*rgba\\(\\s*" + 
-																	"(\\d{1,3})\\s*,\\s*" +
-																	"(\\d{1,3})\\s*,\\s*" + 
-																	"(\\d{1,3})\\s*,\\s*" + 
-																	"(0|1|0\\.\\d+)\\s*\\)\\s*$");
+		private static final Pattern RGBA_PATTERN = Pattern.compile("^\\s*rgba\\(" + 
+																	"\\s*(\\d{1,3})\\s*," +
+																	"\\s*(\\d{1,3})\\s*," + 
+																	"\\s*(\\d{1,3})\\s*," + 
+																	"\\s*((1|0\\.\\d+)|(1.0)|(0))\\s*\\)\\s*$");
 
 		@Override
 		protected Pattern getPattern() {
@@ -269,11 +269,11 @@ public class DBSColor {
 	}
 
 	private static class RgbaPctConverter extends RgbPctConverter {
-		private static final Pattern RGBAPCT_PATTERN = Pattern.compile("^\\s*rgba\\(\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(0|1|0\\.\\d+)\\s*\\)\\s*$");
+		private static final Pattern RGBAPCT_PATTERN = Pattern.compile("^\\s*rgba\\(" + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*((1|0\\.\\d+)|(1.0)|(0))\\s*\\)\\s*$");
 
 		@Override
 		protected Pattern getPattern() {
@@ -311,10 +311,10 @@ public class DBSColor {
 	}
 
 	private static class HslConverter extends Converter {
-		private static final Pattern HSL_PATTERN = Pattern.compile("^\\s*hsl\\(\\s*" + 
-																"(\\d{1,3}|\\d{1,3}\\.\\d+)\\s*,\\s*" + 
-																"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*\\)\\s*$");
+		private static final Pattern HSL_PATTERN = Pattern.compile("^\\s*hsl\\(" + 
+																"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)\\s*," + 
+																"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*\\)\\s*$");
 		
 		@Override
 		protected Pattern getPattern() {
@@ -360,12 +360,13 @@ public class DBSColor {
 	}
 
 	private static class HslaConverter extends HslConverter {
-		private static final Pattern HSLA_PATTERN = Pattern.compile("^\\s*hsla\\(\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" + 
-																	"(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*,\\s*" +
-																	"(0|1|0\\.\\d+)\\s*\\)\\s*$");
-
+		private static final Pattern HSLA_PATTERN = Pattern.compile("^\\s*hsla\\(" + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
+																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," +
+																	"\\s*((1|0\\.\\d+)|(1.0)|(0))\\s*\\)\\s*$");
+//		((1|0\.\d+)|(1.0))
+		//\\s*(0|1|0\\.\\d+)\\s*\\)\\s*$"
 		@Override
 		protected Pattern getPattern() {
 			return HSLA_PATTERN;

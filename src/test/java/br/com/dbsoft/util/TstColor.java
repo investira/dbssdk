@@ -59,13 +59,20 @@ public class TstColor {
 		Assert.assertEquals(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 0.5)").asHsb(), "hsb(202.85715, 76.36363%, 64.70589%)");
 		Assert.assertEquals(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 0.5)").asHsba(), "hsba(202.85715, 76.36363%, 64.70589%, 0.5)");
 
+		Assert.assertEquals(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 1.0)").asHsba(), "hsba(202.85715, 76.36363%, 64.70589%, 1)");
+		Assert.assertEquals(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 0.0)").asHsba(), "hsba(202.85715, 76.36363%, 64.70589%, 0)");
+		Assert.assertEquals(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 0)").asHsba(), "hsba(202.85715, 76.36363%, 64.70589%, 0)");
 	}
 
 	@Test
 	public void toFromColor(){
+//		System.out.println(DBSColor.fromString("hsla(202.85715, 61.76471%, 40%, 0.5)").asRgba());
 //		System.out.println(DBSColor.fromString("hsl(120.0, 100.0%, 82.1%)").asHsl());
 //		System.out.println(DBSColor.fromString("hsl(120.0,100.0% ,82.0%)").asHsl());
 //		System.out.println(DBSColor.fromString("hsl(217.5, 55.17%, 11.37%)").asHsl());
+		System.out.println(DBSColor.fromString("hsla(217.5, 0.2096436%, 0.02384182%, 1.0)").asHsla());
+//		System.out.println(DBSColor.fromString("hsla(217.5, 0.2096436%, 0.02323%, 1)").asHsla());
+		
 		
 		
 	}
