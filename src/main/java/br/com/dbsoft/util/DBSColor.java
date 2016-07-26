@@ -10,13 +10,184 @@ import org.apache.log4j.Logger;
 public class DBSColor {
 	protected static Logger			wLogger = Logger.getLogger(DBSColor.class);
 	
+	private interface ALPHA{
+		float getAlpha();
+	}
+
+	private interface HS{
+		float getHue();
+		float getSaturation();
+	}
+
+	public interface RGB{
+		int getRed();
+		int getGreen();
+		int getBlue();
+	}
+	
+	public interface HSB extends HS{
+		float getBrightness();
+	}
+	public interface HSL extends HS{
+		float getLightness();
+	}
+
+	public interface RGBA extends RGB, ALPHA{}
+	public interface HSBA extends HSB, ALPHA{}
+	public interface HSLA extends HSL, ALPHA{}
+
+
+	private abstract class HSValue implements HS{
+		@Override
+		public float getHue() {return wHue;}
+	}
+
+	
+	private class RGBValue implements RGB{
+		@Override
+		public int getRed() {return wRed;}
+		@Override
+		public int getGreen() {return wGreen;}
+		@Override
+		public int getBlue() {return wBlue;}
+		
+		@Override
+		public String toString() {
+			return String.format("rgb(%s, %s, %s)", getRed(), getGreen(), getBlue());
+		}
+	}
+	
+	private class HSBValue extends HSValue implements HSB{
+		@Override
+		public float getSaturation() {return wSaturationB;}
+		@Override
+		public float getBrightness() {return wBrightness;}
+
+		@Override
+		public String toString() {
+			return String.format("hsb(%s, %s%%, %s%%)", getHue(), getSaturation(), getBrightness());
+		}
+	}
+
+	private class HSLValue extends HSValue implements HSL{
+		@Override
+		public float getSaturation() {return wSaturationL;}
+		@Override
+		public float getLightness() {return wLightness;}
+
+		@Override
+		public String toString() {
+			return String.format("hsl(%s, %s%%, %s%%)", getHue(), getSaturation(), getLightness());
+		}
+		
+	}
+
+	private class RGBAValue extends RGBValue implements RGBA{
+		@Override
+		public float getAlpha() {return wAlpha;}
+		@Override
+		public String toString() {
+			return String.format("rgba(%s, %s, %s, %s)", getRed(), getGreen(), getBlue(), getAlpha());
+		}
+	}
+
+	private class HSBAValue extends HSBValue implements HSBA{
+		@Override
+		public float getAlpha() {return wAlpha;}
+		@Override
+		public String toString() {
+			return String.format("hsba(%s, %s%%, %s%%, %s)", getHue(), getSaturation(), getBrightness(), getAlpha());
+		}
+	}
+
+	private class HSLAValue extends HSLValue implements HSLA{
+		@Override
+		public float getAlpha() {return wAlpha;}
+		@Override
+		public String toString() {
+			return String.format("hsla(%s, %s%%, %s%%, %s)", getHue(), getSaturation(), getLightness(), getAlpha());
+		}
+	}
+
+	private RGBValue wRGBValue = new RGBValue();
+	private HSBValue wHSBValue = new HSBValue();
+	private HSLValue wHSLValue = new HSLValue();
+	private RGBAValue wRGBAValue = new RGBAValue();
+	private HSBAValue wHSBAValue = new HSBAValue();
+	private HSLAValue wHSLAValue = new HSLAValue();
+	
 	private int wRed;
 	private int wGreen;
 	private int wBlue;
 	private float wHue;
-	private float wSaturation;
+	private float wSaturationB;
+	private float wBrightness;
+	private float wSaturationL;
 	private float wLightness;
-	private double wAlpha= 1D;
+	private float wAlpha = 1f;
+
+	public DBSColor(int pRed, int pGreen, int pBlue, float pAlpha) {
+		pvSetColorAttributes(this, pRed, pGreen, pBlue, pAlpha);
+	}
+
+	public DBSColor(String pColorString){
+		DBSColor xColor = fromString(pColorString);
+		pvSetColorAttributes(this, xColor.wRed, xColor.wGreen, xColor.wBlue, xColor.wAlpha);
+	}
+
+	/**
+	 * Cria cor a partir de uma string: ex:rgb(10,23,42), hsl(200, 20%, 10%)
+	 * @param pColor
+	 * @return
+	 */
+	public static DBSColor fromString(String pColorString) {
+		pColorString = pColorString.trim().toLowerCase();
+		for (Converter xConverter : CONVERTERS) {
+			DBSColor xColor = xConverter.getColor(pColorString);
+			if (xColor != null) {
+				return xColor;
+			}
+		}
+		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColorString));
+		return null;
+	}
+	
+	
+	public String toHex() {
+		return String.format("#%02x%02x%02x", wRGBValue.getRed(), wRGBValue.getGreen(), wRGBValue.getBlue());
+	}
+	public RGB toRGB(){
+		return wRGBValue;
+	}
+	public RGBA toRGBA(){
+		return wRGBAValue;
+	}
+	public HSL toHSL(){
+		return wHSLValue;
+	}
+	public HSLA toHSLA(){
+		return wHSLAValue;
+	}
+	public HSB toHSB(){
+		return wHSBValue;
+	}
+	public HSBA toHSBA(){
+		return wHSBAValue;
+	}
+	
+
+	@Override
+	public boolean equals(Object pColor) {
+		if (pColor == null) {
+			return false;
+		}
+
+		if (!(pColor instanceof DBSColor)) {
+			return false;
+		}
+
+		return toRGBA().equals(((DBSColor) pColor).toRGBA());
+	}
 
 	private static final Converter[] CONVERTERS = { 
 			new RgbConverter(), 
@@ -29,130 +200,34 @@ public class DBSColor {
 			new HslaConverter() 
 	};
 
-	public float getHue() {return wHue;}
-	public void setHue(float pHue) {wHue = pHue;}
-
-	public float getSaturation() {return wSaturation;}
-	public void setSaturation(float pSaturation) {wSaturation = pSaturation;}
-
-	public float getLightness() {return wLightness;}
-	public void setLightness(float pLightness) {wLightness = pLightness;}
-
-	public int getRed() {return wRed;}
-	public void setRed(int pRed) {wRed = pRed;}
-
-	public int getGreen() {return wGreen;}
-	public void setGreen(int pGreen) {wGreen = pGreen;}
-
-	public int getBlue() {return wBlue;}
-	public void setBlue(int pBlue) {wBlue = pBlue;}
-
-	public double getAlpha() {return wAlpha;}
-	public void setAlpha(double pAlpha) {wAlpha = pAlpha;}
-
-	/*
-	 * Guesses what format the input color is in.
+	
+	/**
+	 * Configura atributos do DBSColor informado utilizando os RGBA.
+	 * @param pDBSColor
+	 * @param pRed
+	 * @param pGreen
+	 * @param pBlue
+	 * @param pAlpha
+	 * @return
 	 */
-	public static DBSColor fromString(String pColor) {
-		pColor = pColor.trim().toLowerCase();
-		for (Converter converter : CONVERTERS) {
-			DBSColor color = converter.getColor(pColor);
-			if (color != null) {
-				return color;
-			}
-		}
-		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColor));
-		return null;
-	}
-	
-
-	
-	public String asRgb() {
-		return String.format("rgb(%d, %d, %d)", wRed, wGreen, wBlue);
-	}
-
-	public String asRgba() {
-		String alphaString;
-		if (wAlpha == 1) {
-			alphaString = "1";
-		} else if (wAlpha == 0) {
-			alphaString = "0";
-		} else {
-			alphaString = Double.toString(wAlpha);
-		}
-		return String.format("rgba(%d, %d, %d, %s)", wRed, wGreen, wBlue, alphaString);
-	}
-
-	public String asHex() {
-		return String.format("#%02x%02x%02x", wRed, wGreen, wBlue);
-	}
-
-	public String asHsba(){
-		String alphaString;
-		if (wAlpha == 1) {
-			alphaString = "1";
-		} else if (wAlpha == 0) {
-			alphaString = "0";
-		} else {
-			alphaString = Double.toString(wAlpha);
-		}
-		float[] xHSBValues = pvGetHSB(getRed(), getGreen(), getBlue());
-		return String.format("hsba(%s, %s, %s, %s)", xHSBValues[0], xHSBValues[1] + "%", xHSBValues[2] + "%", alphaString);
-	}
-	
-	public String asHsb(){
-		float[] xHSBValues = pvGetHSB(getRed(), getGreen(), getBlue());
-		return String.format("hsb(%s, %s, %s)", xHSBValues[0], xHSBValues[1] + "%", xHSBValues[2] + "%");
-	}
-	
-	public String asHsla(){
-		String alphaString;
-		if (wAlpha == 1) {
-			alphaString = "1";
-		} else if (wAlpha == 0) {
-			alphaString = "0";
-		} else {
-			alphaString = Double.toString(wAlpha);
-		}
-		float[] xHSLValues = pvGetHSL(getRed(), getGreen(), getBlue());
-		return String.format("hsla(%s, %s, %s, %s)", xHSLValues[0], xHSLValues[1] + "%", xHSLValues[2] + "%", alphaString);
-	}
-	
-	public String asHsl(){
-		float[] xHSLValues = pvGetHSL(getRed(), getGreen(), getBlue());
-		return String.format("hsl(%s, %s, %s)", xHSLValues[0], xHSLValues[1] + "%", xHSLValues[2] + "%");
-	}
-
-	@Override
-	public String toString() {
-		return "Color: " + asRgba();
-	}
-
-	@Override
-	public boolean equals(Object pColor) {
-		if (pColor == null) {
-			return false;
-		}
-
-		if (!(pColor instanceof DBSColor)) {
-			return false;
-		}
-
-		return asRgba().equals(((DBSColor) pColor).asRgba());
-	}
-
-	private static DBSColor pvFromRGBA(int pRed, int pGreen, int pBlue, double pAlpha) {
-		DBSColor xColor = new DBSColor();
-		float[] xHSBValues = new float[3];
-		xColor.setRed(pRed);
-		xColor.setGreen(pGreen);
-		xColor.setBlue(pBlue);
-		xColor.setAlpha(pAlpha);
-		xHSBValues = pvGetHSL(pRed, pGreen, pBlue); 
-		xColor.setHue(xHSBValues[0]);
-		xColor.setSaturation(xHSBValues[1]);
-		xColor.setLightness(xHSBValues[2]);
-		return xColor;
+	private static DBSColor pvSetColorAttributes(DBSColor pDBSColor, int pRed, int pGreen, int pBlue, float pAlpha) {
+		//ALPHA
+		pDBSColor.wAlpha = pAlpha;
+		//RGB
+		pDBSColor.wRed = pRed;
+		pDBSColor.wGreen = pGreen;
+		pDBSColor.wBlue = pBlue;
+		float[] xHSValues = new float[3];
+		//HSL
+		xHSValues = pvGetHSL(pRed, pGreen, pBlue); 
+		pDBSColor.wHue = xHSValues[0];
+		pDBSColor.wSaturationL = xHSValues[1];
+		pDBSColor.wLightness = xHSValues[2];
+		//HSB
+		xHSValues = pvGetHSB(pRed, pGreen, pBlue); 
+		pDBSColor.wSaturationB = xHSValues[1];
+		pDBSColor.wBrightness = xHSValues[2];
+		return pDBSColor;
 	}
 	
 	private static float[] pvGetHSB(int pRed, int pGreen, int pBlue){
@@ -205,17 +280,17 @@ public class DBSColor {
 		public DBSColor getColor(String pString) {
 			Matcher xMatcher = getPattern().matcher(pString);
 			if (xMatcher.find()) {
-				double xAlpha = 1.0;
+				float xAlpha = 1f;
 				if (xMatcher.groupCount() >= 4) {
-					xAlpha = Double.parseDouble(xMatcher.group(4));
+					xAlpha = Float.parseFloat(xMatcher.group(4));
 				}
 				return createColor(xMatcher, xAlpha);
 			}
 			return null;
 		}
 
-		protected DBSColor createColor(Matcher pMatcher, double pAlpha) {
-			return DBSColor.pvFromRGBA(fromMatchGroup(pMatcher, 1), fromMatchGroup(pMatcher, 2), fromMatchGroup(pMatcher, 3), pAlpha);
+		protected DBSColor createColor(Matcher pMatcher, float pAlpha) {
+			return new DBSColor(fromMatchGroup(pMatcher, 1), fromMatchGroup(pMatcher, 2), fromMatchGroup(pMatcher, 3), pAlpha);
 		}
 
 		protected short fromMatchGroup(Matcher pMatcher, int pIndex) {
@@ -322,7 +397,7 @@ public class DBSColor {
 		}
 
 		@Override
-		protected DBSColor createColor(Matcher pMatcher, double a) {
+		protected DBSColor createColor(Matcher pMatcher, float pAlpha) {
 			double xHue = Double.parseDouble(pMatcher.group(1)) / 360;
 			double xSaturation = Double.parseDouble(pMatcher.group(2)) / 100;
 			double xLightness = Double.parseDouble(pMatcher.group(3)) / 100;
@@ -340,7 +415,7 @@ public class DBSColor {
 				xBlue = pvHueToRgb(xLuminocity1, xLuminocity2, xHue - 1.0 / 3.0);
 			}
 
-			return DBSColor.pvFromRGBA((short) Math.round(xRed * 255), (short) Math.round(xGreen * 255), (short) Math.round(xBlue * 255), a);
+			return new DBSColor((short) Math.round(xRed * 255), (short) Math.round(xGreen * 255), (short) Math.round(xBlue * 255), pAlpha);
 		}
 
 		private double pvHueToRgb(double pLuminocity1, double pLuminocity2, double pHue) {
@@ -365,8 +440,6 @@ public class DBSColor {
 																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," + 
 																	"\\s*(\\d{1,3}|\\d{1,3}\\.\\d+)%\\s*," +
 																	"\\s*((1|0\\.\\d+)|(1.0)|(0))\\s*\\)\\s*$");
-//		((1|0\.\d+)|(1.0))
-		//\\s*(0|1|0\\.\\d+)\\s*\\)\\s*$"
 		@Override
 		protected Pattern getPattern() {
 			return HSLA_PATTERN;
