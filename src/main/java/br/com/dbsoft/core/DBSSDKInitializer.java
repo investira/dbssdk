@@ -147,7 +147,11 @@ public final class DBSSDKInitializer implements ServletContainerInitializer {
 		Object xLocalHost = null;
 		//Le o alias do servidor , caso exista para substituir o localhost
 		try {
-			xLocalHost = pvGetManagementFactoryPlatformMBeanServerAttribute("jboss.as:interface=public", "inet-address");
+			xLocalHost = pvGetManagementFactoryPlatformMBeanServerAttribute("jboss.as.expr:subsystem=undertow,server=default-server,host=default-host", "alias");
+			if (xLocalHost != null){
+				xLocalHost = ((String[]) xLocalHost)[0]; //Le primeiro item do alias
+			}
+			
 			if (xLocalHost !=null){
 				//Verificar se foi configurado o virtualhost(configuração é efetuado no arquivo no WEB-INF/jboss-web.xml
 				if (DBSApp.VirtualHostName != null){
