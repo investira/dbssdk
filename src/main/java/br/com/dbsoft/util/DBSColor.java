@@ -84,7 +84,7 @@ public class DBSColor {
 
 	private class RGBAValue extends RGBValue implements RGBA{
 		@Override
-		public float getAlpha() {return wAlpha;}
+		public float getAlpha() {return DBSObject.getNotNull(wAlpha, 1f);}
 		@Override
 		public String toString() {
 			return String.format("rgba(%s, %s, %s, %s)", getRed(), getGreen(), getBlue(), getAlpha());
@@ -100,7 +100,7 @@ public class DBSColor {
 		}
 	}
 
-	private class HSLAValue extends HSLValue implements HSLA{
+	public class HSLAValue extends HSLValue implements HSLA{
 		@Override
 		public float getAlpha() {return wAlpha;}
 		@Override
@@ -162,19 +162,18 @@ public class DBSColor {
 	public RGBA toRGBA(){
 		return wRGBAValue;
 	}
-	public HSL toHSL(){
-		return wHSLValue;
-	}
-	public HSLA toHSLA(){
-		return wHSLAValue;
-	}
 	public HSB toHSB(){
 		return wHSBValue;
 	}
 	public HSBA toHSBA(){
 		return wHSBAValue;
 	}
-	
+	public HSL toHSL(){
+		return wHSLValue;
+	}
+	public HSLA toHSLA(){
+		return wHSLAValue;
+	}
 
 	@Override
 	public boolean equals(Object pColor) {

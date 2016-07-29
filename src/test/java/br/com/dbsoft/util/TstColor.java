@@ -70,7 +70,7 @@ public class TstColor {
 //		System.out.println(DBSColor.fromString("hsl(120.0, 100.0%, 82.1%)").toHSL().toString());
 //		System.out.println(DBSColor.fromString("hsl(120.0,100.0% ,82.0%)").toHSL().toString());
 //		System.out.println(DBSColor.fromString("hsl(217.5, 55.17%, 11.37%)").toHSL().toString());
-		System.out.println(DBSColor.fromString("hsla(217.5, 0.2096436%, 0.02384182%, 1.0)").toHSLA().toString());
+//		System.out.println(DBSColor.fromString("hsla(217.5, 0.2096436%, 0.02384182%, 1.0)").toHSLA().toString());
 //		System.out.println(DBSColor.fromString("hsla(217.5, 0.2096436%, 0.02323%, 1)").toHSLA().toString());
 		
 		
