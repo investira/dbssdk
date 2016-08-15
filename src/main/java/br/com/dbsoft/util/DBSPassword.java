@@ -4,6 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -285,5 +287,45 @@ public class DBSPassword {
 		}
 	}
 
+    //VALIDACAO DE REGRAS DA SENHA
+    /**
+	 * (			# Início do grupo
+	 * (?=.*\d)			# deve conter ao menos um digito de 0-9
+	 * (?=.*[a-z])		# deve conter ao menos uma letra minúscula
+	 * (?=.*[A-Z])		# deve conter ao menos uma letra maiúscula
+	 * (?=.*[@#$%])		# deve conter ao menos um caracter especial da lista (@ ou # ou $ ou %)
+	 * .				# combina qualquer coisa com a verificação anterior
+	 * {6,20}			# deve ter tamanho de no mínimo 6 caracteres e no máximo 20
+	 * )			# Fim do grupo
+	 */
+	private static final String PASSWORD_PATTERN =
+            "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})";
 	
+	/**
+	 * Valida se a senha cumpre as regras mínimas
+	 * A regra padrão é: deve conter ao menos um número, uma letra minúscula, 
+	 * uma letra maiúscula e ter tamanho de no mínimo 6 e no máximo 20 caracteres.
+	 * 
+	 * @param pPassword senha para validação
+	 * @return true Senha Válida, false Senha Inválida
+	 */
+	public static boolean validateRulePassword(String pPassword) {
+		return validateRulePassword(pPassword, PASSWORD_PATTERN);
+	}
+	
+	/**
+	 * Valida se a senha cumpre as regras mínimas
+	 * Recebe um Pattern com as regras que a senha deve segui.
+	 * 
+	 * @param pPassword senha para validação
+	 * @param pPattern Regras em ExpressionLanguage que a Senha deve segui.
+	 * @return true Senha Válida, false Senha Inválida
+	 */
+	public static boolean validateRulePassword(String pPassword, String pPattern) {
+		Pattern xPattern = Pattern.compile(pPattern);
+		Matcher xMatcher;
+		
+		xMatcher = xPattern.matcher(pPassword);
+		return xMatcher.matches();
+	}
 }
