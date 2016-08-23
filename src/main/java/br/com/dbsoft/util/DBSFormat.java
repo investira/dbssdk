@@ -625,7 +625,7 @@ public class DBSFormat {
 		}else{
 			xSimple = xVal;
 		}
-		xFormated = getFormattedNumber(xSimple, 0) + xSuf;
+		xFormated = getFormattedNumber(xSimple, 0) + " " + xSuf;
 		return xFormated;
 	}
 
