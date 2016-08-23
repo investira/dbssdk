@@ -217,8 +217,8 @@ public class DBSNumber {
 	 */
 	public static Point2D centerPoint(Double pWidth, Double pHeight){
 		Point2D xCentro = new Point2D.Double();
-		xCentro.setLocation((pWidth / 2),
-			    			(pHeight / 2));
+		xCentro.setLocation((pWidth / 2D),
+			    			(pHeight / 2D));
 		return xCentro;
 	}
 
