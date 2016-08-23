@@ -10,6 +10,12 @@ import org.apache.log4j.Logger;
 public class DBSColor {
 	protected static Logger			wLogger = Logger.getLogger(DBSColor.class);
 	
+	public enum TYPE{
+		RGBA,
+		HSLA,
+		HSBA;
+	}
+	
 	private interface ALPHA{
 		float getAlpha();
 	}
@@ -82,7 +88,7 @@ public class DBSColor {
 		
 	}
 
-	private class RGBAValue extends RGBValue implements RGBA{
+	protected class RGBAValue extends RGBValue implements RGBA{
 		@Override
 		public float getAlpha() {return DBSObject.getNotNull(wAlpha, 1f);}
 		@Override
@@ -100,7 +106,7 @@ public class DBSColor {
 		}
 	}
 
-	public class HSLAValue extends HSLValue implements HSLA{
+	private class HSLAValue extends HSLValue implements HSLA{
 		@Override
 		public float getAlpha() {return wAlpha;}
 		@Override
@@ -126,13 +132,43 @@ public class DBSColor {
 	private float wLightness;
 	private float wAlpha = 1f;
 
-	public DBSColor(int pRed, int pGreen, int pBlue, float pAlpha) {
-		pvSetColorAttributes(this, pRed, pGreen, pBlue, pAlpha);
+	public DBSColor(TYPE pType, float pValue1, float pValue2, float pValue3, float pAlpha) {
+		String xColorString;
+		if (pType == TYPE.HSBA){
+			xColorString = "HSBA(" + pValue1 + ", " + 
+									pValue2 + "%, " + 
+									pValue3 + "%," + 
+									DBSObject.getNotNull(pAlpha,1) + ")";
+ 		}else if (pType == TYPE.HSLA){
+			xColorString = "HSLA(" + pValue1 + ", " + 
+									pValue2 + "%, " + 
+									pValue3 + "%," + 
+									DBSObject.getNotNull(pAlpha,1) + ")";
+ 		}else{
+			xColorString = "RGBA(" + new Float(pValue1).intValue() + ", " + 
+									new Float(pValue2).intValue() + ", " + 
+									new Float(pValue3).intValue() + ", " + 
+									DBSObject.getNotNull(pAlpha,1) + ")";
+ 		}
+		
+		pvFromString(this, xColorString);
 	}
 
 	public DBSColor(String pColorString){
-		DBSColor xColor = fromString(pColorString);
-		pvSetColorAttributes(this, xColor.wRed, xColor.wGreen, xColor.wBlue, xColor.wAlpha);
+		pvFromString(this, pColorString);
+//		pvSetColorAttributes(this, xColor.wRed, xColor.wGreen, xColor.wBlue, xColor.wAlpha);
+	}
+
+	public static void pvFromString(DBSColor pColor, String pColorString) {
+		pColorString = pColorString.trim().toLowerCase();
+		for (Converter xConverter : CONVERTERS) {
+			RGBA xColor = xConverter.getRGBA(pColorString);
+			if (xColor != null){
+				pvSetColorAttributes(pColor, xColor.getRed(), xColor.getGreen(), xColor.getBlue(), xColor.getAlpha());
+				return;
+			}
+		}
+		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColorString));
 	}
 
 	/**
@@ -141,15 +177,7 @@ public class DBSColor {
 	 * @return
 	 */
 	public static DBSColor fromString(String pColorString) {
-		pColorString = pColorString.trim().toLowerCase();
-		for (Converter xConverter : CONVERTERS) {
-			DBSColor xColor = xConverter.getColor(pColorString);
-			if (xColor != null) {
-				return xColor;
-			}
-		}
-		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColorString));
-		return null;
+		return new DBSColor(pColorString);
 	}
 	
 	
@@ -173,6 +201,21 @@ public class DBSColor {
 	}
 	public HSLA toHSLA(){
 		return wHSLAValue;
+	}
+	/**
+	 * Inverte de escuro para claro e vice-versa.
+	 * @return
+	 */
+	public DBSColor invertLightness(){
+		HSLA xHSLA = this.toHSLA();
+		float xLightness = xHSLA.getLightness();
+		if (xLightness > 50){
+			xLightness -= 50;
+		}else{
+			xLightness += 50;
+		}
+		DBSColor xInverted = new DBSColor(TYPE.HSLA, xHSLA.getHue(), xHSLA.getSaturation(), xLightness, xHSLA.getAlpha());
+		return xInverted;
 	}
 
 	@Override
@@ -273,23 +316,47 @@ public class DBSColor {
 		return xHSLValues;
 	}
 
-	
+	private static RGBA pvCreateRGBA(final short pRed, final short pGreen, final short pBlue, final float pAlpha){
+		RGBA xColor = new RGBA(){
+			@Override
+			public int getRed() {
+				return pRed;
+			}
+
+			@Override
+			public int getGreen() {
+				return pGreen;
+			}
+
+			@Override
+			public int getBlue() {
+				return pBlue;
+			}
+
+			@Override
+			public float getAlpha() {
+				return pAlpha;
+			}
+		};
+		return xColor;
+	}
 
 	private static abstract class Converter {
-		public DBSColor getColor(String pString) {
+		public RGBA getRGBA(String pString) {
 			Matcher xMatcher = getPattern().matcher(pString);
 			if (xMatcher.find()) {
 				float xAlpha = 1f;
 				if (xMatcher.groupCount() >= 4) {
 					xAlpha = Float.parseFloat(xMatcher.group(4));
 				}
-				return createColor(xMatcher, xAlpha);
+				return createRGBA(xMatcher, xAlpha);
 			}
 			return null;
 		}
 
-		protected DBSColor createColor(Matcher pMatcher, float pAlpha) {
-			return new DBSColor(fromMatchGroup(pMatcher, 1), fromMatchGroup(pMatcher, 2), fromMatchGroup(pMatcher, 3), pAlpha);
+		protected RGBA createRGBA(Matcher pMatcher, float pAlpha) {
+//			return new  DBSColor(TYPE.RGBA, fromMatchGroup(pMatcher, 1), fromMatchGroup(pMatcher, 2), fromMatchGroup(pMatcher, 3), pAlpha);
+			return pvCreateRGBA(fromMatchGroup(pMatcher, 1), fromMatchGroup(pMatcher, 2), fromMatchGroup(pMatcher, 3), pAlpha);
 		}
 
 		protected short fromMatchGroup(Matcher pMatcher, int pIndex) {
@@ -396,7 +463,7 @@ public class DBSColor {
 		}
 
 		@Override
-		protected DBSColor createColor(Matcher pMatcher, float pAlpha) {
+		protected RGBA createRGBA(Matcher pMatcher, float pAlpha) {
 			double xHue = Double.parseDouble(pMatcher.group(1)) / 360;
 			double xSaturation = Double.parseDouble(pMatcher.group(2)) / 100;
 			double xLightness = Double.parseDouble(pMatcher.group(3)) / 100;
@@ -414,7 +481,8 @@ public class DBSColor {
 				xBlue = pvHueToRgb(xLuminocity1, xLuminocity2, xHue - 1.0 / 3.0);
 			}
 
-			return new DBSColor((short) Math.round(xRed * 255), (short) Math.round(xGreen * 255), (short) Math.round(xBlue * 255), pAlpha);
+//			return new DBSColor(TYPE.RGBA, (short) Math.round(xRed * 255), (short) Math.round(xGreen * 255), (short) Math.round(xBlue * 255), pAlpha);
+			return pvCreateRGBA((short) Math.round(xRed * 255), (short) Math.round(xGreen * 255), (short) Math.round(xBlue * 255), pAlpha);
 		}
 
 		private double pvHueToRgb(double pLuminocity1, double pLuminocity2, double pHue) {
