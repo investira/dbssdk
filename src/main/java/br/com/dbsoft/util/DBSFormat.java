@@ -611,7 +611,7 @@ public class DBSFormat {
 		if (xLength == 0){return "";}
 		Double xSimple = (xVal / Math.pow(10, ((xLength -1) - ((xLength -1) % 3))));
 		String xSuf = "";
-		String xFormated = "";
+//		String xFormated = "";
 		if (xLength > 15){
 			xSuf = "quatri";
 		}else if (xLength > 12){
@@ -622,11 +622,12 @@ public class DBSFormat {
 			xSuf = "mi";
 		}else if (xLength > 3){
 			xSuf = "mil";
-		}else{
-			xSimple = xVal;
 		}
-		xFormated = getFormattedNumber(xSimple, 0) + " " + xSuf;
-		return xFormated;
+		if (xSuf != ""){
+			return getFormattedNumber(xSimple, 0) + " " + xSuf;
+		}else{
+			return getFormattedNumber(xVal, 2);
+		}
 	}
 
 	//====================================================
