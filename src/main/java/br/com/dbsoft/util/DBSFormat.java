@@ -611,7 +611,6 @@ public class DBSFormat {
 		if (xLength == 0){return "";}
 		Double xSimple = (xVal / Math.pow(10, ((xLength -1) - ((xLength -1) % 3))));
 		String xSuf = "";
-//		String xFormated = "";
 		if (xLength > 15){
 			xSuf = "quatri";
 		}else if (xLength > 12){
