@@ -624,7 +624,7 @@ public class DBSFormat {
 			xSuf = "mil";
 		}
 		if (xSuf != ""){
-			return getFormattedNumber(xSimple, 0) + " " + xSuf;
+			return getFormattedNumber(xSimple, 2) + " " + xSuf;
 		}else{
 			return getFormattedNumber(xVal, 2);
 		}
