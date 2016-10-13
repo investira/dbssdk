@@ -1,7 +1,7 @@
 package br.com.dbsoft.message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -23,13 +23,13 @@ public class DBSMessage implements IDBSMessage{
 	private DateTime		wTime;
 	private String			wMessageKey = null;
 	private Integer			wMessageCode = 0;
-	private List<String>    wIds = new ArrayList<String>();
+	private Set<String>	wMessageClientIds = new HashSet<String>();
 	
 	//Construtores============================
 	public DBSMessage(){}
 
 	public DBSMessage(DBSIOException e){
-		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null,  null);
+		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null, null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
@@ -37,35 +37,35 @@ public class DBSMessage implements IDBSMessage{
 	}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
-		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null,  null);
+		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null, null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  null);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, null,  pMessageTime);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, null, pMessageTime);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime);
 	}
 
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null,  null);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, null);
 	}
 	
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  null);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, null);
 	}
 	
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null,  pMessageTime);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, pMessageTime);
 	}
 
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip,  pMessageTime);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime);
 	}
 
 	//=========================================
@@ -74,7 +74,13 @@ public class DBSMessage implements IDBSMessage{
 	public String getMessageKey(){return wMessageKey; }
 
 	@Override
-	public void setMessageKey(String pMessageKey){wMessageKey = pMessageKey.trim();}
+	public void setMessageKey(String pMessageKey){
+		if (pMessageKey != null){
+			wMessageKey = pMessageKey.trim();
+		}else{
+			wMessageKey = pMessageKey;
+		}
+	}
 	
 	@Override
 	public String getMessageText() {return wMessageText;}
@@ -178,9 +184,10 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getIds()
 	 */
 	@Override
-	public List<String> getIds() {
-		return wIds;
+	public Set<String> getMessageClientIds() {
+		return wMessageClientIds;
 	}
+	
 
 
 	//PRIVATE =========================
@@ -204,6 +211,9 @@ public class DBSMessage implements IDBSMessage{
 		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
 		setMessageType(pMessage.getMessageType());
 		setMessageValidated(pMessage.isMessageValidated());
-		getIds().addAll(pMessage.getIds());
+		getMessageClientIds().clear();
+		getMessageClientIds().addAll(pMessage.getMessageClientIds());
 	}
+
+
 }

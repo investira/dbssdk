@@ -1,7 +1,9 @@
 package br.com.dbsoft.message;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -20,13 +22,8 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	
 	protected LinkedHashMap<String, MessageClass> 	wMessages =  new LinkedHashMap<String, MessageClass>(); 
 	protected String 								wCurrentMessageKey;
-//	private Class<MessageClass>						wMessageClass;
 	private String									wFromUserId;
 	
-//	public DBSMessages(Class<MessageClass> pMessageClass){
-//		//Salva class para ser utilizada na criação de uma nova instancia
-//		wMessageClass = pMessageClass;
-//	}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessages#getMessages()
@@ -35,35 +32,13 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	public Collection<MessageClass> getMessages(){
 		return wMessages.values();
 	}
-	
-//	@Override
-//	public Iterator<Entry<String, MessageClass>> iterator(){
-//		return wMessages.entrySet().iterator();
-//	}
-	
+
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public MessageClass add(MessageClass pMessage){
-		MessageClass xM = null;
-		try {
-			if (pMessage == null){return null;}
-			if (wMessages.containsKey(pMessage.getMessageKey())){
-				//Exclui ela da fila
-				wMessages.remove(pMessage.getMessageKey());
-			}
-			//Cria nova mensagem do tipo informado
-			xM = (MessageClass) pMessage.getClass().newInstance();
-			xM.copy(pMessage);
-			wMessages.put(pMessage.getMessageKey(), xM);
-			pvFindNextMessage();
-			return xM;
-		} catch (InstantiationException | IllegalAccessException e) {
-			wLogger.error(e);
-		}
-		return xM;
+		return add(null, pMessage);
 	}
 
 	/**
@@ -75,6 +50,30 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 		wMessages.values().addAll(pMessages.getMessages());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public MessageClass add(String pClientId, MessageClass pMessage) {
+		if (pMessage == null){return null;}
+		try {
+			MessageClass xM = wMessages.get(pMessage.getMessageKey());
+			if (xM == null){
+				//Cria nova mensagem do tipo informado
+				xM = (MessageClass) pMessage.getClass().newInstance();
+				//Copia dados da mensagem origem
+				xM.copy(pMessage);
+				wMessages.put(pMessage.getMessageKey(), xM);
+			}
+			if (pClientId != null){
+				//Inclui o clientId na lista
+				xM.getMessageClientIds().add(pClientId);
+			}
+			pvFindNextMessage();
+			return xM;
+		} catch (InstantiationException | IllegalAccessException e) {
+			wLogger.error(e);
+		}
+		return null;
+	}
 
 
 	/**
@@ -311,5 +310,30 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 		return wMessages.get(pMessageKey);
 	}
 
+	@Override
+	public MessageClass getMessageForClientId(String pClientId) {
+		for (Entry<String, MessageClass> xM : wMessages.entrySet()) {
+			for (String xClientId:xM.getValue().getMessageClientIds()){
+				if (xClientId.equals(pClientId)){
+					return xM.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<MessageClass> getMessagesForClientId(String pClientId) {
+		List<MessageClass> xMsgs = new ArrayList<MessageClass>();
+		for (Entry<String, MessageClass> xM : wMessages.entrySet()){
+			for (String xClientId:xM.getValue().getMessageClientIds()){
+				if (xClientId.equals(pClientId)){
+					xMsgs.add(xM.getValue());
+					break; //Proxima mensagem
+				}
+			}
+		}
+		return xMsgs;
+	}
 
 }

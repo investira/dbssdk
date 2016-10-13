@@ -1,7 +1,7 @@
 package br.com.dbsoft.message;
 
 import java.util.Collection;
-
+import java.util.List;
 
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 
@@ -30,6 +30,13 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * @param pMessage
 	 */
 	public MessageClass add(MessageClass pMessage);
+	
+	/** Inclui uma mensagem na fila para ser exibida.
+	 * @param pClientId
+	 * @param pMessage
+	 * @return
+	 */
+	public MessageClass add(String pClientId, MessageClass pMessage);
 
 	/**
 	 * Adiciona todas as mensagems a fila
@@ -55,7 +62,17 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 */
 	public MessageClass get(String pMessageKey);
 
+	/**
+	 * Retorna uma mensagem vinculada ao clientId informado.
+	 * @param pMessageKey
+	 */
+	public MessageClass getMessageForClientId(String pClientId);
 
+	/**
+	 * Retorna list com as mensagens vinculada ao clientId informado.
+	 * @param pMessageKey
+	 */
+	public List<MessageClass> getMessagesForClientId(String pClientId);
 	
 	/**
 	 * Apaga todas as mensagem da fila 

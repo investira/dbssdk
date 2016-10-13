@@ -1,7 +1,6 @@
 package br.com.dbsoft.message;
 
-
-import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -107,13 +106,13 @@ public interface IDBSMessage extends Cloneable{
 	public void setMessageTime(DateTime pTime);
 	
 	/**
-	 * Quais Id's que dizem respeito esta mensagem.<br/>
-	 * Esta propriedade pode ser utilizada para devolver a mensagem com informações adicionais sobre a origem sua origem.</br>
-	 * Como no caso de um validade que retorna mensagens de erro. Sendo importante saber quais campos foram afetados.<br/>
+	 * Id's vinculados esta mensagem.<br/>
+	 * Esta propriedade pode ser utilizada para devolver a mensagem com informações adicionais sobre a origem.</br>
+	 * Como no caso de um validade que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
 	 * O valor do <b>id</b> é a critério do usuário.
 	 * @return
 	 */
-	public List<String> getIds();
+	public Set<String> getMessageClientIds();
 	
 	/**
 	 * Copia dados de uma mensagem para esta
