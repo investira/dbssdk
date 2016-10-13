@@ -1,8 +1,7 @@
 package br.com.dbsoft.message;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import java.util.Collection;
+
 
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 
@@ -13,10 +12,19 @@ import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
  */
 public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 
-	public LinkedHashMap<String, MessageClass> getMessages();
-	
-	public Iterator<Entry<String, MessageClass>> iterator();
-	
+	/**
+	 * Retorna lista contendo chave e respectiva mensagem
+	 * @return
+	 */
+	public Collection<MessageClass>getMessages();
+
+
+//	/**
+//	 * Retorna iterator da chave e respectiva mensagem
+//	 * @return
+//	 */
+//	public Iterator<Entry<String, MessageClass>> iterator();
+//	
 
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
@@ -40,6 +48,13 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * @param pMessageKey
 	 */
 	public void remove(String pMessageKey);
+	
+	/**
+	 * Retorna uma mensagem a partir da chave informada
+	 * @param pMessageKey
+	 */
+	public MessageClass get(String pMessageKey);
+
 
 	
 	/**

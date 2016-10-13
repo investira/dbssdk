@@ -1,6 +1,6 @@
 package br.com.dbsoft.message;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -28,15 +28,18 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 //		wMessageClass = pMessageClass;
 //	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#getMessages()
+	 */
 	@Override
-	public LinkedHashMap<String, MessageClass> getMessages(){
-		return wMessages;
+	public Collection<MessageClass> getMessages(){
+		return wMessages.values();
 	}
 	
-	@Override
-	public Iterator<Entry<String, MessageClass>> iterator(){
-		return wMessages.entrySet().iterator();
-	}
+//	@Override
+//	public Iterator<Entry<String, MessageClass>> iterator(){
+//		return wMessages.entrySet().iterator();
+//	}
 	
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
@@ -53,12 +56,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 			}
 			//Cria nova mensagem do tipo informado
 			xM = (MessageClass) pMessage.getClass().newInstance();
-			xM.setMessageKey(pMessage.getMessageKey());
-			xM.setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
-			xM.setMessageType(pMessage.getMessageType());
-			xM.setMessageText(pMessage.getMessageText());
-			xM.setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(), ""));
-			xM.setMessageTime(pMessage.getMessageTime());
+			xM.copy(pMessage);
 			wMessages.put(pMessage.getMessageKey(), xM);
 			pvFindNextMessage();
 			return xM;
@@ -72,12 +70,9 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * Adiciona todas as mensagems a fila
 	 * @param pMessages
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public void addAll(IDBSMessages<MessageClass> pMessages) {
-		for (Object xMessage : pMessages.getMessages().values()) {
-			add((MessageClass) xMessage);
-		}
+	public void addAll(IDBSMessages<MessageClass> pMessages){
+		wMessages.values().addAll(pMessages.getMessages());
 	}
 
 
@@ -308,6 +303,12 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 			}
 		}	
 		return false;
+	}
+
+	@Override
+	public MessageClass get(String pMessageKey) {
+		if (DBSObject.isEmpty(pMessageKey)){return null;}
+		return wMessages.get(pMessageKey);
 	}
 
 

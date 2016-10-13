@@ -25,7 +25,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	
 	protected Logger	wLogger = Logger.getLogger(this.getClass());
 	
-	protected Connection 				wConnection;
+	protected Connection 				wConnection = null;
 	protected boolean					wOk = true;
 	
 	protected DBSDAO<Object> wDAO;
@@ -42,6 +42,14 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	@SuppressWarnings("rawtypes")
 	private List<IDBSCrudEventsListener>	wEventListeners = new ArrayList<IDBSCrudEventsListener>();
+	
+	/**
+	 * É aconselhável que qualquer DBSCrud dentro de outro DBSCrud seja instanciado com <b>AutoCommit = false</b>, 
+	 * para evitar conflito com o DBSCrud pai.
+	 * @param pConnection Cone
+	 * @param pAutoCommit
+	 */
+	public DBSCrud() {}
 	
 	/**
 	 * É aconselhável que qualquer DBSCrud dentro de outro DBSCrud seja instanciado com <b>AutoCommit = false</b>, 

@@ -1,6 +1,8 @@
 package br.com.dbsoft.message;
 
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 
 /**
@@ -14,10 +16,13 @@ public interface IDBSMessage extends Cloneable{
 //    WARNING		(20, "-warning"),
 //    IMPORTANT	(30, "-important"),
 //    ERROR		(40, "-error");
-//   	
+	
+//  
+	public static final String ATTRIBUTE_NAME = "DBSMESSAGES";
+
 	public static enum MESSAGE_TYPE
 	{
-	    ABOUT 		("a", "Sobre", "-i_about", false, 1),
+	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
 	    SUCCESS		("s", "Sucesso", "-i_sucess -green", false, 1),
 	    INFORMATION	("i", "Informação", "-i_information", false, 10),
 	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
@@ -73,6 +78,10 @@ public interface IDBSMessage extends Cloneable{
 		}
 	}
 	
+	/**
+	 * Retorna o código da mensagem
+	 * @return
+	 */
 	public String getMessageKey();
 	public void setMessageKey(String pMessageKey);
 	
@@ -96,6 +105,21 @@ public interface IDBSMessage extends Cloneable{
 	
 	public DateTime getMessageTime();
 	public void setMessageTime(DateTime pTime);
+	
+	/**
+	 * Quais Id's que dizem respeito esta mensagem.<br/>
+	 * Esta propriedade pode ser utilizada para devolver a mensagem com informações adicionais sobre a origem sua origem.</br>
+	 * Como no caso de um validade que retorna mensagens de erro. Sendo importante saber quais campos foram afetados.<br/>
+	 * O valor do <b>id</b> é a critério do usuário.
+	 * @return
+	 */
+	public List<String> getIds();
+	
+	/**
+	 * Copia dados de uma mensagem para esta
+	 * @return
+	 */
+	public void copy(IDBSMessage pSourceMessage);
 
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>

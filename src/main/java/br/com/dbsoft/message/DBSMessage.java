@@ -1,9 +1,12 @@
 package br.com.dbsoft.message;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.util.DBSObject;
 
 /**
  * @author ricardo.villar
@@ -20,6 +23,7 @@ public class DBSMessage implements IDBSMessage{
 	private DateTime		wTime;
 	private String			wMessageKey = null;
 	private Integer			wMessageCode = 0;
+	private List<String>    wIds = new ArrayList<String>();
 	
 	//Construtores============================
 	public DBSMessage(){}
@@ -70,7 +74,7 @@ public class DBSMessage implements IDBSMessage{
 	public String getMessageKey(){return wMessageKey; }
 
 	@Override
-	public void setMessageKey(String pMessageKey){wMessageKey = pMessageKey; }
+	public void setMessageKey(String pMessageKey){wMessageKey = pMessageKey.trim();}
 	
 	@Override
 	public String getMessageText() {return wMessageText;}
@@ -105,28 +109,42 @@ public class DBSMessage implements IDBSMessage{
 	 * Retorna o código da mensagem, 
 	 * @param pMessageCode
 	 */
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setMessageCode(java.lang.Integer)
+	 */
 	@Override
 	public void setMessageCode(Integer pMessageCode) {wMessageCode = pMessageCode;}
 	
-	/**
-	 * @return Null = ainda não validada.<br/> True = Validada para verdadeiro.<br/> False = Validada para falso 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#isMessageValidated()
 	 */
 	@Override
 	public Boolean isMessageValidated() {return wValidated;}
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setMessageValidated(java.lang.Boolean)
+	 */
 	@Override
 	public void setMessageValidated(Boolean validated) {wValidated = validated;}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#getException()
+	 */
 	@Override
 	public Exception getException() {return wException;}
-	/**
-	 * Configura a exception vinculada a mensagem caso exista
-	 * @param pException
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setException(java.lang.Exception)
 	 */
 	@Override
 	public void setException(Exception pException) {this.wException = pException;}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTooltip()
+	 */
 	@Override
 	public String getMessageTooltip() {return wMessageTooltip;}
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setMessageTooltip(java.lang.String)
+	 */
 	@Override
 	public void setMessageTooltip(String pMessageTooltip) {this.wMessageTooltip = pMessageTooltip;}
 	
@@ -144,18 +162,25 @@ public class DBSMessage implements IDBSMessage{
 		}
 	}
 
-	/**
-	 * Horário que a mensagem foi criada
-	 * @return
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTime()
 	 */
 	@Override
 	public DateTime getMessageTime() {return wTime;}
 
-	/**
-	 * Horário que a mensagem foi criada
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setMessageTime(org.joda.time.DateTime)
 	 */
 	@Override
 	public void setMessageTime(DateTime pTime) {wTime = pTime;}
+
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#getIds()
+	 */
+	@Override
+	public List<String> getIds() {
+		return wIds;
+	}
 
 
 	//PRIVATE =========================
@@ -169,4 +194,16 @@ public class DBSMessage implements IDBSMessage{
 		wMessageTextOriginal = pMessageText;
 	}
 
+	@Override
+	public void copy(IDBSMessage pMessage){
+		if (pMessage == null){return;}
+		setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
+		setMessageKey(pMessage.getMessageKey());
+		setMessageText(pMessage.getMessageText());
+		setMessageTime(pMessage.getMessageTime());
+		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
+		setMessageType(pMessage.getMessageType());
+		setMessageValidated(pMessage.isMessageValidated());
+		getIds().addAll(pMessage.getIds());
+	}
 }
