@@ -61,6 +61,15 @@ public interface IDBSMessage extends Cloneable{
 	    	return wRequireConfirmation;
 	    }
 
+	    
+	    /**
+	     * 1 - Informação simples</br>
+	     * 10 - Informação importante</br>
+	     * 20 - Confirmação necessárias</br>
+	     * 30 - Proibido</br>
+	     * 40 - Erro</br>
+	     * @return
+	     */
 	    public Integer getSeverity(){
 	    	return wSeverity;
 	    }

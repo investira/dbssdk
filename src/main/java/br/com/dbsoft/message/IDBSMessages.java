@@ -1,6 +1,5 @@
 package br.com.dbsoft.message;
 
-import java.util.Collection;
 import java.util.List;
 
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
@@ -16,15 +15,8 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	 * Retorna lista contendo chave e respectiva mensagem
 	 * @return
 	 */
-	public Collection<MessageClass>getMessages();
+	public List<MessageClass> getMessages();
 
-
-//	/**
-//	 * Retorna iterator da chave e respectiva mensagem
-//	 * @return
-//	 */
-//	public Iterator<Entry<String, MessageClass>> iterator();
-//	
 
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage

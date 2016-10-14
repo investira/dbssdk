@@ -1,7 +1,6 @@
 package br.com.dbsoft.message;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -29,10 +28,11 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * @see br.com.dbsoft.message.IDBSMessages#getMessages()
 	 */
 	@Override
-	public Collection<MessageClass> getMessages(){
-		return wMessages.values();
+	public List<MessageClass> getMessages(){
+		return new ArrayList<MessageClass>(wMessages.values());
 	}
 
+	
 	/** Inclui uma mensagem na fila para ser exibida.
 	 * @param pMessage
 	 */
@@ -314,7 +314,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	public MessageClass getMessageForClientId(String pClientId) {
 		for (Entry<String, MessageClass> xM : wMessages.entrySet()) {
 			for (String xClientId:xM.getValue().getMessageClientIds()){
-				if (xClientId.equals(pClientId)){
+				if (DBSObject.isEqual(xClientId, pClientId)){
 					return xM.getValue();
 				}
 			}
@@ -327,7 +327,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 		List<MessageClass> xMsgs = new ArrayList<MessageClass>();
 		for (Entry<String, MessageClass> xM : wMessages.entrySet()){
 			for (String xClientId:xM.getValue().getMessageClientIds()){
-				if (xClientId.equals(pClientId)){
+				if (DBSObject.isEqual(xClientId, pClientId)){
 					xMsgs.add(xM.getValue());
 					break; //Proxima mensagem
 				}
