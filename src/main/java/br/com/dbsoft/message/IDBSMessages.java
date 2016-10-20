@@ -9,29 +9,36 @@ import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
  *Armazenar e controlar uma lista de mensagem(class DBSMessage)
  * @param <MessageClass> Classe de mensagem
  */
-public interface IDBSMessages<MessageClass extends IDBSMessage>  {
+public interface IDBSMessages<MessageClass extends IDBSMessage>{
 
+	
 	/**
-	 * Retorna lista contendo chave e respectiva mensagem
+	 * Retorna copia da lista de mensagens.<br/>
+	 * Qualquer alteração no conteúdo desta lista, em nada afetará o controle de mensagens original.
 	 * @return
 	 */
 	public List<MessageClass> getMessages();
 
 
-	/** Inclui uma mensagem na fila para ser exibida.
+	/** 
+	 * Inclui uma mensagem na fila.
 	 * @param pMessage
 	 */
 	public MessageClass add(MessageClass pMessage);
 	
-	/** Inclui uma mensagem na fila para ser exibida.
+	/** 
+	 * Inclui uma mensagem na fila e vincula um <b>sourceId</b> a ela.</br>
+	 * O <b>sourceId</b> pode ser utilizado indicar a origem da mensagem, 
+	 * como no caso de um validade que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
+	 * O valor do <b>sourceId</b> é a critério do usuário.
 	 * @param pClientId
 	 * @param pMessage
 	 * @return
 	 */
-	public MessageClass add(String pClientId, MessageClass pMessage);
+	public MessageClass add(MessageClass pMessage, String pSourceId);
 
 	/**
-	 * Adiciona todas as mensagems a fila
+	 * Adiciona todas as mensagems a fila.
 	 * @param pMessages
 	 */
 	public void addAll(IDBSMessages<MessageClass> pMessages);
@@ -55,16 +62,16 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	public MessageClass get(String pMessageKey);
 
 	/**
-	 * Retorna uma mensagem vinculada ao clientId informado.
+	 * Retorna uma mensagem vinculada ao <b>sourceId</b> informado.
 	 * @param pMessageKey
 	 */
-	public MessageClass getMessageForClientId(String pClientId);
+	public MessageClass getMessageForSourceId(String pClientId);
 
 	/**
-	 * Retorna list com as mensagens vinculada ao clientId informado.
+	 * Retorna list com as mensagens vinculada ao  <b>sourceId</b> informado.
 	 * @param pMessageKey
 	 */
-	public List<MessageClass> getMessagesForClientId(String pClientId);
+	public List<MessageClass> getMessagesForSourceId(String pClientId);
 	
 	/**
 	 * Apaga todas as mensagem da fila 
@@ -140,19 +147,31 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>  {
 	
 
 	/**
-	 * Valida ou invalida a mensagem
+	 * Valida ou invalida a mensagem corrente da fila.
 	 * Se não for mensagem de warning, automaticamente retira mensagem da fila 
-	 * @param pButtonPressed
+	 * @param pIsValidated
+	 * @return Caminho da view a ser exibida
 	 */
-	public void setMessageValidated(Boolean pIsValidated);
+	public String setMessageValidated(Boolean pIsValidated);
 	
 	/**
-	 * Método após a validação de qualquer mensagem
+	 * Valida ou invalida a mensagem informada pela <b>messageKey</b>.
+	 * Se não for mensagem de warning, automaticamente retira mensagem da fila 
 	 * @param pMessageKey
 	 * @param pIsValidated
+	 * @return Caminho da view a ser exibida
 	 */
-	public void onMessageValidate(String pMessageKey, Boolean pIsValidated);
-	
+	public String setMessageValidated(String pMessageKey, Boolean pIsValidated);
+
+	/**
+	 * Valida ou invalida a mensagem informada.
+	 * Se não for mensagem de warning, automaticamente retira mensagem da fila 
+	 * @param pMessageKey
+	 * @param pIsValidated
+	 * @return Caminho da view a ser exibida
+	 */
+	public String setMessageValidated(MessageClass pMessage);
+
 	/**
 	 * Usuário que criou as mensagens
 	 * @return

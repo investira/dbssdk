@@ -14,16 +14,18 @@ import br.com.dbsoft.util.DBSObject;
  */
 public class DBSMessage implements IDBSMessage{
 
-	private String			wMessageTextOriginal;
-	private String			wMessageText;
-	private Boolean			wValidated = null; 
-	private MESSAGE_TYPE	wMessageType;
-	private Exception		wException;
-	private String			wMessageTooltip = "";
-	private DateTime		wTime;
-	private String			wMessageKey = null;
-	private Integer			wMessageCode = 0;
-	private Set<String>	wMessageClientIds = new HashSet<String>();
+	private String						wMessageTextOriginal;
+	private String						wMessageText;
+	private Boolean						wValidated = null; 
+	private MESSAGE_TYPE				wMessageType;
+	private Exception					wException;
+	private String						wMessageTooltip = "";
+	private DateTime					wTime;
+	private String						wMessageKey = null;
+	private Integer						wMessageCode = 0;
+	private Set<String>					wMessageSourceIds = new HashSet<String>();
+//	private Set<IDBSMessageListener> 	wMessageListeners = new HashSet<IDBSMessageListener>();
+	
 	
 	//Construtores============================
 	public DBSMessage(){}
@@ -67,6 +69,12 @@ public class DBSMessage implements IDBSMessage{
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
 		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime);
 	}
+
+
+//	@Override
+//	public Set<IDBSMessageListener> getMessageListeners() {
+//		return wMessageListeners;
+//	}
 
 	//=========================================
 	
@@ -130,7 +138,10 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#setMessageValidated(java.lang.Boolean)
 	 */
 	@Override
-	public void setMessageValidated(Boolean validated) {wValidated = validated;}
+	public void setMessageValidated(Boolean validated) {
+		wValidated = validated;
+//		pvFireEventAfterMessageValidated();
+	}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getException()
@@ -164,7 +175,7 @@ public class DBSMessage implements IDBSMessage{
 		if (wMessageTextOriginal != null){
 			this.setMessageText(String.format(wMessageTextOriginal, pParameters));
 		}else{
-			this.setMessageText(String.format(this.getMessageText(), pParameters));
+			this.setMessageText(String.format(getMessageText(), pParameters));
 		}
 	}
 
@@ -184,22 +195,11 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getIds()
 	 */
 	@Override
-	public Set<String> getMessageClientIds() {
-		return wMessageClientIds;
+	public Set<String> getMessageSourceIds() {
+		return wMessageSourceIds;
 	}
 	
 
-
-	//PRIVATE =========================
-	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-		setMessageKey(pMessageKey);
-		setMessageCode(pMessageCode);
-		setMessageType(pMessageType);
-		setMessageText(pMessageText);
-		setMessageTooltip(pMessageTooltip);
-		setMessageTime(pMessageTime);
-		wMessageTextOriginal = pMessageText;
-	}
 
 	@Override
 	public void copy(IDBSMessage pMessage){
@@ -211,9 +211,37 @@ public class DBSMessage implements IDBSMessage{
 		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
 		setMessageType(pMessage.getMessageType());
 		setMessageValidated(pMessage.isMessageValidated());
-		getMessageClientIds().clear();
-		getMessageClientIds().addAll(pMessage.getMessageClientIds());
+		getMessageSourceIds().clear();
+		getMessageSourceIds().addAll(pMessage.getMessageSourceIds());
+//		getMessageListeners().clear();
+//		getMessageListeners().addAll(pMessage.getMessageListeners());
 	}
 
+	@Override
+	public boolean equals(IDBSMessage pSourceMessage) {
+		return DBSObject.isEqual(this.getMessageKey(), pSourceMessage.getMessageKey());
+	}
+
+	//PROTECTED =========================
+	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+		setMessageKey(pMessageKey);
+		setMessageCode(pMessageCode);
+		setMessageType(pMessageType);
+		setMessageText(pMessageText);
+		setMessageTooltip(pMessageTooltip);
+		setMessageTime(pMessageTime);
+		wMessageTextOriginal = pMessageText;
+	}
+
+	//PRIVATE =========================
+//	/**
+//	 * Dispara evento informando que mensagem foi validada.
+//	 */
+//	private void pvFireEventAfterMessageValidated(){
+//		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
+//		while(xI.hasNext()){
+//			xI.next().onAfterMessageValidated(this);
+//		}
+//	}
 
 }

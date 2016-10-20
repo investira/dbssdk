@@ -2,6 +2,9 @@ package br.com.dbsoft.message;
 
 import java.util.Set;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.joda.time.DateTime;
 
 /**
@@ -17,8 +20,6 @@ public interface IDBSMessage extends Cloneable{
 //    ERROR		(40, "-error");
 	
 //  
-	public static final String ATTRIBUTE_NAME = "DBSMESSAGES";
-
 	public static enum MESSAGE_TYPE
 	{
 	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
@@ -35,14 +36,22 @@ public interface IDBSMessage extends Cloneable{
 	    String 	wName;
 	    String 	wIconClass;
 	    Boolean wRequireConfirmation;
-	    Integer wSeverity; 
+	    Integer wSeverityLevel; 
+	    Severity wSeverity;
 	    
-	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pRequireConfirmation, Integer pSeverity){
+	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pRequireConfirmation, Integer pSeverityLevel){
 	    	wCode = pCode;
 	    	wName = pName;
 	    	wIconClass = pIconClass;
 	    	wRequireConfirmation = pRequireConfirmation;
-	    	wSeverity = pSeverity; 
+	    	wSeverityLevel = pSeverityLevel; 
+			if (wSeverityLevel < 19){
+				wSeverity = FacesMessage.SEVERITY_INFO;
+			}else if (wSeverityLevel < 29){
+				wSeverity = FacesMessage.SEVERITY_WARN;
+			}else if (wSeverityLevel < 49){
+				wSeverity = FacesMessage.SEVERITY_ERROR;
+			}
 	    }
 	
 	    public String getCode(){
@@ -61,6 +70,9 @@ public interface IDBSMessage extends Cloneable{
 	    	return wRequireConfirmation;
 	    }
 
+	    public Severity getSeverity(){
+	    	return wSeverity;
+	    }
 	    
 	    /**
 	     * 1 - Informação simples</br>
@@ -70,8 +82,8 @@ public interface IDBSMessage extends Cloneable{
 	     * 40 - Erro</br>
 	     * @return
 	     */
-	    public Integer getSeverity(){
-	    	return wSeverity;
+	    public Integer getSeverityLevel(){
+	    	return wSeverityLevel;
 	    }
 
 	    public static MESSAGE_TYPE get(String pType){
@@ -82,6 +94,19 @@ public interface IDBSMessage extends Cloneable{
 	    			return xCT;
 	    		}
 	    	}
+	    	return null;
+		}
+
+	    public static MESSAGE_TYPE get(Severity pSeverity){
+			if (pSeverity == null){return null;}
+			if (pSeverity == FacesMessage.SEVERITY_ERROR
+			 || pSeverity == FacesMessage.SEVERITY_FATAL){
+				return MESSAGE_TYPE.ERROR;
+			}else if (pSeverity == FacesMessage.SEVERITY_INFO){
+				return MESSAGE_TYPE.INFORMATION;
+			}else if (pSeverity == FacesMessage.SEVERITY_WARN){
+				return MESSAGE_TYPE.IMPORTANT;
+			}
 	    	return null;
 		}
 	}
@@ -121,13 +146,20 @@ public interface IDBSMessage extends Cloneable{
 	 * O valor do <b>id</b> é a critério do usuário.
 	 * @return
 	 */
-	public Set<String> getMessageClientIds();
+	public Set<String> getMessageSourceIds();
 	
 	/**
 	 * Copia dados de uma mensagem para esta
 	 * @return
 	 */
 	public void copy(IDBSMessage pSourceMessage);
+
+	/**
+	 * Verifica se mensagem é iqual a partir da chave;
+	 * @param pSourceMessage
+	 * @return
+	 */
+	public boolean equals(IDBSMessage pSourceMessage);
 
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
