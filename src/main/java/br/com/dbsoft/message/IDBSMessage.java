@@ -11,15 +11,16 @@ import org.joda.time.DateTime;
  * @author ricardo.villar
  *
  */
+/**
+ * @author ricardo.villar
+ *
+ */
+/**
+ * @author ricardo.villar
+ *
+ */
 public interface IDBSMessage extends Cloneable{
    	
-//	SUCESS		(1, "-sucess"),
-//   	INFORMATION	(10, "-information"),
-//    WARNING		(20, "-warning"),
-//    IMPORTANT	(30, "-important"),
-//    ERROR		(40, "-error");
-	
-//  
 	public static enum MESSAGE_TYPE
 	{
 	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
@@ -168,6 +169,26 @@ public interface IDBSMessage extends Cloneable{
 	 */
 	public void setMessageTextParameters(Object... pParameters);
 
-
+	/**
+	 * Retorna lista com os listeners
+	 * @return
+	 */
+	public Set<IDBSMessageListener> getMessageListeners();
+	
+	/**
+	 * Adiciona um listener que receberá os eventos disparados pela mensagem.</br>
+	 * Retorna a própria mensagem já com o listener incluído.
+	 * @param pMessageListener
+	 * @return
+	 */
+	public IDBSMessage addListener(IDBSMessageListener pMessageListener);
+	
+	/**
+	 * Remove o listener.</br>
+	 * Retorna a própria mensagem já com o listener removido.
+	 * @param pMessageListener
+	 * @return
+	 */
+	public IDBSMessage removeListener(IDBSMessageListener pMessageListener);
 
 }

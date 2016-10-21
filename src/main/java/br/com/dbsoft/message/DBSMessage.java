@@ -1,6 +1,8 @@
 package br.com.dbsoft.message;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -12,7 +14,9 @@ import br.com.dbsoft.util.DBSObject;
  * @author ricardo.villar
  *
  */
-public class DBSMessage implements IDBSMessage{
+public class DBSMessage implements Serializable, IDBSMessage{
+
+	private static final long serialVersionUID = 2176781176871000385L;
 
 	private String						wMessageTextOriginal;
 	private String						wMessageText;
@@ -24,7 +28,7 @@ public class DBSMessage implements IDBSMessage{
 	private String						wMessageKey = null;
 	private Integer						wMessageCode = 0;
 	private Set<String>					wMessageSourceIds = new HashSet<String>();
-//	private Set<IDBSMessageListener> 	wMessageListeners = new HashSet<IDBSMessageListener>();
+	private Set<IDBSMessageListener> 	wMessageListeners = new HashSet<IDBSMessageListener>();
 	
 	
 	//Construtores============================
@@ -71,10 +75,7 @@ public class DBSMessage implements IDBSMessage{
 	}
 
 
-//	@Override
-//	public Set<IDBSMessageListener> getMessageListeners() {
-//		return wMessageListeners;
-//	}
+	
 
 	//=========================================
 	
@@ -140,7 +141,7 @@ public class DBSMessage implements IDBSMessage{
 	@Override
 	public void setMessageValidated(Boolean validated) {
 		wValidated = validated;
-//		pvFireEventAfterMessageValidated();
+		pvFireEventAfterMessageValidated();
 	}
 
 	/* (non-Javadoc)
@@ -213,13 +214,32 @@ public class DBSMessage implements IDBSMessage{
 		setMessageValidated(pMessage.isMessageValidated());
 		getMessageSourceIds().clear();
 		getMessageSourceIds().addAll(pMessage.getMessageSourceIds());
-//		getMessageListeners().clear();
-//		getMessageListeners().addAll(pMessage.getMessageListeners());
+		getMessageListeners().clear();
+		getMessageListeners().addAll(pMessage.getMessageListeners());
 	}
 
 	@Override
 	public boolean equals(IDBSMessage pSourceMessage) {
 		return DBSObject.isEqual(this.getMessageKey(), pSourceMessage.getMessageKey());
+	}
+
+	@Override
+	public IDBSMessage addListener(IDBSMessageListener pMessageListener) {
+		if (pMessageListener == null){return this;}
+		wMessageListeners.add(pMessageListener);
+		return this;
+	}
+
+	@Override
+	public IDBSMessage removeListener(IDBSMessageListener pMessageListener) {
+		if (pMessageListener == null){return this;}
+		wMessageListeners.remove(pMessageListener);
+		return this;
+	}
+
+	@Override
+	public Set<IDBSMessageListener> getMessageListeners() {
+		return wMessageListeners;
 	}
 
 	//PROTECTED =========================
@@ -234,14 +254,14 @@ public class DBSMessage implements IDBSMessage{
 	}
 
 	//PRIVATE =========================
-//	/**
-//	 * Dispara evento informando que mensagem foi validada.
-//	 */
-//	private void pvFireEventAfterMessageValidated(){
-//		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
-//		while(xI.hasNext()){
-//			xI.next().onAfterMessageValidated(this);
-//		}
-//	}
+	/**
+	 * Dispara evento informando que mensagem foi validada.
+	 */
+	private void pvFireEventAfterMessageValidated(){
+		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
+		while(xI.hasNext()){
+			xI.next().onAfterMessageValidated(this);
+		}
+	}
 
 }
