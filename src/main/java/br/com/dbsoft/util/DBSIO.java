@@ -44,6 +44,9 @@ import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
+import br.com.dbsoft.message.DBSMessage;
+import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessages;
 
 /**
  * @author ricardo.villar
@@ -794,13 +797,20 @@ public class DBSIO{
 		return false;
 	}
 	
-	/**
-	 * Retorna se dois datamodels contém os mesmos valores
-	 * @param pSourceDataModelClass
-	 * @param pSourceDataModel
-	 * @param pTargetDataModel
-	 * @return
-	 */
+	@SuppressWarnings("rawtypes")
+	public final static <T, T2> boolean dataModelValuesIsEqual(T pSourceDataModel, T pTargetDataModel, IDBSMessages pMessages) {
+		if (pSourceDataModel != null && pTargetDataModel != null){
+			return pvDataModelFieldsValueIsEqual(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel, pMessages);
+		}
+		return false; 
+	}
+//	/**
+//	 * Retorna se dois datamodels contém os mesmos valores
+//	 * @param pSourceDataModelClass
+//	 * @param pSourceDataModel
+//	 * @param pTargetDataModel
+//	 * @return
+//	 */
 //	public final static <T,T2> boolean isEqualDataModelMethodValues(Class<T> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
 //		for (Method xMethod:pSourceDataModelClass.getDeclaredMethods()){
 //			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
@@ -3369,7 +3379,39 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			pvCopyDataModelFieldsValue(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel);
 		}
 	}
+	
+//	private final static <T,T2> IDBSMessages<IDBSMessage> pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
+	@SuppressWarnings("unchecked")
+	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel, IDBSMessages pMessages){
+		boolean 					xIguais = true;
+		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
+			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
+			// Se for irá procurar dentro dos fields do datamodel
+			Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
+			if (xAnnotationTmp instanceof DBSTableModel){
+				//Chamada recursiva não implementada
+			}else{
+				Field yField = findDataModelField(pTargetDataModel.getClass(), xField.getName());
+				if (yField != null){
+					try {
+						xField.setAccessible(true);
+						if (!DBSObject.isEqual(xField.get(pSourceDataModel), xField.get(pTargetDataModel))) {
+							xIguais = false;
+							pMessages.add(new DBSMessage(MESSAGE_TYPE.ERROR, "Valor alterado."), xField.getName());
+						}
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						wLogger.error("copyDataModelFieldsValue", e);
+					}
+				}
+			}
+		}
 
-
+//		//Chamada recurva para procurar campo na superclass, se existir
+//		if (pSourceDataModelClass.getSuperclass() != null){
+//			xMessages.addAll(pvDataModelFieldsValueIsEqual(pSourceDataModelClass.getSuperclass(), pSourceDataModel, pTargetDataModel));
+//		}
+//		return xMessages;
+		return xIguais;
+	}
 	
 }
