@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
@@ -198,8 +197,7 @@ public class DBSHttp {
 	public static void ObjectOutputStreamWriteObject(ObjectOutputStream pObjectOutputStream, Object pObject) throws DBSIOException{
 		if (pObjectOutputStream == null){return;}
 		try {
-			Gson xJSON = new Gson();
-			pObjectOutputStream.writeObject(xJSON.toJson(pObject));
+			pObjectOutputStream.writeObject(DBSJson.toJson(pObject));
 		} catch (IOException e) {
 			DBSIO.throwIOException(e);
 		}
@@ -219,10 +217,7 @@ public class DBSHttp {
 		if (pObjectInputStream == null){return null;}
 		try {
 			Object xObject = pObjectInputStream.readObject();
-			if (xObject == null) {return null;}
-			Gson   xJSON = new Gson();
-			String xS = xObject.toString();
-			return xJSON.fromJson(xS, pClass);
+			return DBSJson.fromJson(xObject, pClass);
 		} catch (EOFException | StreamCorruptedException e){
 			return null;
 		} catch (JsonSyntaxException | ClassNotFoundException e) {
