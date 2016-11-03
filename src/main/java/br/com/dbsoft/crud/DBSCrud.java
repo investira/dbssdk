@@ -254,6 +254,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Integer pvMerge(DataModelClass pDataModel) throws DBSIOException{
 		if (pDataModel==null){
 			pvFireEventAfterError(pDataModel);
@@ -270,10 +271,15 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 				//Lê dado anterior se existir e dispara eventos beforeRead e afterRead para dar a oportunidade do cliente efetuar alguma procedimento com os dados anteriores
 				pvRead(pDataModel);
 				if (isOk()){
-					//Insere lançamento
-					xCount = pvFireEventOnMerge(pDataModel);
-					if (isOk()){
-						pvFireEventAfterMerge(pDataModel);
+					//Compra os dados originais para saber se houve alteração
+					if (!DBSIO.dataModelValuesIsEqual(wDataModelRead, pDataModel, getMessages())){
+						//Insere lançamento
+						xCount = pvFireEventOnMerge(pDataModel);
+						if (isOk()){
+							pvFireEventAfterMerge(pDataModel);
+						}
+					} else {
+						getMessages().add(new DBSMessage(MESSAGE_TYPE.INFORMATION, "Não houveram alterações."));
 					}
 				}
 			}
