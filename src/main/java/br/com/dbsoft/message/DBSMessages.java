@@ -323,6 +323,7 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	private void pvFindNextMessage(){
 		wCurrentMessageKey = null;
 		for (Entry<String, MessageClass> xM : wMessages.entrySet()) {
+			//Mensagem ainda não validade com true ou false
 			if (xM.getValue().isMessageValidated() == null){
 				wCurrentMessageKey =  xM.getKey();
 				break;
