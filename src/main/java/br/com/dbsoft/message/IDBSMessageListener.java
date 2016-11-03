@@ -8,6 +8,6 @@ public interface IDBSMessageListener {
 	 * @param pMessage
 	 * @return
 	 */
-	public <MessageClass extends IDBSMessage> String onAfterMessageValidated(MessageClass pMessage);
+	public <MessageClass extends IDBSMessage> void afterMessageValidated(MessageClass pMessage);
 
 }
