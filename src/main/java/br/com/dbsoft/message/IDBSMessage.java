@@ -133,17 +133,31 @@ public interface IDBSMessage extends Cloneable{
 	public void setMessageCode(Integer pMessageCode);
 
 	/**
-	 * Retorna se mensagem está validada:
-	 * @return false = validada como "não"</br>
-	 * true = validada como "sim"</br>
-	 * null = não validada</br>
+	 * Retorna se mensagem foi validada como true.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa ou não validada</li>
+	 * </ul>
 	 */
+	public Boolean isMessageValidatedTrue();
+	
+	/**
+	 * Retorna se mensagem foi validada.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
+	 */
+
 	public Boolean isMessageValidated();
 	/**
-	 * Retorna se mensagem está validada:
-	 * @return false = validada como "não"</br>
-	 * true = validada como "sim"</br>
-	 * null = não validada</br>
+	 * Retorna se mensagem foi validada.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
 	 */
 	public void setMessageValidated(Boolean validated);
 
