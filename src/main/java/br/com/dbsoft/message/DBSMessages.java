@@ -207,6 +207,17 @@ public class DBSMessages<MessageClass extends IDBSMessage> implements IDBSMessag
 	 * @see br.com.dbsoft.message.IDBSMessages#isMessageValidated(java.lang.String)
 	 */
 	@Override
+	public Boolean isMessageValidatedTrue(String pMessageKey){
+		if (wMessages.containsKey(pMessageKey)){
+			return wMessages.get(pMessageKey).isMessageValidatedTrue();
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#isMessageValidated(java.lang.String)
+	 */
+	@Override
 	public Boolean isMessageValidated(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
 			return wMessages.get(pMessageKey).isMessageValidated();
