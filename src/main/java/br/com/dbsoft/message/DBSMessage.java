@@ -220,7 +220,12 @@ public class DBSMessage implements Serializable, IDBSMessage{
 
 	@Override
 	public boolean equals(IDBSMessage pSourceMessage) {
-		return DBSObject.isEqual(this.getMessageKey(), pSourceMessage.getMessageKey());
+		return equals(pSourceMessage.getMessageKey());
+	}
+
+	@Override
+	public boolean equals(String pMessageKey) {
+		return DBSObject.isEqual(this.getMessageKey(), pMessageKey);
 	}
 
 	@Override
@@ -260,8 +265,9 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	private void pvFireEventAfterMessageValidated(){
 		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
 		while(xI.hasNext()){
-			xI.next().onAfterMessageValidated(this);
+			xI.next().afterMessageValidated(this);
 		}
 	}
+
 
 }

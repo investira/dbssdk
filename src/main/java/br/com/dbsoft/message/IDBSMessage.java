@@ -156,11 +156,18 @@ public interface IDBSMessage extends Cloneable{
 	public void copy(IDBSMessage pSourceMessage);
 
 	/**
-	 * Verifica se mensagem é iqual a partir da chave;
+	 * Verifica se mensagem é iqual a partir da chave da mensagem.
 	 * @param pSourceMessage
 	 * @return
 	 */
 	public boolean equals(IDBSMessage pSourceMessage);
+
+	/**
+	 * Verifica se mensagem é iqual a partir da chave.
+	 * @param pMessageKey
+	 * @return
+	 */
+	public boolean equals(String pMessageKey);
 
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
