@@ -19,6 +19,10 @@ import org.joda.time.DateTime;
  * @author ricardo.villar
  *
  */
+/**
+ * @author ricardo.villar
+ *
+ */
 public interface IDBSMessage extends Cloneable{
    	
 	public static enum MESSAGE_TYPE
@@ -128,7 +132,33 @@ public interface IDBSMessage extends Cloneable{
 	public Integer getMessageCode();
 	public void setMessageCode(Integer pMessageCode);
 
+	/**
+	 * Retorna se mensagem foi validada como true.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa ou não validada</li>
+	 * </ul>
+	 */
+	public Boolean isMessageValidatedTrue();
+	
+	/**
+	 * Retorna se mensagem foi validada.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
+	 */
+
 	public Boolean isMessageValidated();
+	/**
+	 * Retorna se mensagem foi validada.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
+	 */
 	public void setMessageValidated(Boolean validated);
 
 	public Exception getException();

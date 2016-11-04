@@ -8,6 +8,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSObject;
 
 /**
@@ -145,6 +146,14 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	}
 
 	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#isMessageValidatedTrue()
+	 */
+	@Override
+	public Boolean isMessageValidatedTrue() {
+		return DBSObject.getNotNull(isMessageValidated(), false);
+	}
+
+	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getException()
 	 */
 	@Override
@@ -265,9 +274,14 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	private void pvFireEventAfterMessageValidated(){
 		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
 		while(xI.hasNext()){
-			xI.next().afterMessageValidated(this);
+			IDBSMessageListener xListener = xI.next();
+			IDBSMessage xMsg = xListener.afterMessageValidated(this);
+			if (xMsg != null){
+				DBSIO.copyDataModelFieldsValue(this, xMsg);
+			}
 		}
 	}
+
 
 
 }

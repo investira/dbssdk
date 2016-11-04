@@ -133,7 +133,17 @@ public interface IDBSMessages<MessageClass extends IDBSMessage>{
 	 * @return
 	 */
 	public boolean hasMessages();
+	
+	/**
+	 * Retorna se mensagem foi validada como true.<br/>
+	 * @param pMessageKey
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa ou não validada</li>
+	 * </ul>
+	 */
+	public Boolean isMessageValidatedTrue(String pMessageKey);
 
+	
 	/**
 	 * Retorna se mensagem foi validada.<br/>
 	 * @param pMessageKey
