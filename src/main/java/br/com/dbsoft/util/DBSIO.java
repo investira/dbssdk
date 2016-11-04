@@ -44,8 +44,6 @@ import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
-import br.com.dbsoft.message.DBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
 
 /**
@@ -3381,7 +3379,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	}
 	
 //	private final static <T,T2> IDBSMessages<IDBSMessage> pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel, IDBSMessages pMessages){
 		boolean 					xIguais = true;
 		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
@@ -3397,7 +3395,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 						xField.setAccessible(true);
 						if (!DBSObject.isEqual(xField.get(pSourceDataModel), xField.get(pTargetDataModel))) {
 							xIguais = false;
-							pMessages.add(new DBSMessage(MESSAGE_TYPE.ERROR, "Valor alterado."), xField.getName());
+//							pMessages.add(new DBSMessage(MESSAGE_TYPE.ERROR, "Valor alterado."), xField.getName());
 						}
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						wLogger.error("copyDataModelFieldsValue", e);
