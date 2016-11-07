@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
@@ -29,8 +30,12 @@ public  class DBSObject {
 			if (xObj.trim().equals("")){
 				return true;
 			}
-		} else if (pObj instanceof List<?>){
+		} else if (pObj instanceof List<?>) {
 			if (((List<?>) pObj).isEmpty()) {
+				return true;
+			}
+		} else if (pObj instanceof LinkedHashMap<?, ?>){
+			if (((LinkedHashMap<?, ?>) pObj).isEmpty()) {
 				return true;
 			}
 		}
