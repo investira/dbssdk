@@ -1,5 +1,6 @@
 package br.com.dbsoft.message;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.faces.application.FacesMessage;
@@ -23,7 +24,7 @@ import org.joda.time.DateTime;
  * @author ricardo.villar
  *
  */
-public interface IDBSMessage extends Cloneable{
+public interface IDBSMessage extends Serializable{
    	
 	public static enum MESSAGE_TYPE
 	{
@@ -139,7 +140,7 @@ public interface IDBSMessage extends Cloneable{
 	 * <li>false= Validada como negativa ou não validada</li>
 	 * </ul>
 	 */
-	public Boolean isMessageValidatedTrue();
+	public boolean isMessageValidatedTrue();
 	
 	/**
 	 * Retorna se mensagem foi validada.<br/>
@@ -159,10 +160,8 @@ public interface IDBSMessage extends Cloneable{
 	 * <li>null= Ainda não validada</li>
 	 * </ul>
 	 */
+	
 	public void setMessageValidated(Boolean validated);
-
-	public Exception getException();
-	public void setException(Exception pException);
 
 	public String getMessageTooltip();
 	public void setMessageTooltip(String pMessageTooltip);
@@ -180,10 +179,29 @@ public interface IDBSMessage extends Cloneable{
 	public Set<String> getMessageSourceIds();
 	
 	/**
+	 * Retorna lista com os listeners
+	 * @return
+	 */
+	public Set<IDBSMessageListener> getMessageListeners();
+	/**
+	 * Adiciona um listener que receberá os eventos disparados pela mensagem.</br>
+	 * Retorna a própria mensagem já com o listener incluído.
+	 * @param pMessageListener
+	 * @return
+	 */
+	public IDBSMessage addMessageListener(IDBSMessageListener pMessageListener);
+	/**
+	 * Remove o listener.</br>
+	 * Retorna a própria mensagem já com o listener removido.
+	 * @param pMessageListener
+	 * @return
+	 */
+	public IDBSMessage removeMessageListener(IDBSMessageListener pMessageListener);
+	/**
 	 * Copia dados de uma mensagem para esta
 	 * @return
 	 */
-	public void copy(IDBSMessage pSourceMessage);
+	public void copyFrom(IDBSMessage pSourceMessage);
 
 	/**
 	 * Verifica se mensagem é iqual a partir da chave da mensagem.
@@ -199,6 +217,8 @@ public interface IDBSMessage extends Cloneable{
 	 */
 	public boolean equals(String pMessageKey);
 
+	public IDBSMessage clone();
+
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
 	 * A mensagem padrão deverá conter o simbolo %s nas posições que se deseja incluir os parametros informados.
@@ -206,26 +226,7 @@ public interface IDBSMessage extends Cloneable{
 	 */
 	public void setMessageTextParameters(Object... pParameters);
 
-	/**
-	 * Retorna lista com os listeners
-	 * @return
-	 */
-	public Set<IDBSMessageListener> getMessageListeners();
+	public Exception getException();
+	public void setException(Exception pException);
 	
-	/**
-	 * Adiciona um listener que receberá os eventos disparados pela mensagem.</br>
-	 * Retorna a própria mensagem já com o listener incluído.
-	 * @param pMessageListener
-	 * @return
-	 */
-	public IDBSMessage addListener(IDBSMessageListener pMessageListener);
-	
-	/**
-	 * Remove o listener.</br>
-	 * Retorna a própria mensagem já com o listener removido.
-	 * @param pMessageListener
-	 * @return
-	 */
-	public IDBSMessage removeListener(IDBSMessageListener pMessageListener);
-
 }
