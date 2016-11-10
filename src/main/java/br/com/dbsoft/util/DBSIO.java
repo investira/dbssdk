@@ -746,14 +746,16 @@ public class DBSIO{
 	
 	/**
 	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
-	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes estendidas. 
+	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes extendidas. 
 	 * @param pSourceDataModel DataModel origem
 	 * @param pTargetDataModel DataModel destino
-	 */	
-	public final static <T, T2> void copyDataModelFieldsValue(T pSourceDataModel, T2 pTargetDataModel){
+	 * @return Retorna <b>pTargetDataModel<b> destino já preenchido.
+	 */
+	public final static <T, T2> T2 copyDataModelFieldsValue(T pSourceDataModel, T2 pTargetDataModel){
 		if (pSourceDataModel != null && pTargetDataModel != null){
 			pvCopyDataModelFieldsValue(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel);
 		}
+		return pTargetDataModel;
 	}	
 	
 		
@@ -797,7 +799,6 @@ public class DBSIO{
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public final static <T, T2> boolean dataModelValuesIsEqual(T pSourceDataModel, T pTargetDataModel, IDBSMessages pMessages) {
 		if (pSourceDataModel != null && pTargetDataModel != null){
 			return pvDataModelFieldsValueIsEqual(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel, pMessages);
@@ -3350,7 +3351,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		
 	/**
 	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
-	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes estendidas. 
+	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes extendidas. 
 	 * @param pSourceDataModel DataModel origem
 	 * @param pTargetDataModel DataModel destino
 	 */	
@@ -3381,7 +3382,6 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	}
 	
 //	private final static <T,T2> IDBSMessages<IDBSMessage> pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
-	@SuppressWarnings("unchecked")
 	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel, IDBSMessages pMessages){
 		boolean 					xIguais = true;
 		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
