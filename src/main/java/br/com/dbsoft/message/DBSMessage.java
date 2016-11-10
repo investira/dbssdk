@@ -1,6 +1,5 @@
 package br.com.dbsoft.message;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -15,7 +14,7 @@ import br.com.dbsoft.util.DBSObject;
  * @author ricardo.villar
  *
  */
-public class DBSMessage implements Serializable, IDBSMessage{
+public class DBSMessage implements IDBSMessage{
 
 	private static final long serialVersionUID = 2176781176871000385L;
 
@@ -149,21 +148,10 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#isMessageValidatedTrue()
 	 */
 	@Override
-	public Boolean isMessageValidatedTrue() {
+	public boolean isMessageValidatedTrue() {
 		return DBSObject.getNotNull(isMessageValidated(), false);
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessage#getException()
-	 */
-	@Override
-	public Exception getException() {return wException;}
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessage#setException(java.lang.Exception)
-	 */
-	@Override
-	public void setException(Exception pException) {this.wException = pException;}
-	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTooltip()
 	 */
@@ -212,19 +200,40 @@ public class DBSMessage implements Serializable, IDBSMessage{
 
 
 	@Override
-	public void copy(IDBSMessage pMessage){
-		if (pMessage == null){return;}
-		setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
-		setMessageKey(pMessage.getMessageKey());
-		setMessageText(pMessage.getMessageText());
-		setMessageTime(pMessage.getMessageTime());
-		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
-		setMessageType(pMessage.getMessageType());
-		setMessageValidated(pMessage.isMessageValidated());
-		getMessageSourceIds().clear();
-		getMessageSourceIds().addAll(pMessage.getMessageSourceIds());
-		getMessageListeners().clear();
-		getMessageListeners().addAll(pMessage.getMessageListeners());
+	public IDBSMessage addMessageListener(IDBSMessageListener pMessageListener) {
+		if (pMessageListener == null){return this;}
+		wMessageListeners.add(pMessageListener);
+		return this;
+	}
+
+	@Override
+	public IDBSMessage removeMessageListener(IDBSMessageListener pMessageListener) {
+		if (pMessageListener == null){return this;}
+		wMessageListeners.remove(pMessageListener);
+		return this;
+	}
+
+	@Override
+	public Set<IDBSMessageListener> getMessageListeners() {
+		return wMessageListeners;
+	}
+
+	@Override
+	public void copyFrom(IDBSMessage pMessage){
+		if (pMessage == null 
+         || pMessage.equals(this)){return;}
+		DBSIO.copyDataModelFieldsValue(pMessage, this);  
+//		setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
+//		setMessageKey(pMessage.getMessageKey());
+//		setMessageText(pMessage.getMessageText());
+//		setMessageTime(pMessage.getMessageTime());
+//		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
+//		setMessageType(pMessage.getMessageType());
+//		setMessageValidated(pMessage.isMessageValidated());
+//		getMessageSourceIds().clear();
+//		getMessageSourceIds().addAll(pMessage.getMessageSourceIds());
+//		getMessageListeners().clear();
+//		getMessageListeners().addAll(pMessage.getMessageListeners());
 	}
 
 	@Override
@@ -236,25 +245,30 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	public boolean equals(String pMessageKey) {
 		return DBSObject.isEqual(this.getMessageKey(), pMessageKey);
 	}
-
+	
 	@Override
-	public IDBSMessage addListener(IDBSMessageListener pMessageListener) {
-		if (pMessageListener == null){return this;}
-		wMessageListeners.add(pMessageListener);
-		return this;
+	public IDBSMessage clone(){
+		try {
+			IDBSMessage xM = this.getClass().newInstance();
+			xM.copyFrom(this);
+			return xM;
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#getException()
+	 */
 	@Override
-	public IDBSMessage removeListener(IDBSMessageListener pMessageListener) {
-		if (pMessageListener == null){return this;}
-		wMessageListeners.remove(pMessageListener);
-		return this;
-	}
+	public Exception getException() {return wException;}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessage#setException(java.lang.Exception)
+	 */
 	@Override
-	public Set<IDBSMessageListener> getMessageListeners() {
-		return wMessageListeners;
-	}
+	public void setException(Exception pException) {this.wException = pException;}
 
 	//PROTECTED =========================
 	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
@@ -272,13 +286,13 @@ public class DBSMessage implements Serializable, IDBSMessage{
 	 * Dispara evento informando que mensagem foi validada.
 	 */
 	private void pvFireEventAfterMessageValidated(){
-		Iterator<IDBSMessageListener> xI = wMessageListeners.iterator();
+		Iterator<IDBSMessageListener> xI = getMessageListeners().iterator(); 
 		while(xI.hasNext()){
 			IDBSMessageListener xListener = xI.next();
-			IDBSMessage xMsg = xListener.afterMessageValidated(this);
-			if (xMsg != null){
-				DBSIO.copyDataModelFieldsValue(this, xMsg);
-			}
+			xListener.afterMessageValidated(this);
+//			if (xMsg != null){
+//				xMsg.copyFrom(this);
+//			}
 		}
 	}
 
