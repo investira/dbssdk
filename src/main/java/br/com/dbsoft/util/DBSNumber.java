@@ -159,6 +159,19 @@ public class DBSNumber {
 		return toBigDecimal(Math.log(xX));
 	}
 	
+	/**
+	 * Logaritmo na Base 10
+	 * @param pX Valor que se deseja retornar o Log
+	 * @return Restorna log do pX
+	 */
+	public static BigDecimal log10(Object pX){
+		if (DBSObject.isEmpty(pX)){
+			return null;
+		}
+		Double xX = toDouble(pX);
+		return toBigDecimal(Math.log10(xX));
+	}
+	
 	//------------------------------------------------------------------------------------
 	
 	/**
