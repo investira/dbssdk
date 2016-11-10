@@ -147,13 +147,12 @@ public  class DBSObject {
 		if (pClass==null){
 			return (T) pValue;
 		}
-		if (pClass.isAssignableFrom(Boolean.class)){
-			return (T) DBSBoolean.toBoolean(pValue);
-		}
 		if (pValue==null){
 			return null;
 		}
-		if (pClass.isAssignableFrom(Integer.class)){
+		if (pClass.isAssignableFrom(Boolean.class)){ //2016-11-04 - Boolean estava antes do pValue == null acima. Verificar o pq.
+			return (T) DBSBoolean.toBoolean(pValue);
+		}else if (pClass.isAssignableFrom(Integer.class)){
 			return (T) DBSNumber.toInteger(pValue);
 		}else if (pClass.isAssignableFrom(BigDecimal.class)){
 			return (T) DBSNumber.toBigDecimal(pValue);
