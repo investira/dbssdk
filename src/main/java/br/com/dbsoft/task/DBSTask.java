@@ -16,11 +16,11 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
-import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.DBSMessagesController;
 //import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
-import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.message.IDBSMessagesController;
 import br.com.dbsoft.util.DBSBoolean;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSFormat;
@@ -123,7 +123,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	protected Connection 			wConnection;
 	protected static IDBSMessage	wMessageError = new DBSMessage(MESSAGE_TYPE.ERROR,"Erro: %s");
 	
-	protected IDBSMessages<IDBSMessage>		wMessages = new DBSMessages<IDBSMessage>();
+	protected IDBSMessagesController		wMessagesController = new DBSMessagesController();
 	
 	private List<IDBSTaskEventsListener>	wEventListeners = new ArrayList<IDBSTaskEventsListener>();
 	
@@ -934,9 +934,17 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
+	public IDBSMessagesController getMessagesController(){
+		return wMessagesController;
+	}
+
+	/**
+	 * Retorna texto da mensagem que está na fila
+	 * @return
+	 */
 	public String getMessageText(){
 //		return wMessages.getMessageText(); //Comentado em 16/01/14 - Ricardo. Aparentemente não fazia sentido
-		return wMessages.getCurrentMessageText();
+		return wMessagesController.getCurrentMessage().getMessageText();
 	}
 	
 	/**
@@ -944,19 +952,9 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	public String getMessageTooltip(){
-		return wMessages.getCurrentMessageTooltip();
+		return wMessagesController.getCurrentMessage().getMessageTooltip();
 	}
 	
-	/**
-	 * Retorna texto da mensagem que está na fila
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	public IDBSMessages getMessages(){
-		return wMessages;
-	}
-
-
 	/**
 	 * Retorna se há alguma mensagem na fila
 	 * @return
@@ -965,7 +963,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	public Boolean getHasMessage(){
-		if (wMessages.getCurrentMessageKey()!=null){
+		if (wMessagesController.getCurrentMessage() != null && wMessagesController.getCurrentMessage().getMessageKey()!=null){
 			return true;
 		}else{
 			return false;
@@ -980,27 +978,18 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	public void setMessageValidated(Boolean pIsValidated){
-		if (wMessages!=null){
-			String xMessageKey = wMessages.getCurrentMessageKey();
-			wMessages.setMessageValidated(pIsValidated);
-			messageValidated(xMessageKey, pIsValidated);
+		if (wMessagesController!=null && wMessagesController.getCurrentMessage() != null){
+			wMessagesController.getCurrentMessage().setMessageValidated(pIsValidated);
 		}
 	}
 	
-	/**
-	 * Método após a validação de qualquer mensagem.
-	 * @param pMessageKey
-	 * @param pIsValidated
-	 * @throws DBSIOException 
-	 */
-	protected void messageValidated(String pMessageKey, Boolean pIsValidated){}
 
 	// Protected ------------------------------------------------------------------------
 	/**
 	 * Limpa fila de mensagens
 	 */
 	protected void clearMessages(){
-		wMessages.clear();
+		wMessagesController.getMessages().clear();
 	}
 	
 	/**
@@ -1020,7 +1009,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @param pMessageText Texto da mensagem
 	 */
 	protected void addMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		wMessages.add(new DBSMessage(pMessageType, pMessageText));
+		wMessagesController.getMessages().add(new DBSMessage(pMessageType, pMessageText));
 	}
 
 	/**
@@ -1038,14 +1027,14 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 */
 	protected void addMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
 		//Configura o icone do dialog confome o tipo de mensagem
-		wMessages.add(new DBSMessage(pMessageKey, pMessageType, pMessageText, pMessageTooltip));
+		wMessagesController.getMessages().add(new DBSMessage(pMessageKey, pMessageType, pMessageText, pMessageTooltip));
 	}
 	/**
 	 * Remove uma mensagem da fila
 	 * @param pMessageKey
 	 */
 	protected void removeMessage(String pMessageKey){
-		wMessages.remove(pMessageKey);
+		wMessagesController.getMessages().remove(pMessageKey);
 	}
 
 	/**
@@ -1054,7 +1043,7 @@ public class DBSTask<DataModelClass> implements IDBSTaskEventsListener {
 	 * @return
 	 */
 	protected boolean isMessageValidated(String pMessageKey){
-		return wMessages.isMessageValidated(pMessageKey);
+		return wMessagesController.getMessages().getMessage(pMessageKey).isMessageValidatedTrue();
 	}
 	
 	protected boolean isMessageValidated(IDBSMessage pMessage){

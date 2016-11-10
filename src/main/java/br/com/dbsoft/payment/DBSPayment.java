@@ -8,7 +8,7 @@ import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
 import br.com.dbsoft.util.DBSObject;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+
 public abstract class DBSPayment implements IDBSPayment {
 	
 	protected Logger wLogger = Logger.getLogger(this.getClass());

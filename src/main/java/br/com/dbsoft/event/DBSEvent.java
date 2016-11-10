@@ -1,8 +1,8 @@
 package br.com.dbsoft.event;
 
 import br.com.dbsoft.message.DBSMessages;
-import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessages;
+
 
 /**
  * Class da qual todos os eventos deverão ser extendidos
@@ -11,7 +11,7 @@ import br.com.dbsoft.message.IDBSMessages;
 public abstract class DBSEvent<SourceObjectClass> implements IDBSEvent<SourceObjectClass>{
 	
 	private boolean 					wOk = true;
-	private IDBSMessages<IDBSMessage> 	wMessages = new DBSMessages<IDBSMessage>();
+	private IDBSMessages				wMessages = new DBSMessages();
 	private SourceObjectClass 			wSourceObject;
 
 	/**
@@ -50,7 +50,6 @@ public abstract class DBSEvent<SourceObjectClass> implements IDBSEvent<SourceObj
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public IDBSMessages getMessages() {
 		return wMessages;
 	}

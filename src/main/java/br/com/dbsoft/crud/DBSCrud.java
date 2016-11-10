@@ -35,7 +35,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected IDBSMessage	   			wMsgWarningGenerico = new DBSMessage(MESSAGE_TYPE.WARNING, "%s");
 
 	private   ICrudAction				wCrudAction = CrudAction.NONE; 
-	private   IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
+	private   IDBSMessages				wMessages = new DBSMessages();
 	private	  boolean					wAutoCommit = false;
 	private   DataModelClass			wDataModelRead = null;
 	
@@ -126,7 +126,6 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 	
 	@Override
-	@SuppressWarnings("rawtypes")
 	public final IDBSMessages getMessages(){
 		return wMessages;
 	}
@@ -254,7 +253,6 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private Integer pvMerge(DataModelClass pDataModel) throws DBSIOException{
 		if (pDataModel==null){
 			pvFireEventAfterError(pDataModel);
@@ -272,7 +270,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 				pvRead(pDataModel);
 				if (isOk()){
 					//Compra os dados originais para saber se houve alteração
-					if (!DBSIO.dataModelValuesIsEqual(wDataModelRead, pDataModel, getMessages())){
+					if (!DBSIO.dataModelValuesIsEqual(wDataModelRead, pDataModel)){
 						//Insere lançamento
 						xCount = pvFireEventOnMerge(pDataModel);
 						if (isOk()){
@@ -323,7 +321,6 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xCount;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void pvAfterEventFire(IDBSCrudEvent<DataModelClass> pEvent){
 		//Seta set o crud está ok.
 		pvSetOk(pEvent.isOk());

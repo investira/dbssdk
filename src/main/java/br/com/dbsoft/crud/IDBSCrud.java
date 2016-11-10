@@ -130,7 +130,6 @@ public interface IDBSCrud<DataModelClass> {
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public IDBSMessages getMessages();
 
 	

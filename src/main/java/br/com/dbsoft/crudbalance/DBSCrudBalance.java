@@ -36,7 +36,6 @@ public abstract class DBSCrudBalance<DataModelClass> extends DBSCrud<DataModelCl
 	protected abstract void pvIncrementDate() throws DBSIOException;
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final void afterRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 		if (getCrudAction() == CrudAction.MERGING
@@ -49,7 +48,6 @@ public abstract class DBSCrudBalance<DataModelClass> extends DBSCrud<DataModelCl
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public final void afterMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 		//Inclui lançamento novo no saldo

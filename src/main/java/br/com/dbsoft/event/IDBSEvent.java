@@ -30,7 +30,6 @@ public interface IDBSEvent<SourceObjectClass>{
 	 * Mensagens dentro do evento
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public IDBSMessages getMessages();	
 
 }

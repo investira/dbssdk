@@ -64,7 +64,6 @@ import urn.ebay.apis.eBLBaseComponents.RecurringPaymentsProfileDetailsType;
 import urn.ebay.apis.eBLBaseComponents.ScheduleDetailsType;
 import urn.ebay.apis.eBLBaseComponents.SetExpressCheckoutRequestDetailsType;
 
-@SuppressWarnings("unchecked")
 public class DBSPayPal extends DBSPayment{
 	
 	private static final String CHECKOUT_EXPRESS_TESTE = "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="; //URL PARA TESTES. TROCAR QUANDO FOR PRA PRODUÇÃO

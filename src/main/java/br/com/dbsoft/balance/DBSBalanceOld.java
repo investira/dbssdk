@@ -7,9 +7,9 @@ import java.sql.Savepoint;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.DBSMessagesController;
 import br.com.dbsoft.message.IDBSMessage;
-import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.message.IDBSMessagesController;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -26,7 +26,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	protected Connection 				wConnection;
 	protected OperationDataClass 		wOperationData;
 	protected Date						wDate;
-	protected IDBSMessages<IDBSMessage>	wMessages = new DBSMessages<IDBSMessage>();
+	protected IDBSMessagesController	wMessages = new DBSMessagesController();
 	
 	public DBSBalanceOld(Connection pConnection) {
 		wConnection = pConnection;
@@ -187,7 +187,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 */
 	public String getMessageText(){
 //		return wMessages.getMessageText(); //Comentado em 16/01/14 - Ricardo. Aparentemente não fazia sentido
-		return wMessages.getCurrentMessageText();
+		return wMessages.getCurrentMessage().getMessageText();
 	}
 	
 	/**
@@ -195,15 +195,14 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @return
 	 */
 	public String getMessageTooltip(){
-		return wMessages.getCurrentMessageTooltip();
+		return wMessages.getCurrentMessage().getMessageTooltip();
 	}
 	
 	/**
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public IDBSMessages getMessages(){
+	public IDBSMessagesController getMessages(){
 		return wMessages;
 	}
 
@@ -213,7 +212,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @return
 	 */
 	public Boolean getHasMessage(){
-		if (wMessages.getCurrentMessageKey()!=null){
+		if (wMessages.getCurrentMessage().getMessageKey()!=null){
 			return true;
 		}else{
 			return false;
@@ -229,8 +228,8 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 */
 	public void setMessageValidated(Boolean pIsValidated){
 		if (wMessages!=null){
-			String xMessageKey = wMessages.getCurrentMessageKey();
-			wMessages.setMessageValidated(pIsValidated);
+			String xMessageKey = wMessages.getCurrentMessage().getMessageKey();
+			wMessages.getCurrentMessage().setMessageValidated(pIsValidated);
 			messageValidated(xMessageKey, pIsValidated);
 		}
 	}
@@ -248,7 +247,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * Limpa fila de mensagens
 	 */
 	protected void clearMessages(){
-		wMessages.clear();
+		wMessages.getMessages().clear();
 	}
 	
 	/**
@@ -256,7 +255,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @param pMessage
 	 */
 	protected void addMessage(IDBSMessage pMessage){
-		wMessages.add(pMessage);
+		wMessages.getMessages().add(pMessage);
 	}
 
 	
@@ -265,7 +264,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @param pMessageKey
 	 */
 	protected void removeMessage(String pMessageKey){
-		wMessages.remove(pMessageKey);
+		wMessages.getMessages().remove(pMessageKey);
 	}
 
 	/**
@@ -274,7 +273,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @return
 	 */
 	protected boolean isMessageValidated(String pMessageKey){
-		return wMessages.isMessageValidated(pMessageKey);
+		return wMessages.getMessages().getMessage(pMessageKey).isMessageValidatedTrue();
 	}
 	
 	protected boolean isMessageValidated(IDBSMessage pMessage){

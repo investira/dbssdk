@@ -19,7 +19,6 @@ public interface IDBSPayment {
 	IDBSMessage MsgErroValidateSucessURLEmpty = new DBSMessage(MESSAGE_TYPE.ERROR, "URL de Sucesso não configurada.");
 	IDBSMessage MsgErroValidateCancelURLEmpty = new DBSMessage(MESSAGE_TYPE.ERROR, "URL de Cancelamento não configurada.");
 	
-	@SuppressWarnings("rawtypes")
 	public IDBSMessages getMessages();
 	
 	public boolean isOk();

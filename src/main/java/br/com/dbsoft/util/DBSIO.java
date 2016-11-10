@@ -44,9 +44,6 @@ import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
-import br.com.dbsoft.message.DBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
-import br.com.dbsoft.message.IDBSMessages;
 
 /**
  * @author ricardo.villar
@@ -799,9 +796,9 @@ public class DBSIO{
 		return false;
 	}
 	
-	public final static <T, T2> boolean dataModelValuesIsEqual(T pSourceDataModel, T pTargetDataModel, IDBSMessages pMessages) {
+	public final static <T, T2> boolean dataModelValuesIsEqual(T pSourceDataModel, T pTargetDataModel) {
 		if (pSourceDataModel != null && pTargetDataModel != null){
-			return pvDataModelFieldsValueIsEqual(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel, pMessages);
+			return pvDataModelFieldsValueIsEqual(pSourceDataModel.getClass(), pSourceDataModel, pTargetDataModel);
 		}
 		return false; 
 	}
@@ -3381,8 +3378,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		}
 	}
 	
-//	private final static <T,T2> IDBSMessages<IDBSMessage> pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
-	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel, IDBSMessages pMessages){
+	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
 		boolean 					xIguais = true;
 		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
 			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
@@ -3397,7 +3393,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 						xField.setAccessible(true);
 						if (!DBSObject.isEqual(xField.get(pSourceDataModel), xField.get(pTargetDataModel))) {
 							xIguais = false;
-							pMessages.add(new DBSMessage(MESSAGE_TYPE.ERROR, "Valor alterado."), xField.getName());
+//							pMessages.add(new DBSMessage(MESSAGE_TYPE.ERROR, "Valor alterado."), xField.getName());
 						}
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						wLogger.error("copyDataModelFieldsValue", e);
