@@ -36,6 +36,7 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 
 	/**
 	 * Disparado após uma edição independentemente se houve ou não erro, seja, insert, update ou delete.<br/>
+	 * O commit ainda não foi efetuado caso o <b>autocommit</b> tenha sido setado.
 	 * @param pEvent
 	 * @throws DBSIOException
 	 */
@@ -52,6 +53,7 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 	/**
 	 * Evento disparado ao final do delete executado com sucesso.<br/>
 	 * Os dados lidos podem ser consultados em <b>pEvent.getDataModel()</b> e <b>pEvent.getDataModelRead()</b>.<br/>
+	 * O commit já foi efetuado caso o <b>autocommit = true</b>.
 	 * @param pEvent
 	 * @throws DBSIOException
 	 */
@@ -60,6 +62,7 @@ public interface IDBSCrudEventsListener<DataModelClass> {
 	/**
 	 * Evento disparado ao final do merge executado com sucesso.<br/>
 	 * Os dados lidos podem ser consultados em <b>pEvent.getDataModelRead()</b>.<br/>
+	 * O commit já foi efetuado caso o <b>autocommit = true</b> tenha sido setado.
 	 * @param pEvent
 	 * @throws DBSIOException
 	 */
