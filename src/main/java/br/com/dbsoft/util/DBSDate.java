@@ -560,13 +560,18 @@ public class DBSDate{
 		return DBSDate.toTimestamp(xData);
 	}
 	
+	/**
+	 * Retorna uma hora do tipo Timestamp a partir de uma String com formato HH:mm 
+	 * @param pData
+	 * @return
+	 */
 	public static Timestamp toTimestampHHmm(String pData){
 		if (DBSObject.isEmpty(pData)) {
 			return null;
 		}
 		SimpleDateFormat xFormat = new SimpleDateFormat("HH:mm");
 		try {
-			return new Timestamp(xFormat.parse((String) pData).getTime());
+			return new Timestamp(xFormat.parse(pData).getTime());
 		} catch (ParseException e) {
 			wLogger.error(e);
 			return null;
