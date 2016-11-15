@@ -19,20 +19,20 @@ import br.com.dbsoft.annotation.DBSEager;
  *
  */
 public class DBSEagerExtension implements Extension {
-    private List<Bean<?>> eagerBeansList = new ArrayList<Bean<?>>();
+    private List<Bean<?>> wEagerBeansList = new ArrayList<Bean<?>>();
 
     public <T> void collect(@Observes ProcessBean<T> pEvent) {
         if (pEvent.getAnnotated().isAnnotationPresent(DBSEager.class)
             && pEvent.getAnnotated().isAnnotationPresent(ApplicationScoped.class)) {
-            eagerBeansList.add(pEvent.getBean());
+            wEagerBeansList.add(pEvent.getBean());
         }
     }
 
     @SuppressWarnings("unused")
 	public void load(@Observes AfterDeploymentValidation pEvent, BeanManager pBeanManager) {
-        for (Bean<?> bean : eagerBeansList) {
+        for (Bean<?> xBean : wEagerBeansList) {
             // note: toString() is important to instantiate the bean
-            pBeanManager.getReference(bean, bean.getBeanClass(), pBeanManager.createCreationalContext(bean)).toString();
+            pBeanManager.getReference(xBean, xBean.getBeanClass(), pBeanManager.createCreationalContext(xBean)).toString();
         }
     }
 }
