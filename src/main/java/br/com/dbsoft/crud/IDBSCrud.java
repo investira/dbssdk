@@ -63,9 +63,16 @@ public interface IDBSCrud<DataModelClass> {
 	// Mensagens
 	IDBSMessage MsgErroNoPadrao					= new DBSMessage(MESSAGE_TYPE.ERROR, "Erro");
 
-	
+	/**
+	 * Retorna qual a ação o crud esta.
+	 * @return
+	 */
 	public ICrudAction getCrudAction();
 	
+	/**
+	 * Retorna se esta OK.
+	 * @return
+	 */
 	public boolean isOk();
 	
 	//Actions=======================================================================================================
