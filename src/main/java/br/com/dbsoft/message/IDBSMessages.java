@@ -100,6 +100,13 @@ public interface IDBSMessages extends Serializable{
 	public void clear();
 
 	/**
+	 * Reseta todas as mensagens como não validadas(null) sem disparar os <b>IDBSMessageListener</b> 
+	 * que eventualmente existam atrelados a elas. 
+	 */
+	public void reset();
+
+	
+	/**
 	 * Retorna se existe mensagem de erro
 	 * @return
 	 */

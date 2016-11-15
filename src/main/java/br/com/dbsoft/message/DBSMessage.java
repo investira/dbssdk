@@ -257,6 +257,12 @@ public class DBSMessage implements IDBSMessage{
 		}
 		return null;
 	}
+	
+	@Override
+	public void reset() {
+		wValidated = null;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getException()

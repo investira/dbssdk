@@ -73,6 +73,11 @@ public class DBSMessages implements IDBSMessages {
 		if (pMessage == null){return;}
 //		try {
 			IDBSMessage xM = wMessages.get(pMessage.getMessageKey());
+			//Se mensagem já existir e estiver validada, exclui da lista para ser reincluida posteriormente abaixo.
+			if (xM != null && xM.isMessageValidatedTrue()){
+				wMessages.remove(pMessage.getMessageKey());
+				xM = null;
+			}
 			//Se mensagem não existir na fila
 			if (xM == null){ 
 				//Se mensagem for estárica, cria copia(clone) da mensagem enviada para não afetar a original. 
@@ -241,20 +246,35 @@ public class DBSMessages implements IDBSMessages {
 		return wMessagesListeners;
 	}
 
-	//PRIVATE =======================================================================================
-
 	@Override
 	public Integer size() {
 		return wMessages.size();
 	}
 
+	@Override
+	public boolean isMessageValidatedTrue(String pMessageKey) {
+		if (pMessageKey == null){return false;}
+		IDBSMessage xMessage = getMessage(pMessageKey);
+		return (xMessage != null && xMessage.isMessageValidatedTrue());
+	}
+	
+	@Override
+	public boolean isMessageValidatedTrue(IDBSMessage pMessage) {
+		if (pMessage == null){return false;}
+		return isMessageValidatedTrue(pMessage.getMessageKey());
+	}
+
+	@Override
+	public void reset() {
+		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
+			xM.getValue().reset();
+		}	
+	}
+
+	//PRIVATE =======================================================================================
 
 	/**
 	 * Retorna se existe alguma mensagem do tipo informado
-	 * @param pMessageType
-	 * @return
-	 */
-	/**
 	 * @param pMessageType
 	 * @return
 	 */
@@ -289,19 +309,6 @@ public class DBSMessages implements IDBSMessages {
 			IDBSMessagesListener xListener = xI.next();
 			xListener.afterClearMessages();
 		}
-	}
-
-	@Override
-	public boolean isMessageValidatedTrue(String pMessageKey) {
-		if (pMessageKey == null){return false;}
-		IDBSMessage xMessage = getMessage(pMessageKey);
-		return (xMessage != null && xMessage.isMessageValidatedTrue());
-	}
-	
-	@Override
-	public boolean isMessageValidatedTrue(IDBSMessage pMessage) {
-		if (pMessage == null){return false;}
-		return isMessageValidatedTrue(pMessage.getMessageKey());
 	}
 
 }

@@ -51,11 +51,11 @@ public interface IDBSMessage extends Serializable{
 	    	wIconClass = pIconClass;
 	    	wRequireConfirmation = pRequireConfirmation;
 	    	wSeverityLevel = pSeverityLevel; 
-			if (wSeverityLevel < 19){
+			if (wSeverityLevel < 20){
 				wSeverity = FacesMessage.SEVERITY_INFO;
-			}else if (wSeverityLevel < 29){
+			}else if (wSeverityLevel < 30){
 				wSeverity = FacesMessage.SEVERITY_WARN;
-			}else if (wSeverityLevel < 49){
+			}else{
 				wSeverity = FacesMessage.SEVERITY_ERROR;
 			}
 	    }
@@ -74,6 +74,13 @@ public interface IDBSMessage extends Serializable{
 
 	    public Boolean getRequireConfirmation(){
 	    	return wRequireConfirmation;
+	    }
+	    
+	    public Boolean getStopExecution(){
+	    	if (wSeverity == FacesMessage.SEVERITY_ERROR){
+	    		return true;
+	    	}
+	    	return false;
 	    }
 
 	    public Severity getSeverity(){
@@ -161,7 +168,21 @@ public interface IDBSMessage extends Serializable{
 	 * </ul>
 	 */
 	
+	/**
+	 * Seta se mensagem foi validada.<br/>
+	 * Dispara os <b>IDBSMessageListener</b> que eventualmente existam atrelados a esta mensagem.
+	 * @param <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Validada como negativa</li>
+	 * <li>null= Ainda não validada</li>
+	 * </ul>
+	 */
 	public void setMessageValidated(Boolean validated);
+	
+	/**
+	 * Reseta mensagem como não validada(null) sem disparar os <b>IDBSMessageListener</b> 
+	 * que eventualmente existam atrelados a ela. 
+	 */
+	public void reset();
 
 	public String getMessageTooltip();
 	public void setMessageTooltip(String pMessageTooltip);
