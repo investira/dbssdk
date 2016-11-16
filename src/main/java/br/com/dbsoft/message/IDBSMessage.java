@@ -28,15 +28,15 @@ public interface IDBSMessage extends Serializable{
    	
 	public static enum MESSAGE_TYPE
 	{
-	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
-	    SUCCESS		("s", "Sucesso", "-i_sucess -green", false, 1),
-	    INFORMATION	("i", "Informação", "-i_information", false, 10),
-	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
-	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
-	    CONFIRM		("c", "Confirmar", "-i_question_confirm", true, 20),
-	    IGNORE 		("g", "Ignorar", "-i_question_ignore -yellow", true, 20),
-	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", false, 30),
-	    ERROR 		("e", "Erro", "-i_error -red", false, 40);
+	    ABOUT 		("a", "Sobre", "-i_information -green", 1),
+	    SUCCESS		("s", "Sucesso", "-i_sucess -green", 1),
+	    INFORMATION	("i", "Informação", "-i_information", 10),
+	    IMPORTANT	("t", "Importante", "-i_important", 10),
+	    WARNING 	("w", "Atenção", "-i_warning -yellow", 20),
+	    CONFIRM		("c", "Confirmar", "-i_question_confirm", 20),
+	    IGNORE 		("g", "Ignorar", "-i_question_ignore -yellow", 20),
+	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", 30),
+	    ERROR 		("e", "Erro", "-i_error -red", 40);
 
 	    String 	wCode;
 	    String 	wName;
@@ -45,11 +45,10 @@ public interface IDBSMessage extends Serializable{
 	    Integer wSeverityLevel; 
 	    Severity wSeverity;
 	    
-	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pRequireConfirmation, Integer pSeverityLevel){
+	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Integer pSeverityLevel){
 	    	wCode = pCode;
 	    	wName = pName;
 	    	wIconClass = pIconClass;
-	    	wRequireConfirmation = pRequireConfirmation;
 	    	wSeverityLevel = pSeverityLevel; 
 			if (wSeverityLevel < 20){
 				wSeverity = FacesMessage.SEVERITY_INFO;
@@ -72,11 +71,30 @@ public interface IDBSMessage extends Serializable{
 	    	return wIconClass;
 	    }
 
-	    public Boolean getRequireConfirmation(){
-	    	return wRequireConfirmation;
+	    /**
+	     * @return Se mensagem é SEVERITY_WARN.
+	     */
+	    public Boolean getIsInfo(){
+	    	if (wSeverity == FacesMessage.SEVERITY_INFO){
+	    		return true;
+	    	}
+	    	return false;
+	    }
+
+	    /**
+	     * @return Se mensagem é SEVERITY_INFO. 
+	     */
+	    public Boolean getIsWarning(){
+	    	if (wSeverity == FacesMessage.SEVERITY_WARN){
+	    		return true;
+	    	}
+	    	return false;
 	    }
 	    
-	    public Boolean getStopExecution(){
+	    /**
+	     * @return Se mensagem é SEVERITY_ERROR. 
+	     */
+	    public Boolean getIsError(){
 	    	if (wSeverity == FacesMessage.SEVERITY_ERROR){
 	    		return true;
 	    	}

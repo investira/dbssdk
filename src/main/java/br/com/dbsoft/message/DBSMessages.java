@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSObject;
 
 
@@ -25,7 +27,8 @@ public class DBSMessages implements IDBSMessages {
 
 	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
-	private LinkedHashMap<String, IDBSMessage> 	wMessages =  new LinkedHashMap<String, IDBSMessage>(); 
+	private LinkedHashMap<String, IDBSMessage> 	wMessages =  new LinkedHashMap<String, IDBSMessage>();
+//	private LinkedHashMap<String, IDBSMessage> 	wMessagessNotValidated =  new LinkedHashMap<String, IDBSMessage>();
 	private Set<IDBSMessagesListener> 			wMessagesListeners = new HashSet<IDBSMessagesListener>();
 	private String								wFromUserId;
 	
@@ -138,7 +141,7 @@ public class DBSMessages implements IDBSMessages {
 	 */
 	@Override
 	public boolean hasErrorsMessages(){
-		return pvFindMessageType(MESSAGE_TYPE.ERROR);
+		return pvFindMessageType(FacesMessage.SEVERITY_ERROR);
 	}
 
 	/* (non-Javadoc)
@@ -146,7 +149,7 @@ public class DBSMessages implements IDBSMessages {
 	 */
 	@Override
 	public boolean hasWarningsMessages(){
-		return pvFindMessageType(MESSAGE_TYPE.WARNING);
+		return pvFindMessageType(FacesMessage.SEVERITY_WARN);
 	}
 
 	/* (non-Javadoc)
@@ -154,7 +157,7 @@ public class DBSMessages implements IDBSMessages {
 	 */
 	@Override
 	public boolean hasInformationsMessages(){
-		return pvFindMessageType(MESSAGE_TYPE.INFORMATION);
+		return pvFindMessageType(FacesMessage.SEVERITY_INFO);
 	}
 	
 
@@ -193,6 +196,12 @@ public class DBSMessages implements IDBSMessages {
 	public IDBSMessage getMessage(String pMessageKey) {
 		if (DBSObject.isEmpty(pMessageKey)){return null;}
 		return wMessages.get(pMessageKey);
+	}
+	
+	@Override
+	public IDBSMessage getMessage(IDBSMessage pMessage) {
+		if (pMessage == null){return null;}
+		return getMessage(pMessage.getMessageKey());
 	}
 
 	/* (non-Javadoc)
@@ -278,9 +287,10 @@ public class DBSMessages implements IDBSMessages {
 	 * @param pMessageType
 	 * @return
 	 */
-	private boolean pvFindMessageType(MESSAGE_TYPE pMessageType){
+	private boolean pvFindMessageType(Severity pSeverity){
 		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
-			if (xM.getValue().getMessageType().equals(pMessageType)){
+			if (xM.getValue().getMessageType().getSeverity().equals(pSeverity)
+			 && xM.getValue().isMessageValidated() == null){ //Ainda não validade. Não é true nem false.
 				return true;
 			}
 		}	

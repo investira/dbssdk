@@ -9,11 +9,13 @@ import java.io.Serializable;
 public interface IDBSMessagesController extends Serializable, IDBSMessageListener, IDBSMessagesListener{
 
 	/**
-	 * Retorna a mensagem corrente
-	 * @return
+	 * @return A mensagem corrente se houver ou <i>null</i> se não houver.
 	 */
 	public IDBSMessage getCurrentMessage();
 	
+	/**
+	 * @return As mensagens não validadas(validated = null).
+	 */
 	public IDBSMessages getMessages();
 	
 }

@@ -81,6 +81,13 @@ public interface IDBSMessages extends Serializable{
 	 */
 	public IDBSMessage getMessage(String pMessageKey);
 
+	/**
+	 * Retorna uma mensagem a partir da mensagem informada.
+	 * Utiliza a chave da mensagem informada(MessageKey). 
+	 * @param pMessageKey
+	 */
+	public IDBSMessage getMessage(IDBSMessage pMessage);
+
 
 	/**
 	 * Retorna uma mensagem vinculada ao <b>sourceId</b> informado.
@@ -107,18 +114,20 @@ public interface IDBSMessages extends Serializable{
 
 	
 	/**
-	 * Retorna se existe mensagem de erro
+	 * Retorna se existe mensagem de erro não validada.
 	 * @return
 	 */
 	public boolean hasErrorsMessages();
+
 	/**
-	 * Retorna se existe alguma mensagem de alerta
+	 * Retorna se existe alguma mensagem de alerta não validada.<br/>
+	 * Mesagens de alerta necessitam de confirmação.
 	 * @return
 	 */
-
 	public boolean hasWarningsMessages();
+	
 	/**
-	 * Retorna se existe mensagem de informação
+	 * Retorna se existe mensagem de informação não validada.
 	 * @return
 	 */
 	public boolean hasInformationsMessages();

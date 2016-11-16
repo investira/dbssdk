@@ -65,7 +65,7 @@ public class DBSMessagesController implements IDBSMessagesController {
 	private void pvRefreshMessages(IDBSMessage pMessage){
 		//Se não for mensagem que não requer confirmação, automaticamente retira mensagem da fila.
 		//Mensagens que requerem confirmação, precisam ser mantidar na fila para serem consultados porteriormente para saber qual foi a validação(false, true).
-		if (!pMessage.getMessageType().getRequireConfirmation()){
+		if (!pMessage.getMessageType().getIsWarning()){
 			getMessages().remove(pMessage);
 		}
 	}
