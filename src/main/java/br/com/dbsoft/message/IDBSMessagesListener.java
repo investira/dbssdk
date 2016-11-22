@@ -12,25 +12,25 @@ public interface IDBSMessagesListener{
 	 * @return Retorna mensagem que foi incluída.</br>
 	 * Quando a mensagem enviada for <i>static</i>, será criado automaticamente um <i>clone</i> e este é que será incluido e retornado.
 	 */
-	public void afterAddMessage(IDBSMessage pMessage);
+	public void afterAddMessage(IDBSMessages pMessages, IDBSMessage pMessage);
 
 	/**
 	 * Disparado após a mensagem ser removida.
 	 * @param pMessageKey Chave da mensagem removida.
 	 */
-	public void afterRemoveMessage(String pMessageKey);
+	public void afterRemoveMessage(IDBSMessages pMessages, String pMessageKey);
 
 	/**
 	 * Disparado após a mensagem ser removida.
 	 * @param pMessageKey Chave da mensagem removida.
 	 */
-	public void afterClearMessages();
-
+	public void afterClearMessages(IDBSMessages pMessages);
+	
 	/**
-	 * Disparado após a mensagem ser validada.
-	 * @param pMessage Copia da mensagem que foi validada.<br/>
-	 * @param pMessage
+	 * Disparado após a mensagem ser validada independentemente do valor da validação(true ou false).
+	 * @param pMessage Mensagem que foi validada.
 	 */
-//	public <MessageClass extends IDBSMessage> void afterMessageValidated(MessageClass pMessage);
+	public void afterMessageValidated(IDBSMessages pMessages, IDBSMessage pMessage);
+
 
 }

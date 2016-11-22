@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public interface IDBSMessages extends Serializable{
+public interface IDBSMessages extends Serializable, IDBSMessageListener{
 
 	/**
 	 * Retorna iterator.<br/>
@@ -60,7 +60,7 @@ public interface IDBSMessages extends Serializable{
 	 * Retorna se mensagem existe e foi validada como true.<br/>
 	 * @param pMessageKey
 	 * @return <ul><li>true= Validada como afirmativa</li>
-	 * <li>false= Validada como negativa ou não validada ou não existente.</li>
+	 * <li>false= Não existente ou não validada ou validada como negativa.</li>
 	 * </ul>
 	 */
 	public boolean isMessageValidatedTrue(String pMessageKey);
@@ -70,10 +70,20 @@ public interface IDBSMessages extends Serializable{
 	 * Utilizada a <b>messageKey</b> da mensagem enviada para pesquisar a mensagem desejada.
 	 * @param pMessage
 	 * @return <ul><li>true= Validada como afirmativa</li>
-	 * <li>false= Validada como negativa ou não validada ou não existente.</li>
+	 * <li>false= Não existente ou não validada ou validada como negativa.</li>
 	 * </ul>
 	 */
 	public boolean isMessageValidatedTrue(IDBSMessage pMessage);
+
+	/**
+	 * Retorna se mensagem existe e foi validada como true.<br/>
+	 * Utilizada a <b>messageKey</b> da mensagem enviada para pesquisar a mensagem desejada.
+	 * @param pMessage
+	 * @return <ul><li>true= Validada como afirmativa</li>
+	 * <li>false= Não existente ou não validada ou validada como negativa.</li>
+	 * </ul>
+	 */
+	public boolean isAllMessagesValidatedTrue();
 
 	/**
 	 * Retorna uma mensagem a partir da chave informada
@@ -102,6 +112,11 @@ public interface IDBSMessages extends Serializable{
 	public List<IDBSMessage> getMessagesForSourceId(String pClientId);
 	
 	/**
+	 * @return A mensagem corrente(a primeira ainda não validada) se houver ou <i>null</i> se não houver.
+	 */
+	public IDBSMessage getCurrentMessage();
+	
+	/**
 	 * Apaga todas as mensagem da fila 
 	 */
 	public void clear();
@@ -113,6 +128,12 @@ public interface IDBSMessages extends Serializable{
 	public void reset();
 
 	
+	/**
+	 * Quantidade total de mensagens validadas e não validadas.
+	 * @return
+	 */
+	public Integer size();
+
 	/**
 	 * Retorna se existe mensagem de erro não validada.
 	 * @return
@@ -133,7 +154,13 @@ public interface IDBSMessages extends Serializable{
 	public boolean hasInformationsMessages();
 	
 	/**
-	 * Retorna se existe alguma mensagem.
+	 * Retorna se existe mensagem fatais não validada.
+	 * @return
+	 */
+	public boolean hasFatalsMessages();
+
+	/**
+	 * Retorna se existe alguma mensagem não validada.
 	 * @return
 	 */
 	public boolean hasMessages();
@@ -169,9 +196,4 @@ public interface IDBSMessages extends Serializable{
 	 * @return
 	 */
 	public IDBSMessages removeMessagesListener(IDBSMessagesListener pMessagesListener);
-	/**
-	 * Quantidade de mensagens
-	 * @return
-	 */
-	public Integer size();
 }

@@ -28,28 +28,60 @@ public interface IDBSMessage extends Serializable{
    	
 	public static enum MESSAGE_TYPE
 	{
-	    ABOUT 		("a", "Sobre", "-i_information -green", 1),
-	    SUCCESS		("s", "Sucesso", "-i_sucess -green", 1),
-	    INFORMATION	("i", "Informação", "-i_information", 10),
-	    IMPORTANT	("t", "Importante", "-i_important", 10),
-	    WARNING 	("w", "Atenção", "-i_warning -yellow", 20),
-	    CONFIRM		("c", "Confirmar", "-i_question_confirm", 20),
-	    IGNORE 		("g", "Ignorar", "-i_question_ignore -yellow", 20),
-	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", 30),
-	    ERROR 		("e", "Erro", "-i_error -red", 40);
+	    /**
+	     * Info
+	     */
+	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
+	    /**
+	     * Info
+	     */
+	    SUCCESS		("s", "Sucesso", "-i_sucess -green", false, 1),
+	    /**
+	     * Info
+	     */
+	    INFORMATION	("i", "Informação", "-i_information", false, 10),
+	    /**
+	     * Info
+	     */
+	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
+	    /**
+	     * Warning, Question
+	     */
+	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
+	    /**
+	     * Error, Question 
+	     * Valor após a validação deste tipo, será sempre False
+	     */
+	    CONFIRM		("c", "Confirmar", "-i_question_confirm", true, 30),
+	    /**
+	     * Error, Question 
+	     * Valor após a validação deste tipo, será sempre False
+	     */
+	    IGNORE		("g", "Ignorar", "-i_question_ignore -yellow", true, 31),
+	    /**
+	     * Error 
+	     * Valor após a validação deste tipo deverá ser sempre False.
+	     */
+	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", false, 40), 
+	    /**
+	     * Error 
+	     * Valor após a validação deste tipo deverá ser sempre False.
+	     */
+	    ERROR 		("e", "Erro", "-i_error -red", false, 50); 
 
 	    String 	wCode;
 	    String 	wName;
 	    String 	wIconClass;
-	    Boolean wRequireConfirmation;
+	    Boolean wQuestion;
 	    Integer wSeverityLevel; 
 	    Severity wSeverity;
 	    
-	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Integer pSeverityLevel){
+	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pQuestion, Integer pSeverityLevel){
 	    	wCode = pCode;
 	    	wName = pName;
 	    	wIconClass = pIconClass;
 	    	wSeverityLevel = pSeverityLevel; 
+	    	wQuestion = pQuestion;
 			if (wSeverityLevel < 20){
 				wSeverity = FacesMessage.SEVERITY_INFO;
 			}else if (wSeverityLevel < 30){
@@ -84,7 +116,7 @@ public interface IDBSMessage extends Serializable{
 	    /**
 	     * @return Se mensagem é SEVERITY_INFO. 
 	     */
-	    public Boolean getIsWarning(){
+	    public Boolean getIsWarnings(){
 	    	if (wSeverity == FacesMessage.SEVERITY_WARN){
 	    		return true;
 	    	}
@@ -101,6 +133,17 @@ public interface IDBSMessage extends Serializable{
 	    	return false;
 	    }
 
+	    
+	    /**
+	     * @return Se mensagem querer pergunta.
+	     */
+	    public Boolean getIsQuestion(){
+	    	return wQuestion;
+	    }
+
+	    /**
+	     * @return FacesMassage.Severity
+	     */
 	    public Severity getSeverity(){
 	    	return wSeverity;
 	    }
@@ -169,22 +212,15 @@ public interface IDBSMessage extends Serializable{
 	
 	/**
 	 * Retorna se mensagem foi validada.<br/>
+	 * Mensagens de erro e fatais que não são pergutas(Questions), são sempre validadas como false.
 	 * @param pMessageKey
 	 * @return <ul><li>true= Validada como afirmativa</li>
 	 * <li>false= Validada como negativa</li>
 	 * <li>null= Ainda não validada</li>
 	 * </ul>
 	 */
-
 	public Boolean isMessageValidated();
-	/**
-	 * Retorna se mensagem foi validada.<br/>
-	 * @param pMessageKey
-	 * @return <ul><li>true= Validada como afirmativa</li>
-	 * <li>false= Validada como negativa</li>
-	 * <li>null= Ainda não validada</li>
-	 * </ul>
-	 */
+
 	
 	/**
 	 * Seta se mensagem foi validada.<br/>

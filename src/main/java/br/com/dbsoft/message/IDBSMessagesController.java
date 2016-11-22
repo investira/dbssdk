@@ -6,7 +6,7 @@ import java.io.Serializable;
  *Armazenar e controlar uma lista de mensagem(class DBSMessage)
  * @param <MessageClass> Classe de mensagem
  */
-public interface IDBSMessagesController extends Serializable, IDBSMessageListener, IDBSMessagesListener{
+public interface IDBSMessagesController extends Serializable, IDBSMessagesListener{
 
 	/**
 	 * @return A mensagem corrente se houver ou <i>null</i> se não houver.

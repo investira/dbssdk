@@ -21,16 +21,33 @@ import br.com.dbsoft.util.DBSObject;
  *Armazenar e controlar uma lista de mensagem(class DBSMessage)
  * @param <MessageClass> Classe de mensagem
  */
-public class DBSMessages implements IDBSMessages {
+/**
+ * @author ricardo.villar
+ *
+ */
+public class DBSMessages implements IDBSMessages{
 
 	private static final long serialVersionUID = -8346514168333934241L;
 
 	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
-	private LinkedHashMap<String, IDBSMessage> 	wMessages =  new LinkedHashMap<String, IDBSMessage>();
-//	private LinkedHashMap<String, IDBSMessage> 	wMessagessNotValidated =  new LinkedHashMap<String, IDBSMessage>();
+	private LinkedHashMap<String, IDBSMessage> 	wMessages = new LinkedHashMap<String, IDBSMessage>();
+	private LinkedHashMap<String, IDBSMessage> 	wMessagesValidated =  new LinkedHashMap<String, IDBSMessage>();
 	private Set<IDBSMessagesListener> 			wMessagesListeners = new HashSet<IDBSMessagesListener>();
 	private String								wFromUserId;
+	private Boolean								wController = false;
+	private String								wCurrentMessageKey = null;
+	
+//	public String wChave;
+	
+	public DBSMessages() {}
+	
+	/**
+	 * @param pController Indica quando irá manter a lista principal com somente as mensagens não validadas. 
+	 */
+	public DBSMessages(Boolean pController) {
+		wController = pController;
+	}
 	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessages#getMessages()
@@ -74,36 +91,34 @@ public class DBSMessages implements IDBSMessages {
 	@Override
 	public void add(IDBSMessage pMessage, String pSourceId) {
 		if (pMessage == null){return;}
-//		try {
-			IDBSMessage xM = wMessages.get(pMessage.getMessageKey());
-			//Se mensagem já existir e estiver validada, exclui da lista para ser reincluida posteriormente abaixo.
-			if (xM != null && xM.isMessageValidatedTrue()){
-				wMessages.remove(pMessage.getMessageKey());
-				xM = null;
-			}
-			//Se mensagem não existir na fila
-			if (xM == null){ 
-				//Se mensagem for estárica, cria copia(clone) da mensagem enviada para não afetar a original. 
-			    if (Modifier.isStatic(pMessage.getClass().getModifiers())) {
-			    	wLogger.warn(pMessage.getMessageKey() + " é uma mensagem static, o que não permite o controle de validação(validate). Envie uma copia ou clone."); 
-			    	return;
-//					Cria nova mensagem do tipo informado
-//					xM = pMessage.getClass().newInstance();
-//					Copia dados da mensagem origem
-//					xM.copyFrom(pMessage);
-			    }else{
-			    	xM = pMessage;
-			    }
-				wMessages.put(xM.getMessageKey(), xM);
-				pvFireEventAfterAddMessage(xM);
-			}
-			if (pSourceId != null){
-				//Adicionla sourceId a lista
-				xM.getMessageSourceIds().add(pSourceId);
-			}
-//		} catch (InstantiationException | IllegalAccessException e) {
-//			wLogger.error(e);
-//		}
+
+		IDBSMessage xM = wMessagesValidated.get(pMessage.getMessageKey());
+		//Se mensagem já existir e estiver validada, exclui da lista para ser reincluida após eventual nova validação.
+		if (xM != null){
+			pMessage.reset();
+			wMessagesValidated.remove(pMessage.getMessageKey());
+			xM = null;
+		}
+		//Se mensagem não existir na fila
+		if (xM == null){ 
+			//Se mensagem for estárica, cria copia(clone) da mensagem enviada para não afetar a original. 
+		    if (Modifier.isStatic(pMessage.getClass().getModifiers())) {
+		    	wLogger.warn(pMessage.getMessageKey() + " é uma mensagem static, o que não permite o controle de validação(validate). Envie uma copia ou clone."); 
+		    	return;
+		    }else{
+		    	xM = pMessage;
+		    }
+		    if (wController){
+			    xM.addMessageListener(this);
+		    }
+			wMessages.put(xM.getMessageKey(), xM);
+			pvFindNextMessage();
+			pvFireEventAfterAddMessage(xM);
+		}
+		if (pSourceId != null){
+			//Adicionla sourceId a lista
+			xM.getMessageSourceIds().add(pSourceId);
+		}
 	}
 
 
@@ -114,7 +129,10 @@ public class DBSMessages implements IDBSMessages {
 	public void remove(String pMessageKey){
 		if (wMessages.containsKey(pMessageKey)){
 			wMessages.remove(pMessageKey);
+			pvFindNextMessage();
 			pvFireEventAfterRemoveMessage(pMessageKey);
+		}else if(wMessagesValidated.containsKey(pMessageKey)){
+			wMessagesValidated.remove(pMessageKey);
 		}
 	}
 	
@@ -133,7 +151,34 @@ public class DBSMessages implements IDBSMessages {
 	@Override
 	public void clear(){
 		wMessages.clear();
+		wMessagesValidated.clear();
+		pvFindNextMessage();
 		pvFireEventAfterClearMessages();
+	}
+
+	@Override
+	public Integer size() {
+		return wMessages.size() + wMessagesValidated.size();
+	}
+
+	@Override
+	public void reset() {
+		//Transfere mensagens validadas para as mensagens não validadas.
+		for (Entry<String, IDBSMessage> xM : wMessagesValidated.entrySet()) {
+			add(xM.getValue());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#hasMessages()
+	 */
+	@Override
+	public boolean hasMessages(){
+		if (wMessages != null 
+		 && wMessages.size() > 0){
+			return true;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -159,17 +204,10 @@ public class DBSMessages implements IDBSMessages {
 	public boolean hasInformationsMessages(){
 		return pvFindMessageType(FacesMessage.SEVERITY_INFO);
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessages#hasMessages()
-	 */
 	@Override
-	public boolean hasMessages(){
-		if (wMessages.size() > 0){
-			return true;
-		}
-		return false;
+	public boolean hasFatalsMessages() {
+		return pvFindMessageType(FacesMessage.SEVERITY_FATAL);
 	}
 
 	/* (non-Javadoc)
@@ -195,13 +233,18 @@ public class DBSMessages implements IDBSMessages {
 	@Override
 	public IDBSMessage getMessage(String pMessageKey) {
 		if (DBSObject.isEmpty(pMessageKey)){return null;}
-		return wMessages.get(pMessageKey);
+		return pvGetMessage(pMessageKey);
 	}
 	
 	@Override
 	public IDBSMessage getMessage(IDBSMessage pMessage) {
 		if (pMessage == null){return null;}
 		return getMessage(pMessage.getMessageKey());
+	}
+
+	@Override
+	public IDBSMessage getCurrentMessage() {
+		return wMessages.get(wCurrentMessageKey);
 	}
 
 	/* (non-Javadoc)
@@ -256,14 +299,9 @@ public class DBSMessages implements IDBSMessages {
 	}
 
 	@Override
-	public Integer size() {
-		return wMessages.size();
-	}
-
-	@Override
 	public boolean isMessageValidatedTrue(String pMessageKey) {
 		if (pMessageKey == null){return false;}
-		IDBSMessage xMessage = getMessage(pMessageKey);
+		IDBSMessage xMessage = wMessagesValidated.get(pMessageKey);
 		return (xMessage != null && xMessage.isMessageValidatedTrue());
 	}
 	
@@ -273,14 +311,34 @@ public class DBSMessages implements IDBSMessages {
 		return isMessageValidatedTrue(pMessage.getMessageKey());
 	}
 
-	@Override
-	public void reset() {
-		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
-			xM.getValue().reset();
-		}	
-	}
+	
 
 	//PRIVATE =======================================================================================
+
+	@Override
+	public boolean isAllMessagesValidatedTrue() {
+		if (wMessages.size() > 0){return false;}
+		for (Entry<String, IDBSMessage> xM : wMessagesValidated.entrySet()) {
+			if (!xM.getValue().isMessageValidatedTrue()){ //Não validada como true.
+				return false;
+			}
+		}	
+		return true;
+	}
+
+	/**
+	 * Disparado após mensagem ser validada.
+	 * @param pMessage
+	 */
+	@Override
+	public void afterMessageValidated(IDBSMessage pMessage) {
+		if (pMessage.isMessageValidated() != null){
+			//Transfere mensagem para a lista de mensagens validadas.
+			wMessages.remove(pMessage.getMessageKey());
+			wMessagesValidated.put(pMessage.getMessageKey(), pMessage);
+		}
+		pvFireEventAfterMessageValidated(pMessage);
+	}
 
 	/**
 	 * Retorna se existe alguma mensagem do tipo informado
@@ -301,7 +359,7 @@ public class DBSMessages implements IDBSMessages {
 		Iterator<IDBSMessagesListener> xI = getMessagesListeners().iterator(); 
 		while(xI.hasNext()){
 			IDBSMessagesListener xListener = xI.next();
-			xListener.afterAddMessage(pMessage);
+			xListener.afterAddMessage(this, pMessage);
 		}
 	}
 
@@ -309,7 +367,7 @@ public class DBSMessages implements IDBSMessages {
 		Iterator<IDBSMessagesListener> xI = getMessagesListeners().iterator(); 
 		while(xI.hasNext()){
 			IDBSMessagesListener xListener = xI.next();
-			xListener.afterRemoveMessage(pMessageKey);
+			xListener.afterRemoveMessage(this, pMessageKey);
 		}
 	}
 	
@@ -317,8 +375,40 @@ public class DBSMessages implements IDBSMessages {
 		Iterator<IDBSMessagesListener> xI = getMessagesListeners().iterator(); 
 		while(xI.hasNext()){
 			IDBSMessagesListener xListener = xI.next();
-			xListener.afterClearMessages();
+			xListener.afterClearMessages(this);
 		}
+	}
+	
+	private void pvFireEventAfterMessageValidated(IDBSMessage pMessage){
+		Iterator<IDBSMessagesListener> xI = getMessagesListeners().iterator();
+		while(xI.hasNext()){
+			IDBSMessagesListener xListener = xI.next();
+			xListener.afterMessageValidated(this, pMessage);
+//			System.out.println("(DBSMessages)pvFireEventAfterMessageValidated\t" + xListener.toString());
+		}
+	}
+	/**
+	 * @param pMessageKey
+	 * @return Mensagem independentemente se é uma mensagem validada(true ou false) ou não(null).
+	 */
+	private IDBSMessage pvGetMessage(String pMessageKey){
+		IDBSMessage xMsg = wMessagesValidated.get(pMessageKey);
+		if (xMsg == null){
+			xMsg = wMessages.get(pMessageKey);
+		}
+		return xMsg;
+	}
+	
+	/**
+	 * Busca a próxima mensagem que não foi setada a validação.
+	 */
+	private void pvFindNextMessage(){
+		wCurrentMessageKey = null;
+		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
+			if (xM.getValue().isMessageValidated() == null){ //Ainda não validade. Não é true nem false.
+				wCurrentMessageKey = xM.getValue().getMessageKey();
+			}
+		}	
 	}
 
 }

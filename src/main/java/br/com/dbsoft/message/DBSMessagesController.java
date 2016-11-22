@@ -15,7 +15,7 @@ public class DBSMessagesController implements IDBSMessagesController {
 
 	protected Logger			wLogger = Logger.getLogger(this.getClass());
 	
-	private IDBSMessages				wMessages = new DBSMessages(); 
+	private IDBSMessages				wMessages = new DBSMessages(true); 
 	private String 						wCurrentMessageKey;
 
 	public DBSMessagesController() {
@@ -30,28 +30,28 @@ public class DBSMessagesController implements IDBSMessagesController {
 	}
 
 	@Override
-	public void afterMessageValidated(IDBSMessage pMessage) {
+	public void afterMessageValidated(IDBSMessages pMessages, IDBSMessage pMessage) {
 		pvRefreshMessages(pMessage);
 	}
 
 
 	@Override
-	public void afterAddMessage(IDBSMessage pMessage) {
+	public void afterAddMessage(IDBSMessages pMessages, IDBSMessage pMessage) {
 		//Listener da mensagem(individual)
-		pMessage.addMessageListener(this);
+//		pMessage.addMessageListener(this);
 		
 		pvFindNextMessage();
 	}
 
 
 	@Override
-	public void afterRemoveMessage(String pMessageKey) {
+	public void afterRemoveMessage(IDBSMessages pMessages, String pMessageKey) {
 		pvFindNextMessage();
 	}
 
 
 	@Override
-	public void afterClearMessages() {
+	public void afterClearMessages(IDBSMessages pMessages) {
 		pvFindNextMessage();
 	}
 
@@ -65,7 +65,7 @@ public class DBSMessagesController implements IDBSMessagesController {
 	private void pvRefreshMessages(IDBSMessage pMessage){
 		//Se não for mensagem que não requer confirmação, automaticamente retira mensagem da fila.
 		//Mensagens que requerem confirmação, precisam ser mantidar na fila para serem consultados porteriormente para saber qual foi a validação(false, true).
-		if (!pMessage.getMessageType().getIsWarning()){
+		if (!pMessage.getMessageType().getIsQuestion()){
 			getMessages().remove(pMessage);
 		}
 	}

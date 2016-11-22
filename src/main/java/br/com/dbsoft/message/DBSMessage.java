@@ -296,10 +296,9 @@ public class DBSMessage implements IDBSMessage{
 		while(xI.hasNext()){
 			IDBSMessageListener xListener = xI.next();
 			xListener.afterMessageValidated(this);
-//			if (xMsg != null){
-//				xMsg.copyFrom(this);
-//			}
+//			System.out.println("pvFireEventAfterMessageValidated\t" + xListener.toString());
 		}
+		wMessageListeners.clear();
 	}
 
 
