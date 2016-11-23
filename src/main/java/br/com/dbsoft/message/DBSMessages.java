@@ -173,7 +173,7 @@ public class DBSMessages implements IDBSMessages{
 	 * @see br.com.dbsoft.message.IDBSMessages#hasMessages()
 	 */
 	@Override
-	public boolean hasMessages(){
+	public Boolean hasMessages(){
 		if (wMessages != null 
 		 && wMessages.size() > 0){
 			return true;
@@ -185,7 +185,7 @@ public class DBSMessages implements IDBSMessages{
 	 * @see br.com.dbsoft.message.IDBSMessages#hasErrors()
 	 */
 	@Override
-	public boolean hasErrorsMessages(){
+	public Boolean hasErrorsMessages(){
 		return pvFindMessageType(FacesMessage.SEVERITY_ERROR);
 	}
 
@@ -193,7 +193,7 @@ public class DBSMessages implements IDBSMessages{
 	 * @see br.com.dbsoft.message.IDBSMessages#hasWarnings()
 	 */
 	@Override
-	public boolean hasWarningsMessages(){
+	public Boolean hasWarningsMessages(){
 		return pvFindMessageType(FacesMessage.SEVERITY_WARN);
 	}
 
@@ -201,12 +201,12 @@ public class DBSMessages implements IDBSMessages{
 	 * @see br.com.dbsoft.message.IDBSMessages#hasInformations()
 	 */
 	@Override
-	public boolean hasInformationsMessages(){
+	public Boolean hasInformationsMessages(){
 		return pvFindMessageType(FacesMessage.SEVERITY_INFO);
 	}
 
 	@Override
-	public boolean hasFatalsMessages() {
+	public Boolean hasFatalsMessages() {
 		return pvFindMessageType(FacesMessage.SEVERITY_FATAL);
 	}
 
@@ -244,6 +244,9 @@ public class DBSMessages implements IDBSMessages{
 
 	@Override
 	public IDBSMessage getCurrentMessage() {
+		if (wCurrentMessageKey==null){
+			return null;
+		}
 		return wMessages.get(wCurrentMessageKey);
 	}
 
@@ -313,8 +316,6 @@ public class DBSMessages implements IDBSMessages{
 
 	
 
-	//PRIVATE =======================================================================================
-
 	@Override
 	public boolean isAllMessagesValidatedTrue() {
 		if (wMessages.size() > 0){return false;}
@@ -339,6 +340,9 @@ public class DBSMessages implements IDBSMessages{
 		}
 		pvFireEventAfterMessageValidated(pMessage);
 	}
+
+	//PRIVATE =======================================================================================
+
 
 	/**
 	 * Retorna se existe alguma mensagem do tipo informado
