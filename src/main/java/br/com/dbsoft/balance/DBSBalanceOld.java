@@ -7,9 +7,9 @@ import java.sql.Savepoint;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.error.DBSIOException;
-import br.com.dbsoft.message.DBSMessagesController;
+import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
-import br.com.dbsoft.message.IDBSMessagesController;
+import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSIO;
 
 /**
@@ -26,7 +26,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	protected Connection 				wConnection;
 	protected OperationDataClass 		wOperationData;
 	protected Date						wDate;
-	protected IDBSMessagesController	wMessages = new DBSMessagesController();
+	protected IDBSMessages				wMessages = new DBSMessages(true);
 	
 	public DBSBalanceOld(Connection pConnection) {
 		wConnection = pConnection;
@@ -202,7 +202,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * Retorna texto da mensagem que está na fila
 	 * @return
 	 */
-	public IDBSMessagesController getMessages(){
+	public IDBSMessages getMessages(){
 		return wMessages;
 	}
 
@@ -247,7 +247,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * Limpa fila de mensagens
 	 */
 	protected void clearMessages(){
-		wMessages.getMessages().clear();
+		wMessages.clear();
 	}
 	
 	/**
@@ -255,7 +255,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @param pMessage
 	 */
 	protected void addMessage(IDBSMessage pMessage){
-		wMessages.getMessages().add(pMessage);
+		wMessages.add(pMessage);
 	}
 
 	
@@ -264,7 +264,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @param pMessageKey
 	 */
 	protected void removeMessage(String pMessageKey){
-		wMessages.getMessages().remove(pMessageKey);
+		wMessages.remove(pMessageKey);
 	}
 
 	/**
@@ -273,7 +273,7 @@ public abstract class DBSBalanceOld<OperationDataClass> {
 	 * @return
 	 */
 	protected boolean isMessageValidated(String pMessageKey){
-		return wMessages.getMessages().getMessage(pMessageKey).isMessageValidatedTrue();
+		return wMessages.getMessage(pMessageKey).isMessageValidatedTrue();
 	}
 	
 	protected boolean isMessageValidated(IDBSMessage pMessage){
