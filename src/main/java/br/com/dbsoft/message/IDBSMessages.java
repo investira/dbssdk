@@ -22,14 +22,14 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	
 	/** 
 	 * Inclui uma mensagem na fila.</br>
-	 * Se mensagem for <i>static</i>, será criada uma clone da mensagem enviada.<br/>.
+	 * Ignora inclusão se existir uma mensagem com a mesma chave.
 	 * @param pMessage
 	 */
 	public void add(IDBSMessage pMessage);
 	
 	/** 
 	 * Inclui uma mensagem na fila e vincula um <b>sourceId</b> a ela.</br>
-	 * Se mensagem for <i>static</i>, será criada uma clone da mensagem enviada.<br/>.
+	 * Ignora inclusão se existir uma mensagem com a mesma chave, porém adiciona o <b>sourceId</b> informado, a ela.</br>
 	 * O <b>sourceId</b> pode ser utilizado indicar a origem da mensagem, 
 	 * como no caso de um validade que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
 	 * O valor do <b>sourceId</b> é a critério do usuário.
@@ -40,6 +40,7 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 
 	/**
 	 * Adiciona todas as mensagems a fila.
+	 * Ignora inclusão se existir uma mensagem com a mesma chave.</br>
 	 * @param pMessages
 	 */
 	public void addAll(IDBSMessages pMessages);
