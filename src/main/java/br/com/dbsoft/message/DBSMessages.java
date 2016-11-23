@@ -90,14 +90,18 @@ public class DBSMessages implements IDBSMessages{
 	 */
 	@Override
 	public void add(IDBSMessage pMessage, String pSourceId) {
-		if (pMessage == null){return;}
+		if (pMessage == null){return;} 
 
+		//Recupera mensagem validada se já existir
 		IDBSMessage xM = wMessagesValidated.get(pMessage.getMessageKey());
 		//Se mensagem já existir e estiver validada, exclui da lista para ser reincluida após eventual nova validação.
 		if (xM != null){
 			pMessage.reset();
 			wMessagesValidated.remove(pMessage.getMessageKey());
 			xM = null;
+		//Recupera mensagem se já existir
+		}else{
+			xM = wMessages.get(pMessage.getMessageKey());
 		}
 		//Se mensagem não existir na fila
 		if (xM == null){ 
