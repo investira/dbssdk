@@ -222,18 +222,11 @@ public class DBSMessage implements IDBSMessage{
 	public void copyFrom(IDBSMessage pMessage){
 		if (pMessage == null 
          || pMessage.equals(this)){return;}
-		DBSIO.copyDataModelFieldsValue(pMessage, this);  
-//		setMessageCode(DBSObject.getNotNull(pMessage.getMessageCode(),0));
-//		setMessageKey(pMessage.getMessageKey());
-//		setMessageText(pMessage.getMessageText());
-//		setMessageTime(pMessage.getMessageTime());
-//		setMessageTooltip(DBSObject.getNotNull(pMessage.getMessageTooltip(),""));
-//		setMessageType(pMessage.getMessageType());
-//		setMessageValidated(pMessage.isMessageValidated());
-//		getMessageSourceIds().clear();
-//		getMessageSourceIds().addAll(pMessage.getMessageSourceIds());
-//		getMessageListeners().clear();
-//		getMessageListeners().addAll(pMessage.getMessageListeners());
+		DBSIO.copyDataModelFieldsValue(pMessage, this);
+		wMessageSourceIds = new HashSet<String>();
+		wMessageSourceIds.addAll(pMessage.getMessageSourceIds());
+		wMessageListeners = new HashSet<IDBSMessageListener>();
+		wMessageListeners.addAll(pMessage.getMessageListeners());
 	}
 
 	@Override
@@ -249,7 +242,7 @@ public class DBSMessage implements IDBSMessage{
 	@Override
 	public IDBSMessage clone(){
 		try {
-			IDBSMessage xM = this.getClass().newInstance();
+			IDBSMessage xM = this.getClass().newInstance(); 
 			xM.copyFrom(this);
 			return xM;
 		} catch (InstantiationException | IllegalAccessException e) {
