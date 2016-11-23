@@ -35,7 +35,7 @@ public class DBSMessages implements IDBSMessages{
 	private LinkedHashMap<String, IDBSMessage> 	wMessagesValidated =  new LinkedHashMap<String, IDBSMessage>();
 	private Set<IDBSMessagesListener> 			wMessagesListeners = new HashSet<IDBSMessagesListener>();
 	private String								wFromUserId;
-	private Boolean								wController = false;
+	private Boolean								wIsController = false;
 	private String								wCurrentMessageKey = null;
 	
 //	public String wChave;
@@ -45,8 +45,8 @@ public class DBSMessages implements IDBSMessages{
 	/**
 	 * @param pController Indica quando irá manter a lista principal com somente as mensagens não validadas. 
 	 */
-	public DBSMessages(Boolean pController) {
-		wController = pController;
+	public DBSMessages(Boolean pIsController) {
+		wIsController = pIsController;
 	}
 	
 	/* (non-Javadoc)
@@ -112,7 +112,7 @@ public class DBSMessages implements IDBSMessages{
 		    }else{
 		    	xM = pMessage;
 		    }
-		    if (wController){
+		    if (wIsController){
 			    xM.addMessageListener(this);
 		    }
 			wMessages.put(xM.getMessageKey(), xM);
