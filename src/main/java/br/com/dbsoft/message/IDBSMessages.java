@@ -138,32 +138,32 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 * Retorna se existe mensagem de erro não validada.
 	 * @return
 	 */
-	public boolean hasErrorsMessages();
+	public Boolean hasErrorsMessages();
 
 	/**
 	 * Retorna se existe alguma mensagem de alerta não validada.<br/>
 	 * Mesagens de alerta necessitam de confirmação.
 	 * @return
 	 */
-	public boolean hasWarningsMessages();
+	public Boolean hasWarningsMessages();
 	
 	/**
 	 * Retorna se existe mensagem de informação não validada.
 	 * @return
 	 */
-	public boolean hasInformationsMessages();
+	public Boolean hasInformationsMessages();
 	
 	/**
 	 * Retorna se existe mensagem fatais não validada.
 	 * @return
 	 */
-	public boolean hasFatalsMessages();
+	public Boolean hasFatalsMessages();
 
 	/**
 	 * Retorna se existe alguma mensagem não validada.
 	 * @return
 	 */
-	public boolean hasMessages();
+	public Boolean hasMessages();
 	
 	/**
 	 * Usuário que criou as mensagens
