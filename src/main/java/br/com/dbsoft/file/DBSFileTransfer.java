@@ -16,6 +16,7 @@ import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.sql.Timestamp;
@@ -600,11 +601,16 @@ public class DBSFileTransfer{
 	 * @throws IOException
 	 */
 	private final File pvDownloadFile(URL pURL) throws IOException {
+		if (pURL.toString().startsWith("ftp://")) {
+			return pvDownloadFileFTP(pURL);
+		} else {
+			return pvDownloadFileHTTP(pURL);
+		}
+	}
+		
+	private final File pvDownloadFileHTTP(URL pURL) throws IOException {
 		setTransferState(TransferState.TRANSFERING);
 		
-		String 			 xFileFullName;
-		File 			 xInputFile = null;
-		FileOutputStream xDownloadedFile = null;
 		HttpURLConnection xConnection = null;
 		try{
 			//Força a criação de cookie para evitar erro em sites que obriguem um sessionid no request para o download. 
@@ -649,122 +655,20 @@ public class DBSFileTransfer{
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 		xConnection.connect();
 		
-		//READ RESPONSE=====================================
-		//Recupera nome do arquivo
-		String xContent = xConnection.getHeaderField("Content-Disposition"); 
-		
-		//Como default, define o nome remoto como sendo iqual ao local
-		String xRemoteFileName = wLocalFileNameOnly;
-
-		//Recupera nome do arquivo enviado pela conexão
-		if(xContent != null 
-		&& xContent.indexOf("=") != -1) {
-		    String[] xFileName = xContent.split("=");
-		    xRemoteFileName = DBSObject.getNotEmpty(xFileName[1], null);
-		    xRemoteFileName = DBSString.changeStr(xRemoteFileName, "\"", "");
-		    wLocalFileNameOrigin = LocalFileNameOrigin.HEADER;
-		}else{
-			//Recupera nome da URL se não foi definido o nome pelo usuário
-			if (DBSObject.isEmpty(xRemoteFileName)){
-				if (pURL.getFile() != null){
-				    wLocalFileNameOrigin = LocalFileNameOrigin.URL;
-					xRemoteFileName = DBSFile.getFileNameFromPath(pURL.getFile());
-				}
-			}
-		}
-		//Não foi encontrado o nome do arquivo a ser baixado
-		if (DBSObject.isEmpty(xRemoteFileName)){
-			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado, Level.ERROR);
-			xConnection.disconnect();
-			setTransferState(TransferState.NOTTRANSFERING);
-			return null;
-		}
-		
-		//READ FILE=====================================
 		if (xConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-			//Salva qual o servidor utilizado
-			wRemoteServer = xConnection.getHeaderField("Server"); 
-			if (wRemoteServer == null){
-				wRemoteServer = xConnection.getHeaderField("X-Powered-By");
-			}
-//			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
-//				//Verifica se arquivo a ser baixado contém e mesma data e hora do arquivo local, se existir. 
-//				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getLastModified().getTime()) {
-//					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
-//					setTransferState(TransferState.NOTTRANSFERING);
-//					return null;
-//				}
-//			} 
-			setLastModified(new Timestamp(xConnection.getLastModified()));
-			
-			if (!pvFireEventBeforeSave()){
-				return null;
-			}
-			
-//			InputStreamReader xReader = new InputStreamReader(xConnection.getInputStream(), Charset.forName(ENCODE.ISO_8859_1));
-			InputStream xReader = xConnection.getInputStream();
-			
-			byte[] xBufferRead = new byte[wBufferSize];
-
-			wInterrupted = false;
-			try {
-				//Le arquivo integralmente
-				int xBytesRead = 0;
-				 
-				while ((xBytesRead = xReader.read(xBufferRead)) != -1 && 
-					   !isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
-					   !wInterrupted) {
-					wFileContent = DBSString.appendByteArrays(wFileContent, xBufferRead, xBytesRead);
-					//Recria buffer vazio
-					xBufferRead = new byte[wBufferSize];
-					pvFireEventTransferring();
-				}
-				
-				//Grava arquivo local
-				if (wLocalPath != null){
-					//Defini o nome do arquivo local
-					wLocalFileNameOnly = xRemoteFileName;
-					//Reconstroi o nome do arquivo local
-					xFileFullName = DBSFile.getPathFromFileName(wLocalPath, true) + xRemoteFileName;
-	
-					xInputFile = new File(xFileFullName);
-					if (!xInputFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
-						DBSFile.mkDir(xInputFile);
-					}
-					xDownloadedFile = new FileOutputStream(xInputFile);
-					xDownloadedFile.write(wFileContent, 0, wFileContent.length);
-				}
-			} catch (IOException e) {
-				wLogger.warn(e);
-				wOk = false;
-			} finally{
-				//Fecha o arquivo local
-				if (xDownloadedFile != null){
-					xDownloadedFile.close();
-				}
-				xReader.close();
-				xConnection.disconnect();
-				setTransferState(TransferState.NOTTRANSFERING);
-			}
-			
-			if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
-				setMsgErro(DBSSDKMessages.ErroTimeout, Level.ERROR);
-				xInputFile = null;
-			} else if (wInterrupted) {
-				setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
-				xInputFile = null;
-			}else{
-				pvFireEventAfterSave();
-			}
-
-			return xInputFile;
+			return pvDownload(pURL, xConnection);
 		} else {
 //			wLogger.error("Erro tentando baixar aquivo: " + xConnection.getResponseMessage());
 			setMsgErro(DBSSDKMessages.ErroGenerico + xConnection.getResponseMessage(), Level.ERROR);
 			return null;
 		}
 	}
-	
+
+	private final File pvDownloadFileFTP(URL pURL) throws IOException {
+		URLConnection 	xConnection = pURL.openConnection();
+		return pvDownload(pURL, xConnection);
+	}
+
 	private File pvDownloadFile(String pURL) throws IOException {
 
 		if (!pvFireEventBeforeSave()){
@@ -828,6 +732,125 @@ public class DBSFileTransfer{
 		pvFireEventAfterSave();
 		
 		return xLocalFile;
+	}
+	
+	private File pvDownload(URL pURL, URLConnection pConnection) throws IOException {
+		String 			 xFileFullName;
+		File 			 xInputFile = null;
+		FileOutputStream xDownloadedFile = null;
+		
+		//READ RESPONSE=====================================
+		//Recupera nome do arquivo
+		String xContent = pConnection.getHeaderField("Content-Disposition"); 
+		
+		//Como default, define o nome remoto como sendo iqual ao local
+		String xRemoteFileName = wLocalFileNameOnly;
+
+		//Recupera nome do arquivo enviado pela conexão
+		if(xContent != null 
+		&& xContent.indexOf("=") != -1) {
+		    String[] xFileName = xContent.split("=");
+		    xRemoteFileName = DBSObject.getNotEmpty(xFileName[1], null);
+		    xRemoteFileName = DBSString.changeStr(xRemoteFileName, "\"", "");
+		    wLocalFileNameOrigin = LocalFileNameOrigin.HEADER;
+		}else{
+			//Recupera nome da URL se não foi definido o nome pelo usuário
+			if (DBSObject.isEmpty(xRemoteFileName)){
+				if (pURL.getFile() != null){
+				    wLocalFileNameOrigin = LocalFileNameOrigin.URL;
+					xRemoteFileName = DBSFile.getFileNameFromPath(pURL.getFile());
+				}
+			}
+		}
+		//Não foi encontrado o nome do arquivo a ser baixado
+		if (DBSObject.isEmpty(xRemoteFileName)){
+			setMsgErro(DBSSDKMessages.ArquivoLocalNaoInformado, Level.ERROR);
+			if (pConnection instanceof HttpURLConnection){
+				((HttpURLConnection) pConnection).disconnect();
+			}
+			setTransferState(TransferState.NOTTRANSFERING);
+			return null;
+		}
+		
+		//READ FILE=====================================
+		//Salva qual o servidor utilizado
+		wRemoteServer = pConnection.getHeaderField("Server"); 
+		if (wRemoteServer == null){
+			wRemoteServer = pConnection.getHeaderField("X-Powered-By");
+		}
+//			if (DBSFile.exists(wLocalFileName) && !DBSObject.isEmpty(getVersion())) {
+//				//Verifica se arquivo a ser baixado contém e mesma data e hora do arquivo local, se existir. 
+//				if (xConnection.getLastModified() != 0 && xConnection.getLastModified() == getLastModified().getTime()) {
+//					setMsgErro(DBSSDKMessages.ArquivoNaoBaixadoVersaoAtual, Level.INFO);
+//					setTransferState(TransferState.NOTTRANSFERING);
+//					return null;
+//				}
+//			} 
+		setLastModified(new Timestamp(pConnection.getLastModified()));
+		
+		if (!pvFireEventBeforeSave()){
+			return null;
+		}
+		
+//			InputStreamReader xReader = new InputStreamReader(xConnection.getInputStream(), Charset.forName(ENCODE.ISO_8859_1));
+		InputStream xReader = pConnection.getInputStream();
+		
+		byte[] xBufferRead = new byte[wBufferSize];
+
+		wInterrupted = false;
+		try {
+			//Le arquivo integralmente
+			int xBytesRead = 0;
+			 
+			while ((xBytesRead = xReader.read(xBufferRead)) != -1 && 
+				   !isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
+				   !wInterrupted) {
+				wFileContent = DBSString.appendByteArrays(wFileContent, xBufferRead, xBytesRead);
+				//Recria buffer vazio
+				xBufferRead = new byte[wBufferSize];
+				pvFireEventTransferring();
+			}
+			
+			//Grava arquivo local
+			if (wLocalPath != null){
+				//Defini o nome do arquivo local
+				wLocalFileNameOnly = xRemoteFileName;
+				//Reconstroi o nome do arquivo local
+				xFileFullName = DBSFile.getPathFromFileName(wLocalPath, true) + xRemoteFileName;
+
+				xInputFile = new File(xFileFullName);
+				if (!xInputFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
+					DBSFile.mkDir(xInputFile);
+				}
+				xDownloadedFile = new FileOutputStream(xInputFile);
+				xDownloadedFile.write(wFileContent, 0, wFileContent.length);
+			}
+		} catch (IOException e) {
+			wLogger.warn(e);
+			wOk = false;
+		} finally{
+			//Fecha o arquivo local
+			if (xDownloadedFile != null){
+				xDownloadedFile.close();
+			}
+			xReader.close();
+			if (pConnection instanceof HttpURLConnection){
+				((HttpURLConnection) pConnection).disconnect();
+			}
+			setTransferState(TransferState.NOTTRANSFERING);
+		}
+		
+		if (getTimeElapsed() > wTimeOut && wTimeOut != 0L) {
+			setMsgErro(DBSSDKMessages.ErroTimeout, Level.ERROR);
+			xInputFile = null;
+		} else if (wInterrupted) {
+			setMsgErro(DBSSDKMessages.ProcessoInterrompidoUsuario, Level.WARN);
+			xInputFile = null;
+		}else{
+			pvFireEventAfterSave();
+		}
+
+		return xInputFile;
 	}
 	
 	//EVENTOS =======================================================================
