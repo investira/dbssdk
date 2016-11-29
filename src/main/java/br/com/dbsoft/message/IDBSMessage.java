@@ -49,23 +49,25 @@ public interface IDBSMessage extends Serializable{
 	     */
 	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
 	    /**
-	     * Error, Question 
-	     * Valor após a validação deste tipo, será sempre False
+	     * Error, Question</br>
+	     * obs: Error interrompe o outcome do action 
 	     */
 	    CONFIRM		("c", "Confirmar", "-i_question_confirm", true, 30),
 	    /**
-	     * Error, Question 
-	     * Valor após a validação deste tipo, será sempre False
+	     * Error, Question</br>
+	     * obs: Error interrompe o outcome do action 
 	     */
 	    IGNORE		("g", "Ignorar", "-i_question_ignore -yellow", true, 31),
 	    /**
-	     * Error 
-	     * Valor após a validação deste tipo deverá ser sempre False.
+	     * Error</br>
+	     * obs: Error interrompe o outcome do action</br> 
+	     * obs: Valor após a validação deste tipo deverá ser sempre False.
 	     */
 	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", false, 40), 
 	    /**
-	     * Error 
-	     * Valor após a validação deste tipo deverá ser sempre False.
+	     * Error</br>
+	     * obs: Error interrompe o outcome do action</br> 
+	     * obs: Valor após a validação deste tipo deverá ser sempre False.
 	     */
 	    ERROR 		("e", "Erro", "-i_error -red", false, 50); 
 
