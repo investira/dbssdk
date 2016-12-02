@@ -742,7 +742,7 @@ public class DBSIO{
 	}	
 	
 	/**
-	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
+	 * Copia os valores do dataModel origem(pSourceDataModel) para o dataModel destino(pTargetDataModel), desde que encontre campos com o mesmo nome.<br/>
 	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes extendidas. 
 	 * @param pSourceDataModel DataModel origem
 	 * @param pTargetDataModel DataModel destino
@@ -3347,8 +3347,9 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 
 		
 	/**
-	 * Copia os valores de uma DataModel para outro, desde que encontre campos com o mesmo nome.<br/>
+	 * Copia os valores do dataModel origem(pSourceDataModel) para o dataModel destino(pTargetDataModel), desde que encontre campos com o mesmo nome.<br/>
 	 * Esta rotina ainda não contempla datamodel recursivo, mas aceita classes extendidas. 
+	 * @param pSourceDataModelClass Classe do datamodel origem
 	 * @param pSourceDataModel DataModel origem
 	 * @param pTargetDataModel DataModel destino
 	 */	
