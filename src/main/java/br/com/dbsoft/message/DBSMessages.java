@@ -71,9 +71,21 @@ public class DBSMessages implements IDBSMessages{
 	 */
 	@Override
 	public void addAll(IDBSMessages pMessages){
+		if (pMessages == null){return;}
 		Iterator<IDBSMessage> xMessages = pMessages.iterator();
 		while(xMessages.hasNext()){
 			add(xMessages.next());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#addAll(java.util.List)
+	 */
+	@Override
+	public void addAll(List<DBSMessage> pMessages) {
+		if (pMessages == null){return;}
+		for (IDBSMessage xMessage: pMessages){
+			add(xMessage);
 		}
 	}
 	
@@ -418,5 +430,6 @@ public class DBSMessages implements IDBSMessages{
 			}
 		}	
 	}
+
 
 }
