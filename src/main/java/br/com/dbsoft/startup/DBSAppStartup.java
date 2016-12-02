@@ -2,7 +2,6 @@ package br.com.dbsoft.startup;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,7 +20,7 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 
 	protected Logger wLogger =  Logger.getLogger(DBSAppStartup.class);
 
-	ScheduledExecutorService wScheduler;
+//	ScheduledExecutorService wScheduler;
 
 	public DBSAppStartup() {
 		DBSSDKInitializer.addEventListener(this);
