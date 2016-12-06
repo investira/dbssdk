@@ -168,8 +168,8 @@ public class DBSIO{
 	 * @return true = Sem erro ; false = Com erro
 	 * @throws DBSIOException 
 	 */	
-	public static Connection getConnection(DataSource pDS) throws DBSIOException{
-		return getConnection(pDS, 0, null, null);
+	public static Connection openConnection(DataSource pDS) throws DBSIOException{
+		return openConnection(pDS, 0, null, null);
 	}
 
 	/**
@@ -179,8 +179,8 @@ public class DBSIO{
 	 * @return true = Sem erro ; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static Connection getConnection(DataSource pDS, int pTimeout) throws DBSIOException{
-		return getConnection(pDS, pTimeout, null, null);
+	public static Connection openConnection(DataSource pDS, int pTimeout) throws DBSIOException{
+		return openConnection(pDS, pTimeout, null, null);
 	}
 	
 	/**
@@ -192,7 +192,7 @@ public class DBSIO{
 	 * @return true = Sem erro ; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static Connection getConnection(DataSource pDS, int pTimeout, String pUserName, String pUserPassword) throws DBSIOException{
+	public static Connection openConnection(DataSource pDS, int pTimeout, String pUserName, String pUserPassword) throws DBSIOException{
 		boolean xOk = false;
 		int xI = 0;
 		Connection xCn = null;
@@ -227,7 +227,7 @@ public class DBSIO{
 	 * @return true = Sem erro ; false = Com erro
 	 * @throws DBSIOException 
 	 */
-	public static Connection getConnection(String pConnectionString, String pUserName, String pUserPassword) throws DBSIOException{
+	public static Connection openConnection(String pConnectionString, String pUserName, String pUserPassword) throws DBSIOException{
 	    // Força o load dos JDBC drivers.
 	    Enumeration<Driver> xD = java.sql.DriverManager.getDrivers();
 	    while (xD.hasMoreElements()) {
