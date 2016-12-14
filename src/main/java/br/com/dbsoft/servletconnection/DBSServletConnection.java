@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -71,6 +72,16 @@ public class DBSServletConnection {
 	 */
 	public <T> T readObject(Class<T> pClass) throws DBSIOException{
 		return DBSHttp.ObjectInputStreamReadObject(wObjectInputStream, pClass);
+	}
+	
+	/**
+	 * Retorna objeto a partir do objeto JSON lido do InputStream.<br/>
+	 * @param pClass
+	 * @return
+	 * @throws DBSIOException
+	 */
+	public <T> List<T> readObjectList(Class<T> pClass) throws DBSIOException{
+		return DBSHttp.ObjectInputStreamReadObjectList(wObjectInputStream, pClass);
 	}
 	
 	/**

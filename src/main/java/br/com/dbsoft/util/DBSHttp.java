@@ -13,6 +13,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
@@ -218,6 +219,31 @@ public class DBSHttp {
 		try {
 			Object xObject = pObjectInputStream.readObject();
 			return DBSJson.fromJson(xObject, pClass);
+		} catch (EOFException | StreamCorruptedException e){
+			return null;
+		} catch (JsonSyntaxException | ClassNotFoundException e) {
+			DBSIO.throwIOException(e);
+			return null;
+		} catch (IOException e) {
+			DBSIO.throwIOException(e);
+			return null;
+		}
+	}
+	
+	/**
+	 * Retorna objeto a partir do objeto JSON lido do InputStream.<br/>
+	 * A classe do retornada deverá conter variáveis com os mesmos nomes dos campos contidos no objeto JSON lido. Não são necessários <i>setter e getter</i>.<br/>
+	 * Os objetos são lidos sequencialmente(FIFO/PEPS). O primeiro objeto enviado, será o primeiro lido.
+	 * @param pObjectInputStream
+	 * @param pClass
+	 * @return
+	 * @throws DBSIOException
+	 */
+	public static <T> List<T> ObjectInputStreamReadObjectList(ObjectInputStream pObjectInputStream, Class<T> pClass) throws DBSIOException{
+		if (pObjectInputStream == null){return null;}
+		try {
+			Object xObject = pObjectInputStream.readObject();
+			return DBSJson.fromJsonList(xObject, pClass);
 		} catch (EOFException | StreamCorruptedException e){
 			return null;
 		} catch (JsonSyntaxException | ClassNotFoundException e) {
