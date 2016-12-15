@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -55,6 +55,15 @@ public class DBSMessages implements IDBSMessages{
 	@Override
 	public List<IDBSMessage> getListMessage() {
 		return new ArrayList<IDBSMessage>(wMessages.values());
+	}
+	
+	@Override
+	public List<DBSMessage> getListMessage2() {
+		List<DBSMessage> xList = new ArrayList<DBSMessage>();
+		for (IDBSMessage xMsg : wMessages.values()) {
+			xList.add((DBSMessage)xMsg);
+		}
+		return xList;
 	}
 
 	/* (non-Javadoc)
