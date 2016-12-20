@@ -31,11 +31,11 @@ public interface IDBSMessage extends Serializable{
 	    /**
 	     * Info
 	     */
-	    ABOUT 		("a", "Sobre", "-i_information -green", false, 1),
+	    ABOUT 		("a", "Sobre", "-i_information", false, 1),
 	    /**
 	     * Info
 	     */
-	    SUCCESS		("s", "Sucesso", "-i_sucess -green", false, 1),
+	    SUCCESS		("s", "Sucesso", "-i_sucess", false, 1),
 	    /**
 	     * Info
 	     */
@@ -47,7 +47,7 @@ public interface IDBSMessage extends Serializable{
 	    /**
 	     * Warning, Question
 	     */
-	    WARNING 	("w", "Atenção", "-i_warning -yellow", true, 20),
+	    WARNING 	("w", "Atenção", "-i_warning", true, 20),
 	    /**
 	     * Error, Question</br>
 	     * obs: Error interrompe o outcome do action 
@@ -57,19 +57,19 @@ public interface IDBSMessage extends Serializable{
 	     * Error, Question</br>
 	     * obs: Error interrompe o outcome do action 
 	     */
-	    IGNORE		("g", "Ignorar", "-i_question_ignore -yellow", true, 31),
+	    IGNORE		("g", "Ignorar", "-i_question_ignore", true, 31),
 	    /**
 	     * Error</br>
 	     * obs: Error interrompe o outcome do action</br> 
 	     * obs: Valor após a validação deste tipo deverá ser sempre False.
 	     */
-	    PROHIBID 	("p", "Proibido", "-i_forbidden -red", false, 40), 
+	    PROHIBID 	("p", "Proibido", "-i_forbidden", false, 40), 
 	    /**
 	     * Error</br>
 	     * obs: Error interrompe o outcome do action</br> 
 	     * obs: Valor após a validação deste tipo deverá ser sempre False.
 	     */
-	    ERROR 		("e", "Erro", "-i_error -red", false, 50); 
+	    ERROR 		("e", "Erro", "-i_error", false, 50); 
 
 	    String 	wCode;
 	    String 	wName;
