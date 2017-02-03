@@ -35,6 +35,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected IDBSMessage	   			wMsgWarningGenerico = new DBSMessage(MESSAGE_TYPE.WARNING, "%s");
 	protected IDBSMessage	   			wMsgMergeIndisponivel = new DBSMessage(MESSAGE_TYPE.ERROR, "Operação de Merge indisponível.");
 	protected IDBSMessage	   			wMsgDeleteIndisponivel = new DBSMessage(MESSAGE_TYPE.ERROR, "Operação de Delete indisponível.");
+	protected IDBSMessage	   			wMsgReadIndisponivel = new DBSMessage(MESSAGE_TYPE.ERROR, "Operação de Read indisponível.");
 
 	private   ICrudAction				wCrudAction = CrudAction.NONE; 
 	private   IDBSMessages				wMessages = new DBSMessages();
