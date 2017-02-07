@@ -159,17 +159,6 @@ public class DBSColor {
 //		pvSetColorAttributes(this, xColor.wRed, xColor.wGreen, xColor.wBlue, xColor.wAlpha);
 	}
 
-	public static void pvFromString(DBSColor pColor, String pColorString) {
-		pColorString = pColorString.trim().toLowerCase();
-		for (Converter xConverter : CONVERTERS) {
-			RGBA xColor = xConverter.getRGBA(pColorString);
-			if (xColor != null){
-				pvSetColorAttributes(pColor, xColor.getRed(), xColor.getGreen(), xColor.getBlue(), xColor.getAlpha());
-				return;
-			}
-		}
-		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColorString));
-	}
 
 	/**
 	 * Cria cor a partir de uma string: ex:rgb(10,23,42), hsl(200, 20%, 10%)
@@ -177,6 +166,9 @@ public class DBSColor {
 	 * @return
 	 */
 	public static DBSColor fromString(String pColorString) {
+		if (pColorString == null){
+			return null;
+		}
 		return new DBSColor(pColorString);
 	}
 	
@@ -512,6 +504,18 @@ public class DBSColor {
 			return HSLA_PATTERN;
 		}
 
+	}
+
+	private static void pvFromString(DBSColor pColor, String pColorString) {
+		pColorString = pColorString.trim().toLowerCase();
+		for (Converter xConverter : CONVERTERS) {
+			RGBA xColor = xConverter.getRGBA(pColorString);
+			if (xColor != null){
+				pvSetColorAttributes(pColor, xColor.getRed(), xColor.getGreen(), xColor.getBlue(), xColor.getAlpha());
+				return;
+			}
+		}
+		wLogger.error(String.format("Não foi possível converter %s em DBSColor.", pColorString));
 	}
 
 }
