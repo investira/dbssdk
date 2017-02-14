@@ -158,6 +158,8 @@ public class DBSColor {
 		pvFromString(this, pColorString);
 //		pvSetColorAttributes(this, xColor.wRed, xColor.wGreen, xColor.wBlue, xColor.wAlpha);
 	}
+	
+	public DBSColor(){}
 
 
 	/**

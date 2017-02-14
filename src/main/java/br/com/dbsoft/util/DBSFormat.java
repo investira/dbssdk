@@ -46,7 +46,7 @@ public class DBSFormat {
 	}
 	
 	
-	DBSFormat(){
+	public DBSFormat(){
 		wPHONE_NUMBER = Pattern.compile(REGEX.PHONE_NUMBER);
 	}
 	
