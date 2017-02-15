@@ -1,5 +1,6 @@
 package br.com.dbsoft.util;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
@@ -13,7 +14,10 @@ import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 
-public class DBSFormat {
+public class DBSFormat implements Serializable {
+
+
+	private static final long serialVersionUID = 5612058969596633659L;
 
 	public static String[] ZERO_DDI_DDDs = new String[]{
 		"800",

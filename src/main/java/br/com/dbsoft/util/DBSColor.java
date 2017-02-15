@@ -1,13 +1,16 @@
 package br.com.dbsoft.util;
 
 import java.awt.Color;
-
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-public class DBSColor {
+public class DBSColor implements Serializable {
+	
+	private static final long serialVersionUID = 5237657636946668520L;
+
 	protected static Logger			wLogger = Logger.getLogger(DBSColor.class);
 	
 	public enum TYPE{
@@ -342,6 +345,8 @@ public class DBSColor {
 	}
 
 	private static abstract class Converter {
+		public Converter() {}
+		
 		public RGBA getRGBA(String pString) {
 			Matcher xMatcher = getPattern().matcher(pString);
 			if (xMatcher.find()) {
