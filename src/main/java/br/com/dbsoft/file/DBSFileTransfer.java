@@ -610,7 +610,7 @@ public class DBSFileTransfer{
 		
 	private final File pvDownloadFileHTTP(URL pURL) throws IOException {
 		setTransferState(TransferState.TRANSFERING);
-		
+//		wLogger.info("pvDownloadFileHTTP: Iniciando transferencia: "+ pURL);
 		HttpURLConnection xConnection = null;
 		try{
 			//Força a criação de cookie para evitar erro em sites que obriguem um sessionid no request para o download. 
@@ -618,7 +618,9 @@ public class DBSFileTransfer{
 				CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 			}
 			//Abre conexão 
+//			wLogger.info("pvDownloadFileHTTP: abrindo conexão...");
 			xConnection = (HttpURLConnection) pURL.openConnection();
+//			wLogger.info("pvDownloadFileHTTP: conexão aberta.");
 		}catch(Exception e){
 			wLogger.error(e);
 			return null;
@@ -628,7 +630,9 @@ public class DBSFileTransfer{
 		xConnection.setDoInput(true);
 		xConnection.setDoOutput(true);
 		//Configura parametros para a request
+//		wLogger.info("pvDownloadFileHTTP: Configurando o Request...");
 		if (!DBSObject.isNull(wRequestPropertys) && !wRequestPropertys.isEmpty()) {
+//			wLogger.info("pvDownloadFileHTTP: Configurando propertys...");
 			StringBuilder xParams = new StringBuilder();
 			boolean first = true;
 			for (String xProperty : wRequestPropertys) {
@@ -651,10 +655,14 @@ public class DBSFileTransfer{
 			xWriter.flush();
 			xWriter.close();
 			xOs.close();
+//			wLogger.info("pvDownloadFileHTTP: Propertys configurados.");
 		}
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
+//		wLogger.info("pvDownloadFileHTTP: Request configurado.");
+//		wLogger.info("pvDownloadFileHTTP: Metodo Request: "+ xConnection.getRequestMethod());
+//		wLogger.info("pvDownloadFileHTTP: Conectando...");
 		xConnection.connect();
-		
+//		wLogger.info("pvDownloadFileHTTP: Conectado. Resposta: "+ xConnection.getResponseMessage());
 		if (xConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 			return pvDownload(pURL, xConnection);
 		} else {
@@ -670,7 +678,7 @@ public class DBSFileTransfer{
 	}
 
 	private File pvDownloadFile(String pURL) throws IOException {
-
+//		wLogger.info("pvDownloadFile: "+ pURL);
 		if (!pvFireEventBeforeSave()){
 			return null;
 		}
@@ -680,6 +688,7 @@ public class DBSFileTransfer{
 		setLastModified(null);
 		if (!xLocalFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.
 			DBSFile.mkDir(xLocalFile);
+//			wLogger.info("pvDownloadFile, Pasta Criada: "+xLocalFile);
 		}
 		
 		if (xLocalFile.exists()) { //Deleta o arquivo caso ele já exista.
@@ -700,9 +709,11 @@ public class DBSFileTransfer{
 	    	if (xFileDestinationStream != null){
 	    		xDestinationChannel = xFileDestinationStream.getChannel();   
 	    	}
+//	    	wLogger.info("pvDownloadFile: Iniciando transferencia...");
 			xSourceChannel.transferTo(0, xSourceChannel.size(), xDestinationChannel);
 //	         destinationChannel.transferFrom(sourceChannel, 0, Long.MAX_VALUE);
 			pvFireEventTransferring(); //EVENTO
+//			wLogger.info("pvDownloadFile: Transferencia concluída!");
 	    }finally {   
 	    	if (xFileSourceStream != null){   
 		    	if (xSourceChannel != null && xSourceChannel.isOpen()){   
@@ -735,6 +746,7 @@ public class DBSFileTransfer{
 	}
 	
 	private File pvDownload(URL pURL, URLConnection pConnection) throws IOException {
+//		wLogger.info("pvDownloadFileHTTP: Iniciando transferencia...");
 		String 			 xFileFullName;
 		File 			 xInputFile = null;
 		FileOutputStream xDownloadedFile = null;
@@ -801,7 +813,7 @@ public class DBSFileTransfer{
 		try {
 			//Le arquivo integralmente
 			int xBytesRead = 0;
-			 
+//			wLogger.info("pvDownloadFileHTTP: Lendo o arquivo...");
 			while ((xBytesRead = xReader.read(xBufferRead)) != -1 && 
 				   !isTimeOut() && //Se o timeout for 0 ele irá ler até acabar.
 				   !wInterrupted) {
@@ -810,7 +822,8 @@ public class DBSFileTransfer{
 				xBufferRead = new byte[wBufferSize];
 				pvFireEventTransferring();
 			}
-			
+//			wLogger.info("pvDownloadFileHTTP: Arquivo Lido.");
+//			wLogger.info("pvDownloadFileHTTP: Gravando o arquivo...");
 			//Grava arquivo local
 			if (wLocalPath != null){
 				//Defini o nome do arquivo local
@@ -825,8 +838,9 @@ public class DBSFileTransfer{
 				xDownloadedFile = new FileOutputStream(xInputFile);
 				xDownloadedFile.write(wFileContent, 0, wFileContent.length);
 			}
+//			wLogger.info("pvDownloadFileHTTP: Arquivo gravado.");
 		} catch (IOException e) {
-			wLogger.warn(e);
+			wLogger.error(e);
 			wOk = false;
 		} finally{
 			//Fecha o arquivo local
@@ -849,7 +863,7 @@ public class DBSFileTransfer{
 		}else{
 			pvFireEventAfterSave();
 		}
-
+//		wLogger.info("pvDownloadFileHTTP: Transferencia concluida.");
 		return xInputFile;
 	}
 	
