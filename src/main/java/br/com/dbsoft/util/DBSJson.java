@@ -19,14 +19,27 @@ public class DBSJson {
 	 * @return
 	 * @throws DBSIOException
 	 */
-	public static String toJsonTree(Object pObject){ 
+	public static JsonElement toJsonTree(Object pObject){ 
 		if (pObject == null) {return null;}
 		Gson xJSON = new Gson();
 		JsonElement xJE = xJSON.toJsonTree(pObject);
 		if (xJE.isJsonArray()){return null;}
-		return "";
+		return xJE;
 	}
 	
+	/**
+	 * Retorna String JSon a partir de objeto informado
+	 * @param pObject
+	 * @return
+	 * @throws DBSIOException
+	 */
+	public static <T> JsonElement toJsonTree(Object pObject, Class<T> pClass){ 
+		if (pObject == null) {return null;}
+		Gson xJSON = new Gson();
+		JsonElement xJE = xJSON.toJsonTree(pObject, pClass);
+		return xJE;
+	}
+
 	/**
 	 * Retorna String JSon a partir de objeto informado
 	 * @param pObject
