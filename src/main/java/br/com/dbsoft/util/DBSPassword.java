@@ -25,7 +25,9 @@ public class DBSPassword {
 
 	protected static Logger	wLogger = Logger.getLogger(DBSPassword.class);
 
-	public static String 	Algorithm = "PBKDF2WithHmacSHA1";
+	public static String 	Algorithm = 	"PBKDF2WithHmacSHA1";
+	public static String 	Algorithm256 = 	"PBKDF2WithHmacSHA256";
+	public static String 	Algorithm512 = 	"PBKDF2WithHmacSHA512";
 	public static String	Salt = "dbs";
 	public static int		SaltLenghtInBytes = 15;
 	public static int		PasswordLenght = SaltLenghtInBytes * 2;
@@ -82,7 +84,8 @@ public class DBSPassword {
 
     /**
      * Retorna String com a senha (de 30 caracteres) criptografada a partir do texto informado adicionando utilizando um <b>salt</b>) padrão.<br/>
-     * Para a validação da senha porteriormente, deve-se utilizar o método <b>validatePassword</b>.
+     * Para a validação da senha posteriormente, deve-se utilizar o método <b>validatePassword</b>.
+     * Algoritmo PBKDF2WithHmacSHA1
      * @param pPlainPassword
      * @return
      */
@@ -100,6 +103,28 @@ public class DBSPassword {
     	byte[] xHash = pvGetHash(DBSString.toHex(pSalt.getBytes()), pPlainPassword, pLength);
 		return DBSString.toHex(xHash);
 	}
+    
+    /**
+     * Algoritmo PBKDF2WithHmacSHA256
+     * @param pPlainPassword
+     * @return
+     */
+    public static String createPassword256(String pPlainPassword) {
+    	if (pPlainPassword==null){return null;}
+    	byte[] xHash = pvGetHash256(DBSString.toHex(Salt.getBytes()), pPlainPassword);
+		return DBSString.toHex(xHash);
+    }
+    
+    /**
+     * Algoritmo PBKDF2WithHmacSHA512
+     * @param pPlainPassword
+     * @return
+     */
+    public static String createPassword512(String pPlainPassword) {
+    	if (pPlainPassword==null){return null;}
+    	byte[] xHash = pvGetHash512(DBSString.toHex(Salt.getBytes()), pPlainPassword);
+		return DBSString.toHex(xHash);
+    }
     
     /**
      * Verifica se a senha (de 30 caractes) informada em <b>pPlainPassword</b> é iqual a senha já criptografada informada em <b>pStoredPassword</b>.
@@ -266,7 +291,15 @@ public class DBSPassword {
      * @return
      */
     private static byte[] pvGetHash(String pSalt, String pPlainPassword){
-		return pvGetHash(pSalt, pPlainPassword, PasswordLenght);
+		return pvGetHash(pSalt, pPlainPassword, PasswordLenght, Algorithm);
+ 	}
+    
+    private static byte[] pvGetHash256(String pSalt, String pPlainPassword){
+		return pvGetHash(pSalt, pPlainPassword, PasswordLenght, Algorithm256);
+ 	}
+    
+    private static byte[] pvGetHash512(String pSalt, String pPlainPassword){
+		return pvGetHash(pSalt, pPlainPassword, PasswordLenght, Algorithm512);
  	}
 
     /**
@@ -276,10 +309,13 @@ public class DBSPassword {
      * @return
      */
     private static byte[] pvGetHash(String pSalt, String pPlainPassword, Integer pLenght){
+    	return pvGetHash(pSalt, pPlainPassword, pLenght, Algorithm);
+    }
+    private static byte[] pvGetHash(String pSalt, String pPlainPassword, Integer pLenght, String pAlgorithm){
 		byte[] xSalt = DBSString.fromHex(pSalt);
 		KeySpec xSpec = new PBEKeySpec(pPlainPassword.toCharArray(), xSalt, Iterations, pLenght * 4);
 		try {
-			SecretKeyFactory xFactory = SecretKeyFactory.getInstance(Algorithm);
+			SecretKeyFactory xFactory = SecretKeyFactory.getInstance(pAlgorithm);
 			return xFactory.generateSecret(xSpec).getEncoded();
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 			wLogger.error(e);
