@@ -25,10 +25,10 @@ public class DBSPassword {
 
 	protected static Logger	wLogger = Logger.getLogger(DBSPassword.class);
 
-	public static String 	Algorithm = 	"PBKDF2WithHmacSHA1";
-	public static String 	Algorithm256 = 	"PBKDF2WithHmacSHA256";
-	public static String 	Algorithm512 = 	"PBKDF2WithHmacSHA512";
-	public static String	Salt = "dbs";
+	public static String 	Algorithm 		= "PBKDF2WithHmacSHA1";
+	public static String 	Algorithm256 	= "PBKDF2WithHmacSHA256";
+	public static String 	Algorithm512 	= "PBKDF2WithHmacSHA512";
+	public static String	Salt 			= "dbs";
 	public static int		SaltLenghtInBytes = 15;
 	public static int		PasswordLenght = SaltLenghtInBytes * 2;
 	public static int		Iterations = 9000;
