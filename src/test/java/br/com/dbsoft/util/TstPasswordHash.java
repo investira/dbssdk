@@ -126,4 +126,29 @@ public class TstPasswordHash {
 
 	}
 	
+	@Test
+	public void testeCreatePassword(){
+		String xPassword;
+		xPassword = DBSPassword.createPassword("dbsoft");
+		System.out.println(xPassword);
+		Assert.assertEquals(true, DBSPassword.validatePassword("dbsoft", xPassword));
+	}
+	
+	@Test
+	public void testeCreatePassword256(){
+		String xPassword;
+		System.out.println(DBSPassword.createPassword256("Teste"));
+		System.out.println(DBSPassword.createPassword256("Teste123"));
+		xPassword = DBSPassword.createPassword256("dbsoft");
+		System.out.println(xPassword);
+		Assert.assertEquals(true, DBSPassword.validatePassword256("dbsoft", xPassword));
+	}
+	
+	@Test
+	public void testeCreatePassword512(){
+		String xPassword;
+		xPassword = DBSPassword.createPassword512("dbsoft");
+		System.out.println(xPassword);
+		Assert.assertEquals(true, DBSPassword.validatePassword512("dbsoft", xPassword));
+	}
 }
