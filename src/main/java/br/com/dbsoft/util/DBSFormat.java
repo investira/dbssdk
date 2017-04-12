@@ -85,10 +85,21 @@ public class DBSFormat implements Serializable {
 		if (pDate == null){
 			return "";
 		}else{
+			Date xData = DBSDate.getNowDate();
+			xData.setTime(pDate.getTime());
+			return getFormattedDate(xData);
+		}
+	}
+	
+	public static String getFormattedDate(java.util.Date pDate){
+		if (pDate == null){
+			return "";
+		}else{
 			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy");
 			return xFormat.format(pDate);
 		}
 	}
+	
 	/**
 	 * Retorna string contendo a data reduzida formatada no padrão dd/mm/yyyy
 	 * @param pData Data a ser formatado
