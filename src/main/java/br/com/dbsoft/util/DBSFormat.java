@@ -75,13 +75,8 @@ public class DBSFormat implements Serializable {
 			return xFormat.format(DBSDate.toDate(pDate));
 		}
 	}
-	
-	/**
-	 * Retorna string contendo a data reduzida formatada no padrão dd/mm/yyyy
-	 * @param pData Data a ser formatado
-	 * @return String com a data já formatada
-	 */
-	public static String getFormattedDate(Date pDate){
+
+	public static String getFormattedDate(java.util.Date pDate){
 		if (pDate == null){
 			return "";
 		}else{
@@ -91,7 +86,12 @@ public class DBSFormat implements Serializable {
 		}
 	}
 	
-	public static String getFormattedDate(java.util.Date pDate){
+	/**
+	 * Retorna string contendo a data reduzida formatada no padrão dd/mm/yyyy
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedDate(Date pDate){
 		if (pDate == null){
 			return "";
 		}else{
