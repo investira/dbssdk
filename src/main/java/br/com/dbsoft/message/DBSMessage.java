@@ -18,17 +18,17 @@ public class DBSMessage implements IDBSMessage{
 
 	private static final long serialVersionUID = 2176781176871000385L;
 
-	private String						wMessageTextOriginal;
-	private String						wMessageText;
-	private Boolean						wValidated = null; 
-	private MESSAGE_TYPE				wMessageType;
-	private Exception					wException;
-	private String						wMessageTooltip = "";
-	private DateTime					wTime;
-	private String						wMessageKey = null;
-	private Integer						wMessageCode = 0;
-	private Set<String>					wMessageSourceIds = new HashSet<String>();
-	private Set<IDBSMessageListener> 	wMessageListeners = new HashSet<IDBSMessageListener>();
+	private String						messageTextOriginal;
+	private String						messageText;
+	private Boolean						validated = null; 
+	private MESSAGE_TYPE				messageType;
+	private Exception					exception;
+	private String						messageTooltip = "";
+	private DateTime					time;
+	private String						messageKey = null;
+	private Integer						messageCode = 0;
+	private Set<String>					messageSourceIds = new HashSet<String>();
+	private Set<IDBSMessageListener> 	messageListeners = new HashSet<IDBSMessageListener>();
 	
 	
 	//Construtores============================
@@ -80,45 +80,45 @@ public class DBSMessage implements IDBSMessage{
 	//=========================================
 	
 	@Override
-	public String getMessageKey(){return wMessageKey; }
+	public String getMessageKey(){return messageKey; }
 
 	@Override
 	public void setMessageKey(String pMessageKey){
 		if (pMessageKey != null){
-			wMessageKey = pMessageKey.trim();
+			messageKey = pMessageKey.trim();
 		}else{
-			wMessageKey = pMessageKey;
+			messageKey = pMessageKey;
 		}
 	}
 	
 	@Override
-	public String getMessageText() {return wMessageText;}
+	public String getMessageText() {return messageText;}
 	
 	@Override
 	public void setMessageText(String pMessageText) {
 		//Seta a chave como o próprio texto caso não tenha seja nula.
-		if (wMessageKey == null){
+		if (messageKey == null){
 			setMessageKey(pMessageText);
 		}
-		wMessageText = pMessageText;
+		messageText = pMessageText;
 	}
 
 	@Override
-	public MESSAGE_TYPE getMessageType() {return wMessageType;}
+	public MESSAGE_TYPE getMessageType() {return messageType;}
 	
 	/**
 	 * Retorna o tipo de mensagem 
 	 * @param pMessageType 
 	 */
 	@Override
-	public void setMessageType(MESSAGE_TYPE pMessageType) {wMessageType = pMessageType;}
+	public void setMessageType(MESSAGE_TYPE pMessageType) {messageType = pMessageType;}
 	
 	/**
 	 * Código da mensagem.
 	 * @return
 	 */
 	@Override
-	public Integer getMessageCode() {return wMessageCode;}
+	public Integer getMessageCode() {return messageCode;}
 
 	/**
 	 * Retorna o código da mensagem, 
@@ -128,19 +128,19 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#setMessageCode(java.lang.Integer)
 	 */
 	@Override
-	public void setMessageCode(Integer pMessageCode) {wMessageCode = pMessageCode;}
+	public void setMessageCode(Integer pMessageCode) {messageCode = pMessageCode;}
 	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#isMessageValidated()
 	 */
 	@Override
-	public Boolean isMessageValidated() {return wValidated;}
+	public Boolean isMessageValidated() {return validated;}
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#setMessageValidated(java.lang.Boolean)
 	 */
 	@Override
-	public void setMessageValidated(Boolean validated) {
-		wValidated = validated;
+	public void setMessageValidated(Boolean pValidated) {
+		validated = pValidated;
 		pvFireEventAfterMessageValidated();
 	}
 
@@ -156,12 +156,12 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTooltip()
 	 */
 	@Override
-	public String getMessageTooltip() {return wMessageTooltip;}
+	public String getMessageTooltip() {return messageTooltip;}
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#setMessageTooltip(java.lang.String)
 	 */
 	@Override
-	public void setMessageTooltip(String pMessageTooltip) {this.wMessageTooltip = pMessageTooltip;}
+	public void setMessageTooltip(String pMessageTooltip) {this.messageTooltip = pMessageTooltip;}
 	
 	/**
 	 * Incorpora os parametros a mensagem padrão definida no construtor.<br/>
@@ -170,8 +170,8 @@ public class DBSMessage implements IDBSMessage{
 	 */
 	@Override
 	public void setMessageTextParameters(Object... pParameters){
-		if (wMessageTextOriginal != null){
-			this.setMessageText(String.format(wMessageTextOriginal, pParameters));
+		if (messageTextOriginal != null){
+			this.setMessageText(String.format(messageTextOriginal, pParameters));
 		}else{
 			this.setMessageText(String.format(getMessageText(), pParameters));
 		}
@@ -181,20 +181,20 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTime()
 	 */
 	@Override
-	public DateTime getMessageTime() {return wTime;}
+	public DateTime getMessageTime() {return time;}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#setMessageTime(org.joda.time.DateTime)
 	 */
 	@Override
-	public void setMessageTime(DateTime pTime) {wTime = pTime;}
+	public void setMessageTime(DateTime pTime) {time = pTime;}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getIds()
 	 */
 	@Override
 	public Set<String> getMessageSourceIds() {
-		return wMessageSourceIds;
+		return messageSourceIds;
 	}
 	
 
@@ -202,20 +202,20 @@ public class DBSMessage implements IDBSMessage{
 	@Override
 	public IDBSMessage addMessageListener(IDBSMessageListener pMessageListener) {
 		if (pMessageListener == null){return this;}
-		wMessageListeners.add(pMessageListener);
+		messageListeners.add(pMessageListener);
 		return this;
 	}
 
 	@Override
 	public IDBSMessage removeMessageListener(IDBSMessageListener pMessageListener) {
 		if (pMessageListener == null){return this;}
-		wMessageListeners.remove(pMessageListener);
+		messageListeners.remove(pMessageListener);
 		return this;
 	}
 
 	@Override
 	public Set<IDBSMessageListener> getMessageListeners() {
-		return wMessageListeners;
+		return messageListeners;
 	}
 
 	@Override
@@ -223,10 +223,10 @@ public class DBSMessage implements IDBSMessage{
 		if (pMessage == null 
          || pMessage.equals(this)){return;}
 		DBSIO.copyDataModelFieldsValue(pMessage, this);
-		wMessageSourceIds = new HashSet<String>();
-		wMessageSourceIds.addAll(pMessage.getMessageSourceIds());
-		wMessageListeners = new HashSet<IDBSMessageListener>();
-		wMessageListeners.addAll(pMessage.getMessageListeners());
+		messageSourceIds = new HashSet<String>();
+		messageSourceIds.addAll(pMessage.getMessageSourceIds());
+		messageListeners = new HashSet<IDBSMessageListener>();
+		messageListeners.addAll(pMessage.getMessageListeners());
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class DBSMessage implements IDBSMessage{
 	
 	@Override
 	public void reset() {
-		wValidated = null;
+		validated = null;
 	}
 
 
@@ -261,13 +261,13 @@ public class DBSMessage implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getException()
 	 */
 	@Override
-	public Exception getException() {return wException;}
+	public Exception getException() {return exception;}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#setException(java.lang.Exception)
 	 */
 	@Override
-	public void setException(Exception pException) {this.wException = pException;}
+	public void setException(Exception pException) {this.exception = pException;}
 
 	//PROTECTED =========================
 	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
@@ -277,7 +277,7 @@ public class DBSMessage implements IDBSMessage{
 		setMessageText(pMessageText);
 		setMessageTooltip(pMessageTooltip);
 		setMessageTime(pMessageTime);
-		wMessageTextOriginal = pMessageText;
+		messageTextOriginal = pMessageText;
 	}
 
 	//PRIVATE =========================
@@ -291,7 +291,7 @@ public class DBSMessage implements IDBSMessage{
 			xListener.afterMessageValidated(this);
 //			System.out.println("pvFireEventAfterMessageValidated\t" + xListener.toString());
 		}
-		wMessageListeners.clear();
+		messageListeners.clear();
 	}
 
 
