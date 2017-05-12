@@ -28,7 +28,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected Connection 				wConnection = null;
 	protected boolean					wOk = true;
 	
-	protected DBSDAO<Object> wDAO;
+	protected DBSDAO<Object> 			wDAO;
 
 	protected IDBSMessage	   			wMsgCampoNaoInformado = new DBSMessage(MESSAGE_TYPE.ERROR, "%s não infomado. %s");	 
 	protected IDBSMessage	   			wMsgErroGenerico = new DBSMessage(MESSAGE_TYPE.ERROR, "%s");
