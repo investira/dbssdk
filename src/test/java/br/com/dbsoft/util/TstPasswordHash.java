@@ -8,10 +8,10 @@ import org.junit.Test;
 public class TstPasswordHash {
 
 
-	@Test
+//	@Test
 	public void testeSaltedPassword(){
 		String xPassword;
-//		xPassword = DBSPassword.createSaltedPassword("dbsoft");
+//		xPassword = DBSPassword.createSaltedPassword("dbs0ft-local");
 //		System.out.println(xPassword);
 //		Assert.assertEquals(true, DBSPassword.validateSaltedPassword("dbsoft", xPassword));
 //		xPassword = DBSPassword.createSaltedPassword("dbsoft" , 10);
@@ -40,7 +40,7 @@ public class TstPasswordHash {
 	}
 	
 
-	@Test
+//	@Test
 	public void testeCheck(){
 		String xPwd = "";
 		xPwd = "DBSOFT";
@@ -126,7 +126,7 @@ public class TstPasswordHash {
 
 	}
 	
-	@Test
+//	@Test
 	public void testeCreatePassword(){
 		String xPassword;
 		xPassword = DBSPassword.createPassword("dbsoft");
@@ -134,7 +134,7 @@ public class TstPasswordHash {
 		Assert.assertEquals(true, DBSPassword.validatePassword("dbsoft", xPassword));
 	}
 	
-	@Test
+//	@Test
 	public void testeCreatePassword256(){
 		String xPassword;
 		System.out.println(DBSPassword.createPassword256("Teste"));

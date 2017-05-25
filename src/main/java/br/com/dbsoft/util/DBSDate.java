@@ -961,9 +961,9 @@ public class DBSDate{
 			if (pPrazo==0){
 				return pDataBase;
 			}else{
-				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
+				LocalDateTime xDT = new DateTime(pDataBase).toLocalDateTime();
 				xDT = xDT.plusDays(pPrazo);
-				return DBSDate.toDate(xDT); 
+				return DBSDate.toDate(xDT.toDateTime()); 
 		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
 		        
 			}
