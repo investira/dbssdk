@@ -2,7 +2,6 @@ package br.com.dbsoft.listener;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -115,7 +114,7 @@ public abstract class DBSPhaseListener implements PhaseListener/*, Filter*/ {
 	 * @param pScopes
 	 * @return
 	 */
-	protected boolean hasScopePermission(String pPath, Set<String> pScopes) {
+	protected boolean hasScopePermission() {
 		return true;
 	}
 	
@@ -135,25 +134,8 @@ public abstract class DBSPhaseListener implements PhaseListener/*, Filter*/ {
 	 * Scopes do Usuário
 	 * @return
 	 */
-	protected abstract Set<String> getUserScopes();
+	protected abstract List<String> getUserScopes();
 
-	/**
-	 * 
-	 * @param pAuthorities
-	 * @param pAuthority
-	 * @return
-	 */
-	protected boolean hasPermission(String pAuthority, List<String> pAuthorities) {
-		boolean xOK = false;
-		for (String xDadosAuthority : pAuthorities) {
-			if (DBSObject.isEqual(xDadosAuthority, pAuthority)) {
-				xOK = true;
-				break;
-			}
-		}
-		return xOK;
-	}
-	
 	//METODOS LISTENER ========================================================================
 	@Override
 	public PhaseId getPhaseId() {
@@ -185,15 +167,14 @@ public abstract class DBSPhaseListener implements PhaseListener/*, Filter*/ {
 			
 			//Está Logado?
 			if (isLoggedIn()) {
+				//Tem Permissão de Scopo
+				if (!hasScopePermission()) {
+					xEC.redirect(DBSApp.URLHttp+getScopePath());
+					return;
+				}
 				//Tem Permissão de Authority
 				if (!hasAuthorityPermission(xCurrentView, getUserRoles())) {
 					xEC.redirect(DBSApp.URLHttp+getRolePath());
-					return;
-				}
-				
-				//Tem Permissão de Scopo
-				if (!hasScopePermission(xCurrentView, getUserScopes())) {
-					xEC.redirect(DBSApp.URLHttp+getScopePath());
 					return;
 				}
 			} else {
@@ -202,6 +183,29 @@ public abstract class DBSPhaseListener implements PhaseListener/*, Filter*/ {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param pListPermissions
+	 * @param pPermission
+	 * @return
+	 */
+	public static boolean hasPermission(String pPermission, List<String> pListPermissions) {
+		boolean xOK = false;
+		
+		for (String xDadosPermission : pListPermissions) {
+			//Verifica se tem permissão DBSOFT, e libera tudo.
+			if (DBSObject.isEqual(xDadosPermission, "DBSOFT")) {
+				xOK = true;
+				break;
+			}
+			if (DBSObject.isEqual(xDadosPermission, pPermission)) {
+				xOK = true;
+				break;
+			}
+		}
+		return xOK;
 	}
 
 //	//METODOS FILTER =====================================================================================
