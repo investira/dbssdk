@@ -20,8 +20,8 @@ public class DBSNumber {
 	protected static Logger		wLogger = Logger.getLogger(DBSNumber.class);
 	
 	public static Locale 	LOCALE_PTBR = new Locale("pt", "BR");
-	public static Double 	PIDiameter = Math.PI * 2;
-	public static Double 	PIDiameterFactor = PIDiameter / 100;
+	public static Double 	PICircle = Math.PI * 2;
+	public static Double 	PICircleFactor = PICircle / 100;
 	
 	//------------------------------------------------------------------------------------
 	/**
