@@ -3,7 +3,7 @@ package br.com.dbsoft.crud;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
 
 public interface IDBSCrud<DataModelClass> {

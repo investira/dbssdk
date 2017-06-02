@@ -22,7 +22,7 @@ import br.com.dbsoft.enums.DBSSDKEnums.PAYMENT_STATUS;
 import br.com.dbsoft.enums.DBSSDKEnums.PROFILE_STATUS;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.payment.DBSPayment;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;

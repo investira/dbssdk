@@ -14,19 +14,15 @@ import br.com.dbsoft.util.DBSObject;
  * @author ricardo.villar
  *
  */
-public class DBSMessage implements IDBSMessage{
+public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 
 	private static final long serialVersionUID = 2176781176871000385L;
 
 	private String						messageTextOriginal;
-	private String						messageText;
 	private Boolean						validated = null; 
-	private MESSAGE_TYPE				messageType;
 	private Exception					exception;
 	private String						messageTooltip = "";
-	private DateTime					time;
 	private String						messageKey = null;
-	private Integer						messageCode = 0;
 	private Set<String>					messageSourceIds = new HashSet<String>();
 	private Set<IDBSMessageListener> 	messageListeners = new HashSet<IDBSMessageListener>();
 	
@@ -80,6 +76,15 @@ public class DBSMessage implements IDBSMessage{
 	//=========================================
 	
 	@Override
+	public void setMessageText(String pMessageText) {
+		//Seta a chave como o próprio texto caso não tenha seja nula.
+		if (messageKey == null){
+			setMessageKey(pMessageText);
+		}
+		super.setMessageText(pMessageText);
+	}
+	
+	@Override
 	public String getMessageKey(){return messageKey; }
 
 	@Override
@@ -90,45 +95,6 @@ public class DBSMessage implements IDBSMessage{
 			messageKey = pMessageKey;
 		}
 	}
-	
-	@Override
-	public String getMessageText() {return messageText;}
-	
-	@Override
-	public void setMessageText(String pMessageText) {
-		//Seta a chave como o próprio texto caso não tenha seja nula.
-		if (messageKey == null){
-			setMessageKey(pMessageText);
-		}
-		messageText = pMessageText;
-	}
-
-	@Override
-	public MESSAGE_TYPE getMessageType() {return messageType;}
-	
-	/**
-	 * Retorna o tipo de mensagem 
-	 * @param pMessageType 
-	 */
-	@Override
-	public void setMessageType(MESSAGE_TYPE pMessageType) {messageType = pMessageType;}
-	
-	/**
-	 * Código da mensagem.
-	 * @return
-	 */
-	@Override
-	public Integer getMessageCode() {return messageCode;}
-
-	/**
-	 * Retorna o código da mensagem, 
-	 * @param pMessageCode
-	 */
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessage#setMessageCode(java.lang.Integer)
-	 */
-	@Override
-	public void setMessageCode(Integer pMessageCode) {messageCode = pMessageCode;}
 	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#isMessageValidated()
@@ -176,18 +142,6 @@ public class DBSMessage implements IDBSMessage{
 			this.setMessageText(String.format(getMessageText(), pParameters));
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessage#getMessageTime()
-	 */
-	@Override
-	public DateTime getMessageTime() {return time;}
-
-	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessage#setMessageTime(org.joda.time.DateTime)
-	 */
-	@Override
-	public void setMessageTime(DateTime pTime) {time = pTime;}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessage#getIds()

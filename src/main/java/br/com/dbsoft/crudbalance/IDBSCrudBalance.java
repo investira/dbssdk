@@ -4,7 +4,7 @@ import br.com.dbsoft.crud.IDBSCrud;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
-import br.com.dbsoft.message.IDBSMessage.MESSAGE_TYPE;
+import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 
 public interface IDBSCrudBalance<DataModelClass> extends IDBSCrud<DataModelClass> {
 	
