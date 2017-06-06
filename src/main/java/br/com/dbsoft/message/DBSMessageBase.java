@@ -61,4 +61,9 @@ public class DBSMessageBase implements IDBSMessageBase {
 	@Override
 	public void setMessageTime(DateTime pTime) {time = pTime;}
 
+	
+	@Override
+	public String toString() {
+		return getMessageText();
+	}
 }

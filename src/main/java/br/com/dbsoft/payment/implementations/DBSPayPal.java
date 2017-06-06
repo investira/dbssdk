@@ -120,8 +120,8 @@ public class DBSPayPal extends DBSPayment{
 	public DBSPayPal(Map<String, String> pConfigMap) {
 		setConfigMap(pConfigMap);
 	}
-	//Overrides =====================================================================================================================================
 	
+	//Overrides =====================================================================================================================================
 	@Override
 	public void onPrepare() throws DBSIOException {
 		SetExpressCheckoutRequestDetailsType 	xSetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType();
