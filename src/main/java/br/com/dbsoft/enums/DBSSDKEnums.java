@@ -67,6 +67,44 @@ public class DBSSDKEnums {
 		}
 	}
 	
+	public static enum PAYMENT_TYPE {
+		PAYPAL			("PayPal",			1),
+		CREDIT_CARD		("Credit Card", 	2),
+		BOLETO			("Boleto", 			3);
+		
+		private String 	wName;
+		private int 	wCode;
+		
+		private PAYMENT_TYPE(String pName, int pCode) {
+			this.wName = pName;
+			this.wCode = pCode;
+		}
+
+		public String getName() {
+			return	wName;
+		}
+
+		public int getCode() {
+			return wCode;
+		}
+		
+		public static PAYMENT_TYPE get(Integer pCode) {
+			if (DBSObject.isNull(pCode)) {
+				return null;
+			}
+			switch (pCode) {
+			case 1:
+				return PAYPAL;
+			case 2:
+				return CREDIT_CARD;
+			case 3:
+				return BOLETO;
+			default:
+				return null;
+			}
+		}
+	}
+	
 	public static enum PAYMENT_STATUS {
 		COMPLETE		("Complete",	0),
 		PENDING			("Pending", 	1),
