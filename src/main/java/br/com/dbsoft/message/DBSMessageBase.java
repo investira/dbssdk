@@ -1,7 +1,10 @@
 package br.com.dbsoft.message;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.joda.time.DateTime;
 
+@XmlRootElement
 public class DBSMessageBase implements IDBSMessageBase {
 
 	private static final long serialVersionUID = -3225736874946291541L;

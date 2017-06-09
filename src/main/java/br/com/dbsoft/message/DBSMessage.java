@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.joda.time.DateTime;
 
 import br.com.dbsoft.error.DBSIOException;
@@ -14,6 +16,7 @@ import br.com.dbsoft.util.DBSObject;
  * @author ricardo.villar
  *
  */
+@XmlRootElement
 public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 
 	private static final long serialVersionUID = 2176781176871000385L;
