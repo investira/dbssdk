@@ -238,7 +238,13 @@ public class DBSEmailSend {
 		public PasswordAuthentication getPasswordAuthentication() {
            String username = wHostUserName;
            String password = wHostPassword;
-           return new PasswordAuthentication(username, password);
+           if (DBSObject.isEmpty(wHostUserName)
+        	 ||DBSObject.isEmpty(wHostPassword)){
+        	   wLogger.error("Usuário e/ou senha do STMP não informados.");
+        	   return null;
+           }else{
+        	   return new PasswordAuthentication(username, password);
+           }
         }
     }
     
