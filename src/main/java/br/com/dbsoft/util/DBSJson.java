@@ -77,9 +77,15 @@ public class DBSJson {
 	 */
 	public static <T> T fromJson(Object pObject, Class<T> pClass){
 		if (pObject == null) {return null;}
-		Gson   xJSON = new Gson();
-		String xS = pObject.toString();
-		return xJSON.fromJson(xS, pClass);
+		T 		xFromJson = null;
+		Gson   	xJSON = new Gson();
+		String 	xS = pObject.toString();
+		try {
+			xFromJson = xJSON.fromJson(xS, pClass);
+		} catch (Exception xE) {
+			xE.printStackTrace();
+		}
+		return xFromJson;
 	}
 	
 	/**

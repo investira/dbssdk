@@ -36,6 +36,10 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 	public DBSMessage(DBSIOException e){
 		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null, null);
 	}
+	
+	public DBSMessage(IDBSMessageBase pMessageBase){
+		pvSetMessage(pMessageBase.getMessageText(), pMessageBase.getMessageCode(), pMessageBase.getMessageType(), pMessageBase.getMessageText(), null, pMessageBase.getMessageTime());
+	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
 		pvSetMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);

@@ -98,6 +98,14 @@ public class DBSMessages implements IDBSMessages{
 		}
 	}
 	
+	@Override
+	public void addAllMessageBase(List<IDBSMessageBase> pMessages) {
+		if (pMessages == null){return;}
+		for (IDBSMessageBase xMessageBase: pMessages){
+			add(xMessageBase);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessages#add(br.com.dbsoft.message.IDBSMessage)
 	 */
@@ -144,6 +152,16 @@ public class DBSMessages implements IDBSMessages{
 			//Adicionla sourceId a lista
 			xM.getMessageSourceIds().add(pSourceId);
 		}
+	}
+	
+	@Override
+	public void add(IDBSMessageBase pMessageBase) {
+		add(pMessageBase, null);
+	}
+	
+	@Override
+	public void add(IDBSMessageBase pMessageBase, String pSourceId) {
+		add(new DBSMessage(pMessageBase), pSourceId);
 	}
 
 

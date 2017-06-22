@@ -21,6 +21,10 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	public List<IDBSMessage> getListMessage();
 	public List<DBSMessage> getListMessage2();
 	
+	public void add(IDBSMessageBase pMessageBase);
+	
+	public void add(IDBSMessageBase pMessageBase, String pSourceId);
+	
 	/** 
 	 * Inclui uma mensagem na fila.</br>
 	 * Ignora inclusão se existir uma mensagem com a mesma chave.
@@ -53,6 +57,8 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 */
 	public void addAll(List<DBSMessage> pMessages);
 
+	public void addAllMessageBase(List<IDBSMessageBase> pMessages);
+	
 	/**
 	 * Remove uma mensagem da fila e reposiciona da próxima
 	 * @param pMessageKey
