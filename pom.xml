@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.dbsoft</groupId>
-	<artifactId>dbssdk</artifactId> 
+	<artifactId>dbssdk</artifactId>
 	<version>2.2.0</version>
 	<name>DBSoft - SDK</name>
 	<url>http://www.dbsoft.com.br</url>
@@ -18,7 +17,7 @@
 		<weld-core.version>2.3.1.Final</weld-core.version>
 		<junit.version>4.8.1</junit.version>
 		<arquillian.version>1.0.0.Final</arquillian.version>
-<!-- 		<jbossas.version>7.1.1.Final</jbossas.version> -->
+		<!-- <jbossas.version>7.1.1.Final</jbossas.version> -->
 		<log4j.version>1.2.17</log4j.version>
 		<el.version>2.2.3</el.version>
 		<jaxb.version>2.2.12</jaxb.version>
@@ -35,17 +34,18 @@
 		<caelum-stella.version>2.1.0</caelum-stella.version>
 		<jsf.version>2.2.11</jsf.version>
 		<apache-poi.version>3.13</apache-poi.version>
-		
-<!-- 		<json.version>20140107</json.version> -->
+		<jaxrs.version>2.0.1</jaxrs.version>
+
+		<!-- <json.version>20140107</json.version> -->
 
 	</properties>
 	<distributionManagement>
 		<repository>
-		  <id>internal.repo</id>
-		  <name>Internal Repository</name>
-		  <url>file://${internal.repo.path}</url>
+			<id>internal.repo</id>
+			<name>Internal Repository</name>
+			<url>file://${internal.repo.path}</url>
 		</repository>
-	</distributionManagement>	
+	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>central</id>
@@ -56,53 +56,53 @@
 		<repository>
 			<id>codelds</id>
 			<url>https://code.lds.org/nexus/content/groups/main-repo</url>
-		</repository>		
+		</repository>
 	</repositories>
 	<!-- JUNIT -->
-<!-- 	<dependencyManagement> -->
-<!-- 		<dependencies> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.jboss.arquillian</groupId> -->
-<!-- 				<artifactId>arquillian-bom</artifactId> -->
-<!-- 				<version>${arquillian.version}</version> -->
-<!-- 				<scope>import</scope> -->
-<!-- 				<type>pom</type> -->
-<!-- 			</dependency> -->
-<!-- 		</dependencies> -->
-<!-- 	</dependencyManagement> -->
+	<!-- <dependencyManagement> -->
+	<!-- <dependencies> -->
+	<!-- <dependency> -->
+	<!-- <groupId>org.jboss.arquillian</groupId> -->
+	<!-- <artifactId>arquillian-bom</artifactId> -->
+	<!-- <version>${arquillian.version}</version> -->
+	<!-- <scope>import</scope> -->
+	<!-- <type>pom</type> -->
+	<!-- </dependency> -->
+	<!-- </dependencies> -->
+	<!-- </dependencyManagement> -->
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 		    <groupId>com.github.github</groupId> -->
-<!-- 		    <artifactId>site-maven-plugin</artifactId> -->
-<!-- 		    <version>0.8</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>javax.servlet</groupId> -->
-<!-- 			<artifactId>javax.servlet-api</artifactId> -->
-<!-- 			<version>${servlet-api.version}</version> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency>		 -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss</groupId> -->
-<!-- 			<artifactId>jboss-common-core</artifactId> -->
-<!-- 			<version>2.5.0.Final</version> -->
-<!-- 		</dependency> -->
-<!-- 	<dependency> -->
-<!-- 		<groupId>org.wildfly</groupId> -->
-<!-- 		<artifactId>wildfly-jmx</artifactId> -->
-<!-- 		<version>8.2.0.Final</version> -->
-<!-- 	</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss.spec.javax.servlet</groupId> -->
-<!-- 			<artifactId>jboss-servlet-api_3.0_spec</artifactId> -->
-<!-- 			<version>1.0.2.Final</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.github.github</groupId> -->
+		<!-- <artifactId>site-maven-plugin</artifactId> -->
+		<!-- <version>0.8</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>javax.servlet</groupId> -->
+		<!-- <artifactId>javax.servlet-api</artifactId> -->
+		<!-- <version>${servlet-api.version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss</groupId> -->
+		<!-- <artifactId>jboss-common-core</artifactId> -->
+		<!-- <version>2.5.0.Final</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.wildfly</groupId> -->
+		<!-- <artifactId>wildfly-jmx</artifactId> -->
+		<!-- <version>8.2.0.Final</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.spec.javax.servlet</groupId> -->
+		<!-- <artifactId>jboss-servlet-api_3.0_spec</artifactId> -->
+		<!-- <version>1.0.2.Final</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
 			<version>${jboss-servlet-api.version}</version>
-		</dependency>				
+		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -128,23 +128,23 @@
 			<artifactId>jstl</artifactId>
 			<version>${jstl.version}</version>
 		</dependency>
-		<!-- JSON		 -->
+		<!-- JSON -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${gson.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.json</groupId> -->
-<!-- 			<artifactId>json</artifactId> -->
-<!-- 			<version>${json.version}</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.json</groupId> -->
+		<!-- <artifactId>json</artifactId> -->
+		<!-- <version>${json.version}</version> -->
+		<!-- </dependency> -->
 		<!-- DRIVER ORACLE -->
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 			<version>${oracle.version}</version>
-		</dependency>		
+		</dependency>
 		<!-- MYSQL -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -155,7 +155,7 @@
 			<groupId>javax.mail</groupId>
 			<artifactId>javax.mail-api</artifactId>
 			<version>1.5.2</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
@@ -171,29 +171,30 @@
 			<artifactId>caelum-stella-core</artifactId>
 			<version>${caelum-stella.version}</version>
 		</dependency>
-<!-- 		Retinado por causa erro Asynchronous requests are not supported with this servlet -->
-<!-- 		verificar: https://issues.jboss.org/browse/JBAS-8294 -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss.solder</groupId> -->
-<!-- 			<artifactId>solder-impl</artifactId> -->
-<!-- 			<version>3.2.1.Final</version> -->
-<!-- 		</dependency> -->
+		<!-- Retinado por causa erro Asynchronous requests are not supported with 
+			this servlet -->
+		<!-- verificar: https://issues.jboss.org/browse/JBAS-8294 -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.solder</groupId> -->
+		<!-- <artifactId>solder-impl</artifactId> -->
+		<!-- <version>3.2.1.Final</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-core</artifactId>
 			<version>${weld-core.version}</version>
-		</dependency>	
+		</dependency>
 
 		<dependency>
 			<groupId>javax.json</groupId>
 			<artifactId>javax.json-api</artifactId>
 			<version>${javax.json.version}</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>${commons-collections.version}</version>
-		</dependency>	
+		</dependency>
 		<!-- JUNIT -->
 
 		<dependency>
@@ -212,11 +213,11 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss.arquillian.junit</groupId> -->
-<!-- 			<artifactId>arquillian-junit-container</artifactId> -->
-<!-- 			<scope>test</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.arquillian.junit</groupId> -->
+		<!-- <artifactId>arquillian-junit-container</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.github.github</groupId>
 			<artifactId>site-maven-plugin</artifactId>
@@ -232,7 +233,7 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache-poi.version}</version>
 		</dependency>
-		
+
 		<!-- MATH3 APACHE -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -250,6 +251,18 @@
 			<artifactId>merchantsdk</artifactId>
 			<version>2.14.117</version>
 		</dependency>
+		<!-- Jax-RS -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${jaxrs.version}</version>
+		</dependency>
+		<!-- jackson - TEMPORARIO -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.8.6</version>
+		</dependency>
 	</dependencies>
 
 
@@ -257,7 +270,7 @@
 		<profile>
 			<id>arquillian-jbossas-remote</id>
 			<activation>
-      			<activeByDefault>true</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<dependencies>
 				<!-- JUNIT -->
@@ -268,12 +281,12 @@
 					<type>pom</type>
 					<scope>test</scope>
 				</dependency>
-<!-- 				<dependency> -->
-<!-- 					<groupId>org.jboss.as</groupId> -->
-<!-- 					<artifactId>jboss-as-arquillian-container-remote</artifactId> -->
-<!-- 					<version>${jbossas.version}</version> -->
-<!-- 					<scope>test</scope> -->
-<!-- 				</dependency> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.jboss.as</groupId> -->
+				<!-- <artifactId>jboss-as-arquillian-container-remote</artifactId> -->
+				<!-- <version>${jbossas.version}</version> -->
+				<!-- <scope>test</scope> -->
+				<!-- </dependency> -->
 			</dependencies>
 		</profile>
 		<profile>
@@ -288,12 +301,12 @@
 					<scope>test</scope>
 				</dependency>
 
-<!-- 				<dependency> -->
-<!-- 					<groupId>org.jboss.arquillian.container</groupId> -->
-<!-- 					<artifactId>arquillian-weld-ee-embedded-1.1</artifactId> -->
-<!-- 					<version>${arquillian.version}</version> -->
-<!-- 					<scope>test</scope> -->
-<!-- 				</dependency> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.jboss.arquillian.container</groupId> -->
+				<!-- <artifactId>arquillian-weld-ee-embedded-1.1</artifactId> -->
+				<!-- <version>${arquillian.version}</version> -->
+				<!-- <scope>test</scope> -->
+				<!-- </dependency> -->
 
 				<dependency>
 					<groupId>org.slf4j</groupId>
@@ -316,12 +329,12 @@
 					<type>pom</type>
 					<scope>test</scope>
 				</dependency>
-<!-- 				<dependency> -->
-<!-- 					<groupId>org.jboss.as</groupId> -->
-<!-- 					<artifactId>jboss-as-arquillian-container-managed</artifactId> -->
-<!-- 					<version>${jbossas.version}</version> -->
-<!-- 					<scope>test</scope> -->
-<!-- 				</dependency> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.jboss.as</groupId> -->
+				<!-- <artifactId>jboss-as-arquillian-container-managed</artifactId> -->
+				<!-- <version>${jbossas.version}</version> -->
+				<!-- <scope>test</scope> -->
+				<!-- </dependency> -->
 			</dependencies>
 		</profile>
 
@@ -329,12 +342,12 @@
 			<id>arquillian-glassfish-embedded</id>
 			<dependencies>
 				<!-- JUNIT -->
-<!-- 				<dependency> -->
-<!-- 					<groupId>org.jboss.arquillian.container</groupId> -->
-<!-- 					<artifactId>arquillian-glassfish-embedded-3.1</artifactId> -->
-<!-- 					<version>${arquillian-version}</version> -->
-<!-- 					<scope>test</scope> -->
-<!-- 				</dependency> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.jboss.arquillian.container</groupId> -->
+				<!-- <artifactId>arquillian-glassfish-embedded-3.1</artifactId> -->
+				<!-- <version>${arquillian-version}</version> -->
+				<!-- <scope>test</scope> -->
+				<!-- </dependency> -->
 				<dependency>
 					<groupId>org.glassfish.main.extras</groupId>
 					<artifactId>glassfish-embedded-all</artifactId>
@@ -362,44 +375,44 @@
 					<archive></archive>
 				</configuration>
 			</plugin>
-			<plugin> 
-				<groupId>org.apache.maven.plugins</groupId> 
-				<artifactId>maven-resources-plugin</artifactId> 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
-				<configuration> 
-					<encoding>UTF-8</encoding> 
-				</configuration> 
-			</plugin> 
-<!--             <plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId>  -->
-<!-- 				<artifactId>maven-assembly-plugin</artifactId> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>create-my-bundle</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>single</goal> -->
-<!-- 						</goals> -->
-<!-- 						<configuration> -->
-<!-- 							<descriptorRefs> -->
-<!-- 								<descriptorRef>jar-with-dependencies</descriptorRef> -->
-<!-- 						    </descriptorRefs> -->
-<!-- 						</configuration> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-				
-<!--                 <configuration> -->
-<!-- 					<descriptorRefs> -->
-<!-- 						<descriptorRef>jar-with-dependencies</descriptorRef> -->
-<!-- 					</descriptorRefs> -->
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<mainClass>fully.qualified.MainClass</mainClass> -->
-<!-- 						</manifest> -->
-<!-- 					</archive> -->
-<!-- 				</configuration> -->
-             
-<!--              </plugin> -->
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-assembly-plugin</artifactId> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>create-my-bundle</id> -->
+			<!-- <phase>package</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>single</goal> -->
+			<!-- </goals> -->
+			<!-- <configuration> -->
+			<!-- <descriptorRefs> -->
+			<!-- <descriptorRef>jar-with-dependencies</descriptorRef> -->
+			<!-- </descriptorRefs> -->
+			<!-- </configuration> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+
+			<!-- <configuration> -->
+			<!-- <descriptorRefs> -->
+			<!-- <descriptorRef>jar-with-dependencies</descriptorRef> -->
+			<!-- </descriptorRefs> -->
+			<!-- <archive> -->
+			<!-- <manifest> -->
+			<!-- <mainClass>fully.qualified.MainClass</mainClass> -->
+			<!-- </manifest> -->
+			<!-- </archive> -->
+			<!-- </configuration> -->
+
+			<!-- </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -413,56 +426,57 @@
 					</execution>
 				</executions>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-javadoc-plugin</artifactId> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>attach-javadocs</id> -->
-<!-- 						<goals> -->
-<!-- 							<goal>jar</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin>			 -->
-		    <plugin>
-		        <artifactId>maven-deploy-plugin</artifactId>
-		        <version>2.8.1</version>
-		        <configuration>
-		            <altDeploymentRepository>internal.repo::default::file://${internal.repo.path}</altDeploymentRepository>
-		        </configuration>
-		    </plugin>
-	        <plugin>
-	            <groupId>com.github.github</groupId>
-	            <artifactId>site-maven-plugin</artifactId>
-	            <version>0.12</version>
-	            <configuration>
-	                <message>Maven artifacts for ${project.name} ${project.version}</message>  <!-- git commit message -->
-	                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-	                <outputDirectory>${internal.repo.path}</outputDirectory> <!-- matches distribution management repository url above -->
-	                <branch>refs/heads/master</branch>                       <!-- remote branch name -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>attach-javadocs</id> -->
+			<!-- <goals> -->
+			<!-- <goal>jar</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file://${internal.repo.path}</altDeploymentRepository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.12</version>
+				<configuration>
+					<message>Maven artifacts for ${project.name} ${project.version}</message>  <!-- git commit message -->
+					<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+					<outputDirectory>${internal.repo.path}</outputDirectory> <!-- matches distribution management repository url above -->
+					<branch>refs/heads/master</branch>                       <!-- remote branch name -->
 					<excludes>
 						<exclude>.git/**/*</exclude>
 						<exclude>.gitignore</exclude>
-                        <exclude>.DS_Store</exclude>
-                        <exclude>*.sh</exclude>
-                    </excludes>
-                    <force>true</force>
-                    <merge>true</merge>
-	                <repositoryName>mvn-repo</repositoryName>      <!-- github repo name -->
-	                <repositoryOwner>dbsoftcombr</repositoryOwner>    <!-- github username  -->
-	            </configuration>
-	            <executions>
-					<!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+						<exclude>.DS_Store</exclude>
+						<exclude>*.sh</exclude>
+					</excludes>
+					<force>true</force>
+					<merge>true</merge>
+					<repositoryName>mvn-repo</repositoryName>      <!-- github repo name -->
+					<repositoryOwner>dbsoftcombr</repositoryOwner>    <!-- github username -->
+				</configuration>
+				<executions>
+					<!-- run site-maven-plugin's 'site' target as part of the build's normal 
+						'deploy' phase -->
 					<execution>
 						<goals>
 							<goal>site</goal>
 						</goals>
 						<phase>deploy</phase>
 					</execution>
-	            </executions>
-	        </plugin>		    
-    	</plugins>
+				</executions>
+			</plugin>
+		</plugins>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
