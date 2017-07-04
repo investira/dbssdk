@@ -1,12 +1,17 @@
 package br.com.dbsoft.util;
 
 import java.lang.reflect.Type;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
 import br.com.dbsoft.error.DBSIOException;
@@ -78,7 +83,7 @@ public class DBSJson {
 	public static <T> T fromJson(Object pObject, Class<T> pClass){
 		if (pObject == null) {return null;}
 		T 		xFromJson = null;
-		Gson   	xJSON = new Gson();
+		Gson   	xJSON = pvCreateGson();
 		String 	xS = pObject.toString();
 		try {
 			xFromJson = xJSON.fromJson(xS, pClass);
@@ -118,5 +123,32 @@ public class DBSJson {
 		String xS = pObject.toString();
 		Type xType = new TypeToken<List<T>>(){}.getType();
 		return xJSON.fromJson(xS, xType);
+	}
+	
+	/**
+	 * Cria uma instância de GSON (Google) e registra dois adapters: java.sql.Date e java.sql.Timestamp
+	 * @return
+	 */
+	private static Gson pvCreateGson() {
+		//Cria um objeto construtor json para gerencia as informações recebidas
+		GsonBuilder xBuilder = new GsonBuilder(); 
+
+		//Registra os adaptadores para fazer a deserialização de valor LONG para o tipo informado
+		//SQL.Date
+		xBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() { 
+			@Override
+			public Date deserialize(JsonElement pJson, Type pTypeOfT, JsonDeserializationContext pContext) throws JsonParseException {
+				return new Date(pJson.getAsJsonPrimitive().getAsLong()); 
+			} 
+		});
+		
+		//SQL.Timestamp 
+		xBuilder.registerTypeAdapter(Timestamp.class, new JsonDeserializer<Timestamp>() { 
+			@Override
+			public Timestamp deserialize(JsonElement pJson, Type pTypeOfT, JsonDeserializationContext pContext) throws JsonParseException {
+				return new Timestamp(pJson.getAsJsonPrimitive().getAsLong()); 
+			} 
+		});
+		return xBuilder.create();
 	}
 }
