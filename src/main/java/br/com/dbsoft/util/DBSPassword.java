@@ -408,6 +408,9 @@ public class DBSPassword {
 	 * @return true Senha Válida, false Senha Inválida
 	 */
 	public static boolean validateRulePassword(String pPassword, String pPattern) {
+		if (DBSObject.isEmpty(pPassword)) {
+			return false;
+		}
 		Pattern xPattern = Pattern.compile(pPattern);
 		Matcher xMatcher;
 		
