@@ -131,7 +131,17 @@ public interface IDBSCrud<DataModelClass> {
 	 * @throws DBSIOException
 	 */
 	public Integer delete(DataModelClass pDataModelClass) throws DBSIOException;
-	
+
+	/**
+	 * Valida sem efetuar qualquer modificação.<br/>
+	 * <ul><b>Evento disparado</b>
+	 * <li>validate(recebe:dados da chave do registro)</li>
+	 * </ul>
+	 * @param pDataModelClass
+	 * @throws DBSIOException
+	 */
+	public IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException;
+
 	
 	/**
 	 * Retorna texto da mensagem que está na fila

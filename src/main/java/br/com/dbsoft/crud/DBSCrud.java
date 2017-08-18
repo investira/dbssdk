@@ -104,6 +104,13 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	}
 
 	
+
+	@Override
+	public IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException {
+		pvFireEventOnValidate(pDataModelClass);
+		return getMessages();
+	}
+	
 	@Override
 	public final Integer merge(DataModelClass pDataModel) throws DBSIOException{
 		pvInitializeAction(CrudAction.MERGING);
