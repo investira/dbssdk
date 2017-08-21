@@ -38,7 +38,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	protected IDBSMessage	   			wMsgReadIndisponivel = new DBSMessage(MESSAGE_TYPE.ERROR, "Operação de Read indisponível.");
 
 	private   ICrudAction				wCrudAction = CrudAction.NONE; 
-	private   IDBSMessages				wMessages = new DBSMessages();
+	private   IDBSMessages				wMessages = new DBSMessages(true);
 	private	  boolean					wAutoCommit = false;
 	private   DataModelClass			wDataModelRead = null;
 	
@@ -105,12 +105,18 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrud#validate(java.lang.Object)
+	 */
 	@Override
 	public IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException {
 		pvFireEventOnValidate(pDataModelClass);
 		return getMessages();
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrud#merge(java.lang.Object)
+	 */
 	@Override
 	public final Integer merge(DataModelClass pDataModel) throws DBSIOException{
 		pvInitializeAction(CrudAction.MERGING);
@@ -123,6 +129,9 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xCount;
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrud#delete(java.lang.Object)
+	 */
 	@Override
 	public final Integer delete(DataModelClass pDataModel) throws DBSIOException{
 		pvInitializeAction(CrudAction.DELETING);
@@ -135,6 +144,12 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xCount;
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrud#getMessages()
+	 */
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrud#getMessages()
+	 */
 	@Override
 	public final IDBSMessages getMessages(){
 		return wMessages;
@@ -182,38 +197,65 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 
 	
 	//Eventos ====================================================================
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#beforeEdit(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void beforeEdit(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#beforeRead(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void beforeRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#beforeDelete(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void beforeDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#beforeMerge(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void beforeMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#afterEdit(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void afterEdit(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#afterRead(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void afterRead(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#afterDelete(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void afterDelete(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#afterMerge(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void afterMerge(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.crud.IDBSCrudEventsListener#afterError(br.com.dbsoft.crud.IDBSCrudEvent)
+	 */
 	@Override
 	public void afterError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
@@ -272,7 +314,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		//Retira lançamento anterior do saldo se lançamento existir
 		//Le lançamento
 		//Cria savepoint para retornar em caso de erro
-		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "balance");
+		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "crud");
 
 		if (pvFireEventBeforeMerge(pDataModel)){
 			if (pvFireEventOnValidate(pDataModel)){
@@ -287,7 +329,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 							pvFireEventAfterMerge(pDataModel);
 						}
 					} else {
-						getMessages().add(new DBSMessage(MESSAGE_TYPE.INFORMATION, "Não houveram alterações."));
+						getMessages().add(new DBSMessage(MESSAGE_TYPE.INFORMATION, "Não houve alteração."));
 					}
 				}
 			}
@@ -309,7 +351,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		Integer xCount = 0;
 		
 		//Cria savepoint para retornar em caso de erro
-		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "balance");
+		Savepoint xSavePoint = DBSIO.beginTrans(wConnection, "crud");
 
 		//Retira do saldo lançamento antigo
 		if (pvFireEventBeforeDelete(pDataModel)){
