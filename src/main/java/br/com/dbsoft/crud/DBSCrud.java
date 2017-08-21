@@ -329,7 +329,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 							pvFireEventAfterMerge(pDataModel);
 						}
 					} else {
-						getMessages().add(new DBSMessage(MESSAGE_TYPE.INFORMATION, "Não houve alteração."));
+						getMessages().add(new DBSMessage(MESSAGE_TYPE.INFORMATION, "Não foi necessária a atualização pois a informação digitada é igual a registrada."));
 					}
 				}
 			}
