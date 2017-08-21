@@ -57,6 +57,20 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 */
 	public void addAll(List<DBSMessage> pMessages);
 
+	/**
+	 * Adiciona todas as mensagems a fila e remove da lista original.
+	 * Ignora inclusão se existir uma mensagem com a mesma chave.</br>
+	 * @param pMessages
+	 */
+	public void moveAll(IDBSMessages pMessages);
+
+	/**
+	 * Adiciona todas as mensagems da lista a fila e remove da lista original.
+	 * Ignora inclusão se existir uma mensagem com a mesma chave.</br>
+	 * @param pMessages
+	 */
+	public void moveAll(List<DBSMessage> pMessages);
+
 	public void addAllMessageBase(List<IDBSMessageBase> pMessages);
 	
 	/**

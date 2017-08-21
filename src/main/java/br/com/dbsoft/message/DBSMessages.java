@@ -98,6 +98,31 @@ public class DBSMessages implements IDBSMessages{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#addAll(br.com.dbsoft.message.IDBSMessages)
+	 */
+	@Override
+	public void moveAll(IDBSMessages pMessages){
+		if (pMessages == null){return;}
+		Iterator<IDBSMessage> xMessages = pMessages.iterator();
+		while(xMessages.hasNext()){
+			add(xMessages.next());
+			xMessages.remove();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.dbsoft.message.IDBSMessages#addAll(java.util.List)
+	 */
+	@Override
+	public void moveAll(List<DBSMessage> pMessages) {
+		if (pMessages == null){return;}
+		for (IDBSMessage xMessage: pMessages){
+			add(xMessage);
+		}
+		pMessages.clear();
+	}
+	
 	@Override
 	public void addAllMessageBase(List<IDBSMessageBase> pMessages) {
 		if (pMessages == null){return;}
