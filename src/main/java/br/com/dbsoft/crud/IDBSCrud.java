@@ -133,7 +133,7 @@ public interface IDBSCrud<DataModelClass> {
 	public Integer delete(DataModelClass pDataModelClass) throws DBSIOException;
 
 	/**
-	 * Valida sem efetuar qualquer modificação.<br/>
+	 * Chama evento de validação onValidate.<br/>
 	 * <ul><b>Evento disparado</b>
 	 * <li>validate(recebe:dados da chave do registro)</li>
 	 * </ul>
