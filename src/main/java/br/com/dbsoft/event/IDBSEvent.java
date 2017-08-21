@@ -27,7 +27,8 @@ public interface IDBSEvent<SourceObjectClass>{
 	public SourceObjectClass getSource();
 
 	/**
-	 * Mensagens dentro do evento
+	 * Mensagens entre os eventos.
+	 * Utilizar caso NÃO exista um outra forma de enviar mensagem para outro evento.
 	 * @return
 	 */
 	public IDBSMessages getMessages();	
