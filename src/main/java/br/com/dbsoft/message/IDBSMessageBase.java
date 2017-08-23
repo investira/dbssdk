@@ -11,45 +11,61 @@ public interface IDBSMessageBase extends Serializable {
 
 	public static enum MESSAGE_TYPE {
 	    /**
-	     * Info
+	     * Sobre</br>
+	     * Chama action novamente após fechar para recuperar o outcome
 	     */
 	    ABOUT 		("a", "Sobre", "-i_information", false, 1),
+	    
 	    /**
-	     * Info
+	     * Sucesso</br>
+	     * Chama action novamente após fechar para recuperar o outcome
 	     */
 	    SUCCESS		("s", "Sucesso", "-i_sucess", false, 1),
+	    
 	    /**
-	     * Info
+	     * Info</br>
+	     * Chama action novamente após fechar para recuperar o outcome
 	     */
 	    INFORMATION	("i", "Informação", "-i_information", false, 10),
+	    
 	    /**
-	     * Info
+	     * Importante</br>
+	     * Chama action novamente após fechar para recuperar o outcome
 	     */
 	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
+	    
 	    /**
 	     * Warning, Question
+	     * Sim: Chama action novamente após fechar com mensagem validada como <b>true</b></br>
+	     * Não: Chama action novamente após fechar com mensagem validada como <b>false</b>.
 	     */
 	    WARNING 	("w", "Atenção", "-i_warning", true, 20),
+	    
 	    /**
 	     * Error, Question</br>
-	     * obs: Error interrompe o outcome do action 
+	     * Sim: Chama action novamente após fechar</br>
+	     * Não: interrompe o outcome 
 	     */
 	    CONFIRM		("c", "Confirmar", "-i_question_confirm", true, 30),
+	    
 	    /**
 	     * Error, Question</br>
-	     * obs: Error interrompe o outcome do action 
+	     * Sim: Chama action novamente após fechar</br>
+	     * Não: interrompe o outcome 
 	     */
 	    IGNORE		("g", "Ignorar", "-i_question_ignore", true, 31),
+	    
 	    /**
 	     * Error</br>
-	     * obs: Error interrompe o outcome do action</br> 
-	     * obs: Valor após a validação deste tipo deverá ser sempre False.
+	     * Interrompe o outcome do action</br> 
+	     * Valor após a validação deste tipo deverá ser sempre False.
 	     */
 	    PROHIBID 	("p", "Proibido", "-i_forbidden", false, 40), 
+
 	    /**
 	     * Error</br>
-	     * obs: Error interrompe o outcome do action</br> 
-	     * obs: Valor após a validação deste tipo deverá ser sempre False.
+	     * Interrompe o outcome do action</br> 
+	     * Valor após a validação deste tipo deverá ser sempre False.
 	     */
 	    ERROR 		("e", "Erro", "-i_error", false, 50); 
 	
