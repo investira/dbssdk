@@ -113,6 +113,22 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		pvFireEventOnValidate(pDataModelClass);
 		return getMessages();
 	}
+
+	@Override
+	public IDBSMessages validateAction(DataModelClass pDataModelClass, ICrudAction pCrudAction) throws DBSIOException {
+		//Salva action em curso
+		ICrudAction xCrudAction = wCrudAction;
+		IDBSMessages xMessages;
+		//Configura action desejado para chamado do validate
+		wCrudAction = pCrudAction;
+		try{
+			xMessages = validate(pDataModelClass);
+		}finally{
+			//Restaura action em curso
+			wCrudAction = xCrudAction;
+		}
+		return xMessages;
+	}
 	
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.crud.IDBSCrud#merge(java.lang.Object)

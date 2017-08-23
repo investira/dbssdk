@@ -138,10 +138,21 @@ public interface IDBSCrud<DataModelClass> {
 	 * <li>validate(recebe:dados da chave do registro)</li>
 	 * </ul>
 	 * @param pDataModelClass
+	 * @param pCrudAction Ação sob a qual o validate deverá ser chamado. A ação não será executada. Serve somente para diferenciar a validação de um <b>merge</b> de ou <b>delete</b> por exemplo.
 	 * @throws DBSIOException
 	 */
 	public IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException;
 
+	/**
+	 * Chama evento de validação onValidate utilizando o CrudAction informado independemente o crudAction corrente.<br/>
+	 * <ul><b>Evento disparado</b>
+	 * <li>validate(recebe:dados da chave do registro)</li>
+	 * </ul>
+	 * @param pDataModelClass
+	 * @param pCrudAction Ação sob a qual o validate deverá ser chamado. A ação não será executada. Serve somente para diferenciar a validação de um <b>merge</b> de ou <b>delete</b> por exemplo.
+	 * @throws DBSIOException
+	 */
+	public IDBSMessages validateAction(DataModelClass pDataModelClass, ICrudAction pCrudAction) throws DBSIOException;
 	
 	/**
 	 * Retorna texto da mensagem que está na fila
