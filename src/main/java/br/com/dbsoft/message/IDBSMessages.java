@@ -164,6 +164,12 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	public Integer size();
 
 	/**
+	 * Quantidade total de mensagens não validadas.
+	 * @return
+	 */
+	public Integer notValidatedSize();
+
+	/**
 	 * Retorna se existe mensagem de erro não validada.
 	 * @return
 	 */

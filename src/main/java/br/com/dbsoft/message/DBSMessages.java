@@ -159,7 +159,7 @@ public class DBSMessages implements IDBSMessages{
 		}
 		//Se mensagem não existir na fila
 		if (xM == null){ 
-			//Se mensagem for estárica, cria copia(clone) da mensagem enviada para não afetar a original. 
+			//Se mensagem for estática, cria copia(clone) da mensagem enviada para não afetar a original. 
 		    if (Modifier.isStatic(pMessage.getClass().getModifiers())) {
 		    	wLogger.warn(pMessage.getMessageKey() + " é uma mensagem static, o que não permite o controle de validação(validate). Envie uma copia ou clone."); 
 		    	return;
@@ -227,6 +227,11 @@ public class DBSMessages implements IDBSMessages{
 	@Override
 	public Integer size() {
 		return wMessages.size() + wMessagesValidated.size();
+	}
+
+	@Override
+	public Integer notValidatedSize() {
+		return wMessages.size();
 	}
 
 	@Override
