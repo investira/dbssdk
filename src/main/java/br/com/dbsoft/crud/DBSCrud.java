@@ -303,7 +303,7 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 	}
 
-	protected final void pvSetOk(boolean pOk){
+	private void pvSetOk(boolean pOk){
 		wOk = pOk;
 	}
 	
