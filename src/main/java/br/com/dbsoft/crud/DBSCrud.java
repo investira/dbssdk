@@ -109,13 +109,13 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	 * @see br.com.dbsoft.crud.IDBSCrud#validate(java.lang.Object)
 	 */
 	@Override
-	public IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException {
+	public final IDBSMessages validate(DataModelClass pDataModelClass) throws DBSIOException {
 		pvFireEventOnValidate(pDataModelClass);
 		return getMessages();
 	}
 
 	@Override
-	public IDBSMessages validateAction(DataModelClass pDataModelClass, ICrudAction pCrudAction) throws DBSIOException {
+	public final IDBSMessages validateAction(DataModelClass pDataModelClass, ICrudAction pCrudAction) throws DBSIOException {
 		//Salva action em curso
 		ICrudAction xCrudAction = wCrudAction;
 		IDBSMessages xMessages;
