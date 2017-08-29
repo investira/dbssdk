@@ -106,9 +106,13 @@ public class DBSMessages implements IDBSMessages{
 		if (pMessages == null){return;}
 		Iterator<IDBSMessage> xMessages = pMessages.iterator();
 		while(xMessages.hasNext()){
-			add(xMessages.next());
-			xMessages.remove();
+			IDBSMessage xMessage = xMessages.next();
+			//Remove o DBSMessages da lista de listener da mensagem
+			xMessage.removeMessageListener(pMessages);
+			add(xMessage);
+//			xMessages.remove();
 		}
+		pMessages.clear();
 	}
 	
 	/* (non-Javadoc)
@@ -118,6 +122,7 @@ public class DBSMessages implements IDBSMessages{
 	public void moveAll(List<DBSMessage> pMessages) {
 		if (pMessages == null){return;}
 		for (IDBSMessage xMessage: pMessages){
+			//Remove o DBSMessages da lista de listener da mensagem
 			add(xMessage);
 		}
 		pMessages.clear();
@@ -166,6 +171,7 @@ public class DBSMessages implements IDBSMessages{
 		    }else{
 		    	xM = pMessage;
 		    }
+		    //Dispara evento local <b>afterMessageValidated</b> quando mensagem for validada.
 		    if (wIsController){
 			    xM.addMessageListener(this);
 		    }
@@ -401,7 +407,7 @@ public class DBSMessages implements IDBSMessages{
 	}
 
 	/**
-	 * Disparado após mensagem ser validada.
+	 * Disparado após mensagem ser validada se este DBSMessages for controller ou existir listener.
 	 * @param pMessage
 	 */
 	@Override
@@ -409,6 +415,7 @@ public class DBSMessages implements IDBSMessages{
 		if (pMessage.isMessageValidated() != null){
 			//Transfere mensagem para a lista de mensagens validadas.
 			wMessages.remove(pMessage.getMessageKey());
+			//Salva mensagem quando for uma pergunta para que a resposta possa ser recuperada posteriormente.
 			wMessagesValidated.put(pMessage.getMessageKey(), pMessage);
 		}
 		pvFireEventAfterMessageValidated(pMessage);
