@@ -129,13 +129,15 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 
 
 	/**
-	 * Retorna uma mensagem vinculada ao <b>sourceId</b> informado.
+	 * Retorna uma mensagem vinculada ao <b>sourceId</b> informado.<br/>
+	 * Desta forma é possível identificar se uma mensagem é específica de uma fonte, como por exemplo com input.
 	 * @param pMessageKey
 	 */
 	public IDBSMessage getMessageForSourceId(String pClientId);
 
 	/**
 	 * Retorna list com as mensagens vinculada ao  <b>sourceId</b> informado.
+	 * Desta forma é possível identificar se uma mensagem é específica de uma fonte, como por exemplo com input.
 	 * @param pMessageKey
 	 */
 	public List<IDBSMessage> getMessagesForSourceId(String pClientId);
