@@ -62,7 +62,7 @@ public interface IDBSMessage extends IDBSMessageBase {
 	 * O valor do <b>id</b> é a critério do usuário.
 	 * @return
 	 */
-	public Set<String> getMessageSourceIds();
+	public Set<String> getMessageTargetsIds();
 	
 	/**
 	 * Retorna lista com os listeners

@@ -26,7 +26,7 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 	private Exception					exception;
 	private String						messageTooltip = "";
 	private String						messageKey = null;
-	private Set<String>					messageSourceIds = new HashSet<String>();
+	private Set<String>					messageTargetsIds = new HashSet<String>();
 	private Set<IDBSMessageListener> 	messageListeners = new HashSet<IDBSMessageListener>();
 	
 	
@@ -154,8 +154,8 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 	 * @see br.com.dbsoft.message.IDBSMessage#getIds()
 	 */
 	@Override
-	public Set<String> getMessageSourceIds() {
-		return messageSourceIds;
+	public Set<String> getMessageTargetsIds() {
+		return messageTargetsIds;
 	}
 	
 
@@ -184,8 +184,8 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 		if (pMessage == null 
          || pMessage.equals(this)){return;}
 		DBSIO.copyDataModelFieldsValue(pMessage, this);
-		messageSourceIds = new HashSet<String>();
-		messageSourceIds.addAll(pMessage.getMessageSourceIds());
+		messageTargetsIds = new HashSet<String>();
+		messageTargetsIds.addAll(pMessage.getMessageTargetsIds());
 		messageListeners = new HashSet<IDBSMessageListener>();
 		messageListeners.addAll(pMessage.getMessageListeners());
 	}

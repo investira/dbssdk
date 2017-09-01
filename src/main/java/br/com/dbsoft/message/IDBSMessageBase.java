@@ -32,7 +32,7 @@ public interface IDBSMessageBase extends Serializable {
 	     * Importante</br>
 	     * Chama action novamente após fechar para recuperar o outcome
 	     */
-	    IMPORTANT	("t", "Importante", "-i_important", false, 10),
+	    IMPORTANT	("t", "Importante", "-i_important", false, 11),
 	    
 	    /**
 	     * Warning, Question
@@ -75,6 +75,7 @@ public interface IDBSMessageBase extends Serializable {
 	    Boolean wQuestion;
 	    Integer wSeverityLevel; 
 	    Severity wSeverity;
+	    String 	wInputStyleClass;
 	    
 	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pQuestion, Integer pSeverityLevel){
 	    	wCode = pCode;
@@ -82,6 +83,7 @@ public interface IDBSMessageBase extends Serializable {
 	    	wIconClass = pIconClass;
 	    	wSeverityLevel = pSeverityLevel; 
 	    	wQuestion = pQuestion;
+	    	wInputStyleClass = " -msg_" + pCode + " ";
 			if (wSeverityLevel < 20){
 				wSeverity = FacesMessage.SEVERITY_INFO;
 			}else if (wSeverityLevel < 30){
@@ -93,6 +95,10 @@ public interface IDBSMessageBase extends Serializable {
 	
 	    public String getCode(){
 	    	return wCode;
+	    }
+	    
+	    public String getInputStyleClass(){
+	    	return wInputStyleClass;
 	    }
 	    
 	    public String getName(){

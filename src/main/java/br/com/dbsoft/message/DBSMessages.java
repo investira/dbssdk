@@ -15,6 +15,7 @@ import javax.faces.application.FacesMessage.Severity;
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 
 /**
@@ -37,6 +38,7 @@ public class DBSMessages implements IDBSMessages{
 	private String								wFromUserId;
 	private Boolean								wIsController = false;
 	private String								wCurrentMessageKey = null;
+	private String								wMostSevereMessageKey = null;
 	
 //	public String wChave;
 	
@@ -148,7 +150,7 @@ public class DBSMessages implements IDBSMessages{
 	 * @see br.com.dbsoft.message.IDBSMessages#add(java.lang.String, br.com.dbsoft.message.IDBSMessage)
 	 */
 	@Override
-	public void add(IDBSMessage pMessage, String pSourceId) {
+	public void add(IDBSMessage pMessage, String pTargetId) {
 		if (pMessage == null){return;} 
 
 		//Recupera mensagem validada se já existir
@@ -179,9 +181,15 @@ public class DBSMessages implements IDBSMessages{
 			pvFindNextMessage();
 			pvFireEventAfterAddMessage(xM);
 		}
-		if (pSourceId != null){
-			//Adicionla sourceId a lista
-			xM.getMessageSourceIds().add(pSourceId);
+
+		//Adiciona SourcesIds a vinculados a esta mensagem
+		if (!DBSObject.isEmpty(pTargetId)){
+			List<String> xListTargetIds = new ArrayList<String>();
+			//Busca sourcesIds separador por ';' ',' e espaço.
+			xListTargetIds = DBSString.toArrayListRegex(pTargetId.trim(), "[,;\\s]");
+			for (String xTargetId:xListTargetIds){
+				xM.getMessageTargetsIds().add(xTargetId);
+			}
 		}
 	}
 	
@@ -191,8 +199,8 @@ public class DBSMessages implements IDBSMessages{
 	}
 	
 	@Override
-	public void add(IDBSMessageBase pMessageBase, String pSourceId) {
-		add(new DBSMessage(pMessageBase), pSourceId);
+	public void add(IDBSMessageBase pMessageBase, String pTargetId) {
+		add(new DBSMessage(pMessageBase), pTargetId);
 	}
 
 
@@ -329,14 +337,23 @@ public class DBSMessages implements IDBSMessages{
 		return wMessages.get(wCurrentMessageKey);
 	}
 
+
+	@Override
+	public IDBSMessage getMostSevereMessage() {
+		if (wMostSevereMessageKey==null){
+			return null;
+		}
+		return wMessages.get(wMostSevereMessageKey);
+	}
+
 	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessages#getMessageForSourceId(java.lang.String)
+	 * @see br.com.dbsoft.message.IDBSMessages#getMessageForTargetId(java.lang.String)
 	 */
 	@Override
-	public IDBSMessage getMessageForSourceId(String pSourceId) {
+	public IDBSMessage getMessageForTargetId(String pTargetId) {
 		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
-			for (String xSourceId:xM.getValue().getMessageSourceIds()){
-				if (DBSObject.isEqual(xSourceId, pSourceId)){
+			for (String xTargetId:xM.getValue().getMessageTargetsIds()){
+				if (DBSObject.isEqual(xTargetId, pTargetId)){
 					return xM.getValue();
 				}
 			}
@@ -345,14 +362,14 @@ public class DBSMessages implements IDBSMessages{
 	}
 
 	/* (non-Javadoc)
-	 * @see br.com.dbsoft.message.IDBSMessages#getMessagesForSourceId(java.lang.String)
+	 * @see br.com.dbsoft.message.IDBSMessages#getMessagesForTargetId(java.lang.String)
 	 */
 	@Override
-	public List<IDBSMessage> getMessagesForSourceId(String pSourceId) {
+	public List<IDBSMessage> getMessagesForTargetId(String pTargetId) {
 		List<IDBSMessage> xMsgs = new ArrayList<IDBSMessage>();
 		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()){
-			for (String xSourceId:xM.getValue().getMessageSourceIds()){
-				if (DBSObject.isEqual(xSourceId, pSourceId)){
+			for (String xTargetId:xM.getValue().getMessageTargetsIds()){
+				if (DBSObject.isEqual(xTargetId, pTargetId)){
 					xMsgs.add(xM.getValue());
 					break; //Proxima mensagem
 				}
@@ -488,9 +505,17 @@ public class DBSMessages implements IDBSMessages{
 	 */
 	private void pvFindNextMessage(){
 		wCurrentMessageKey = null;
+		wMostSevereMessageKey = null;
+		IDBSMessage xMostSevereMessage = null;
 		for (Entry<String, IDBSMessage> xM : wMessages.entrySet()) {
+			//Configura mensagem atual
 			if (xM.getValue().isMessageValidated() == null){ //Ainda não validade. Não é true nem false.
 				wCurrentMessageKey = xM.getValue().getMessageKey();
+			}
+			//COnfigura mensagem mais severa
+			if (xMostSevereMessage == null || xMostSevereMessage.getMessageType().wSeverityLevel < xM.getValue().getMessageType().wSeverityLevel){
+				xMostSevereMessage = xM.getValue();
+				wMostSevereMessageKey = xM.getKey();
 			}
 		}	
 	}

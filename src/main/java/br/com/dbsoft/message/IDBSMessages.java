@@ -23,7 +23,19 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	
 	public void add(IDBSMessageBase pMessageBase);
 	
-	public void add(IDBSMessageBase pMessageBase, String pSourceId);
+	/** 
+	 * Inclui uma mensagem na fila.</br>
+	 * Ignora inclusão se existir uma mensagem com a mesma chave, porém adiciona o <b>TargetId</b> informado, a ela.</br>
+	 * O <b>TargetsIds</b> pode ser utilizado indicar a quem se destina a mensagem, 
+	 * como no caso de um validação que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
+	 * O valor do <b>targetsIds</b> é a critério do usuário.<br/>
+	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter a lista com o clientId destes componentes.</b> 
+	 * Caso seja adicionada um mensagem que já exista, porém para outros targetsIds, não será adicionada nova mensagem, mas os <b>targetsIds</b> serão adicionados a mensagem já existente.<br/>
+	 * Caso exista mais de um TargetId, eles deverão estar separador por espaço.<br/>
+	 * @param pMessage
+	 * @param pTargetsIds Ids separados por espaços caso seja mais de um.
+	 */
+	public void add(IDBSMessageBase pMessageBase, String pTargetsIds);
 	
 	/** 
 	 * Inclui uma mensagem na fila.</br>
@@ -33,15 +45,18 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	public void add(IDBSMessage pMessage);
 	
 	/** 
-	 * Inclui uma mensagem na fila e vincula um <b>sourceId</b> a ela.</br>
-	 * Ignora inclusão se existir uma mensagem com a mesma chave, porém adiciona o <b>sourceId</b> informado, a ela.</br>
-	 * O <b>sourceId</b> pode ser utilizado indicar a origem da mensagem, 
-	 * como no caso de um validade que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
-	 * O valor do <b>sourceId</b> é a critério do usuário.
-	 * @param pClientId
+	 * Inclui uma mensagem na fila.</br>
+	 * Ignora inclusão se existir uma mensagem com a mesma chave, porém adiciona o <b>TargetId</b> informado, a ela.</br>
+	 * O <b>TargetsIds</b> pode ser utilizado indicar a quem se destina a mensagem, 
+	 * como no caso de um validação que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
+	 * O valor do <b>targetsIds</b> é a critério do usuário.<br/>
+	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter a lista com o clientId destes componentes.</b> 
+	 * Caso seja adicionada um mensagem que já exista, porém para outros targetsIds, não será adicionada nova mensagem, mas os <b>targetsIds</b> serão adicionados a mensagem já existente.<br/>
+	 * Caso exista mais de um TargetId, eles deverão estar separador por espaço.<br/>
 	 * @param pMessage
+	 * @param pTargetsIds Ids separados por espaços caso seja mais de um.
 	 */
-	public void add(IDBSMessage pMessage, String pSourceId);
+	public void add(IDBSMessage pMessage, String pTargetsIds);
 
 	/**
 	 * Adiciona todas as mensagems a fila.
@@ -129,18 +144,18 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 
 
 	/**
-	 * Retorna uma mensagem vinculada ao <b>sourceId</b> informado.<br/>
-	 * Desta forma é possível identificar se uma mensagem é específica de uma fonte, como por exemplo com input.
+	 * Retorna uma mensagem vinculada ao <b>TargetId</b> informado.<br/>
+	 * Desta forma é possível identificar se uma mensagem tem um destino específico, como por exemplo com input.
 	 * @param pMessageKey
 	 */
-	public IDBSMessage getMessageForSourceId(String pClientId);
+	public IDBSMessage getMessageForTargetId(String pTargetId);
 
 	/**
-	 * Retorna list com as mensagens vinculada ao  <b>sourceId</b> informado.
-	 * Desta forma é possível identificar se uma mensagem é específica de uma fonte, como por exemplo com input.
+	 * Retorna list com as mensagens vinculada ao  <b>TargetId</b> informado.
+	 * Desta forma é possível identificar se uma mensagem tem um destino específico, como por exemplo com input.
 	 * @param pMessageKey
 	 */
-	public List<IDBSMessage> getMessagesForSourceId(String pClientId);
+	public List<IDBSMessage> getMessagesForTargetId(String pTargetId);
 	
 	/**
 	 * @return A mensagem corrente(a primeira ainda não validada) se houver ou <i>null</i> se não houver.
@@ -172,30 +187,37 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	public Integer notValidatedSize();
 
 	/**
-	 * Retorna se existe mensagem de erro não validada.
+	 * Retorna se existe mensagem de erro(FacesMessage.SEVERITY_ERROR) não validada.
 	 * @return
 	 */
 	public Boolean hasErrorsMessages();
 
 	/**
-	 * Retorna se existe alguma mensagem de alerta não validada.<br/>
+	 * Retorna se existe alguma mensagem de alerta(FacesMessage.SEVERITY_WARN) não validada.<br/>
 	 * Mesagens de alerta necessitam de confirmação.
 	 * @return
 	 */
 	public Boolean hasWarningsMessages();
 	
 	/**
-	 * Retorna se existe mensagem de informação não validada.
+	 * Retorna se existe mensagem de informação(FacesMessage.SEVERITY_INFO) não validada.
 	 * @return
 	 */
 	public Boolean hasInformationsMessages();
 	
 	/**
-	 * Retorna se existe mensagem fatais não validada.
+	 * Retorna se existe mensagem fatais(FacesMessage.SEVERITY_FATAL) não validada.
 	 * @return
 	 */
 	public Boolean hasFatalsMessages();
 
+	/**
+	 * Retorna a mensagem mais severa, conforme a seguinte ordem: FATAL,ERROR,WARNING,INFO.
+	 * @return
+	 */
+	public IDBSMessage getMostSevereMessage();
+
+	
 	/**
 	 * Retorna se existe alguma mensagem não validada.
 	 * @return
