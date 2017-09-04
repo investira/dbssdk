@@ -27,15 +27,14 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 * Inclui uma mensagem na fila.</br>
 	 * O <b>TargetsIds</b> pode ser utilizado indicar a quem se destina a mensagem, 
 	 * como no caso de um validação que retorna mensagem de erro onde é importante saber a qual campo se refere.<br/>
-	 * O valor do <b>targetsIds</b> é a critério do usuário.<br/>
-	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter a lista com o clientId destes componentes.</b><br/> 
+	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter o clientId componente. Se for mais de um, devem estar separador por espaço.</b><br/> 
 	 * Caso seja adicionada um mensagem que já exista, porém para outros targetsIds, não será adicionada nova mensagem, mas os <b>targetsIds</b> serão adicionados a mensagem já existente.<br/>
 	 * Caso exista mais de um TargetId, eles deverão estar separador por espaço.<br/>
 	 * @param pMessage
 	 * @param pTargetsIds Ids separados por espaços.
 	 */
 	public void add(IDBSMessageBase pMessageBase, String pTargetsIds);
-	
+
 	/** 
 	 * Inclui uma mensagem na fila.</br>
 	 * Ignora inclusão se existir uma mensagem com a mesma chave.
@@ -47,8 +46,7 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 * Inclui uma mensagem na fila.</br>
 	 * O <b>TargetsIds</b> pode ser utilizado indicar a quem se destina a mensagem, 
 	 * como no caso de um validação que retorna mensagem de erro onde é importante saber a qual campo se refere.<br/>
-	 * O valor do <b>targetsIds</b> é a critério do usuário.<br/>
-	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter a lista com o clientId destes componentes.</b><br/> 
+	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter o clientId componente. Se for mais de um, devem estar separador por espaço.</b><br/> 
 	 * Caso seja adicionada um mensagem que já exista, porém para outros targetsIds, não será adicionada nova mensagem, mas os <b>targetsIds</b> serão adicionados a mensagem já existente.<br/>
 	 * Caso exista mais de um TargetId, eles deverão estar separador por espaço.<br/>
 	 * @param pMessage
