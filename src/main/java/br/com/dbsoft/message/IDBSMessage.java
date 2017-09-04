@@ -57,9 +57,11 @@ public interface IDBSMessage extends IDBSMessageBase {
 	
 	/**
 	 * Id's vinculados esta mensagem.<br/>
-	 * Esta propriedade pode ser utilizada para devolver a mensagem com informações adicionais sobre a origem.</br>
-	 * Como no caso de um validade que retorna mensagens de erro onde é importante saber quais campos foram afetados.<br/>
-	 * O valor do <b>id</b> é a critério do usuário.
+	 * O <b>TargetsIds</b> pode ser utilizado indicar a quem se destina a mensagem, 
+	 * como no caso de um validação que retorna mensagem de erro onde é importante saber a qual campo se refere.<br/>
+	 * <b>Caso queira que a mensagem afete componentes em tela, o targetsIds deverá conter o clientId componente. Se for mais de um, devem estar separador por espaço.</b><br/> 
+	 * Caso seja adicionada um mensagem que já exista, porém para outros targetsIds, não será adicionada nova mensagem, mas os <b>targetsIds</b> serão adicionados a mensagem já existente.<br/>
+	 * Caso exista mais de um TargetId, eles deverão estar separador por espaço.<br/>
 	 * @return
 	 */
 	public Set<String> getMessageTargetsIds();
@@ -83,6 +85,7 @@ public interface IDBSMessage extends IDBSMessageBase {
 	 * @return
 	 */
 	public IDBSMessage removeMessageListener(IDBSMessageListener pMessageListener);
+	
 	/**
 	 * Copia dados de uma mensagem para esta
 	 * @return
