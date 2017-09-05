@@ -826,10 +826,13 @@ public class DBSFileTransfer{
 //			wLogger.info("pvDownloadFileHTTP: Gravando o arquivo...");
 			//Grava arquivo local
 			if (wLocalPath != null){
-				//Defini o nome do arquivo local
-				wLocalFileNameOnly = xRemoteFileName;
+				//Se o nome do arquivo não está definido utiliza o nome original.
+				if (!wLocalFileNameOnly.contains(".")) {
+					//Defini o nome do arquivo local
+					wLocalFileNameOnly = xRemoteFileName;
+				}
 				//Reconstroi o nome do arquivo local
-				xFileFullName = DBSFile.getPathFromFileName(wLocalPath, true) + xRemoteFileName;
+				xFileFullName = DBSFile.getPathFromFileName(wLocalPath, true) + wLocalFileNameOnly;
 
 				xInputFile = new File(xFileFullName);
 				if (!xInputFile.isFile()) { //Cria a pasta do arquivo caso ela não exista.

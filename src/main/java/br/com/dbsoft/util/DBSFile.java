@@ -269,12 +269,26 @@ public class DBSFile {
 				xZipFileElements = xZipFile.entries();
 				while (xZipFileElements.hasMoreElements()) {
 					xZipFileObject = (ZipEntry) xZipFileElements.nextElement();
-					pvCopyInputStream(xZipFile.getInputStream(xZipFileObject), 
-							new BufferedOutputStream(new FileOutputStream(pDestinationFolder + xZipFileObject.getName())));
 					
-					xFile = new File(pDestinationFolder + xZipFileObject.getName());
-					//Corrige a hora de criação
-					xFile.setLastModified(xZipFileObject.getTime());
+					if (xZipFileObject.getName().toLowerCase().endsWith(FILE.EXTENSION.ZIP)) {
+						pvCopyInputStream(xZipFile.getInputStream(xZipFileObject), 
+								new BufferedOutputStream(new FileOutputStream(xFile.getParent() +File.separator+ xZipFileObject.getName())));
+						
+						xFile = new File(xFile.getParent() +File.separator+ xZipFileObject.getName());
+						//Corrige a hora de criação
+						xFile.setLastModified(xZipFileObject.getTime());
+						
+						//Descompacta o arquivo compactado
+						xFile = unzipFile(xFile.getAbsolutePath(), pDestinationFolder);
+					} else {
+						pvCopyInputStream(xZipFile.getInputStream(xZipFileObject), 
+								new BufferedOutputStream(new FileOutputStream(pDestinationFolder + xZipFileObject.getName())));
+						
+						xFile = new File(pDestinationFolder + xZipFileObject.getName());
+						//Corrige a hora de criação
+						xFile.setLastModified(xZipFileObject.getTime());
+					}
+					
 				}
 			} catch (IOException e) {
 				wLogger.error("Erro ao descompactar arquivo " + pZipFileName, e);
