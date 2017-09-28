@@ -12,6 +12,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import br.com.dbsoft.error.DBSIOException;
@@ -55,7 +58,8 @@ public class DBSJson {
 	 */
 	public static <T> String toJson(T pObject){
 		if (pObject == null) {return null;}
-		Gson xJSON = new Gson();
+//		Gson xJSON = new Gson();
+		Gson xJSON = pvCreateGson();
 		return xJSON.toJson(pObject);
 	}
 	
@@ -133,13 +137,21 @@ public class DBSJson {
 		//Cria um objeto construtor json para gerencia as informações recebidas
 		GsonBuilder xBuilder = new GsonBuilder(); 
 
-		//Registra os adaptadores para fazer a deserialização de valor LONG para o tipo informado
+		//Registra os adaptadores para fazer a DESERIALIZAÇÃO de valor LONG para o tipo informado
 		//SQL.Date
+		//Deserialização
 		xBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() { 
 			@Override
 			public Date deserialize(JsonElement pJson, Type pTypeOfT, JsonDeserializationContext pContext) throws JsonParseException {
 				return new Date(pJson.getAsJsonPrimitive().getAsLong()); 
-			} 
+			}
+		});
+		//Serialização
+		xBuilder.registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
+			@Override
+			public JsonElement serialize(Date pSrc, Type pTypeOfSrc, JsonSerializationContext pContext) {
+				return new JsonPrimitive(DBSFormat.getFormattedDateTimes(pSrc));
+			}
 		});
 		
 		//SQL.Timestamp 
@@ -149,6 +161,10 @@ public class DBSJson {
 				return new Timestamp(pJson.getAsJsonPrimitive().getAsLong()); 
 			} 
 		});
+		
+		//Registra o formato das datas;
+		xBuilder.setDateFormat("dd/MM/yyyy HH:mm:ss");
+		//Cria o Gson
 		return xBuilder.create();
 	}
 }
