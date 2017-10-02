@@ -6,6 +6,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -1230,6 +1231,24 @@ public class DBSNumber {
 		return pvBigDecimalStripTrailingZeros(xValue);
 	}
 
+	/**
+	 * Retorna uma lista (do tipo Integer) a patir de uma String, separado por um delimitador informado
+	 * 
+	 * @param pTextoBase String com o texto que se deseja separar
+	 * @param pDelimitador String que será utilizado para separar os campos. Não faz a delimitação dos campos se delimitador for nulo ou vázio
+	 * @return Lista com o conteúdo em cada linha 
+	 */
+	public static List<Integer> toArrayList(String pTextoBase, String pDelimitador){
+		List<Integer> xListaRetorno = new ArrayList<Integer>();
+		ArrayList<String> xListaStrings = DBSString.toArrayList(pTextoBase, pDelimitador);
+		
+		for (String xValor : xListaStrings) {
+			xListaRetorno.add(DBSNumber.toInteger(xValor));
+		}
+		
+		return xListaRetorno; 
+	}
+	
 	//===========================================================================================================
 	// PRIVATE
 	//===========================================================================================================
