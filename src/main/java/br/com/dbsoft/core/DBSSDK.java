@@ -154,6 +154,7 @@ public final class DBSSDK {
 			RAR,
 			BIN,
 			DMG,
+			PDF,
 			FOLDER,
 			GENERAL;
 		}
