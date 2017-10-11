@@ -1,6 +1,3 @@
-/target
-*.class
-.DS_Store
-
-
-/target
+.*
+**/target
+!.gitignore
