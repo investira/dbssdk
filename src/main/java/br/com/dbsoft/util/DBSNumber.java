@@ -1384,6 +1384,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	public static String toPlainString(Double pValue){
+		if (pValue == null){return "";}
 		return BigDecimal.valueOf(pValue).toPlainString();
 	}
 }
