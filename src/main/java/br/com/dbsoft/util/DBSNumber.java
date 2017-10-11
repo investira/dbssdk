@@ -1260,6 +1260,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static <T extends Number> T pvAbs(Object pValue, Class<?> pClass){
+		if (pValue == null){return null;}
 		BigDecimal xValue = toBigDecimal(pValue);
 	
 		xValue = xValue.abs();
@@ -1272,6 +1273,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static <T extends Number> T pvTrunc(Object pValue, Integer pDecimalPlaces, Class<?> pClass){
+		if (pValue == null){return null;}
 		BigDecimal xValue;
 	
 		if (pDecimalPlaces==null){
@@ -1288,6 +1290,7 @@ public class DBSNumber {
 	 * @return
 	 */
 	private static <T extends Number> T pvRound(Object pValue, Integer pDecimalPlaces, Class<?> pClass){
+		if (pValue == null){return null;}
 		BigDecimal xValue;
 
 		if (pDecimalPlaces==null){
@@ -1374,6 +1377,15 @@ public class DBSNumber {
 		}
 	}
 	
+	/**
+	 * Retorna string contendo os valores.
+	 * Este método evita o retorno de notação científica. 
+	 * @param pValue
+	 * @return
+	 */
+	public static String toPlainString(Double pValue){
+		return BigDecimal.valueOf(pValue).toPlainString();
+	}
 }
 
 
