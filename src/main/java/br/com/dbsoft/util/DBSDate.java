@@ -954,28 +954,29 @@ public class DBSDate{
 
 	/**
 	 * Calcula a data a partir da database adicionada de dias.<br/>
-	 * Horário, se houver, será desprezado. Se quiser considerar o horário, utilize o addDays passando um java.sql.Timestamp.
+	 * O horário, se houver, será desprezado. Se quiser considerar o horário, utilize o addDaysWithTime
 	 * @param pDataBase Data base
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
 	public static Date addDays(Date pDataBase, int pPrazo){
-		if (pDataBase!=null){
-			if (pPrazo==0){
-				return pDataBase;
-			}else{
-				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
-				xDT = xDT.plusDays(pPrazo);
-				return DBSDate.toDate(xDT); 
-		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
-		        
-			}
-		}else{
-			return null;
-		}
+		return addDays(pDataBase, pPrazo, false);
 	}
 	public static Timestamp addDays(Timestamp pDataBase, int pPrazo){
-		return toTimestamp(addDays(toDate(pDataBase), pPrazo));
+		return toTimestamp(addDays(toDate(pDataBase), pPrazo, false));
+	}
+	
+	/**
+	 * Calcula a data a partir da database adicionada de dias considerando a hora na data base.<br/>
+	 * @param pDataBase Data base
+	 * @param pPrazo em dias
+	 * @return
+	 */
+	public static Date addDaysWithTime(Date pDataBase, int pPrazo){
+		return addDays(pDataBase, pPrazo, true);
+	}
+	public static Timestamp addDaysWithTime(Timestamp pDataBase, int pPrazo){
+		return toTimestamp(addDays(toDate(pDataBase), pPrazo, true));
 	}
 
 	/**
@@ -1009,21 +1010,47 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Calcula a data a partir da database adicionada de meses
+	 * Calcula a data a partir da database adicionada de meses.<br/>
+	 * O horário, se houver, será desprezado. 
 	 * @param pDataBase Data base
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
 	public static Date addMonths(Date pDataBase, int pPrazo){
+		return addMonths(pDataBase, pPrazo, false);
+	}
+	
+	/**
+	 * Calcula a data a partir da database adicionada de meses considerando o horário.<br/>
+	 * @param pDataBase
+	 * @param pPrazo
+	 * @return
+	 */
+	public static Date addMonthsWithTime(Date pDataBase, int pPrazo){
+		return addMonths(pDataBase, pPrazo, true);
+	}
+	
+	/**
+	 * Calcula a data a partir da database adicionada de dias.<br/>
+	 * @param pDataBase
+	 * @param pPrazo
+	 * @param pIncludeTime
+	 * @return
+	 */
+	public static Date addMonths(Date pDataBase, int pPrazo, boolean pIncludeTime){
 		if (pDataBase!=null){
 			if (pPrazo==0){
 				return pDataBase;
 			}else{
-				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
-				xDT = xDT.plusMonths(pPrazo);
-				return DBSDate.toDate(xDT); 
-		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
-		        
+				if (pIncludeTime){
+					LocalDateTime xDT = new DateTime(pDataBase).toLocalDateTime();
+					xDT = xDT.plusMonths(pPrazo);
+					return DBSDate.toDate(xDT.toDateTime()); 
+				}else{
+					LocalDate xDT = new DateTime(pDataBase).toLocalDate();
+					xDT = xDT.plusMonths(pPrazo);
+					return DBSDate.toDate(xDT); 
+				}
 			}
 		}else{
 			return null;
@@ -1031,21 +1058,47 @@ public class DBSDate{
 	}
 	
 	/**
-	 * Calcula a data a partir da database adicionada de anos
+	 * Calcula a data a partir da database adicionada de anos.<br/>
+	 * O horário, se houver, será desprezado. 
 	 * @param pDataBase Data base
 	 * @param pPrazo em dias
 	 * @return Data
 	 */
 	public static Date addYears(Date pDataBase, int pPrazo){
+		return addYears(pDataBase, pPrazo, false);
+	}
+	
+	/**
+	 * Calcula a data a partir da database adicionada de anos considerando o horário.<br/>
+	 * @param pDataBase
+	 * @param pPrazo
+	 * @return
+	 */
+	public static Date addYearsWithTime(Date pDataBase, int pPrazo){
+		return addYears(pDataBase, pPrazo, true);
+	}
+	
+	/**
+	 * Calcula a data a partir da database adicionada de dias.<br/>
+	 * @param pDataBase
+	 * @param pPrazo
+	 * @param pIncludeTime
+	 * @return
+	 */
+	public static Date addYears(Date pDataBase, int pPrazo, boolean pIncludeTime){
 		if (pDataBase!=null){
 			if (pPrazo==0){
 				return pDataBase;
 			}else{
-				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
-				xDT = xDT.plusYears(pPrazo);
-				return DBSDate.toDate(xDT); 
-		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
-		        
+				if (pIncludeTime){
+					LocalDateTime xDT = new DateTime(pDataBase).toLocalDateTime();
+					xDT = xDT.plusYears(pPrazo);
+					return DBSDate.toDate(xDT.toDateTime()); 
+				}else{
+					LocalDate xDT = new DateTime(pDataBase).toLocalDate();
+					xDT = xDT.plusYears(pPrazo);
+					return DBSDate.toDate(xDT); 
+				}
 			}
 		}else{
 			return null;
@@ -1053,7 +1106,7 @@ public class DBSDate{
 	}
 
 	/**
-	 * Adiciona horas a uma data informada.
+	 * Adiciona horas a uma data informada.<br/>
 	 * @param Data e Hora
 	 * @param pMinutes
 	 * @return
