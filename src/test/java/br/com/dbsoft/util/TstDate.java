@@ -4,10 +4,9 @@ package br.com.dbsoft.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +14,7 @@ import org.junit.Test;
 
 import br.com.dbsoft.core.DBSSDK;
 import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
+import junit.framework.TestCase;
 
 /**
  * @author ricardo.villar
@@ -23,10 +23,12 @@ import br.com.dbsoft.util.DBSDate.PERIODICIDADE;
 public class TstDate extends TestCase {
 
 	//IFEED
-	String wUrl="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
-
-	String wUser="";
-	String wPassword="";
+//	String wUrl="jdbc:mysql://localhost:3306/dbsfnd?zeroDateTimeBehavior=convertToNull&amp;useOldAliasMetadataBehavior=true";
+	//ORACLE
+	String wUrl="jdbc:oracle:thin:@192.168.0.115:1521:XE";
+	
+	String wUser="dbsfnd";
+	String wPassword="dbs0ft";
 
 	Connection wConexao;
 	
@@ -346,6 +348,12 @@ public class TstDate extends TestCase {
 		d2 = DBSDate.toDate("17/10/2011");
 		assertEquals(d1.toString(), d2.toString());
 		assertEquals(DBSDate.toDate("19/10/2011"), DBSDate.getNextDate(wConexao, DBSDate.toDate("18/10/2011"), 1, false));
+		
+		//proxima data com Timestamp
+		Timestamp xT1, xT2;
+		xT1 = DBSDate.getNextDate(wConexao, DBSDate.toTimestamp("01/10/2011"), 10, true); //Sem cidade
+		xT2 = DBSDate.toTimestamp("17/10/2011");
+		assertEquals(xT1.toString(), xT2.toString());
 	}
 	@Test
 	public void test_getNomeDaSemana(){
@@ -467,7 +475,7 @@ public class TstDate extends TestCase {
 		assertEquals(DBSDate.toDate("31/12/2011"), DBSDate.getLastDayOfTheYear(wConexao, DBSDate.toDate("01/01/2011"), false));
 		assertEquals(DBSDate.toDate("30/12/2011"), DBSDate.getLastDayOfTheYear(wConexao, DBSDate.toDate("01/01/2011"), true));
 		assertEquals(DBSDate.toDate("31/12/2012"), DBSDate.getLastDayOfTheYear(wConexao, DBSDate.toDate("31/12/2012"), false));
-		assertEquals(DBSDate.toDate("28/12/2012"), DBSDate.getLastDayOfTheYear(wConexao, DBSDate.toDate("31/12/2012"), true));
+		assertEquals(DBSDate.toDate("31/12/2012"), DBSDate.getLastDayOfTheYear(wConexao, DBSDate.toDate("31/12/2012"), true));
 	}
 	@Test
 	public void test_getPrimeiroDiaDoAno(){
@@ -559,7 +567,7 @@ public class TstDate extends TestCase {
 		
 		//DIAS UTEIS DO MES DE DEZEMBRO DE 2012
 		xDias = DBSDate.getDaysOfTheMonth(wConexao, DBSDate.toDate("01/12/2012"), true, -1);
-		assertEquals(18, xDias);
+		assertEquals(20, xDias);
 	}
 
 }

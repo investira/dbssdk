@@ -527,6 +527,9 @@ public class DBSDate{
 			return new Timestamp((Integer) pData);
 		} else if (pData instanceof String) {
 			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			if (!((String) pData).contains(":")) {
+				xFormat = new SimpleDateFormat("dd/MM/yyyy");
+			}
 			try {
 				return new Timestamp(xFormat.parse((String) pData).getTime());
 			} catch (ParseException e) {
@@ -951,7 +954,7 @@ public class DBSDate{
 
 	/**
 	 * Calcula a data a partir da database adicionada de dias.<br/>
-	 * Horário, se houver, será desprezado.
+	 * Horário, se houver, será desprezado. Se quiser considerar o horário, utilize o addDays passando um java.sql.Timestamp.
 	 * @param pDataBase Data base
 	 * @param pPrazo em dias
 	 * @return Data
@@ -961,9 +964,9 @@ public class DBSDate{
 			if (pPrazo==0){
 				return pDataBase;
 			}else{
-				LocalDateTime xDT = new DateTime(pDataBase).toLocalDateTime();
+				LocalDate xDT = new DateTime(pDataBase).toLocalDate();
 				xDT = xDT.plusDays(pPrazo);
-				return DBSDate.toDate(xDT.toDateTime()); 
+				return DBSDate.toDate(xDT); 
 		        //int xDias = Days.daysBetween(new DateTime(pDataBase).toLocalDate(), new DateTime(pDataFim).toLocalDate()).getDays();
 		        
 			}
