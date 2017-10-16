@@ -592,28 +592,28 @@ public class DBSFormat implements Serializable {
 		String xValue = pValue.toString();
 		int 	xVI = 0;
 		boolean xAchou;
-		for (int xMI =0 ; xMI < pMask.length(); xMI++){
+		for (int xMI =0; xMI < pMask.length(); xMI++){
 			String xMC = pMask.substring(xMI, xMI+1).toUpperCase();
-			if (xMC.equals("9")||
-				xMC.equals("A")){
+			if (xMC.equals("9")
+		 	 || xMC.equals("A")){
 				//Busca próximo caracter válido dentro do valor informado, para preencher a respectivo campo na máscara
 				xAchou = false;
 				while (xVI < xValue.length()){
 					 char xVC = xValue.charAt(xVI);
 					 xVI++;
 					 if(Character.isLetterOrDigit(xVC)){
-						 xFV = xFV + xVC;
+						 xFV += xVC;
 						 xAchou = true;
 						 break;
 					 }
 				}
 				//Se não achou um caracter válido, preenche com o caracter vázio
 				if (!xAchou){
-					xFV = xFV + pEmptyChr;
+					xFV += pEmptyChr;
 				}
 			}else{
 				//Incorpora o caracter da máscara ao valor
-				xFV = xFV + xMC;
+				xFV += xMC;
 			}
 		}
 		return xFV;
