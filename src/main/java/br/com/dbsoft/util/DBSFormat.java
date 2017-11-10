@@ -622,31 +622,44 @@ public class DBSFormat implements Serializable {
 	/**
 	 * Retorna o número simplificado com mil, mi, bi, tri, quatri.
 	 * @param pValue
+	 * @param pDecimalPlaces
 	 * @return
 	 */
-	public static String numberSimplify(Number pValue){
+	public static String numberSimplify(Number pValue, Integer pDecimalPlaces){
 		Double 	xVal = pValue.doubleValue();
+		Integer xSign = DBSNumber.sign(xVal);
+		if (xSign == 0){
+			xSign = 1;
+		}
+		xVal = DBSNumber.abs(xVal);
 		Integer xIntVal = pValue.intValue();
 		Integer xLength = xIntVal.toString().length();
 		if (xLength == 0){return "";}
 		Double xSimple = (xVal / Math.pow(10, ((xLength -1) - ((xLength -1) % 3))));
 		String xSuf = "";
 		if (xLength > 15){
-			xSuf = "quatri";
+			xSuf = " quatri";
 		}else if (xLength > 12){
-			xSuf = "tri";
+			xSuf = " tri";
 		}else if (xLength > 9){
-			xSuf = "bi";
+			xSuf = " bi";
 		}else if (xLength > 6){
-			xSuf = "mi";
+			xSuf = " mi";
 		}else if (xLength > 3){
-			xSuf = "mil";
-		}
-		if (xSuf != ""){
-			return getFormattedNumber(xSimple, 2) + " " + xSuf;
+			xSuf = " mil";
 		}else{
-			return getFormattedNumber(xVal, 2);
+			xSimple = xVal;
 		}
+		xSimple *= xSign;
+		return getFormattedNumber(xSimple, pDecimalPlaces) + xSuf;
+	}
+	/**
+	 * Retorna o número simplificado com mil, mi, bi, tri, quatri.
+	 * @param pValue
+	 * @return
+	 */
+	public static String numberSimplify(Number pValue){
+		return numberSimplify(pValue, 2);
 	}
 
 	//====================================================
