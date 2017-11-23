@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSObject;
 
 /**
@@ -13,22 +15,28 @@ import br.com.dbsoft.util.DBSObject;
  *
  * @param <DataModelClass>
  */
-public abstract class DBSPagedSearch<DataModelClass> implements IDBSPagedSeach<DataModelClass>{
+public abstract class DBSPagedSearchController<DataModelClass> implements IDBSPagedSearchController<DataModelClass>{
 	
-	private List<DataModelClass>	wLista = null;	
-	private String					wSearchParam;
-	private Integer					wCurrentIndex = -1;
-	private Integer 				wPageSize = 20;
-	protected Connection			wConnection;
+	private 	IDBSMessages			wMessages = new DBSMessages(true);
+	private 	List<DataModelClass>	wLista = null;	
+	private 	String					wSearchParam;
+	private 	Integer					wCurrentIndex = -1;
+	private 	Integer 				wPageSize = 20;
+	protected 	Connection				wConnection;
 	
 	/**
 	 * Construtor Padrão.
 	 * @param pConnection Conexão com o Banco de Dados
 	 * @param pPageSize Quantidade de registros retornados por página de pesquisa.
 	 */
-	public DBSPagedSearch(Connection pConnection, Integer pPageSize) {
+	public DBSPagedSearchController(Connection pConnection, Integer pPageSize) {
 		wConnection = pConnection;
 		wPageSize = pPageSize;
+	}
+	
+	@Override
+	public final IDBSMessages getMessages(){
+		return wMessages;
 	}
 
 	/**
@@ -72,7 +80,6 @@ public abstract class DBSPagedSearch<DataModelClass> implements IDBSPagedSeach<D
 	public Integer getCurrentIndex(){
 		return wCurrentIndex;
 	}
-	
 	
 	//MÉTODOS PÚBLICOS ===========================================================================
 	/**

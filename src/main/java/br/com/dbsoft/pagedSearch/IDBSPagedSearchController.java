@@ -2,14 +2,22 @@ package br.com.dbsoft.pagedSearch;
 
 import java.util.List;
 
+import br.com.dbsoft.message.IDBSMessages;
+
 /**
- * Interface para pesquisas paginadas ({@link DBSPagedSearch}).
+ * Interface para pesquisas paginadas ({@link DBSPagedSearchController}).
  * @author jose.avila@dbsoft.com.br
  *
  * @param <DataModelClass>
  */
-public interface IDBSPagedSeach<DataModelClass> {
+public interface IDBSPagedSearchController<DataModelClass> {
 
+	/**
+	 * Retorna texto da mensagem que está na fila
+	 * @return
+	 */
+	public IDBSMessages getMessages();
+	
 	/**
 	 * Retorna o Parametro de Pesquisa.
 	 * @return String
