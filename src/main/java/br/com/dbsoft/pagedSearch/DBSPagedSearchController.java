@@ -1,11 +1,8 @@
 package br.com.dbsoft.pagedSearch;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.dbsoft.message.DBSMessages;
-import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSObject;
 
 /**
@@ -15,56 +12,73 @@ import br.com.dbsoft.util.DBSObject;
  *
  * @param <DataModelClass>
  */
-public abstract class DBSPagedSearchController<DataModelClass> implements IDBSPagedSearchController<DataModelClass>{
+public abstract class DBSPagedSearchController<DataModelClass> {
 	
-	private 	IDBSMessages			wMessages = new DBSMessages(true);
-	private 	List<DataModelClass>	wLista = null;	
+	private 	List<DataModelClass>	wLista = null;
+	private		DataModelClass			wSelectedItem;
+	private		Integer					wSelectedRow;
 	private 	String					wSearchParam;
 	private 	Integer					wCurrentIndex = -1;
-	private 	Integer 				wPageSize = 20;
-	protected 	Connection				wConnection;
+	private 	Integer 				wPageSize = 20; //Valor Default
 	
 	/**
 	 * Construtor Padrão.
 	 * @param pConnection Conexão com o Banco de Dados
 	 * @param pPageSize Quantidade de registros retornados por página de pesquisa.
 	 */
-	public DBSPagedSearchController(Connection pConnection, Integer pPageSize) {
-		wConnection = pConnection;
+	public DBSPagedSearchController(Integer pPageSize) {
 		wPageSize = pPageSize;
-	}
-	
-	@Override
-	public final IDBSMessages getMessages(){
-		return wMessages;
 	}
 
 	/**
-	 * Retorna o Parametro de Pesquisa.
-	 */
-	@Override
-	public String getSearchParam() {
-		return wSearchParam;
-	}
-	/**
-	 * Configura o Parametro de Pesquisa.
-	 */
-	@Override
-	public void setSearchParam(String pSearchParam) {
-		wSearchParam = pSearchParam;
-	}
-	
-	/**
 	 * Retorna a lista resultado da pesquisa.
 	 */
-	@Override
 	public List<DataModelClass> getList() {
 		if (DBSObject.isNull(wLista)) {
 			newSearch();
 		}
 		return wLista;
 	}
+	
+	/**
+	 * Retorna o Objeto selecionado (via click) na lista de resultados.<br/>
+	 * Esta seleção só é feita se o atributo keyColumnName estiver configurado.
+	 * @return
+	 */
+	public DataModelClass getSelectedItem() {
+		return wSelectedItem;
+	}
 
+	/**
+	 * Configura o Objeto selecionado (via click) na lista de resultados.<br/>
+	 * Esta seleção só é feita se o atributo keyColumnName estiver configurado.
+	 * @param pSelectedItem
+	 */
+	public void setSelectedItem(DataModelClass pSelectedItem) {
+		wSelectedItem = pSelectedItem;
+	}
+	
+	public Integer getSelectedRow() {
+		return wSelectedRow;
+	}
+
+	public void setSelectedRow(Integer pSelectedRow) {
+		wSelectedRow = pSelectedRow;
+	}
+	
+	/**
+	 * Retorna o Parametro de Pesquisa.
+	 */
+	public String getSearchParam() {
+		return wSearchParam;
+	}
+	/**
+	 * Configura o Parametro de Pesquisa.
+	 */
+	public void setSearchParam(String pSearchParam) {
+		wSearchParam = pSearchParam;
+	}
+	
 	/**
 	 * Quantidade de registros retornados por página de pesquisa.
 	 * @return
@@ -86,32 +100,29 @@ public abstract class DBSPagedSearchController<DataModelClass> implements IDBSPa
 	 * Efetua uma Nova pesquisa.
 	 * Esta ação limpa a lista e zera o index de pesquisas.
 	 */
-	@Override
 	public void newSearch() {
 		//Inicia uma nova consulta
 		beforeNewSearch();
-		wLista = new ArrayList<>();
+		wLista = new ArrayList<DataModelClass>();
 		wCurrentIndex = 0;
-		pvSearch();
+		searchMore();
 	}
 	
 	/**
 	 * Efetua uma pesquisa continuando de onde a pesquisa anterior parou (index de pesquisa).
 	 */
-	@Override
 	public void searchMore() {
-		pvSearch();
-	}
-
-	//MÉTODOS PRIVADOS ===========================================================================
-	/**
-	 * Efetua uma pesquisa e incrementa o Index corrente.
-	 */
-	private void pvSearch() {
 		search();
 		wCurrentIndex += wLista.size();
 	}
 	
+	public void selectItem() {
+		setSelectedItem(getList().get(getSelectedRow()));
+//		System.out.println("Objeto "+ getSelectedItem() +" selecionado.");
+//		System.out.println("Objeto na posição "+ getSelectedRow() +" selecionado.");
+	}
+
+	//MÉTODOS PRIVADOS ===========================================================================
 	/**
 	 * Método executado antes de uma Nova Pesquisa (newSearch).
 	 */
@@ -124,4 +135,5 @@ public abstract class DBSPagedSearchController<DataModelClass> implements IDBSPa
 	 * sob demanda à lista de resultado (getList()). 
 	 */
 	protected abstract void search();
+
 }
