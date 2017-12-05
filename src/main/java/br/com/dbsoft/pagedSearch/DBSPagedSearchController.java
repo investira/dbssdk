@@ -68,6 +68,7 @@ public abstract class DBSPagedSearchController<DataModelClass> {
 	
 	/**
 	 * Retorna o Parametro de Pesquisa.
+	 * Use-o na pesquisa do Search, mesmo que tenha definido um outro campo no atributo VALOR. 
 	 */
 	public String getSearchParam() {
 		return wSearchParam;
