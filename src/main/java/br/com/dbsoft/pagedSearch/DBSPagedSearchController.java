@@ -71,6 +71,9 @@ public abstract class DBSPagedSearchController<DataModelClass> {
 	 * Use-o na pesquisa do Search, mesmo que tenha definido um outro campo no atributo VALOR. 
 	 */
 	public String getSearchParam() {
+		if (DBSObject.isNull(wSearchParam)){
+			wSearchParam = "";
+		}
 		return wSearchParam;
 	}
 	/**
