@@ -306,7 +306,7 @@ public final class DBSSDK {
 			CHROME		("Chrome", "-webkit-"),
 			FIREFOX		("Mozilla", "-moz-"),
 			OPERA		("Opera", "-o-"),
-			SAFARI		("Webkit", "-webkit-"),
+			SAFARI		("Safari", "-webkit-"),
 			MICROSOFT	("Microsoft", "-ms-");
 		
 			private String 	wCSSPrefix;
