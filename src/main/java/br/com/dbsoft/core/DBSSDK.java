@@ -292,6 +292,31 @@ public final class DBSSDK {
 			WINDOWS,
 			WINDOWSPHONE,
 			SYMBIAN;
+			
+			public static OS get(int pCode) {
+				switch (pCode) {
+				case 0:
+					return MACOS;
+				case 1:
+					return IOS;
+				case 2:
+					return ANDROID;
+				case 3:
+					return RIM;
+				case 4:
+					return LINUX;
+				case 5:
+					return WEBOS;
+				case 6:
+					return WINDOWS;
+				case 7:
+					return WINDOWSPHONE;
+				case 8:
+					return SYMBIAN;
+				default:
+					return null;
+				}
+			}
 		}
 
 		public enum APP_CLIENT {
@@ -328,6 +353,23 @@ public final class DBSSDK {
 				case "-o-":
 					return OPERA;
 				case "-ms-":
+					return MICROSOFT;
+				default:
+					return DEFAULT;
+				}
+			}
+			
+			public static WEB_CLIENT get(int pCode) {
+				switch (pCode) {
+				case 1:
+					return CHROME;
+				case 2:
+					return FIREFOX;
+				case 3:
+					return OPERA;
+				case 4:
+					return SAFARI;
+				case 5:
 					return MICROSOFT;
 				default:
 					return DEFAULT;
