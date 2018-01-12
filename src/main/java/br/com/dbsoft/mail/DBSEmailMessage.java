@@ -14,10 +14,14 @@ public class DBSEmailMessage {
 	private List<String> 			wAttachments = new ArrayList<String>();
 	private Boolean					wIsHtmlContent = true;
 	
+	/**
+	 * Dados de quem esta enviando o e-mail.
+	 * @return
+	 */
 	public DBSEmailAddress getFrom() {return wFrom;}
 
 	/**
-	 * Lista principal de endereço
+	 * Lista principal de endereços que receberão o e-mail
 	 * @return
 	 */
 	public List<DBSEmailAddress> getTo() {return wTo;}

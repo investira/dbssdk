@@ -239,7 +239,7 @@ public class DBSEmailSend {
            String username = wHostUserName;
            String password = wHostPassword;
            if (DBSObject.isEmpty(wHostUserName)
-        	 ||DBSObject.isEmpty(wHostPassword)){
+        	     ||DBSObject.isEmpty(wHostPassword)){
         	   wLogger.error("Usuário e/ou senha do STMP não informados.");
         	   return null;
            }else{
