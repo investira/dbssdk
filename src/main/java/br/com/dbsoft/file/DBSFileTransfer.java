@@ -30,7 +30,7 @@ import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.core.DBSSDK.NETWORK.METHOD;
 import br.com.dbsoft.core.DBSSDKMessages;
 import br.com.dbsoft.error.DBSException;
-import br.com.dbsoft.task.IDBSTaskEventsListener;
+
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
@@ -264,7 +264,7 @@ public class DBSFileTransfer{
 	 * Remove classe listener.
 	 * @param pEventListener
 	 */
-	public final void removeEventListener(IDBSTaskEventsListener pEventListener) {
+	public final void removeEventListener(IDBSFileTransferEventsListener pEventListener) {
 		wEventListeners.remove(pEventListener);
 	}
 
