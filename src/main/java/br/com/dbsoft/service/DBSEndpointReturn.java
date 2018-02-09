@@ -23,7 +23,7 @@ public class DBSEndpointReturn<C> {
 	private C object;
 	
 	@JsonDeserialize(contentAs=DBSMessageBase.class)
-	private List<IDBSMessageBase> message;
+	private List<IDBSMessageBase> messages;
 	
     @XmlAnyElement(lax=true)
 	public C getObject() {
@@ -35,8 +35,8 @@ public class DBSEndpointReturn<C> {
 	}
 	
 	@XmlAnyElement(lax = true)
-	public List<IDBSMessageBase> getMessage() {
-		return message;
+	public List<IDBSMessageBase> getMessages() {
+		return messages;
 	}
 
 	//CONSTRUTORES
@@ -48,7 +48,7 @@ public class DBSEndpointReturn<C> {
 	
 	public DBSEndpointReturn(C pObject, List<IDBSMessageBase> pMessage) {
 		this.object = pObject;
-		this.message = pMessage;
+		this.messages = pMessage;
 	}
 
 }

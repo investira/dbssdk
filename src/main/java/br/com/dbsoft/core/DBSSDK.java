@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import br.com.dbsoft.util.DBSObject;
+
 
 public final class DBSSDK {
 	public static final String DOMAIN = "br.com.dbsoft";
@@ -293,7 +295,10 @@ public final class DBSSDK {
 			WINDOWSPHONE,
 			SYMBIAN;
 			
-			public static OS get(int pCode) {
+			public static OS get(Integer pCode) {
+				if (DBSObject.isNull(pCode)) {
+					return null;
+				}
 				switch (pCode) {
 				case 0:
 					return MACOS;
@@ -359,7 +364,10 @@ public final class DBSSDK {
 				}
 			}
 			
-			public static WEB_CLIENT get(int pCode) {
+			public static WEB_CLIENT get(Integer pCode) {
+				if (DBSObject.isNull(pCode)) {
+					return null;
+				}
 				switch (pCode) {
 				case 1:
 					return CHROME;
