@@ -322,6 +322,20 @@ public final class DBSSDK {
 					return null;
 				}
 			}
+			
+			public static OS getOSFromUserAgent(String pUserAgent) {
+				OS xOS = null;
+				if (pUserAgent.contains("Mac")) {
+					xOS = OS.MACOS;
+				} else if (pUserAgent.contains("Win")) {
+					xOS = OS.WINDOWS;
+				} else if (pUserAgent.contains("X11")) {
+					xOS = OS.LINUX;
+				} else if (pUserAgent.contains("Linux")) {
+					xOS = OS.LINUX;
+				}
+				return xOS;
+			}
 		}
 
 		public enum APP_CLIENT {
@@ -383,8 +397,168 @@ public final class DBSSDK {
 					return DEFAULT;
 				}
 			}
+			
+			public static WEB_CLIENT getBrowserFromUserAgent(String pUserAgent) {
+				WEB_CLIENT xBrowser = WEB_CLIENT.DEFAULT; //Desconhecido
+				if (pUserAgent.contains("MSIE")) {
+				    xBrowser = WEB_CLIENT.MICROSOFT;
+				} else if (pUserAgent.contains("Chrome")) {
+					xBrowser = WEB_CLIENT.CHROME;
+				} else if (pUserAgent.contains("Firefox")) {
+					xBrowser = WEB_CLIENT.FIREFOX;
+				} else if (pUserAgent.contains("Safari") && !pUserAgent.contains("Chrome")) {
+					xBrowser = WEB_CLIENT.SAFARI;
+				} else if (pUserAgent.contains("Opera")) {
+					xBrowser = WEB_CLIENT.OPERA;
+				}
+				return xBrowser;
+			}
+			
+			public static String getBrowserVersionFromUserAgent(String pUserAgent) {
+				String xBrowserVer = pUserAgent;
+				xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf(")")+2, xBrowserVer.lastIndexOf(" "));
+				return xBrowserVer;
+			}
 		}
 
+		public enum DEVICE {
+			
+			UNKNOW 				("Unknow", 			""),
+			MACINTOSH 			("Mac", 				"Macintosh"),
+			PHONE 				("Phone", 			"Phone"),
+			DROID 				("Droid", 			"DROID"),
+			ANDROID 				("Android", 			"Android"),
+			WEBOS 				("webOS", 			"webOS"),
+			IPHONE 				("iPhone", 			"iPhone"),
+			IPOD 				("iPod", 			"iPod"),
+			IPAD 				("iPad", 			"iPad"),
+			BLACKBERRY 			("BlackBerry", 		"BlackBerry"),
+			WINDOWS_PHONE 		("Windows Phone", 	"Windows Phone"),
+			ZUNE_WP7 			("ZuneWP7", 			"ZuneWP7"),
+			IE_MOBILE 			("IEMobile", 		"IEMobile"),
+			TABLET 				("Tablet", 			"Tablet"),
+			KINDLE 				("Amazon Kindle", 	"Kindle"),
+			PLAYBOOK 			("Playbook", 		"Playbook"),
+			GOOGLE_NEXUS 		("Google Nexus", 	"Nexus"),
+			MOTOROLA_XOOM 		("Motorola Xoom", 	"Xoom"),
+			SAMSUNG_NOTE 		("Samsung Note", 	"SAMSUNG-SGH-I717"),
+			SAMSUNG_NOTE_2 		("Samsung Note 2", 	"GT-N7100"),
+			SAMSUNG_NOTE_3 		("Samsung Note 3", 	"SM-N900T"),
+			SAMSUNG_TAB_4 		("Samsung Tab 4", 	"SM-T330NU");
+			
+			private String 	wName;
+			private String 	wUserAgent;
+			public String getName() {return wName;}
+			public String getUserAgent() {return wUserAgent;}
+			
+			private DEVICE(String pName, String pUserAgent) {
+				wName = pName;
+				wUserAgent = pUserAgent;
+			}
+			
+			public static DEVICE get(Integer pCode) {
+				if (DBSObject.isNull(pCode)) {
+					return null;
+				}
+				switch (pCode) {
+				case 0:
+					return UNKNOW;
+				case 1:
+					return MACINTOSH;
+				case 2:
+					return PHONE;
+				case 3:
+					return DROID;
+				case 4:
+					return ANDROID;
+				case 5:
+					return WEBOS;
+				case 6:
+					return IPHONE;
+				case 7:
+					return IPOD;
+				case 8:
+					return IPAD;
+				case 9:
+					return BLACKBERRY;
+				case 10:
+					return WINDOWS_PHONE;
+				case 11:
+					return ZUNE_WP7;
+				case 12:
+					return IE_MOBILE;
+				case 13:
+					return TABLET;
+				case 14:
+					return KINDLE;
+				case 15:
+					return PLAYBOOK;
+				case 16:
+					return GOOGLE_NEXUS;
+				case 17:
+					return MOTOROLA_XOOM;
+				case 18:
+					return SAMSUNG_NOTE;
+				case 19:
+					return SAMSUNG_NOTE_2;
+				case 20:
+					return SAMSUNG_NOTE_3;
+				case 21:
+					return SAMSUNG_TAB_4;
+				default:
+					return UNKNOW;
+				}
+			}
+			
+			public static String getDeviceFromUserAgent(String pUserAgent) {
+				if (pUserAgent.contains("Macintosh")) {
+					return "Macintosh";
+				} else if (pUserAgent.contains("Phone")) {
+					return "Phone";
+				} else if (pUserAgent.contains("DROID")) {
+					return "Droid";
+				} else if (pUserAgent.contains("Android")) {
+					return "Android";
+				} else if (pUserAgent.contains("webOS")) {
+					return "webOS";
+				} else if (pUserAgent.contains("iPhone")) {
+					return "iPhone";
+				} else if (pUserAgent.contains("iPod")) {
+					return "iPod";
+				} else if (pUserAgent.contains("BlackBerry")) {
+					return "BlackBerry";
+				} else if (pUserAgent.contains("Windows Phone")) {
+					return "Windows Phone";
+				} else if (pUserAgent.contains("ZuneWP7")) {
+					return "ZuneWP7";
+				} else if (pUserAgent.contains("IEMobile")){ 
+					return "IEMobile";
+					
+				//touch/tablet detection
+				} else if (pUserAgent.contains("Tablet")) {
+					return "Tablet";
+				} else if (pUserAgent.contains("iPad")) {
+					return "iPad";
+				} else if (pUserAgent.contains("Kindle")) {
+					return "Amazon Kindle";
+				} else if (pUserAgent.contains("Playbook")) {
+					return "Playbook";
+				} else if (pUserAgent.contains("Nexus")) {
+					return "Google Nexus";
+				} else if (pUserAgent.contains("Xoom")) {
+					return "Motorola Xoom";
+				} else if (pUserAgent.contains("SM-N900T")) { //Samsung Note 3
+					return "Samsung Note 3";
+				} else if (pUserAgent.contains("GT-N7100")) { //Samsung Note 2
+					return "Samsung Note 2";
+				} else if (pUserAgent.contains("SAMSUNG-SGH-I717")) { //Samsung Note
+					return "Samsung Note";
+				} else if (pUserAgent.contains("SM-T330NU")){ //Samsung Tab 4
+					return "Samsung Tab 4";
+				}
+				return "UNKNOW";
+			}
+		}
 	}
 
 	public static class COLUMN {
