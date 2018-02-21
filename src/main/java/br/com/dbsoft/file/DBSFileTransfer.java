@@ -660,7 +660,6 @@ public class DBSFileTransfer{
 		xConnection.setConnectTimeout(DBSNumber.toInteger(wTimeOut)); //DEFINE O TIMEOUT DE CONEXAO
 //		wLogger.info("pvDownloadFileHTTP: Request configurado.");
 //		wLogger.info("pvDownloadFileHTTP: Metodo Request: "+ xConnection.getRequestMethod());
-//		wLogger.info("pvDownloadFileHTTP: Conectando...");
 		xConnection.connect();
 //		wLogger.info("pvDownloadFileHTTP: Conectado. Resposta: "+ xConnection.getResponseMessage());
 		if (xConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -766,7 +765,7 @@ public class DBSFileTransfer{
 		    xRemoteFileName = DBSString.changeStr(xRemoteFileName, "\"", "");
 		    wLocalFileNameOrigin = LocalFileNameOrigin.HEADER;
 		}else{
-			//Recupera nome da URL se não foi definido o nome pelo usuário
+			//Recupera nome atráves da URL se não foi definido o nome pelo usuário
 			if (DBSObject.isEmpty(xRemoteFileName)){
 				if (pURL.getFile() != null){
 				    wLocalFileNameOrigin = LocalFileNameOrigin.URL;
@@ -782,6 +781,8 @@ public class DBSFileTransfer{
 			}
 			setTransferState(TransferState.NOTTRANSFERING);
 			return null;
+		}else if (wLocalFileNameOnly == null) {
+			wLocalFileNameOnly = xRemoteFileName;
 		}
 		
 		//READ FILE=====================================
@@ -825,7 +826,7 @@ public class DBSFileTransfer{
 //			wLogger.info("pvDownloadFileHTTP: Arquivo Lido.");
 //			wLogger.info("pvDownloadFileHTTP: Gravando o arquivo...");
 			//Grava arquivo local
-			if (wLocalPath != null){
+			if (wLocalPath != null && wLocalFileNameOnly != null){
 				//Se o nome do arquivo não está definido utiliza o nome original.
 				if (!wLocalFileNameOnly.contains(".")) {
 					//Defini o nome do arquivo local
