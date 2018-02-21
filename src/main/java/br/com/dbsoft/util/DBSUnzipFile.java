@@ -51,9 +51,10 @@ public class DBSUnzipFile {
 	private static final void pvCopyInputStream(InputStream pInputStream,
 			OutputStream pOutputStream) throws IOException {
 		byte[] xBuffer = new byte[1024];
-		int xFileLentgh;
-		while ((xFileLentgh = pInputStream.read(xBuffer)) >= 0)
-			pOutputStream.write(xBuffer, 0, xFileLentgh);
+		int xFileLenght;
+		while ((xFileLenght = pInputStream.read(xBuffer)) >= 0) {
+			pOutputStream.write(xBuffer, 0, xFileLenght);
+		}
 		pInputStream.close();
 		pOutputStream.close();
 	}
