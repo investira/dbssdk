@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -253,6 +254,23 @@ public class DBSHttp {
 			DBSIO.throwIOException(e);
 			return null;
 		}
+	}
+	
+	/**
+	 * Retorna string a partir de um InputStream
+	 * @param pInputStream
+	 * @return
+	 * @throws IOException
+	 */
+	public static String getStringFromInputStream(InputStream pInputStream) throws IOException {
+		ByteArrayOutputStream xBufferStream = new ByteArrayOutputStream();
+		byte[] xBuffer = new byte[1024];
+		int xFileLenght;
+		while ((xFileLenght = pInputStream.read(xBuffer)) >= 0) {
+			xBufferStream.write(xBuffer, 0, xFileLenght);
+		}
+		xBufferStream.close();
+		return xBufferStream.toString();  
 	}
 }
 
