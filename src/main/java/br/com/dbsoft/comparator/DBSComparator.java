@@ -26,30 +26,74 @@ public class DBSComparator<DataModelClass> implements Comparator<DataModelClass>
 	
 	protected Logger	wLogger = Logger.getLogger(this.getClass());
 	
-	private String  		wFieldName;
+	private String  			wFieldName;
 	private SORT_DIRECTION	wDirection;
+	private String			wPrefix;
 	
 	/**
 	 * @param pFieldName Nome do campos que será ordenado
 	 * @param pDirection Direção da ordenação
 	 */
+	public DBSComparator() {
+		this(null, SORT_DIRECTION.ASCENDING, false);
+	}
+
 	public DBSComparator(String pFieldName, SORT_DIRECTION pDirection) {
+		this(pFieldName, pDirection, false);
+	}
+
+	public DBSComparator(String pFieldName, SORT_DIRECTION pDirection, boolean pIgnoreGetPrefix) {
+		setFieldName(pFieldName);
+		setDirection(pDirection);
+		setIgnoreGetPrefix(pIgnoreGetPrefix);
+	}
+	
+	
+	/**
+	 * Nome do campo do datamodel que será considerado para o ordenamento.
+	 * É incluído o prefixo "get" automáticamente. 
+	 * @return
+	 */
+	public String getFieldName() {
+		return wFieldName;
+	}
+
+	public SORT_DIRECTION getDirection() {
+		return wDirection;
+	}
+
+	public void setFieldName(String pFieldName) {
 		wFieldName = pFieldName;
+	}
+
+	public void setDirection(SORT_DIRECTION pDirection) {
 		wDirection = pDirection;
+	}
+
+	public void setIgnoreGetPrefix(Boolean pIgnore) {
+		if (pIgnore){
+			 wPrefix = "";
+		}else{
+			 wPrefix = "get";
+		}
 	}
 	
 	@Override
 	public int compare(DataModelClass pDataModel1, DataModelClass pDataModel2) {
+		if (wFieldName == null) {return 0;}
 		try {
 			//Retorna o método para posterioemente executar-lo para retornar o valor
-			Method xMethod1 = DBSIO.findDataModelMethod(pDataModel1.getClass(), "get" + wFieldName);
-			Method xMethod2 = DBSIO.findDataModelMethod(pDataModel2.getClass(), "get" + wFieldName);
-			//Executa o método para retornar o valor
+			Method xMethod1 = DBSIO.findDataModelMethod(pDataModel1.getClass(), wPrefix + wFieldName);
 			if (xMethod1 == null){
 				wLogger.error("Atributo [" + wFieldName + "] não existente em " + pDataModel1.getClass().getName());
 				return 0;
+			}else{
+				xMethod1.setAccessible(true);
 			}
+			Method xMethod2 = DBSIO.findDataModelMethod(pDataModel2.getClass(), wPrefix + wFieldName);
+			xMethod2.setAccessible(true);
 			
+			//Executa o método para retornar o valor
 			Object xValue1 = xMethod1.invoke(pDataModel1);
 			Object xValue2 = xMethod2.invoke(pDataModel2);
 			if (xValue1 == null &&
