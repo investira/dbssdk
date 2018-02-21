@@ -1003,7 +1003,7 @@ public class DBSFile {
 	}
 	
 	/**
-	 * Método privado de cópia de Strem
+	 * Método privado de cópia de Stream
 	 * 
 	 * @param pInputStream
 	 * @param pOutputStream
