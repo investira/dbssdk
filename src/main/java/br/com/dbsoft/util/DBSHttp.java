@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 
 import br.com.dbsoft.core.DBSSDK.ENCODE;
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.json.DBSJson;
 
 public class DBSHttp {
 
