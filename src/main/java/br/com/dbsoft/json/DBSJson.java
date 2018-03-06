@@ -25,7 +25,7 @@ public class DBSJson {
 	 * @throws DBSIOException
 	 */
 	public static <T> String toJson(T pObject){
-		if (pObject == null) {return null;}
+		if (DBSObject.isNull(pObject)) {return null;}
 		ObjectMapper xJSON = pvCreateJson();
 		xJSON.setPropertyNamingStrategy(null);
 		try {
@@ -55,7 +55,7 @@ public class DBSJson {
 	 * @return
 	 */
 	public static <T> T fromJson(Object pObject, Class<T> pClass, PropertyNamingStrategy pPropertyNamingStrategy){
-		if (pObject == null) {return null;}
+		if (DBSObject.isEmpty(pObject)) {return null;}
 		T 				xFromJson = null;
 		ObjectMapper 	xJSON = pvCreateJson();
 		String 			xS = pObject.toString();
@@ -79,7 +79,7 @@ public class DBSJson {
 	 * @throws DBSIOException
 	 */
 	public static <T> List<T> fromJsonList(Object pObject, Class<T> pClass){
-		if (pObject == null) {return null;}
+		if (DBSObject.isEmpty(pObject)) {return null;}
 		ObjectMapper 		xJSON = pvCreateJson();
 		String 				xS = pObject.toString();
 		List<T> 				xList = new ArrayList<T>();
