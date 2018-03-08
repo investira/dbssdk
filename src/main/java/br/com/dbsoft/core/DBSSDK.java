@@ -510,53 +510,57 @@ public final class DBSSDK {
 				}
 			}
 			
-			public static String getDeviceFromUserAgent(String pUserAgent) {
+			public static String getDeviceNameFromUserAgent(String pUserAgent) {
+				return getDeviceFromUserAgent(pUserAgent).wName;
+			}
+			
+			public static DEVICE getDeviceFromUserAgent(String pUserAgent) {
 				if (pUserAgent.contains("Macintosh")) {
-					return "Macintosh";
+					return MACINTOSH;
 				} else if (pUserAgent.contains("Phone")) {
-					return "Phone";
+					return PHONE;
 				} else if (pUserAgent.contains("DROID")) {
-					return "Droid";
+					return DROID;
 				} else if (pUserAgent.contains("Android")) {
-					return "Android";
+					return ANDROID;
 				} else if (pUserAgent.contains("webOS")) {
-					return "webOS";
+					return WEBOS;
 				} else if (pUserAgent.contains("iPhone")) {
-					return "iPhone";
+					return IPHONE;
 				} else if (pUserAgent.contains("iPod")) {
-					return "iPod";
+					return IPOD;
 				} else if (pUserAgent.contains("BlackBerry")) {
-					return "BlackBerry";
+					return BLACKBERRY;
 				} else if (pUserAgent.contains("Windows Phone")) {
-					return "Windows Phone";
+					return WINDOWS_PHONE;
 				} else if (pUserAgent.contains("ZuneWP7")) {
-					return "ZuneWP7";
+					return ZUNE_WP7;
 				} else if (pUserAgent.contains("IEMobile")){ 
-					return "IEMobile";
+					return IE_MOBILE;
 					
 				//touch/tablet detection
 				} else if (pUserAgent.contains("Tablet")) {
-					return "Tablet";
+					return TABLET;
 				} else if (pUserAgent.contains("iPad")) {
-					return "iPad";
+					return IPAD;
 				} else if (pUserAgent.contains("Kindle")) {
-					return "Amazon Kindle";
+					return KINDLE;
 				} else if (pUserAgent.contains("Playbook")) {
-					return "Playbook";
+					return PLAYBOOK;
 				} else if (pUserAgent.contains("Nexus")) {
-					return "Google Nexus";
+					return GOOGLE_NEXUS;
 				} else if (pUserAgent.contains("Xoom")) {
-					return "Motorola Xoom";
+					return MOTOROLA_XOOM;
 				} else if (pUserAgent.contains("SM-N900T")) { //Samsung Note 3
-					return "Samsung Note 3";
+					return SAMSUNG_NOTE_3;
 				} else if (pUserAgent.contains("GT-N7100")) { //Samsung Note 2
-					return "Samsung Note 2";
+					return SAMSUNG_NOTE_2;
 				} else if (pUserAgent.contains("SAMSUNG-SGH-I717")) { //Samsung Note
-					return "Samsung Note";
+					return SAMSUNG_NOTE;
 				} else if (pUserAgent.contains("SM-T330NU")){ //Samsung Tab 4
-					return "Samsung Tab 4";
+					return SAMSUNG_TAB_4;
 				}
-				return "UNKNOW";
+				return UNKNOW;
 			}
 		}
 	}
