@@ -325,10 +325,14 @@ public final class DBSSDK {
 			
 			public static OS getOSFromUserAgent(String pUserAgent) {
 				OS xOS = null;
-				if (pUserAgent.contains("Mac")) {
+				if (pUserAgent.contains("iPhone")) {
+					xOS = OS.IOS;
+				} else if (pUserAgent.contains("Mac")) {
 					xOS = OS.MACOS;
 				} else if (pUserAgent.contains("Win")) {
 					xOS = OS.WINDOWS;
+				} else if (pUserAgent.contains("Android")) {
+					xOS = OS.ANDROID;
 				} else if (pUserAgent.contains("X11")) {
 					xOS = OS.LINUX;
 				} else if (pUserAgent.contains("Linux")) {
@@ -415,8 +419,22 @@ public final class DBSSDK {
 			}
 			
 			public static String getBrowserVersionFromUserAgent(String pUserAgent) {
+				if (DBSObject.isEmpty(pUserAgent)) {return "";}
 				String xBrowserVer = pUserAgent;
-				xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf(")")+2, xBrowserVer.lastIndexOf(" "));
+				if (xBrowserVer.contains("Chrome")) {
+					//Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36
+					xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf("Chrome"), xBrowserVer.lastIndexOf(" "));
+				} else if (xBrowserVer.contains("Firefox")) {
+					//Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:59.0) Gecko/20100101 Firefox/59.0
+					xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf(" ")+1);
+				} else if (xBrowserVer.contains("Safari") && xBrowserVer.contains("Version")) {
+					//Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/604.5.6 (KHTML, like Gecko) Version/11.0.3 Safari/604.5.6
+					xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf(")")+2, xBrowserVer.lastIndexOf(" "));
+				} else {
+					//iPhone //Mozilla/5.0 (iPhone; CPU iPhone OS 11_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Mobile/15C107
+					//Android //Mozilla/5.0 (Linux; Android 7.1.1; Moto Z2 Play Build/NPSS26.118-19-1-6; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/65.0.3325.109 Mobile Safari/537.36
+					xBrowserVer = xBrowserVer.substring(xBrowserVer.lastIndexOf(")")+2);
+				}
 				return xBrowserVer;
 			}
 		}
