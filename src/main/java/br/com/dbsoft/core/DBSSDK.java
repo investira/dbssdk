@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 
 public final class DBSSDK {
@@ -285,58 +286,145 @@ public final class DBSSDK {
 		}
 		
 		public enum OS {
-			MACOS,
-			IOS,
-			ANDROID,
-			RIM,
-			LINUX,
-			WEBOS,
-			WINDOWS,
-			WINDOWSPHONE,
-			SYMBIAN;
+			UNIX			("Unix OS Based", 			"x11"),
+			ANDROID 		("Android OS", 				"android"),
+			BADA			("Bada", 					"bada"),
+			BEOS			("Beos", 					"beos"),
+			BLACKBERRY_OS	("Blackberry OS", 			"blackberry, bb"),
+			CHROME_OS		("Chrome OS", 				"cros"), //X11
+			DARWIN			("Darwin", 					"darwin"),
+			FIRE_OS			("Fire OS", 				"kindle fire, kf"),
+			FREE_BSD		("FreeBSD", 				"freebsd"),
+			HAIKU			("Haiku", 					"haiku"),
+			HP_WEBOS		("HP webOS", 				"hpwos"),
+			IOS 			("iOS", 					"iphone, ipod, ipad"),
+			IRIX			("Irix", 					"irix"),			
+			LINUX 			("Linux OS", 				"linux"),
+			LIVEAREA		("Livearea", 				"playstation vita"),
+			MAC_OS 			("Mac OS", 					"mac, macos x "),
+			OPEN_BSD		("OpenBSD", 				"openbsd"),
+			RIM_OS 			("RIM", 					"rim tablet os"),
+			SUNOS			("SunOS", 					"sunos"),
+			SYMBIAN 		("Symbian", 				"symbianos"),
+			WEBOS 			("webOS", 					"webos"),
+			WINDOWS 		("Microsoft Windows", 		"windows"),
+			WINDOWSPHONE 	("Microsoft WindowsPhone", 	"windows phone");
+			
+			private String 	wName;
+			private String 	wUserAgent;
+			public String 	getName() {return wName;}
+			public String 	getUserAgent() {return wUserAgent;}
+			
+			private OS(String pName, String pUserAgent) {
+				wName = pName;
+				wUserAgent = pUserAgent;
+			}
 			
 			public static OS get(Integer pCode) {
 				if (DBSObject.isNull(pCode)) {
 					return null;
 				}
 				switch (pCode) {
-				case 0:
-					return MACOS;
-				case 1:
-					return IOS;
-				case 2:
-					return ANDROID;
-				case 3:
-					return RIM;
-				case 4:
-					return LINUX;
-				case 5:
-					return WEBOS;
-				case 6:
-					return WINDOWS;
-				case 7:
-					return WINDOWSPHONE;
-				case 8:
-					return SYMBIAN;
-				default:
-					return null;
+					case 0:
+						return UNIX;
+					case 1:
+						return ANDROID;
+					case 2:
+						return BADA;
+					case 3:
+						return BEOS;
+					case 4:
+						return BLACKBERRY_OS;
+					case 5:
+						return CHROME_OS;
+					case 6:
+						return DARWIN;
+					case 7:
+						return FIRE_OS;
+					case 8:
+						return FREE_BSD;
+					case 9:
+						return HAIKU;
+					case 10:
+						return HP_WEBOS;
+					case 11:
+						return IOS;
+					case 12:
+						return IRIX;		
+					case 13:
+						return LINUX;
+					case 14:
+						return LIVEAREA;
+					case 15:
+						return MAC_OS;
+					case 16:
+						return OPEN_BSD;
+					case 17:
+						return RIM_OS;
+					case 18:
+						return SUNOS;
+					case 19:
+						return SYMBIAN;
+					case 20:
+						return WEBOS;
+					case 21:
+						return WINDOWS;
+					case 22:
+						return WINDOWSPHONE;
+					default:
+						return null;
 				}
 			}
 			
 			public static OS getOSFromUserAgent(String pUserAgent) {
 				OS xOS = null;
-				if (pUserAgent.contains("iPhone")) {
-					xOS = OS.IOS;
-				} else if (pUserAgent.contains("Mac")) {
-					xOS = OS.MACOS;
-				} else if (pUserAgent.contains("Win")) {
-					xOS = OS.WINDOWS;
-				} else if (pUserAgent.contains("Android")) {
-					xOS = OS.ANDROID;
-				} else if (pUserAgent.contains("X11")) {
-					xOS = OS.LINUX;
-				} else if (pUserAgent.contains("Linux")) {
-					xOS = OS.LINUX;
+				String xUserAgent = pUserAgent.toLowerCase();
+				if (DBSString.contains(xUserAgent, DBSString.toArrayList(BADA.wUserAgent, ","))) {
+					return BADA;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(BEOS.wUserAgent, ","))) {
+					return BEOS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(BLACKBERRY_OS.wUserAgent, ","))) {
+					return BLACKBERRY_OS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(CHROME_OS.wUserAgent, ","))) {
+					return CHROME_OS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(DARWIN.wUserAgent, ","))) {
+					return DARWIN;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(FIRE_OS.wUserAgent, ","))) {
+					return FIRE_OS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(FREE_BSD.wUserAgent, ","))) {
+					return FREE_BSD;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(HAIKU.wUserAgent, ","))) {
+					return HAIKU;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(HP_WEBOS.wUserAgent, ","))) {
+					return HP_WEBOS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IRIX.wUserAgent, ","))) {
+					return IRIX;		
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(LIVEAREA.wUserAgent, ","))) {
+					return LIVEAREA;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(OPEN_BSD.wUserAgent, ","))) {
+					return OPEN_BSD;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(RIM_OS.wUserAgent, ","))) {
+					return RIM_OS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(SUNOS.wUserAgent, ","))) {
+					return SUNOS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(SYMBIAN.wUserAgent, ","))) {
+					return SYMBIAN;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(WEBOS.wUserAgent, ","))) {
+					return WEBOS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(WINDOWSPHONE.wUserAgent, ","))) {
+					return WINDOWSPHONE;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(WINDOWS.wUserAgent, ","))) {
+					return WINDOWS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IOS.wUserAgent, ","))) {
+					return IOS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(MAC_OS.wUserAgent, ","))) {
+					return MAC_OS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(ANDROID.wUserAgent, ","))) {
+					return ANDROID;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(LINUX.wUserAgent, ","))) {
+					return LINUX;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(UNIX.wUserAgent, ","))) {
+					return UNIX;
 				}
 				return xOS;
 			}
@@ -440,38 +528,36 @@ public final class DBSSDK {
 		}
 
 		public enum DEVICE {
+			UNKNOW 				("Unknow", 				"", 										false),
+			MACINTOSH 			("Mac", 				"macintosh", 								false),
+			TV_LG				("TV LG", 				"webos", 									false),
+			TV					("TV", 					"smart-tv, smarttv, googletv, philipstv", 	false),
+			ZUNE 				("Zune", 				"zune", 									true),
+			IE_MOBILE 			("IEMobile", 			"iemobile", 								true),
+			TABLET 				("Tablet", 				"tablet", 									true),
+			KINDLE 				("Amazon Kindle", 		"kindle, kf", 								true),
+			PLAYBOOK 			("Playbook", 			"playbook", 								true),
+			GOOGLE_NEXUS 		("Google Nexus", 		"nexus", 									true),
+			MOTOROLA_XOOM 		("Motorola Xoom", 		"xoom", 									true),
+			IPOD 				("iPod", 				"ipod", 									true),
+			IPAD 				("iPad", 				"ipad", 									true),
+			IPHONE 				("iPhone", 				"iphone", 									true),
+			BLACKBERRY 			("BlackBerry", 			"blackberry, bb", 							true),
+			WINDOWS_PHONE 		("Windows Phone", 		"windows phone", 							true),
+			WINDOWS 			("Windows", 			"windows", 									false),
+			GENREIC_ANDROID 	("Generic Android", 	"android", 									true);
 			
-			UNKNOW 				("Unknow", 			""),
-			MACINTOSH 			("Mac", 				"Macintosh"),
-			PHONE 				("Phone", 			"Phone"),
-			DROID 				("Droid", 			"DROID"),
-			ANDROID 				("Android", 			"Android"),
-			WEBOS 				("webOS", 			"webOS"),
-			IPHONE 				("iPhone", 			"iPhone"),
-			IPOD 				("iPod", 			"iPod"),
-			IPAD 				("iPad", 			"iPad"),
-			BLACKBERRY 			("BlackBerry", 		"BlackBerry"),
-			WINDOWS_PHONE 		("Windows Phone", 	"Windows Phone"),
-			ZUNE_WP7 			("ZuneWP7", 			"ZuneWP7"),
-			IE_MOBILE 			("IEMobile", 		"IEMobile"),
-			TABLET 				("Tablet", 			"Tablet"),
-			KINDLE 				("Amazon Kindle", 	"Kindle"),
-			PLAYBOOK 			("Playbook", 		"Playbook"),
-			GOOGLE_NEXUS 		("Google Nexus", 	"Nexus"),
-			MOTOROLA_XOOM 		("Motorola Xoom", 	"Xoom"),
-			SAMSUNG_NOTE 		("Samsung Note", 	"SAMSUNG-SGH-I717"),
-			SAMSUNG_NOTE_2 		("Samsung Note 2", 	"GT-N7100"),
-			SAMSUNG_NOTE_3 		("Samsung Note 3", 	"SM-N900T"),
-			SAMSUNG_TAB_4 		("Samsung Tab 4", 	"SM-T330NU");
+			private String 		wName;
+			private String 		wUserAgent;
+			private boolean 	wMobile;
+			public String 	getName() {return wName;}
+			public String 	getUserAgent() {return wUserAgent;}
+			public boolean 	isMobile() {return wMobile;}
 			
-			private String 	wName;
-			private String 	wUserAgent;
-			public String getName() {return wName;}
-			public String getUserAgent() {return wUserAgent;}
-			
-			private DEVICE(String pName, String pUserAgent) {
+			private DEVICE(String pName, String pUserAgent, boolean pMobile) {
 				wName = pName;
 				wUserAgent = pUserAgent;
+				wMobile = pMobile;
 			}
 			
 			public static DEVICE get(Integer pCode) {
@@ -484,45 +570,37 @@ public final class DBSSDK {
 				case 1:
 					return MACINTOSH;
 				case 2:
-					return PHONE;
+					return TV_LG;
 				case 3:
-					return DROID;
+					return TV;
 				case 4:
-					return ANDROID;
+					return ZUNE;
 				case 5:
-					return WEBOS;
-				case 6:
-					return IPHONE;
-				case 7:
-					return IPOD;
-				case 8:
-					return IPAD;
-				case 9:
-					return BLACKBERRY;
-				case 10:
-					return WINDOWS_PHONE;
-				case 11:
-					return ZUNE_WP7;
-				case 12:
 					return IE_MOBILE;
-				case 13:
+				case 6:
 					return TABLET;
-				case 14:
+				case 7:
 					return KINDLE;
-				case 15:
+				case 8:
 					return PLAYBOOK;
-				case 16:
+				case 9:
 					return GOOGLE_NEXUS;
-				case 17:
+				case 10:
 					return MOTOROLA_XOOM;
-				case 18:
-					return SAMSUNG_NOTE;
-				case 19:
-					return SAMSUNG_NOTE_2;
-				case 20:
-					return SAMSUNG_NOTE_3;
-				case 21:
-					return SAMSUNG_TAB_4;
+				case 11:
+					return IPOD;
+				case 12:
+					return IPAD;
+				case 13:
+					return IPHONE;
+				case 14:
+					return BLACKBERRY;
+				case 15:
+					return WINDOWS_PHONE;
+				case 16:
+					return WINDOWS;
+				case 17:
+					return GENREIC_ANDROID;
 				default:
 					return UNKNOW;
 				}
@@ -533,50 +611,41 @@ public final class DBSSDK {
 			}
 			
 			public static DEVICE getDeviceFromUserAgent(String pUserAgent) {
-				if (pUserAgent.contains("Macintosh")) {
+				String xUserAgent = pUserAgent.toLowerCase();
+				if (DBSString.contains(xUserAgent, DBSString.toArrayList(MACINTOSH.getUserAgent(), ","))) {
 					return MACINTOSH;
-				} else if (pUserAgent.contains("Phone")) {
-					return PHONE;
-				} else if (pUserAgent.contains("DROID")) {
-					return DROID;
-				} else if (pUserAgent.contains("Android")) {
-					return ANDROID;
-				} else if (pUserAgent.contains("webOS")) {
-					return WEBOS;
-				} else if (pUserAgent.contains("iPhone")) {
-					return IPHONE;
-				} else if (pUserAgent.contains("iPod")) {
-					return IPOD;
-				} else if (pUserAgent.contains("BlackBerry")) {
-					return BLACKBERRY;
-				} else if (pUserAgent.contains("Windows Phone")) {
-					return WINDOWS_PHONE;
-				} else if (pUserAgent.contains("ZuneWP7")) {
-					return ZUNE_WP7;
-				} else if (pUserAgent.contains("IEMobile")){ 
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(TV_LG.getUserAgent(), ","))) {
+					return TV_LG;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(TV.getUserAgent(), ","))) {
+					return TV;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(ZUNE.getUserAgent(), ","))) {
+					return ZUNE;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IE_MOBILE.getUserAgent(), ","))) {
 					return IE_MOBILE;
-					
-				//touch/tablet detection
-				} else if (pUserAgent.contains("Tablet")) {
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(TABLET.getUserAgent(), ","))) {
 					return TABLET;
-				} else if (pUserAgent.contains("iPad")) {
-					return IPAD;
-				} else if (pUserAgent.contains("Kindle")) {
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(KINDLE.getUserAgent(), ","))) {
 					return KINDLE;
-				} else if (pUserAgent.contains("Playbook")) {
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(PLAYBOOK.getUserAgent(), ","))) {
 					return PLAYBOOK;
-				} else if (pUserAgent.contains("Nexus")) {
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(GOOGLE_NEXUS.getUserAgent(), ","))) {
 					return GOOGLE_NEXUS;
-				} else if (pUserAgent.contains("Xoom")) {
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(MOTOROLA_XOOM.getUserAgent(), ","))) {
 					return MOTOROLA_XOOM;
-				} else if (pUserAgent.contains("SM-N900T")) { //Samsung Note 3
-					return SAMSUNG_NOTE_3;
-				} else if (pUserAgent.contains("GT-N7100")) { //Samsung Note 2
-					return SAMSUNG_NOTE_2;
-				} else if (pUserAgent.contains("SAMSUNG-SGH-I717")) { //Samsung Note
-					return SAMSUNG_NOTE;
-				} else if (pUserAgent.contains("SM-T330NU")){ //Samsung Tab 4
-					return SAMSUNG_TAB_4;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IPOD.getUserAgent(), ","))) {
+					return IPOD;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IPAD.getUserAgent(), ","))) {
+					return IPAD;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(IPHONE.getUserAgent(), ","))) {
+					return IPHONE;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(BLACKBERRY.getUserAgent(), ","))) {
+					return BLACKBERRY;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(WINDOWS_PHONE.getUserAgent(), ","))) {
+					return WINDOWS_PHONE;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(WINDOWS.getUserAgent(), ","))) {
+					return WINDOWS;
+				} else if (DBSString.contains(xUserAgent, DBSString.toArrayList(GENREIC_ANDROID.getUserAgent(), ","))) {
+					return GENREIC_ANDROID;
 				}
 				return UNKNOW;
 			}

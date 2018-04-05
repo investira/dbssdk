@@ -1081,5 +1081,21 @@ public class DBSString {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Verifica se algum dos itens do array está contido na String Base
+	 * @param pTextoBase
+	 * @param pArrayTextoPesquisa
+	 * @return
+	 */
+	public static boolean contains(String pTextoBase, ArrayList<String> pArrayTextoPesquisa) {
+		if (DBSObject.isNull(pTextoBase)) {return false;}
+		for (String xTextoPesquisa : pArrayTextoPesquisa) {
+			if (pTextoBase.contains(xTextoPesquisa)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
