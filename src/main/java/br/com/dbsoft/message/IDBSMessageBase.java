@@ -78,12 +78,12 @@ public interface IDBSMessageBase extends Serializable {
 	    String 	wInputStyleClass;
 	    
 	    MESSAGE_TYPE (String pCode, String pName, String pIconClass, Boolean pQuestion, Integer pSeverityLevel){
-	    	wCode = pCode;
-	    	wName = pName;
-	    	wIconClass = pIconClass;
-	    	wSeverityLevel = pSeverityLevel; 
-	    	wQuestion = pQuestion;
-	    	wInputStyleClass = " -msg_" + pCode + " ";
+		    	wCode = pCode;
+		    	wName = pName;
+		    	wIconClass = pIconClass;
+		    	wSeverityLevel = pSeverityLevel; 
+		    	wQuestion = pQuestion;
+		    	wInputStyleClass = " -msg_" + pCode + " ";
 			if (wSeverityLevel < 20){
 				wSeverity = FacesMessage.SEVERITY_INFO;
 			}else if (wSeverityLevel < 30){
@@ -94,49 +94,49 @@ public interface IDBSMessageBase extends Serializable {
 	    }
 	
 	    public String getCode(){
-	    	return wCode;
+	    		return wCode;
 	    }
 	    
 	    public String getInputStyleClass(){
-	    	return wInputStyleClass;
+	    		return wInputStyleClass;
 	    }
 	    
 	    public String getName(){
-	    	return wName;
+	    		return wName;
 	    }
 	    
 	    public String getIconClass(){
-	    	return wIconClass;
+	    		return wIconClass;
 	    }
 	
 	    /**
 	     * @return Se mensagem é SEVERITY_WARN.
 	     */
 	    public Boolean getIsInfo(){
-	    	if (wSeverity == FacesMessage.SEVERITY_INFO){
-	    		return true;
-	    	}
-	    	return false;
+		    	if (wSeverity == FacesMessage.SEVERITY_INFO){
+		    		return true;
+		    	}
+		    	return false;
 	    }
 	
 	    /**
 	     * @return Se mensagem é SEVERITY_INFO. 
 	     */
 	    public Boolean getIsWarnings(){
-	    	if (wSeverity == FacesMessage.SEVERITY_WARN){
-	    		return true;
-	    	}
-	    	return false;
+		    	if (wSeverity == FacesMessage.SEVERITY_WARN){
+		    		return true;
+		    	}
+		    	return false;
 	    }
 	    
 	    /**
 	     * @return Se mensagem é SEVERITY_ERROR. 
 	     */
 	    public Boolean getIsError(){
-	    	if (wSeverity == FacesMessage.SEVERITY_ERROR){
-	    		return true;
-	    	}
-	    	return false;
+		    	if (wSeverity == FacesMessage.SEVERITY_ERROR){
+		    		return true;
+		    	}
+		    	return false;
 	    }
 	
 	    
@@ -144,14 +144,14 @@ public interface IDBSMessageBase extends Serializable {
 	     * @return Se mensagem querer pergunta.
 	     */
 	    public Boolean getIsQuestion(){
-	    	return wQuestion;
+	    		return wQuestion;
 	    }
 	
 	    /**
 	     * @return FacesMassage.Severity
 	     */
 	    public Severity getSeverity(){
-	    	return wSeverity;
+	    		return wSeverity;
 	    }
 	    
 	    /**
@@ -163,18 +163,18 @@ public interface IDBSMessageBase extends Serializable {
 	     * @return
 	     */
 	    public Integer getSeverityLevel(){
-	    	return wSeverityLevel;
+	    		return wSeverityLevel;
 	    }
 	
 	    public static MESSAGE_TYPE get(String pType){
 			if (pType == null){return null;}
 			pType = pType.trim().toLowerCase();
-	    	for (MESSAGE_TYPE xCT:MESSAGE_TYPE.values()) {
-	    		if (xCT.getCode().equals(pType)){
-	    			return xCT;
-	    		}
-	    	}
-	    	return null;
+		    	for (MESSAGE_TYPE xCT:MESSAGE_TYPE.values()) {
+		    		if (xCT.getCode().equals(pType)){
+		    			return xCT;
+		    		}
+		    	}
+		    	return null;
 		}
 	
 	    public static MESSAGE_TYPE get(Severity pSeverity){
@@ -187,7 +187,7 @@ public interface IDBSMessageBase extends Serializable {
 			}else if (pSeverity == FacesMessage.SEVERITY_WARN){
 				return MESSAGE_TYPE.IMPORTANT;
 			}
-	    	return null;
+	    		return null;
 		}
 	}
 	
