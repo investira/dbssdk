@@ -607,10 +607,12 @@ public final class DBSSDK {
 			}
 			
 			public static String getDeviceNameFromUserAgent(String pUserAgent) {
+				if (DBSObject.isEmpty(pUserAgent)) {return "";}
 				return getDeviceFromUserAgent(pUserAgent).wName;
 			}
 			
 			public static DEVICE getDeviceFromUserAgent(String pUserAgent) {
+				if (DBSObject.isEmpty(pUserAgent)) {return null;}
 				String xUserAgent = pUserAgent.toLowerCase();
 				if (DBSString.contains(xUserAgent, DBSString.toArrayList(MACINTOSH.getUserAgent(), ","))) {
 					return MACINTOSH;
