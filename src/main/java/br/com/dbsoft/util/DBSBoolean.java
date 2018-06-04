@@ -28,7 +28,8 @@ public  class DBSBoolean {
 			 || xValue.equals("TRUE")
 			 || xValue.equals("SIM")
 			 || xValue.equals("YES")
-			 || xValue.equals("Y")){
+			 || xValue.equals("Y")
+			 || xValue.equals("C")){ //COMPRA ou CREDITO
 				return true;
 			}
 		}
