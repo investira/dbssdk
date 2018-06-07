@@ -19,7 +19,7 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 * @return
 	 */
 	public List<IDBSMessage> getListMessage();
-	public List<DBSMessage> getListMessage2();
+	public List<IDBSMessageBase> getListMessageBase();
 	
 	public void add(IDBSMessageBase pMessageBase);
 	

@@ -60,10 +60,15 @@ public class DBSMessages implements IDBSMessages{
 	}
 	
 	@Override
-	public List<DBSMessage> getListMessage2() {
-		List<DBSMessage> xList = new ArrayList<DBSMessage>();
+	public List<IDBSMessageBase> getListMessageBase() {
+		List<IDBSMessageBase> xList = new ArrayList<IDBSMessageBase>();
 		for (IDBSMessage xMsg : wMessages.values()) {
-			xList.add((DBSMessage)xMsg);
+			IDBSMessageBase xMsgBase = new DBSMessageBase();
+			xMsgBase.setMessageCode(xMsg.getMessageCode());
+			xMsgBase.setMessageText(xMsg.getMessageText());
+			xMsgBase.setMessageTime(xMsg.getMessageTime());
+			xMsgBase.setMessageType(xMsg.getMessageType());
+			xList.add(xMsgBase);
 		}
 		return xList;
 	}
