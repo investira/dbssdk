@@ -41,6 +41,8 @@ public class DBSEndpointReturnList<C> {
 	}
 
 	public DBSEndpointReturnList() {
+		this.itens = new ArrayList<C>();
+		this.messages = new ArrayList<IDBSMessageBase>();
 	}
 
 	public DBSEndpointReturnList(List<C> pLista) {
