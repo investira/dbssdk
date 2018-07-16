@@ -3381,7 +3381,14 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	
 	private final static <T,T2> boolean pvDataModelFieldsValueIsEqual(Class<?> pSourceDataModelClass, T pSourceDataModel, T2 pTargetDataModel){
 		boolean 					xIguais = true;
+		List<Field> xDeclaredFields = new ArrayList<Field>();
 		for (Field xField:pSourceDataModelClass.getDeclaredFields()){
+			xDeclaredFields.add(xField);
+		}
+		for (Field xField:pSourceDataModelClass.getSuperclass().getDeclaredFields()){
+			xDeclaredFields.add(xField);
+		}
+		for (Field xField:xDeclaredFields){
 			// Verifica se o campo é um datamodel da dbsoft (Anotação @DBSTableModel)
 			// Se for irá procurar dentro dos fields do datamodel
 			Annotation xAnnotationTmp = xField.getType().getAnnotation(DBSTableModel.class);
