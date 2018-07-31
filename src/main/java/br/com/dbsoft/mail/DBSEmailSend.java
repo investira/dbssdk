@@ -1,5 +1,6 @@
 package br.com.dbsoft.mail;
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -24,6 +25,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
+
+import com.sun.mail.util.MailSSLSocketFactory;
 
 import br.com.dbsoft.core.DBSSDK.CONTENT_TYPE;
 import br.com.dbsoft.core.DBSSDK.ENCODE;
@@ -159,10 +162,19 @@ public class DBSEmailSend {
 				xProps.put("mail." + wProtocolString + ".ssl.enable", "true");
 				xProps.put("mail." + wProtocolString + ".ssl.required", "true");
 			} else if (wProtocol == PROTOCOL.STARTTLS){
-				xProps.put("mail.smtp.starttls.enable", "true");    
-		        xProps.put("mail.smtp.socketFactory.port", wHostPort);    
-		        xProps.put("mail.smtp.socketFactory.fallback", "false");    
-		        xProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+				MailSSLSocketFactory xSocketFactory;
+				try {
+					xSocketFactory = new MailSSLSocketFactory();
+					xSocketFactory.setTrustAllHosts(true);
+					xProps.put("mail.smtp.ssl.trust", "mail.investira.com.br");
+					xProps.put("mail.smtp.starttls.trust", "mail.investira.com.br");
+					xProps.put("mail.smtp.starttls.enable", "true");    
+					xProps.put("mail.smtp.socketFactory.port", wHostPort);    
+					xProps.put("mail.smtp.socketFactory.fallback", "false");    
+					xProps.put("mail.smtp.socketFactory.class", xSocketFactory);
+				} catch (GeneralSecurityException e) {
+					wLogger.error(e);
+				}
 			} else if (wProtocol == PROTOCOL.TLS){
 				xProps.put("mail.smtp.starttls.enable", "true");
 			}
