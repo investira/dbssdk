@@ -369,6 +369,7 @@ public class DBSDate{
 		return toXMLGregorianCalendar(toDate(pDate));
 	}
 	public static XMLGregorianCalendar toXMLGregorianCalendar(Date pDate){
+		if (DBSObject.isNull(pDate)) {return null;}
         GregorianCalendar gCalendar = new GregorianCalendar();
         gCalendar.setTime(pDate);
         XMLGregorianCalendar xmlCalendar = null;
