@@ -109,7 +109,7 @@ public abstract class DBSHttpMethod {
 			xResponse = DBSHttp.getStringFromInputStream(pMethod.getResponseBodyAsStream());
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			wLogger.error(e.getLocalizedMessage());
 			throw new CommunicationException("Server is offline", e);
 		}
 		
