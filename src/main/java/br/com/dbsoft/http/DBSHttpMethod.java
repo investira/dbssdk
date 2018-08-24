@@ -107,14 +107,13 @@ public abstract class DBSHttpMethod {
 		try {
 			xClient.executeMethod(pMethod);
 			xResponse = DBSHttp.getStringFromInputStream(pMethod.getResponseBodyAsStream());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			wLogger.error(e.getLocalizedMessage());
-			throw new CommunicationException("Server is offline", e);
+			throw new CommunicationException("Servidor offline:", e);
 		}
 		
 		int xStatusCode = pMethod.getStatusCode();
-		if (xStatusCode == 401) {
+		if (xStatusCode == 401 || xStatusCode == 400) {
 			throw new BadCredentialsException("Token inválido: " + xResponse);
 		}
 
