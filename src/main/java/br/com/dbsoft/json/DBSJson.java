@@ -25,7 +25,7 @@ public class DBSJson {
 	 * @throws DBSIOException
 	 */
 	public static <T> String toJson(T pObject){
-		if (DBSObject.isNull(pObject)) {return null;}
+		if (DBSObject.isNull(pObject)) {return "";}
 		ObjectMapper xJSON = pvCreateJson();
 		xJSON.setPropertyNamingStrategy(null);
 		try {
