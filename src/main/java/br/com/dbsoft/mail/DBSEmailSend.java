@@ -166,8 +166,8 @@ public class DBSEmailSend {
 				try {
 					xSocketFactory = new MailSSLSocketFactory();
 					xSocketFactory.setTrustAllHosts(true);
-					xProps.put("mail.smtp.ssl.trust", "mail.investira.com.br");
-					xProps.put("mail.smtp.starttls.trust", "mail.investira.com.br");
+					xProps.put("mail.smtp.ssl.trust", "mail.investira.com.br smtp.office365.com");
+					xProps.put("mail.smtp.starttls.trust", "mail.investira.com.br smtp.office365.com");
 					xProps.put("mail.smtp.starttls.enable", "true");    
 					xProps.put("mail.smtp.socketFactory.port", wHostPort);    
 					xProps.put("mail.smtp.socketFactory.fallback", "false");    
