@@ -124,6 +124,19 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		}
 	}
 	
+	public final <T, P> T doPost(String pURL, Map<String, String> pExtraHeaders, Map<String, String> pData, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
+		try {
+			PostMethod xMethod = pvCreatePostMethod(pURL, pData, pExtraHeaders);
+			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
+		} catch(BadCredentialsException e) {
+			if (forceRenewToken()) {
+				PostMethod xMethod = pvCreatePostMethod(pURL, pData, pExtraHeaders);
+				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
+			}
+			throw e;
+		}
+	}
+	
 	/**
 	 * Executa chamada POST ao metódo definido na URL e retorna o resultado como XML
 	 * @param pURL
@@ -209,6 +222,20 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
 				PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
+			}
+			throw e;
+		}
+	}
+	
+	public final <T, P> T doPost(String pURL, Map<String, String> pExtraHeaders, Object pObject, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
+		try {
+			PostMethod xMethod = pvCreatePostMethod(pURL, pObject, pExtraHeaders);
+			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
+		} 
+		catch(BadCredentialsException e) {
+			if (forceRenewToken()) {
+				PostMethod xMethod = pvCreatePostMethod(pURL, pObject, pExtraHeaders);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
