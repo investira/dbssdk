@@ -462,6 +462,10 @@ public class DBSDate{
 		int xAno = DBSNumber.toInteger(DBSString.getSubString(pDate, 5, 2));
 		return toDate(01, xMes, xAno);
 	}
+	
+	public static Date toDateCustom(String pData, String pFormat) {
+		return pvToDateLong(pData, pFormat);
+	}
 
 	/**
 	 * Retorna uma Data do tipo Timestamp, a partir de uma data do tipo Date.
