@@ -430,6 +430,9 @@ public class DBSDate{
 	 * @return Date
 	 */
 	public static Date toDateYYYYMMDD(String pValue) {
+		if (DBSObject.isNull(pValue)) {
+			return null;
+		}
 		Date xData = null;
 		String xAno = DBSString.getSubString(pValue, 1, 4);
 		String xMes = DBSString.getSubString(pValue, 5, 2);
