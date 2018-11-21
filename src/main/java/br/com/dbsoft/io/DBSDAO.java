@@ -521,7 +521,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			return wQueryColumns.<A>getValueOriginal(xColumnName);
 		}
 		if (getShowColumnNameNotFoundMessage()){
-			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+			wLogger.debug("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 		return null;
 	}
@@ -564,7 +564,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			return wQueryColumns.<A>getValue(xColumnName);
 		}
 		if (getShowColumnNameNotFoundMessage()){
-			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+			wLogger.debug("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 		return null;
 	}
@@ -606,7 +606,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 		}
 		if (!xAchou
 		 && getShowColumnNameNotFoundMessage()){
-			wLogger.error("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+			wLogger.debug("DBSDAO.setValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 	}
 	
@@ -627,7 +627,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			return wQueryColumns.getColumn(pColumnName).getMessage();
 		}
 		if (getShowColumnNameNotFoundMessage()){
-			wLogger.error("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
+			wLogger.debug("DBSDAO.getValue:Coluna não encontrada.[" + pColumnName + "][" + wQuerySQL + "]");
 		}
 		return null;
 	}
