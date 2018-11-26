@@ -214,7 +214,7 @@ public class DBSEmailSend {
 			xMultipart.addBodyPart(xMessageBodyPart);
 			
 			//Anexos---------------------
-			for (String xFilename:pMessage.getAttachments()){
+			for (String xFilename: pMessage.getAttachments()){
 				xMessageBodyPart = new MimeBodyPart();
 				DataSource source = new FileDataSource(xFilename);
 				xMessageBodyPart.setDataHandler(new DataHandler(source));

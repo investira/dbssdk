@@ -2,6 +2,8 @@ package br.com.dbsoft.mail;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.dbsoft.util.DBSObject;
+
 
 public class DBSEmailMessage {
 	
@@ -45,6 +47,14 @@ public class DBSEmailMessage {
 	public void setText(String pText) {wText = pText;}
 	
 	public List<String> getAttachments() {return wAttachments;}
+	public void setAttachments(List<String> pAttachments) {wAttachments = pAttachments;}
+	
+	public void addAttachment(String pFilename) {
+		if (DBSObject.isNull(wAttachments)) {
+			wAttachments = new ArrayList<String>();
+		}
+		wAttachments.add(pFilename);
+	}
 	
 	/**
 	 * Se conteúdo da mensagem é HTML.<br/>
