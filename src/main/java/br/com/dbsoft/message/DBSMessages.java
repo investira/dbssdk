@@ -72,6 +72,15 @@ public class DBSMessages implements IDBSMessages{
 		}
 		return xList;
 	}
+	
+	@Override
+	public List<String> getListMessageText() {
+		List<String> xList = new ArrayList<String>();
+		for (IDBSMessage xMsg : wMessages.values()) {
+			xList.add(xMsg.getMessageText());
+		}
+		return xList;
+	}
 
 	/* (non-Javadoc)
 	 * @see br.com.dbsoft.message.IDBSMessages#getMessages()

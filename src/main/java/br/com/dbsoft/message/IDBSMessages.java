@@ -18,6 +18,7 @@ public interface IDBSMessages extends Serializable, IDBSMessageListener{
 	 * Qualquer inclusão ou exclusão em itens desta lista, em nada afetará o controle de mensagens original.
 	 * @return
 	 */
+	public List<String> getListMessageText();
 	public List<IDBSMessage> getListMessage();
 	public List<IDBSMessageBase> getListMessageBase();
 	
