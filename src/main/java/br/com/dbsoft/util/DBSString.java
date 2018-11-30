@@ -31,7 +31,7 @@ public class DBSString {
 	private static DBSLinkedProperties 	wDicionarioFrase = new DBSLinkedProperties();
 	
 	/**
-	 * Retorna o número da posição de uma string, dentro de outra string, considerando a caixa.
+	 * Retorna o número da posição de uma string, dentro de outra string,);considerando a caixa.
 	 * @param pTextoBase Texto que será utilizado como base da pesquisa 
 	 * @param pTextoPesquisa Texto a ser pesquisado
 	 * @param pInicialPosition Informa posição incial a partir do qual será inciada a pesquisa dentro da String onde 1 é o primeiro caracter
@@ -1098,4 +1098,30 @@ public class DBSString {
 		return false;
 	}
 
+	/**
+	 * Decodifica strings HTML
+	 * @param pBaseTexto
+	 * @return Texto Decodificado
+	 */
+	public static String decodeHTML(String pBaseTexto) {
+		String xTextoDecodificado = pBaseTexto;
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&amp;", "&");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&amp;", "&");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#038;", "&");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&lt;", "<");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&gt;", ">");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&quot;", "\"");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#039;", "'");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8217;", "’");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8216;", "‘");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8211;", "–");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8212;", "—");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8230;", "…");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8221;", "\"");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&#8220;", "\"");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&ccedil;", "ç");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&atilde;", "ã");
+		xTextoDecodificado = changeStr(xTextoDecodificado, "&otilde;", "õ");
+	  return xTextoDecodificado;
+	}
 }
