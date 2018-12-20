@@ -330,6 +330,8 @@ public class DBSDate{
 			return toDate((String) pData);
 		} else if (pData instanceof Time) {
 			return new Date(((Time) pData).getTime());
+		} else if (pData instanceof DateTime) {
+			return toDate(((DateTime) pData));
 		} else {
 			return (Date) pData;
 		}

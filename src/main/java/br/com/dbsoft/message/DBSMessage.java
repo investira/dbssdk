@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.joda.time.DateTime;
 
 import br.com.dbsoft.error.DBSIOException;
+import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSObject;
 
@@ -205,6 +206,7 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 		try {
 			IDBSMessage xM = this.getClass().newInstance(); 
 			xM.copyFrom(this);
+			xM.setMessageTime(DBSDate.getNowDateTime());
 			return xM;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();

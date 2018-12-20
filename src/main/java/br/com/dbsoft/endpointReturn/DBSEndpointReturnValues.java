@@ -1,4 +1,4 @@
-package br.com.dbsoft.service;
+package br.com.dbsoft.endpointReturn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import br.com.dbsoft.message.DBSMessageBase;
@@ -19,20 +20,21 @@ import br.com.dbsoft.message.IDBSMessageBase;
  * @param <C>
  */
 @XmlRootElement(name = "collection")
-public class DBSEndpointReturnList<C> {
+public class DBSEndpointReturnValues<C> {
 
-	private List<C> itens;
+	@JsonProperty("values")
+	private List<C> wValues;
 	
 	@JsonDeserialize(contentAs=DBSMessageBase.class)
 	private List<IDBSMessageBase> messages;
 
 	@XmlAnyElement(lax = true)
-	public List<C> getItens() {
-		return itens;
+	public List<C> getValues() {
+		return wValues;
 	}
 
-	public void setItens(List<C> pItens) {
-		itens = pItens;
+	public void setValues(List<C> pValues) {
+		wValues = pValues;
 	}
 
 	@XmlAnyElement(lax = true)
@@ -40,27 +42,27 @@ public class DBSEndpointReturnList<C> {
 		return messages;
 	}
 
-	public DBSEndpointReturnList() {
-		this.itens = new ArrayList<C>();
+	public DBSEndpointReturnValues() {
+		this.wValues = new ArrayList<C>();
 		this.messages = new ArrayList<IDBSMessageBase>();
 	}
 
-	public DBSEndpointReturnList(List<C> pLista) {
-		this.itens = pLista;
+	public DBSEndpointReturnValues(List<C> pValues) {
+		this.wValues = pValues;
 	}
 
-	public DBSEndpointReturnList(List<C> pLista, List<IDBSMessageBase> pMessages) {
-		this.itens = pLista;
+	public DBSEndpointReturnValues(List<C> pValues, List<IDBSMessageBase> pMessages) {
+		this.wValues = pValues;
 		this.messages = pMessages;
 	}
 
-	public static <I, C extends I> DBSEndpointReturnList<C> getEndpointReturn(List<I> pListInterface, Class<C> pConcretClass, List<IDBSMessageBase> pMessages) {
+	public static <I, C extends I> DBSEndpointReturnValues<C> getEndpointReturn(List<I> pValuesInterface, Class<C> pConcretClass, List<IDBSMessageBase> pMessages) {
 		List<C> xClasList = new ArrayList<>();
 
-		for (I xInterface : pListInterface) {
+		for (I xInterface : pValuesInterface) {
 			xClasList.add(pConcretClass.cast(xInterface));
 		}
 
-		return new DBSEndpointReturnList<C>(xClasList, pMessages);
+		return new DBSEndpointReturnValues<C>(xClasList, pMessages);
 	}
 }

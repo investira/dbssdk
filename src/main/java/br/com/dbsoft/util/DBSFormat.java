@@ -177,6 +177,21 @@ public class DBSFormat implements Serializable {
 	 * @param pData Data a ser formatado
 	 * @return String com a data já formatada
 	 */
+	public static String getFormattedDateTime(Object pDate){
+		if (pDate == null){
+			return "";
+		}else{
+	
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return xFormat.format(pDate);
+		}
+	}
+	
+	/**
+	 * Retorna string contendo a data formatada contendo data, hora e minutos
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
 	public static String getFormattedDateTime(Long pLong){
 		if (pLong == null){
 			return "";
