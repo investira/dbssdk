@@ -50,6 +50,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 			return;
 		}
 		
+		prBeforeFilter(xRequest);
+		
 		//Verifica se a requisição precisa de Autenticação
 		if (prIsAuthenticationRequired(prGetPath(xRequest))
 		&& !prHasPermission(xRequest, xResponse)) {
@@ -90,6 +92,12 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	 * @throws IOException
 	 */
 	protected abstract boolean prHasPermission(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException;
+	
+	/**
+	 * Método chamado no início do Filter (antes de verificar se a requisição é pública ou não).
+	 * @param pRequest
+	 */
+	protected abstract void prBeforeFilter(HttpServletRequest pRequest);
 	
 	/**
 	 * Método chamado ao final do Filter (logo antes do doFilter).
