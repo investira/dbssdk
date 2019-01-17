@@ -228,8 +228,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	 * @throws IOException
 	 */
 	private void pvResponseJSonError(HttpServletResponse pResponse, int pErrorCode, IDBSMessage pMessage) throws IOException {
-		String xJSonError = "{\"timestamp\": %d, \"error_code\": %d, \"error_message\": \"%s\"}";
-		String xMessage = String.format(xJSonError, new Date().getTime(), pMessage.getMessageCode(), pMessage.getMessageText());
+		String xJSonError = "{\"messages\": [{\"messageTime\": %d, \"messageCode\": %d, \"messageType\": \"%s\", \"messageText\": \"%s\"}], \"values\": []}";
+		String xMessage = String.format(xJSonError, new Date().getTime(), pErrorCode, pMessage.getMessageType(), pMessage.getMessageText());
 		pResponse.setStatus(pErrorCode);
 		pResponse.setCharacterEncoding("UTF-8");
 		pResponse.setContentType(MediaType.APPLICATION_JSON);
