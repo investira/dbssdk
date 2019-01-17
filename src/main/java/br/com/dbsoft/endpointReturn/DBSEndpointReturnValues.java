@@ -15,8 +15,6 @@ import br.com.dbsoft.message.IDBSMessageBase;
 /**
  * Wrapper para as respostas dos endpoints do IFeed
  * 
- * @author Renato
- *
  * @param <C>
  */
 @XmlRootElement(name = "collection")
@@ -25,8 +23,9 @@ public class DBSEndpointReturnValues<C> {
 	@JsonProperty("values")
 	private List<C> wValues;
 	
+	@JsonProperty("messages")
 	@JsonDeserialize(contentAs=DBSMessageBase.class)
-	private List<IDBSMessageBase> messages;
+	private List<IDBSMessageBase> wMessages;
 
 	@XmlAnyElement(lax = true)
 	public List<C> getValues() {
@@ -39,12 +38,12 @@ public class DBSEndpointReturnValues<C> {
 
 	@XmlAnyElement(lax = true)
 	public List<IDBSMessageBase> getMessages() {
-		return messages;
+		return wMessages;
 	}
 
 	public DBSEndpointReturnValues() {
 		this.wValues = new ArrayList<C>();
-		this.messages = new ArrayList<IDBSMessageBase>();
+		this.wMessages = new ArrayList<IDBSMessageBase>();
 	}
 
 	public DBSEndpointReturnValues(List<C> pValues) {
@@ -53,7 +52,7 @@ public class DBSEndpointReturnValues<C> {
 
 	public DBSEndpointReturnValues(List<C> pValues, List<IDBSMessageBase> pMessages) {
 		this.wValues = pValues;
-		this.messages = pMessages;
+		this.wMessages = pMessages;
 	}
 
 	public static <I, C extends I> DBSEndpointReturnValues<C> getEndpointReturn(List<I> pValuesInterface, Class<C> pConcretClass, List<IDBSMessageBase> pMessages) {
