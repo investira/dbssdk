@@ -145,8 +145,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	protected void prResponseError(HttpServletRequest pRequest, HttpServletResponse pResponse, String pRedirectPage, Integer pStatusCode, IDBSMessage pMessage) throws IOException {
 		String xRedirectURL = pRequest.getContextPath() + pRedirectPage;;
 		String xAccept = pRequest.getHeader("accept");
-		if (DBSObject.isEqual(xAccept, MediaType.APPLICATION_JSON)
-		 || DBSObject.isEqual(xAccept, "*/*")) {
+		if (xAccept.contains(MediaType.APPLICATION_JSON)
+		 || xAccept.contains("*/*")) {
 			wLogger.debug("--- ACESSO NEGADO ");
 			pvResponseJSonError(pResponse, pStatusCode, pMessage);
 		} else {
