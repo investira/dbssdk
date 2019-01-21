@@ -68,6 +68,7 @@ public class DBSMessages implements IDBSMessages{
 			xMsgBase.setMessageText(xMsg.getMessageText());
 			xMsgBase.setMessageTime(xMsg.getMessageTime());
 			xMsgBase.setMessageType(xMsg.getMessageType());
+			xMsgBase.setStatusCode(xMsg.getStatusCode());
 			xList.add(xMsgBase);
 		}
 		return xList;

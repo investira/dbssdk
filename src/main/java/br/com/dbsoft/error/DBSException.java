@@ -2,14 +2,17 @@ package br.com.dbsoft.error;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.message.IDBSMessageBase;
+
 /**
  * @author ricardo.villar
  *
  */
 public class DBSException extends Exception {
 
-	private Integer wErrorCode = DBSError.CODES.GENERIC;
-	private String wMessage = "";
+	private Integer 		wErrorCode = DBSError.CODES.GENERIC;
+	private String 			wMessage = "";
+	private IDBSMessageBase wDBSMessage;
 
 	private static final long serialVersionUID = -8315170852933944554L;
 	
@@ -58,6 +61,12 @@ public class DBSException extends Exception {
 		wLogger.error(pMessage, this);
 	}
 	
+	public DBSException(IDBSMessageBase pMessage){
+		super(pMessage.getMessageText());
+		wDBSMessage = pMessage;
+		wLogger.error(pMessage, this);
+	}
+	
 	public void setErrorCode(Integer pErrorCode){
 		wErrorCode = pErrorCode;
 		wMessage = DBSError.getErrorMessageSQL(wErrorCode);
@@ -87,5 +96,9 @@ public class DBSException extends Exception {
 //	public void printStackTrace(){
 //		wLogger.error(this);
 //	}
-//	
+	
+	public IDBSMessageBase getDBSMessage() {
+		return wDBSMessage;
+	}
+	
 }

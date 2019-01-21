@@ -28,6 +28,8 @@ public class DBSMessageBase implements IDBSMessageBase {
 	@JsonDeserialize(using = DBSDateTimeDeserializer.class)
 	@JsonProperty("messageTime")
 	private DateTime					wMessageTime;
+	@JsonProperty("statusCode")
+	private Integer						wStatusCode;
 	
 	//Construtores============================
 	@Override
@@ -77,7 +79,15 @@ public class DBSMessageBase implements IDBSMessageBase {
 	@Override
 	public void setMessageTime(DateTime pTime) {wMessageTime = pTime;}
 
-	
+	@Override
+	public Integer getStatusCode() {
+		return wStatusCode;
+	}
+	@Override
+	public void setStatusCode(Integer pStatusCode) {
+		wStatusCode = pStatusCode;
+	}
+
 	@Override
 	public String toString() {
 		return getMessageText();

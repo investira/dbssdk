@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import br.com.dbsoft.error.DBSError.CODES;
+import br.com.dbsoft.message.IDBSMessageBase;
 
 public class DBSIOException extends DBSException {
 
@@ -27,6 +28,10 @@ public class DBSIOException extends DBSException {
 	}
 
 	public DBSIOException(String pMessage){
+		super(pMessage);
+	}
+	
+	public DBSIOException(IDBSMessageBase pMessage){
 		super(pMessage);
 	}
 

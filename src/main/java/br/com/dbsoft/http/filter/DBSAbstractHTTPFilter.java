@@ -59,8 +59,9 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 			return;
 		}
 		
-		//Artifício para dar a oportunidade de utilizar o resquest e o response 
-		prAfterFilter(xRequest);
+		//Pós-Autorização
+		prAfterAuthorize(xRequest, xResponse);
+		
 		// Proceeding
         pChain.doFilter(xRequest, xResponse);
 	}
@@ -99,13 +100,20 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	 */
 	protected abstract void prBeforeFilter(HttpServletRequest pRequest);
 	
+//	/**
+//	 * Método chamado ao final do Filter (depois do doFilter, a execução de fato da requisição).
+//	 * Deve ser usado para recuperar informações da Requisição
+//	 * @param pRequest
+//	 * @param pResponse
+//	 */
+//	protected abstract HttpServletResponse prAfterFilter(HttpServletRequest pRequest, HttpServletResponse pResponse);
+	
 	/**
-	 * Método chamado ao final do Filter (logo antes do doFilter).
-	 * Deve ser usado para recuperar informações da Requisição
+	 * Método chamado após as verificações de autorização
 	 * @param pRequest
 	 * @param pResponse
 	 */
-	protected abstract void prAfterFilter(HttpServletRequest pRequest);
+	protected abstract void prAfterAuthorize(HttpServletRequest pRequest, HttpServletResponse pResponse);
 	
 	//METODOS PROTECTED =============================================================
 	/**

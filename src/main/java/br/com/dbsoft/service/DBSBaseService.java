@@ -2,6 +2,8 @@ package br.com.dbsoft.service;
 
 import java.sql.Connection;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 
 import br.com.dbsoft.message.DBSMessages;
@@ -16,11 +18,19 @@ public abstract class DBSBaseService {
 
 	protected 	Connection 		wConnection;
 	private 	IDBSMessages 	wMessages = new DBSMessages(true);
+	private		int				wStatusCode = HttpServletResponse.SC_OK;
 	
 	public IDBSMessages getMessages(){
 		return wMessages;
 	}
-	
+
+	public int getStatusCode() {
+		return wStatusCode;
+	}
+	public void setStatusCode(int pStatusCode) {
+		wStatusCode = pStatusCode;
+	}
+
 	//METODOS CONSTRUTORES ================================================
 	
 }

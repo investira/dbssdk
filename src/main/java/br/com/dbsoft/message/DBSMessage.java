@@ -35,51 +35,52 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 	public DBSMessage(){}
 
 	public DBSMessage(DBSIOException e){
-		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null, null);
+		pvSetMessage(e.getLocalizedMessage(), 0, MESSAGE_TYPE.ERROR, e.getLocalizedMessage(), null, null, null);
 	}
 	
 	public DBSMessage(IDBSMessageBase pMessageBase){
-		pvSetMessage(pMessageBase.getMessageText(), pMessageBase.getMessageCode(), pMessageBase.getMessageType(), pMessageBase.getMessageText(), null, pMessageBase.getMessageTime());
+		pvSetMessage(pMessageBase.getMessageText(), pMessageBase.getMessageCode(), pMessageBase.getMessageType(), pMessageBase.getMessageText(), null, pMessageBase.getMessageTime(), null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText){
-		pvSetMessage(pMessageText, 0, pMessageType, pMessageText, null,  null);
+		pvSetMessage(pMessageText, 0, pMessageType, pMessageText, null,  null, null);
 	}
 	
 	public DBSMessage(MESSAGE_TYPE pMessageType, Integer pMessageCode, String pMessageText){
-		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null, null);
+		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null, null, null);
+	}
+	
+	public DBSMessage(MESSAGE_TYPE pMessageType, Integer pMessageCode, int pStatusCode, String pMessageText){
+		pvSetMessage(pMessageText, pMessageCode, pMessageType, pMessageText, null, DBSDate.getNowDateTime(), pStatusCode);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, null);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, null, null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, null, pMessageTime);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, null, pMessageTime, null);
 	}
 
 	public DBSMessage(MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime);
+		pvSetMessage(pMessageText,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime, null);
 	}
 
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, null);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, null, null);
 	}
 	
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, null);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, null, null);
 	}
 	
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, DateTime pMessageTime){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, pMessageTime);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, null, pMessageTime, null);
 	}
 
 	public DBSMessage(String pMessageKey, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
-		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime);
+		pvSetMessage(pMessageKey,0, pMessageType, pMessageText, pMessageTooltip, pMessageTime, null);
 	}
-
-
-	
 
 	//=========================================
 	
@@ -233,13 +234,14 @@ public class DBSMessage extends DBSMessageBase implements IDBSMessage{
 	public void setException(Exception pException) {this.exception = pException;}
 
 	//PROTECTED =========================
-	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime){
+	protected void pvSetMessage(String pMessageKey, Integer pMessageCode, MESSAGE_TYPE pMessageType, String pMessageText, String pMessageTooltip, DateTime pMessageTime, Integer pStatusCode){
 		setMessageKey(pMessageKey);
 		setMessageCode(pMessageCode);
 		setMessageType(pMessageType);
 		setMessageText(pMessageText);
 		setMessageTooltip(pMessageTooltip);
 		setMessageTime(pMessageTime);
+		setStatusCode(pStatusCode);
 		messageTextOriginal = pMessageText;
 	}
 

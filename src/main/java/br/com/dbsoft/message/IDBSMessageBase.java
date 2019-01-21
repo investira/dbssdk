@@ -210,4 +210,8 @@ public interface IDBSMessageBase extends Serializable {
 	
 	public DateTime getMessageTime();
 	public void setMessageTime(DateTime pTime);
+	
+	public Integer getStatusCode();
+	public void setStatusCode(Integer pStatusCode);
+	
 }
