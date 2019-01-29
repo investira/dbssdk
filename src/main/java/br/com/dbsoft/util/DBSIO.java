@@ -206,7 +206,7 @@ public class DBSIO{
 				}else{
 					xCn = pDS.getConnection();
 				} 
-				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED); 
 				xCn.setAutoCommit(false);
 				return xCn;
 //			} catch (SQLException e) {
@@ -441,7 +441,7 @@ public class DBSIO{
 		List<String> xPKs = null;
 		try {
 			xDMD = pCn.getMetaData();
-			xRS = xDMD.getPrimaryKeys(null, null, pTableName);
+			xRS = xDMD.getPrimaryKeys(pCn.getCatalog(), pCn.getCatalog(), pTableName);
 			xPKs = new ArrayList<String>();
 			while (xRS.next()) {
 				if (!xPKs.contains(xRS.getString("COLUMN_NAME"))){
