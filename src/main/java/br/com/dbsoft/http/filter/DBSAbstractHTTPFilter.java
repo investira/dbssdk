@@ -172,7 +172,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	private void pvConfigureResponse(HttpServletRequest pRequest, HttpServletResponse pResponse) {
 		pResponse.setHeader("Access-Control-Allow-Origin", "*");
         pResponse.setHeader("Access-Control-Max-Age", "1");
-        pResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Authorization, username, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+        pResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
+        pResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Content-Type, Accept, X-Requested-With, Authorization, username");
         
         /**
          * Verifica se é um recurso que está sendo requisitado. Se não for, desativa o CACHE.
