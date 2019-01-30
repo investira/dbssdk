@@ -12,6 +12,8 @@ import br.com.dbsoft.util.DBSFormat;
 
 public class DBSDateSerializer extends StdSerializer<Date> {
 
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", locale="pt-BR", timezone="Brazil/East")
+	
 	private static final long serialVersionUID = 5223129049367062286L;
 	
 	private static String FORMAT = "dd/MM/yyyy";
@@ -26,7 +28,7 @@ public class DBSDateSerializer extends StdSerializer<Date> {
 
 	@Override
 	public void serialize(Date pValue, JsonGenerator pGen, SerializerProvider pArg2) throws IOException, JsonProcessingException {
-		pGen.writeString(DBSFormat.getFormattedDateCustom(pValue, FORMAT));
+		pGen.writeString(DBSFormat.getFormattedDateCustom(pValue, FORMAT, "GMT"));
 	}
 
 }

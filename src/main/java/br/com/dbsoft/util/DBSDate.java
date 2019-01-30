@@ -1963,7 +1963,7 @@ public class DBSDate{
 		}
 	
 		DateFormat xFormat = DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt", "BR"));
-		xFormat = new SimpleDateFormat(pDateFormat);
+		xFormat = DBSFormat.getSimpleDateFormater(pDateFormat);
 	    Date xDate = new Date(0);
 		xFormat.setLenient(false);
 		try {
