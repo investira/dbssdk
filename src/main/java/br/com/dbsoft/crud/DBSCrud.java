@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.endpointReturn.ISearchControl;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.message.DBSMessage;
@@ -15,6 +16,9 @@ import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSIO;
+import br.com.dbsoft.util.DBSNumber;
+import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 /**
  * Controle de operação que envolve registro de movimentação e atualização de saldo.
@@ -275,7 +279,6 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 	@Override
 	public void afterError(IDBSCrudEvent<DataModelClass> pEvent) throws DBSIOException {
 	}
-
 
 	/**
 	 * Retorna texto da mensagem que está na fila
@@ -599,7 +602,73 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return xE.isOk();
 	}
 
-
+	//METODO SEARCH CONTROL =================================================
+	private Integer wDefaultSize = 20;
+	private Integer wRowsCount = 0;
+	private Integer wPagesCount = 0;
+	
+	public Integer getRowsCount() {
+		return wRowsCount;
+	}
+	public Integer getPagesCount() {
+		return wPagesCount;
+	}
+	
+	protected String prSetSearchControl(String pSQL, String pWhere, ISearchControl pFilterMeta) {
+		String xWhere = pWhere;
+		String xOrder = "";
+		String xLimit = "";
+		
+		//SearchControl - Sort (Ordenação)
+		if (!DBSObject.isEmpty(pFilterMeta.getSort())) {
+			String xOrders = "";
+			xOrder = " ORDER BY ";
+			for (String xSort : DBSString.toArrayList(pFilterMeta.getSort(), ",")) {
+				xSort = DBSString.changeStr(xSort, "+", " ASC");
+				xSort = DBSString.changeStr(xSort, "-", " DESC");
+				xOrders = DBSString.joinString(xOrders, xSort);
+			}
+			xOrder += xOrders;
+		}
+		
+		Integer xSize = wDefaultSize;
+		if (!DBSObject.isNull(pFilterMeta.getSize())) {
+			xSize = pFilterMeta.getSize();
+		}
+		
+		wRowsCount = DBSIO.getSQLRowsCount(wConnection, pSQL+pWhere);
+		Double xPages = DBSNumber.toDouble(DBSNumber.divide(wRowsCount, xSize));
+		if (DBSNumber.toDouble(DBSNumber.subtract(xPages, DBSNumber.inte(xPages))) > 0) {
+			wPagesCount = DBSNumber.toInteger(DBSNumber.add(DBSNumber.inte(xPages)+1));
+		} else {
+			wPagesCount = DBSNumber.toInteger(xPages);
+		}
+		
+		//SearchControl - Page (Numero da Página de Pesquisa)
+		if (!DBSObject.isNull(pFilterMeta.getPage())) {
+			if (pFilterMeta.getPage() < 1) {
+				pFilterMeta.setPage(1);
+			}
+			pFilterMeta.setOffset(DBSNumber.toInteger(DBSNumber.multiply(DBSNumber.subtract(pFilterMeta.getPage(), 1), xSize)));
+		}
+		
+		//SearchControl - Offset (inicio da paginação) e Limit (Limit de resultados)
+		if (!DBSObject.isNull(pFilterMeta.getOffset())
+		 && !DBSObject.isNull(pFilterMeta.getSize())) {
+			//Offset e Limit
+			xLimit = " LIMIT "+ pFilterMeta.getOffset() +", "+ pFilterMeta.getSize();
+		} else if (!DBSObject.isNull(pFilterMeta.getOffset()) && DBSObject.isNull(pFilterMeta.getSize())) {
+			//Somente Offset
+			xLimit = " LIMIT "+ pFilterMeta.getOffset() +", "+ xSize;
+		} else if (DBSObject.isNull(pFilterMeta.getOffset()) && !DBSObject.isNull(pFilterMeta.getSize())) {
+			//Somente Limit
+			xLimit = " LIMIT "+ pFilterMeta.getSize();
+		} else {
+			//Nada
+			xLimit = "";
+		}
+		return xWhere+xOrder+xLimit;
+	}
 
 }
 
