@@ -15,7 +15,7 @@ public class DBSDateTimeSerializer extends StdSerializer<DateTime> {
 
 	private static final long serialVersionUID = -6244613685169545926L;
 
-	private static String FORMAT = "dd/MM/yyyy hh:mm:ss";
+	private static String FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	public DBSDateTimeSerializer() {
 		this(null);

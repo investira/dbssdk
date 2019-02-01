@@ -13,7 +13,7 @@ public class DBSDateWithTimeDeserializer extends StdDeserializer<Date> {
 
 	private static final long serialVersionUID = -5787166120363721661L;
 	
-	private static String FORMAT = "dd/MM/yyyy hh:mm:ss";
+	private static String FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	public DBSDateWithTimeDeserializer() {
 		this(null);
