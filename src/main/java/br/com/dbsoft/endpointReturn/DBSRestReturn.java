@@ -26,13 +26,17 @@ public class DBSRestReturn<C> {
 	@JsonProperty("values")
 	private List<C> wValues;
 	
+	@JsonProperty("messages")
+	@JsonDeserialize(contentAs=DBSMessageBase.class)
+	private List<IDBSMessageBase> wMessages;
+
 	@JsonProperty("searchLinks")
 	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
 	private Map<String, String> wSearchLinks;
 	
-	@JsonProperty("messages")
-	@JsonDeserialize(contentAs=DBSMessageBase.class)
-	private List<IDBSMessageBase> wMessages;
+	@JsonProperty("included")
+	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
+	private Map<String, List<Object>> wIncluded;
 
 	@XmlAnyElement(lax = true)
 	public List<C> getValues() {
@@ -41,14 +45,6 @@ public class DBSRestReturn<C> {
 
 	public void setValues(List<C> pValues) {
 		wValues = pValues;
-	}
-
-	public Map<String, String> getSearchLinks() {
-		return wSearchLinks;
-	}
-
-	public void setSearchLinks(Map<String, String> pSearchLinks) {
-		wSearchLinks = pSearchLinks;
 	}
 
 	@XmlAnyElement(lax = true)
@@ -60,7 +56,24 @@ public class DBSRestReturn<C> {
 		this.wValues = new ArrayList<C>();
 		this.wMessages = new ArrayList<IDBSMessageBase>();
 	}
+	
+	public Map<String, String> getSearchLinks() {
+		return wSearchLinks;
+	}
 
+	public void setSearchLinks(Map<String, String> pSearchLinks) {
+		wSearchLinks = pSearchLinks;
+	}
+	
+	public Map<String, List<Object>> getIncluded() {
+		return wIncluded;
+	}
+
+	public void setIncluded(Map<String, List<Object>> pIncluded) {
+		wIncluded = pIncluded;
+	}
+
+	//CONSTRUTORES ====================================================
 	public DBSRestReturn(List<C> pValues) {
 		this.wValues = pValues;
 	}

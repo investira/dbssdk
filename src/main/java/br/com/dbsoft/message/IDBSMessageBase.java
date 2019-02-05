@@ -8,10 +8,7 @@ import javax.faces.application.FacesMessage.Severity;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=As.PROPERTY, property="@class", defaultImpl=DBSMessageBase.class)
 @JsonSubTypes({
       @JsonSubTypes.Type(value=DBSMessageBase.class)
   })
