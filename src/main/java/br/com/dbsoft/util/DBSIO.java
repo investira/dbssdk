@@ -1615,7 +1615,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 //			PreparedStatement xPS = pCn.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 //			xPS.execute();
 //			xResultSet = xPS.getResultSet();
-			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			xST = pCn.createStatement(); //ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE); //ALBERTO: Comentado pois estada dando erro na nova versão 8.0 do MySQL;
 			xResultSet = xST.executeQuery(pQuerySQL);
 		}catch(SQLException e){
 			throwIOException(pQuerySQL, e, pCn);
