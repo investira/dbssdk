@@ -206,7 +206,7 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	}
 	
 	private boolean pvAllowOrigin(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException {
-		System.out.println("Origin: "+ pRequest.getHeader("Origin") +" ===========================");
+//		System.out.println("Origin: "+ pRequest.getHeader("Origin") +" ===========================");
 		if (DBSObject.isEmpty(prGetAllowOrigin())) {
 			return true;
 		}
