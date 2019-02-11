@@ -1,6 +1,7 @@
 package br.com.dbsoft.http.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,12 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 		
 		//Configura os Headers de resposta
 		pvConfigureResponse(xRequest, xResponse);
+		
+		//Verifica se a Origem da requisição tem permissão 
+		if (!pvAllowOrigin(xRequest, xResponse)) {
+			wLogger.debug("ORIGEM SEM PERMISSÃO");
+			return;
+		}
 		
 		//Se for uma chamada OPTIONS, retorna OK - 200.
 		if (pvIsOptionsRequest(xRequest, xResponse)) {
@@ -117,6 +124,16 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	
 	//METODOS PROTECTED =============================================================
 	/**
+	 * Define quais as origens permitidas a acessar os serviços (tanto públicos como privados).
+	 * Default vazio = Aceita todas as origens.
+	 * @return
+	 */
+	protected List<String> prGetAllowOrigin() {
+		List<String> xOrigins = new ArrayList<String>();
+		return xOrigins;
+	}
+	
+	/**
 	 * Retorna {@code true} caso a requisição exija autenticação.
 	 */
 	private boolean prIsAuthenticationRequired(String pPath) {
@@ -185,6 +202,18 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
   			pResponse.setHeader("Pragma", "no-cache");
   			pResponse.setDateHeader("Expires", 0);
   		}
+	}
+	
+	private boolean pvAllowOrigin(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException {
+		System.out.println(pRequest.getRemoteHost());
+		if (DBSObject.isEmpty(prGetAllowOrigin())) {
+			return true;
+		}
+		if (prGetAllowOrigin().contains(pRequest.getRemoteHost())) {
+			return true;
+		}
+		pvResponseJSonError(pResponse, HttpServletResponse.SC_UNAUTHORIZED, new DBSMessage(MESSAGE_TYPE.ERROR, "Origem não autorizada."));
+		return false;
 	}
 	
 	/**
