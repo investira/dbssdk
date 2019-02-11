@@ -20,6 +20,7 @@ import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 /**
  * Classe abastrada para uso de Filtro HTTP.
@@ -205,11 +206,11 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	}
 	
 	private boolean pvAllowOrigin(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException {
-//		System.out.println("A Origem "+ pRequest.getRemoteHost() +" solicitou o recurso "+ pRequest.getRequestURI());
+		System.out.println("Origin: "+ pRequest.getHeader("Origin") +" ===========================");
 		if (DBSObject.isEmpty(prGetAllowOrigin())) {
 			return true;
 		}
-		if (prGetAllowOrigin().contains(pRequest.getRemoteHost())) {
+		if (prGetAllowOrigin().contains(DBSString.toString(pRequest.getHeader("Origin"), "null"))) {
 			return true;
 		}
 		pvResponseJSonError(pResponse, HttpServletResponse.SC_UNAUTHORIZED, new DBSMessage(MESSAGE_TYPE.ERROR, "Origem não autorizada."));
