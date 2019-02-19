@@ -614,16 +614,16 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		return wPagesCount;
 	}
 	
-	protected String prSetSearchControl(String pSQL, String pWhere, ISearchControl pFilterMeta) {
+	protected String prSetSearchControl(String pSQL, String pWhere, ISearchControl pFilter) {
 		String xWhere = pWhere;
 		String xOrder = "";
 		String xLimit = "";
 		
 		//SearchControl - Sort (Ordenação)
-		if (!DBSObject.isEmpty(pFilterMeta.getSort())) {
+		if (!DBSObject.isEmpty(pFilter.getSort())) {
 			String xOrders = "";
 			xOrder = " ORDER BY ";
-			for (String xSort : DBSString.toArrayList(pFilterMeta.getSort(), ",")) {
+			for (String xSort : DBSString.toArrayList(pFilter.getSort(), ",")) {
 				xSort = DBSString.changeStr(xSort, "+", " ASC");
 				xSort = DBSString.changeStr(xSort, "-", " DESC");
 				xOrders = DBSString.joinString(xOrders, xSort);
@@ -632,8 +632,8 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 		
 		Integer xSize = wDefaultSize;
-		if (!DBSObject.isNull(pFilterMeta.getSize())) {
-			xSize = pFilterMeta.getSize();
+		if (!DBSObject.isNull(pFilter.getSize())) {
+			xSize = pFilter.getSize();
 		}
 		
 		wRowsCount = DBSIO.getSQLRowsCount(wConnection, pSQL+pWhere);
@@ -645,24 +645,24 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 		
 		//SearchControl - Page (Numero da Página de Pesquisa)
-		if (!DBSObject.isNull(pFilterMeta.getPage())) {
-			if (pFilterMeta.getPage() < 1) {
-				pFilterMeta.setPage(1);
+		if (!DBSObject.isNull(pFilter.getPage())) {
+			if (pFilter.getPage() < 1) {
+				pFilter.setPage(1);
 			}
-			pFilterMeta.setOffset(DBSNumber.toInteger(DBSNumber.multiply(DBSNumber.subtract(pFilterMeta.getPage(), 1), xSize)));
+			pFilter.setOffset(DBSNumber.toInteger(DBSNumber.multiply(DBSNumber.subtract(pFilter.getPage(), 1), xSize)));
 		}
 		
 		//SearchControl - Offset (inicio da paginação) e Limit (Limit de resultados)
-		if (!DBSObject.isNull(pFilterMeta.getOffset())
-		 && !DBSObject.isNull(pFilterMeta.getSize())) {
+		if (!DBSObject.isNull(pFilter.getOffset())
+		 && !DBSObject.isNull(pFilter.getSize())) {
 			//Offset e Limit
-			xLimit = " LIMIT "+ pFilterMeta.getOffset() +", "+ pFilterMeta.getSize();
-		} else if (!DBSObject.isNull(pFilterMeta.getOffset()) && DBSObject.isNull(pFilterMeta.getSize())) {
+			xLimit = " LIMIT "+ pFilter.getOffset() +", "+ pFilter.getSize();
+		} else if (!DBSObject.isNull(pFilter.getOffset()) && DBSObject.isNull(pFilter.getSize())) {
 			//Somente Offset
-			xLimit = " LIMIT "+ pFilterMeta.getOffset() +", "+ xSize;
-		} else if (DBSObject.isNull(pFilterMeta.getOffset()) && !DBSObject.isNull(pFilterMeta.getSize())) {
+			xLimit = " LIMIT "+ pFilter.getOffset() +", "+ xSize;
+		} else if (DBSObject.isNull(pFilter.getOffset()) && !DBSObject.isNull(pFilter.getSize())) {
 			//Somente Limit
-			xLimit = " LIMIT "+ pFilterMeta.getSize();
+			xLimit = " LIMIT "+ pFilter.getSize();
 		} else {
 			//Nada
 			xLimit = "";
