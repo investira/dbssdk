@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.endpointReturn.ISearchControl;
 import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
 
@@ -24,7 +24,7 @@ public abstract class DBSBaseService {
 	protected 	Connection 		wConnection;
 	private 	IDBSMessages 	wMessages = new DBSMessages(true);
 	private		int				wStatusCode = HttpServletResponse.SC_OK;
-	private 	Map<String, String> wSearchLinks;
+	private 	Map<String, String> wPageLinks;
 	
 	public IDBSMessages getMessages(){
 		return wMessages;
@@ -37,17 +37,14 @@ public abstract class DBSBaseService {
 		wStatusCode = pStatusCode;
 	}
 
-	public Map<String, String> getSearchLinks() {
-		return wSearchLinks;
-	}
-	public void setSearchLinks(Map<String, String> pSearchLinks) {
-		wSearchLinks = pSearchLinks;
+	public Map<String, String> getPageLinks() {
+		return wPageLinks;
 	}
 
 	//METODOS CONSTRUTORES ================================================
 	
 	//METODOS PROTECTED ===================================================
-	protected void prSetSearchLinks(String pPath, ISearchControl pSearchControl, Integer pPagesCount) {
+	protected void prSetPageLinks(String pPath, ISearchControl pSearchControl, Integer pPagesCount) {
 		Map<String, String> xSearchLinks = new HashMap<String, String>();
 		
 		
@@ -86,7 +83,7 @@ public abstract class DBSBaseService {
 			xSearchLinks.put("totalPages", DBSString.toString(pPagesCount));
 		}
 		
-		setSearchLinks(xSearchLinks);
+		wPageLinks = xSearchLinks;
 	}
 	
 }

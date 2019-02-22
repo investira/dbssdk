@@ -2,7 +2,6 @@ package br.com.dbsoft.http.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -267,8 +266,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	 * @throws IOException
 	 */
 	private void pvResponseJSonError(HttpServletResponse pResponse, int pErrorCode, IDBSMessage pMessage) throws IOException {
-		String xJSonError = "{\"messages\": [{\"messageTime\": %d, \"messageCode\": %d, \"messageType\": \"%s\", \"messageText\": \"%s\"}], \"values\": []}";
-		String xMessage = String.format(xJSonError, new Date().getTime(), pErrorCode, pMessage.getMessageType(), pMessage.getMessageText());
+		String xJSonError = "{\"error\": {\"code\": %d, \"text\": \"%s\"}}";
+		String xMessage = String.format(xJSonError, pErrorCode, pMessage.getMessageText());
 		pResponse.setStatus(pErrorCode);
 		pResponse.setCharacterEncoding("UTF-8");
 		pResponse.setContentType(MediaType.APPLICATION_JSON);

@@ -7,13 +7,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import br.com.dbsoft.endpointReturn.ISearchControl;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
+import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSNumber;

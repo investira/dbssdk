@@ -1,8 +1,10 @@
-package br.com.dbsoft.endpointReturn;
+package br.com.dbsoft.rest.interfaces;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+
+import br.com.dbsoft.rest.dados.DadosSearchControl;
 
 @JsonSubTypes({
     @JsonSubTypes.Type(value=DadosSearchControl.class)

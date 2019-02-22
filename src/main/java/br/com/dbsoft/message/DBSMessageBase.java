@@ -1,9 +1,8 @@
 package br.com.dbsoft.message;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -12,18 +11,19 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import br.com.dbsoft.json.resolver.DBSDateTimeDeserializer;
 import br.com.dbsoft.json.resolver.DBSDateTimeSerializer;
 
-@XmlRootElement
+//@XmlRootElement
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
+@JsonIgnoreProperties(value = { "messageText", "messageCode", "statusCode", "messageTime", "messageType" }, ignoreUnknown = true)
 public class DBSMessageBase implements IDBSMessageBase {
 
 	private static final long serialVersionUID = -2180786400261608470L;
 	
-	@JsonProperty("messageText")
+	@JsonProperty("text")
 	private String						wMessageText;
+	@JsonProperty("code")
+	private Integer						wMessageCode = 0;
 	@JsonProperty("messageType")
 	private MESSAGE_TYPE				wMessageType;
-	@JsonProperty("messageCode")
-	private Integer						wMessageCode = 0;
 	@JsonSerialize(using = DBSDateTimeSerializer.class)
 	@JsonDeserialize(using = DBSDateTimeDeserializer.class)
 	@JsonProperty("messageTime")
