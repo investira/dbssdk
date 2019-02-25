@@ -21,10 +21,11 @@ public abstract class DBSBaseService {
 
 	protected Logger wLogger =  Logger.getLogger(this.getClass());
 
-	protected 	Connection 		wConnection;
-	private 	IDBSMessages 	wMessages = new DBSMessages(true);
-	private		int				wStatusCode = HttpServletResponse.SC_OK;
+	protected 	Connection 			wConnection;
+	private 	IDBSMessages 		wMessages = new DBSMessages(true);
+	private		int					wStatusCode = HttpServletResponse.SC_OK;
 	private 	Map<String, String> wPageLinks;
+	private 	Map<String, Object> wMetaData = new HashMap<String, Object>();
 	
 	public IDBSMessages getMessages(){
 		return wMessages;
@@ -40,6 +41,10 @@ public abstract class DBSBaseService {
 	public Map<String, String> getPageLinks() {
 		return wPageLinks;
 	}
+	
+	public Map<String, Object> getMetaData() {
+		return wMetaData;
+	}	
 
 	//METODOS CONSTRUTORES ================================================
 	
