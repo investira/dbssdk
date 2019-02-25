@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.rest.dados.DadosRestError;
+import br.com.dbsoft.rest.interfaces.IIncludeAtivo;
 import br.com.dbsoft.rest.interfaces.IRestError;
 import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.util.DBSNumber;
@@ -46,6 +47,13 @@ public abstract class DBSAbstractRest {
 		if (!DBSObject.isNull(xSize)) {
 			pFilterSearchControl.setSize(xSize);
 		}
+	}
+	
+	protected void prToFilterIncludeAtivo(MultivaluedMap<String, String> pParam, IIncludeAtivo pFilter) {
+		String xInclude = DBSString.toString(pParam.getFirst("include"));
+		if (DBSObject.isEqual(xInclude, "ativo")) {
+			pFilter.setIncludeAtivo(true);
+		}		
 	}
 	
 	/**
