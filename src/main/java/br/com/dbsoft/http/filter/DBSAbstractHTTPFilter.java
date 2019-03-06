@@ -170,8 +170,8 @@ public abstract class DBSAbstractHTTPFilter implements Filter {
 	protected void prResponseError(HttpServletRequest pRequest, HttpServletResponse pResponse, String pRedirectPage, Integer pStatusCode, IDBSMessage pMessage) throws IOException {
 		String xRedirectURL = pRequest.getContextPath() + pRedirectPage;;
 		String xAccept = pRequest.getHeader("accept");
-		if (xAccept.contains(MediaType.APPLICATION_XHTML_XML)
-		 || xAccept.contains(MediaType.TEXT_HTML)) {
+		if (!DBSObject.isEmpty(xAccept) 
+		 && (xAccept.contains(MediaType.APPLICATION_XHTML_XML) || xAccept.contains(MediaType.TEXT_HTML))) {
 			wLogger.debug("--- ACESSO NEGADO! REDIRECIONANDO PARA A PAGINA PADRAO.");
 			pResponse.sendRedirect(xRedirectURL);
 		} else {

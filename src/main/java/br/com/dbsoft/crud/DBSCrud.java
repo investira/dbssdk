@@ -13,8 +13,8 @@ import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
-import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.util.DBSIO;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
@@ -653,14 +653,13 @@ public abstract class DBSCrud<DataModelClass> implements IDBSCrud<DataModelClass
 		}
 		
 		//SearchControl - Offset (inicio da paginação) e Limit (Limit de resultados)
-		if (!DBSObject.isNull(pFilter.getOffset())
-		 && !DBSObject.isNull(pFilter.getSize())) {
+		if (!DBSObject.isNull(pFilter.getOffset()) && !DBSObject.isNull(pFilter.getSize()) && pFilter.getSize() > 0) {
 			//Offset e Limit
 			xLimit = " LIMIT "+ pFilter.getOffset() +", "+ pFilter.getSize();
 		} else if (!DBSObject.isNull(pFilter.getOffset()) && DBSObject.isNull(pFilter.getSize())) {
 			//Somente Offset
 			xLimit = " LIMIT "+ pFilter.getOffset() +", "+ xSize;
-		} else if (DBSObject.isNull(pFilter.getOffset()) && !DBSObject.isNull(pFilter.getSize())) {
+		} else if (DBSObject.isNull(pFilter.getOffset()) && !DBSObject.isNull(pFilter.getSize()) && pFilter.getSize() > 0) {
 			//Somente Limit
 			xLimit = " LIMIT "+ pFilter.getSize();
 		} else {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
@@ -169,6 +170,15 @@ public abstract class DBSHttpMethod {
 		ObjectMapper xMapper = ParametersSerializer.get();
 		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
 		JavaType xType = xMapper.getTypeFactory().constructParametricType(pResponseType, pParameterType);
+		return xMapper.readValue(xResponse, xType);
+	}
+	
+	protected final <T,P> T pvGetResponseListAsJson(HttpMethod pMethod, Class<T> pResponseType, Class<P> pParameterType) throws IOException{
+		String xResponse = getResponseAsString(pMethod);
+		ObjectMapper xMapper = ParametersSerializer.get();
+		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
+		JavaType xListType = xMapper.getTypeFactory().constructParametricType(ArrayList.class, pParameterType);
+		JavaType xType = xMapper.getTypeFactory().constructParametricType(pResponseType, xListType);
 		return xMapper.readValue(xResponse, xType);
 	}
 }

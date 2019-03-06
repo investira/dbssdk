@@ -12,6 +12,7 @@ import br.com.dbsoft.rest.dados.DadosRestError;
 import br.com.dbsoft.rest.interfaces.IIncludeAtivo;
 import br.com.dbsoft.rest.interfaces.IRestError;
 import br.com.dbsoft.rest.interfaces.ISearchControl;
+import br.com.dbsoft.service.DBSBaseService;
 import br.com.dbsoft.util.DBSNumber;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
@@ -57,39 +58,24 @@ public abstract class DBSAbstractRest {
 	}
 	
 	/**
-	 * Cria um Response padrão com StatusCode HTTP, os dados e lista de mensagens.
-	 * @param pStatusCode
+	 * Cria um Response padrão.
+	 * @param pService
 	 * @param pData
-	 * @param pErrors
 	 * @return
 	 */
-	protected Response prGetResponse(int pStatusCode, IDBSMessages pErrors, Object pData) {
-		return prGetResponse(pStatusCode, pErrors, pData, null, null, null);
+	protected Response prGetResponse(DBSBaseService pService, Object pData) {
+		return prGetResponse(pService, pData, null);
 	}
 	
 	/**
-	 * Cria um Response padrão com StatusCode HTTP, os dados, lista de mensagens e links de paginação.
-	 * @param pStatusCode
+	 * Cria um Response padrão.
+	 * @param pService
 	 * @param pData
-	 * @param pErrors
-	 * @param pPages
+	 * @param pExtraHeaders
 	 * @return
 	 */
-	protected Response prGetResponse(int pStatusCode, IDBSMessages pErrors, Object pData, Map<String, String> pPages) {
-		return prGetResponse(pStatusCode, pErrors, pData, pPages, null, null);
-	}
-	
-	/**
-	 * Cria um Response padrão com StatusCode HTTP, os dados, lista de mensagens, links de paginação e MetaDados.
-	 * @param pStatusCode
-	 * @param pData
-	 * @param pErrors
-	 * @param pPages
-	 * @param pMetaData
-	 * @return
-	 */
-	protected Response prGetResponse(int pStatusCode, IDBSMessages pErrors, Object pData, Map<String, String> pPages, Map<String, Object> pMetaData) {
-		return prGetResponse(pStatusCode, pErrors, pData, pPages, pMetaData, null);
+	protected Response prGetResponse(DBSBaseService pService, Object pData, Map<String, String> pExtraHeaders) {
+		return prGetResponse(pService.getStatusCode(), pService.getMessages(), pData, pService.getPageLinks(), pService.getMetaData(), pExtraHeaders);
 	}
 	
 	/**
@@ -136,4 +122,5 @@ public abstract class DBSAbstractRest {
 		}
 		return xResponse;
 	}
+	
 }

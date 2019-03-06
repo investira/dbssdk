@@ -128,6 +128,20 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 		}
 	}
 	
+	public final <T,P> T doGetList(String pURL, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
+		try {
+			GetMethod xMethod = pvCreateGetMethod(pURL);
+			return pvGetResponseListAsJson(xMethod, pResponseType, pParameterType);
+		} 
+		catch(BadCredentialsException e) {
+			if (forceRenewToken()) {
+				GetMethod xMethod = pvCreateGetMethod(pURL);
+				return pvGetResponseListAsJson(xMethod, pResponseType, pParameterType);
+			}
+			throw e;
+		}
+	}
+	
 	//METODOS PRIVADOS =============================================================================
 	private GetMethod pvCreateGetMethod(String pURL) throws AuthException, IOException {
 		return pvCreateGetMethod(pURL, Collections.<String,String>emptyMap());

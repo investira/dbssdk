@@ -52,8 +52,7 @@ public abstract class DBSBaseService {
 	protected void prSetPageLinks(String pPath, ISearchControl pSearchControl, Integer pPagesCount) {
 		Map<String, String> xSearchLinks = new HashMap<String, String>();
 		
-		
-		if (!DBSObject.isNull(pSearchControl) && !DBSObject.isNull(pSearchControl.getPage())) {
+		if (!DBSObject.isNull(pSearchControl) && pPagesCount > 1) {
 			Integer xNextPage;
 			Integer xPrevPage;
 			Integer xLastPage;
@@ -68,14 +67,14 @@ public abstract class DBSBaseService {
 				xSize = "&size="+pSearchControl.getSize();
 			}
 			
-			if (pSearchControl.getPage() > 1) {
+			if (!DBSObject.isNull(pSearchControl.getPage()) && pSearchControl.getPage() > 1) {
 				//Paginação - first
 				xSearchLinks.put("firstPage", pPath+"?page=1"+xSize+xSort);
 				//Paginação - Prev
 				xPrevPage = pSearchControl.getPage()-1;
 				xSearchLinks.put("prevPage", pPath+"?page="+xPrevPage+xSize+xSort);
 			}
-			if (pSearchControl.getPage() < pPagesCount && pSearchControl.getPage() >= 1) {
+			if (!DBSObject.isNull(pSearchControl.getPage()) && pSearchControl.getPage() < pPagesCount && pSearchControl.getPage() >= 1) {
 				//Paginação - Next
 				xNextPage = pSearchControl.getPage()+1;
 				xSearchLinks.put("nextPage", pPath+"?page="+xNextPage+xSize+xSort);
