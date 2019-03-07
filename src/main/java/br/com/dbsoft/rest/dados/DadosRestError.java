@@ -1,15 +1,13 @@
 package br.com.dbsoft.rest.dados;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import br.com.dbsoft.rest.interfaces.IRestError;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-@JsonIgnoreProperties(value = { "statusCode" }, ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DadosRestError implements IRestError{
 
 	private static final long serialVersionUID = 3059562643463340866L;
@@ -18,11 +16,8 @@ public class DadosRestError implements IRestError{
 	private String			wText;
 	@JsonProperty("code")
 	private Integer			wCode = 0;
-	@JsonProperty("stack")
-	@JsonInclude(value=Include.NON_NULL, content=Include.NON_NULL)
-	private Object 			wStack;
-	@JsonProperty("statusCode")
-	private Integer			wStatusCode = 0;
+	@JsonProperty("status")
+	private Integer			wStatus = 0;
 	
 	@Override
 	public String getText() {
@@ -41,20 +36,11 @@ public class DadosRestError implements IRestError{
 		wCode = pCode;
 	}
 	@Override
-	public Object getStack() {
-		return wStack;
+	public Integer getStatus() {
+		return wStatus;
 	}
 	@Override
-	public void setStack(Object pStack) {
-		wStack = pStack;
+	public void setStatus(Integer pStatus) {
+		wStatus = pStatus;
 	}
-	@Override
-	public Integer getStatusCode() {
-		return wStatusCode;
-	}
-	@Override
-	public void setStatusCode(Integer pStatusCode) {
-		wStatusCode = pStatusCode;
-	}
-	
 }

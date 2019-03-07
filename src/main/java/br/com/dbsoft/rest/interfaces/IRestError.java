@@ -17,9 +17,7 @@ public interface IRestError extends Serializable {
 	public Integer getCode();
 	public void setCode(Integer pCode);
 	
-	public Object getStack();
-	public void setStack(Object pStack);
+	public Integer getStatus();
+	public void setStatus(Integer pStatus);
 	
-	public Integer getStatusCode();
-	public void setStatusCode(Integer pCode);
 }
