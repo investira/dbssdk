@@ -23,7 +23,7 @@ public abstract class DBSBaseService {
 
 	protected 	Connection 			wConnection;
 	private 	IDBSMessages 		wMessages = new DBSMessages(true);
-	private		int					wStatusCode = HttpServletResponse.SC_OK;
+	private		int					wStatus = HttpServletResponse.SC_OK;
 	private 	Map<String, String> wPageLinks;
 	private 	Map<String, Object> wMetaData = new HashMap<String, Object>();
 	
@@ -31,11 +31,11 @@ public abstract class DBSBaseService {
 		return wMessages;
 	}
 
-	public int getStatusCode() {
-		return wStatusCode;
+	public int getStatus() {
+		return wStatus;
 	}
-	public void setStatusCode(int pStatusCode) {
-		wStatusCode = pStatusCode;
+	public void setStatus(int pStatus) {
+		wStatus = pStatus;
 	}
 
 	public Map<String, String> getPageLinks() {
