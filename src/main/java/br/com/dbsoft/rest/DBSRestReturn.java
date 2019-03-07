@@ -1,5 +1,6 @@
 package br.com.dbsoft.rest;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -7,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import br.com.dbsoft.message.DBSMessageBase;
+import br.com.dbsoft.message.IDBSMessageBase;
 import br.com.dbsoft.rest.dados.DadosRestError;
 import br.com.dbsoft.rest.interfaces.IRestError;
 
@@ -34,10 +37,14 @@ public class DBSRestReturn<C> {
 	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
 	private Map<String, Object> wMetaData;
 	
+	@JsonProperty("messages")
+	@JsonDeserialize(contentAs=DBSMessageBase.class)
+	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
+	private List<IDBSMessageBase> wMessages;
+	
 	public C getData() {
 		return wData;
 	}
-
 	public void setData(C pData) {
 		wData = pData;
 	}
@@ -45,7 +52,6 @@ public class DBSRestReturn<C> {
 	public IRestError getError() {
 		return wError;
 	}
-
 	public void setError(IRestError pError) {
 		wError = pError;
 	}
@@ -53,7 +59,6 @@ public class DBSRestReturn<C> {
 	public Map<String, String> getPages() {
 		return wPages;
 	}
-
 	public void setPages(Map<String, String> pPages) {
 		wPages = pPages;
 	}
@@ -61,35 +66,15 @@ public class DBSRestReturn<C> {
 	public Map<String, Object> getMetaData() {
 		return wMetaData;
 	}
-
 	public void setMetaData(Map<String, Object> pMetaData) {
 		wMetaData = pMetaData;
 	}
-
-	//CONSTRUTORES ====================================================
-	public DBSRestReturn() {
-	}
 	
-	public DBSRestReturn(C pData) {
-		wData = pData;
+	public List<IDBSMessageBase> getMessages() {
+		return wMessages;
 	}
-
-	public DBSRestReturn(C pData, IRestError pRestError) {
-		wData = pData;
-		wError = pRestError;
-	}
-	
-	public DBSRestReturn(C pData, IRestError pRestError, Map<String, String> pPages) {
-		wData = pData;
-		wError = pRestError;
-		wPages = pPages;
-	}
-	
-	public DBSRestReturn(C pData, IRestError pRestError, Map<String, String> pPages, Map<String, Object> pMetaData) {
-		wData = pData;
-		wError = pRestError;
-		wPages = pPages;
-		wMetaData = pMetaData;
+	public void setMessages(List<IDBSMessageBase> pMessages) {
+		wMessages = pMessages;
 	}
 
 }
