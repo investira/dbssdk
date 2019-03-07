@@ -75,41 +75,43 @@ public abstract class DBSAbstractRest {
 	 * @return
 	 */
 	protected Response prGetResponse(DBSBaseService pService, Object pData, Map<String, String> pExtraHeaders) {
-		return prGetResponse(pService.getStatusCode(), pService.getMessages(), pData, pService.getPageLinks(), pService.getMetaData(), pExtraHeaders);
+		return prGetResponse(pService.getStatus(), pService.getMessages(), pData, pService.getPageLinks(), pService.getMetaData(), pExtraHeaders);
 	}
 	
 	/**
 	 * Cria um Response padrão com StatusCode HTTP, os dados, lista de mensagens, links de paginação, MetaDados e Cabeçalhos extras.
-	 * @param pStatusCode
+	 * @param pStatus
 	 * @param pData
-	 * @param pErrors
+	 * @param pMessages
 	 * @param pPages
 	 * @param pMetaData
 	 * @param pExtraHeaders
 	 * @return
 	 */
-	protected Response prGetResponse(int pStatusCode, IDBSMessages pErrors, Object pData, Map<String, String> pPages, Map<String, Object> pMetaData, Map<String, String> pExtraHeaders) {
-		DBSRestReturn<Object> xRetorno = null;
+	protected Response prGetResponse(int pStatus, IDBSMessages pMessages, Object pData, Map<String, String> pPages, Map<String, Object> pMetaData, Map<String, String> pExtraHeaders) {
+		DBSRestReturn<Object> xRetorno = new DBSRestReturn<Object>();
 
 		//Se o Código HTTP for 204 - No Content, não adiciona o corpo na resposta
-		if (DBSObject.isEqual(pStatusCode, HttpServletResponse.SC_NO_CONTENT)) {
+		if (DBSObject.isEqual(pStatus, HttpServletResponse.SC_NO_CONTENT)) {
 			xRetorno = null;
 		//Se houver dados
 		} else if (!DBSObject.isNull(pData)) {
-			xRetorno = new DBSRestReturn<Object>(pData, null, pPages, pMetaData);
+			xRetorno.setData(pData);
+			xRetorno.setPages(pPages);
+			xRetorno.setMetaData(pMetaData);
+			xRetorno.setMessages(pMessages.getListMessageBase());
 		//Se houver erros
-		} else if (!DBSObject.isEmpty(pErrors)) {
+		} else if (!DBSObject.isEmpty(pMessages)) {
 			IRestError xRestError = new DadosRestError();
-			xRestError.setCode(pErrors.getCurrentMessage().getMessageCode());
-			xRestError.setText(pErrors.getCurrentMessage().getMessageText());
-//			xRestError.setStack(pErrors.getListMessageBase());
-			xRestError.setStatusCode(pStatusCode);
-			xRetorno = new DBSRestReturn<Object>(null, xRestError);
+			xRestError.setStatus(pStatus);
+			xRestError.setText(pMessages.getCurrentMessage().getMessageText());
+			xRestError.setCode(pMessages.getCurrentMessage().getMessageCode());
+			xRetorno.setError(xRestError);
 		}
 		
 		//Cria a resposta
 		Response xResponse = Response
-				.status(pStatusCode)
+				.status(pStatus)
 				.entity(xRetorno)
 				.type(MediaType.APPLICATION_JSON)
 				.build();
