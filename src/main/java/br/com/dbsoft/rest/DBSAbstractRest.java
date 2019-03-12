@@ -75,7 +75,7 @@ public abstract class DBSAbstractRest {
 	 * @return
 	 */
 	protected Response prGetResponse(DBSBaseService pService, Object pData, Map<String, String> pExtraHeaders) {
-		return prGetResponse(pService.getStatus(), pService.getMessages(), pData, pService.getPageLinks(), pService.getMetaData(), pExtraHeaders);
+		return prGetResponse(pService.getStatus(), pService.getMessages(), pData, pService.getPageLinks(), pService.getIncluded(), pService.getMetaData(), pExtraHeaders);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public abstract class DBSAbstractRest {
 	 * @param pExtraHeaders
 	 * @return
 	 */
-	protected Response prGetResponse(int pStatus, IDBSMessages pMessages, Object pData, Map<String, String> pPages, Map<String, Object> pMetaData, Map<String, String> pExtraHeaders) {
+	protected Response prGetResponse(int pStatus, IDBSMessages pMessages, Object pData, Map<String, String> pPages, Map<String, Object> pInclude, Map<String, Object> pMetaData, Map<String, String> pExtraHeaders) {
 		DBSRestReturn<Object> xRetorno = new DBSRestReturn<Object>();
 
 		//Se o Código HTTP for 204 - No Content, não adiciona o corpo na resposta
@@ -98,6 +98,7 @@ public abstract class DBSAbstractRest {
 		} else if (!DBSObject.isNull(pData)) {
 			xRetorno.setData(pData);
 			xRetorno.setPages(pPages);
+			xRetorno.setInclude(pInclude);
 			xRetorno.setMetaData(pMetaData);
 			xRetorno.setMessages(pMessages.getListMessageBase());
 		//Se houver erros

@@ -37,6 +37,10 @@ public class DBSRestReturn<C> {
 	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
 	private Map<String, Object> wMetaData;
 	
+	@JsonProperty("include")
+	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
+	private Map<String, Object> wInclude;
+	
 	@JsonProperty("messages")
 	@JsonDeserialize(contentAs=DBSMessageBase.class)
 	@JsonInclude(value=Include.NON_EMPTY, content=Include.NON_NULL)
@@ -68,6 +72,13 @@ public class DBSRestReturn<C> {
 	}
 	public void setMetaData(Map<String, Object> pMetaData) {
 		wMetaData = pMetaData;
+	}
+	
+	public Map<String, Object> getInclude() {
+		return wInclude;
+	}
+	public void setInclude(Map<String, Object> pInclude) {
+		wInclude = pInclude;
 	}
 	
 	public List<IDBSMessageBase> getMessages() {

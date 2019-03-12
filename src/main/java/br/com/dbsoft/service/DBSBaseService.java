@@ -26,6 +26,7 @@ public abstract class DBSBaseService {
 	private		int					wStatus = HttpServletResponse.SC_OK;
 	private 	Map<String, String> wPageLinks;
 	private 	Map<String, Object> wMetaData = new HashMap<String, Object>();
+	private 	Map<String, Object> wIncluded = new HashMap<String, Object>();
 	
 	public IDBSMessages getMessages(){
 		return wMessages;
@@ -44,6 +45,10 @@ public abstract class DBSBaseService {
 	
 	public Map<String, Object> getMetaData() {
 		return wMetaData;
+	}
+	
+	public Map<String, Object> getIncluded() {
+		return wIncluded;
 	}	
 
 	//METODOS CONSTRUTORES ================================================
