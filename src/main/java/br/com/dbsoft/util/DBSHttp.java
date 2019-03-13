@@ -139,6 +139,7 @@ public class DBSHttp {
 		}
 		return xLink.toString();
 	}
+	
 	/**
 	 * Retorna String contendo os parametros sepadados por '&' e codificados em UTF-8 para utilização em requests http
 	 * @param pParams
@@ -147,6 +148,17 @@ public class DBSHttp {
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String encodeParams(Map<String, String> pParams) throws DBSIOException {
+		return encodeParams(pParams, ENCODE.ISO_8859_1);
+	}
+	/**
+	 * Retorna String contendo os parametros sepadados por '&' e codificados em UTF-8 para utilização em requests http
+	 * @param pParams
+	 * @param pEncode
+	 * @return
+	 * @throws DBSIOException 
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String encodeParams(Map<String, String> pParams, String pEncode) throws DBSIOException {
 		StringBuilder xString = new StringBuilder();
 		try {
 			for (String xParametro:pParams.keySet()){
@@ -154,7 +166,7 @@ public class DBSHttp {
 				xString.append(xParametro.trim());
 				xString.append("=");
 				String xValue = DBSString.toString(pParams.get(xParametro),"").trim();
-				xString.append(URLEncoder.encode(xValue, ENCODE.ISO_8859_1));
+				xString.append(URLEncoder.encode(xValue, pEncode));
 			}
 			return xString.toString();
 		} catch (UnsupportedEncodingException e) {
