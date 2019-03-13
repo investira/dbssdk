@@ -95,4 +95,26 @@ public abstract class DBSBaseService {
 		wPageLinks = xSearchLinks;
 	}
 	
+	protected void prPutSearchControlInParams(Map<String, String> pParams, ISearchControl pSearchControl) {
+		if (DBSObject.isNull(pSearchControl) || DBSObject.isNull(pParams)) {
+			return;
+		}
+		//Sort
+		if (!DBSObject.isEmpty(pSearchControl.getSort())) {
+			pParams.put("sort", pSearchControl.getSort());
+		}
+		//Page
+		if (DBSObject.isIdValid(pSearchControl.getPage())) {
+			pParams.put("page", pSearchControl.getPage().toString());
+		}
+		//Offset
+		if (DBSObject.isIdValid(pSearchControl.getOffset())) {
+			pParams.put("offset", pSearchControl.getOffset().toString());
+		}
+		//Size
+		if (!DBSObject.isNull(pSearchControl.getSize())) {
+			pParams.put("size", pSearchControl.getSize().toString());
+		}
+	}
+	
 }
