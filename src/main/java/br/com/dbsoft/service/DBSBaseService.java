@@ -42,18 +42,47 @@ public abstract class DBSBaseService {
 	public Map<String, String> getPageLinks() {
 		return wPageLinks;
 	}
-	
+	public void setPageLinks(Map<String, String> pPageLinks) {
+		wPageLinks = pPageLinks;
+	}
+
 	public Map<String, Object> getMetaData() {
 		return wMetaData;
 	}
-	
+	public void setMetaData(Map<String, Object> pMetaData) {
+		wMetaData = pMetaData;
+	}
+
 	public Map<String, Object> getIncluded() {
 		return wIncluded;
 	}	
+	public void setIncluded(Map<String, Object> pIncluded) {
+		wIncluded = pIncluded;
+	}
 
 	//METODOS CONSTRUTORES ================================================
 	
 	//METODOS PROTECTED ===================================================
+	//Configura no MetaData o total de registros
+	protected void prSetTotalMetaData(Integer pRowsCount) {
+		Map<String, Object> xMetaData = getMetaData();
+		if (!DBSObject.isEmpty(xMetaData)) {
+			xMetaData = new HashMap<String, Object>();
+		}
+		
+		//Total de registros
+		if (DBSObject.isIdValid(pRowsCount)) {
+			xMetaData.put("total", DBSString.toString(pRowsCount));
+		}
+		wMetaData = xMetaData;
+	}
+	
+	/**
+	 * Configura os links de paginação
+	 * @param pPath
+	 * @param pSearchControl
+	 * @param pPagesCount
+	 */
 	protected void prSetPageLinks(String pPath, ISearchControl pSearchControl, Integer pPagesCount) {
 		Map<String, String> xSearchLinks = new HashMap<String, String>();
 		
@@ -91,7 +120,6 @@ public abstract class DBSBaseService {
 			//Total de Páginas
 			xSearchLinks.put("totalPages", DBSString.toString(pPagesCount));
 		}
-		
 		wPageLinks = xSearchLinks;
 	}
 	
