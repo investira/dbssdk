@@ -1615,7 +1615,14 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 //			PreparedStatement xPS = pCn.prepareStatement(pQuerySQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 //			xPS.execute();
 //			xResultSet = xPS.getResultSet();
-			xST = pCn.createStatement(); //ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE); //ALBERTO: Comentado pois estada dando erro na nova versão 8.0 do MySQL;
+
+			//ALBERTO: Alterado para atender a nova versão 8.0 do MySQL;
+			DB_SERVER xDataBase = getDataBaseProduct(pCn);
+			if (xDataBase == DB_SERVER.ORACLE) {
+				xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			} else {
+				xST = pCn.createStatement();
+			}
 			xResultSet = xST.executeQuery(pQuerySQL);
 		}catch(SQLException e){
 			throwIOException(pQuerySQL, e, pCn);
