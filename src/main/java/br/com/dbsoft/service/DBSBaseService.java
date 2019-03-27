@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.DBSMessages;
+import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.message.IDBSMessages;
+import br.com.dbsoft.rest.interfaces.IRestError;
 import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.util.DBSObject;
 import br.com.dbsoft.util.DBSString;
@@ -145,4 +148,8 @@ public abstract class DBSBaseService {
 		}
 	}
 	
+	protected void prGenericError(IRestError pError) {
+		setStatus(pError.getCode().getStatus());		
+		getMessages().add(new DBSMessage(MESSAGE_TYPE.ERROR, pError.getDescription()));
+	}
 }

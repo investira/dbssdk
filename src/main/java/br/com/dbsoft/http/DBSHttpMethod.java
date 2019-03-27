@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
 
 import br.com.dbsoft.error.exception.BadCredentialsException;
+import br.com.dbsoft.error.exception.BadRequestException;
 import br.com.dbsoft.error.exception.CommunicationException;
 import br.com.dbsoft.error.exception.ForbiddenException;
 import br.com.dbsoft.json.DBSJson;
@@ -114,7 +115,10 @@ public abstract class DBSHttpMethod {
 		}
 		
 		int xStatusCode = pMethod.getStatusCode();
-		if (xStatusCode == 401 || xStatusCode == 400) {
+		if (xStatusCode == 400) {
+			throw new BadRequestException("Request inválido: " + xResponse);
+		}
+		if (xStatusCode == 401) {
 			throw new BadCredentialsException("Token inválido: " + xResponse);
 		}
 

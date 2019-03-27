@@ -10,7 +10,6 @@ import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.http.DBSHttpMethodPost;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.rest.DBSRestReturn;
-import br.com.dbsoft.service.DBSBaseService;
 import br.com.dbsoft.util.DBSDate;
 import br.com.dbsoft.util.DBSEmail;
 import br.com.dbsoft.util.DBSFile;
@@ -22,9 +21,8 @@ import br.com.investira.access.dados.DadosAuthToken;
 import br.com.investira.access.interfaces.IAuthToken;
 
 @SuppressWarnings("unchecked")
-public class AccessAuthService extends DBSBaseService {
+public class AccessAuthService extends AbstractService {
 	
-	private String wClientToken;
 	private String wURLPath;
 //	private String wURLPathGoogle;
 	
@@ -53,11 +51,12 @@ public class AccessAuthService extends DBSBaseService {
 			xRetorno = xMethod.doPost(wURLPath, xParams, DBSRestReturn.class, DadosAuthToken.class);
 			xToken = xRetorno.getData();
 			if (DBSObject.isNull(xToken) || DBSObject.isEmpty(xToken.getAccessToken())) {
-				getMessages().add(AccessMessages.ErroGerandoTokenClient);
+				prAddMessage(AccessMessages.ErroGerandoTokenClient);
 			}
-		} catch (AuthException | IOException e) {
-			wLogger.error(e);
-			getMessages().add(AccessMessages.ErroGerandoTokenClient);
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
+			prAddMessage(AccessMessages.ErroGerandoTokenClient);
 		}
 		return xToken;
 	}
@@ -122,7 +121,7 @@ public class AccessAuthService extends DBSBaseService {
 //		boolean 	xOK = false;
 //		IUserInfo xUserInfo = getUserInfo(pToken);
 //		if (DBSObject.isNull(xUserInfo) || !DBSObject.isIdValid(xUserInfo.getUserId())) {
-//			getMessages().add(DBSAuthMessages.TokenInvalido);
+//			prAddMessage(DBSAuthMessages.TokenInvalido);
 //		} else {
 //			xOK = true;
 //		}
@@ -140,9 +139,11 @@ public class AccessAuthService extends DBSBaseService {
 			xRetorno = xMethod.doPost(wURLPath, pParams, DBSRestReturn.class, DadosAuthToken.class);
 			xToken = xRetorno.getData();
 			if (DBSObject.isNull(xToken) || DBSObject.isEmpty(xToken.getAccessToken())) {
-				getMessages().add(AccessMessages.UsuarioUsernameOuSenhaInvalida);
+				prAddMessage(AccessMessages.UsuarioUsernameOuSenhaInvalida);
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
 			if (e.getLocalizedMessage().contains("Bloqueado")) {
 				String xMenssagem = e.getMessage();
@@ -154,11 +155,11 @@ public class AccessAuthService extends DBSBaseService {
 				xMenssagem = "Usuário bloqueado até às "+ DBSFormat.getFormattedTime(xData) +" do dia "+ DBSFormat.getFormattedDate(xData);
 				IDBSMessage xMessage = AccessMessages.UsuarioBloqueadoAte;
 				xMessage.setMessageText(xMenssagem);
-				getMessages().add(xMessage);
+				prAddMessage(xMessage);
 			} else if (e.getLocalizedMessage().contains("offline") || e.getLocalizedMessage().contains("Serviço indisponível")) {
-				getMessages().add(AccessMessages.ServicoIndisponivel);
+				prAddMessage(AccessMessages.ServicoIndisponivel);
 			} else {
-				getMessages().add(AccessMessages.UsuarioUsernameOuSenhaInvalida);
+				prAddMessage(AccessMessages.UsuarioUsernameOuSenhaInvalida);
 			}
 			throw new DBSIOException(getMessages().getCurrentMessage());
 		}
@@ -189,9 +190,9 @@ public class AccessAuthService extends DBSBaseService {
 	 */
 	private void pvAddMessage(IDBSMessage pMessage) {
 		if (DBSObject.isNull(pMessage)) {
-			getMessages().add(AccessMessages.ErroGenerico);
+			prAddMessage(AccessMessages.ErroGenerico);
 		} else {
-			getMessages().add(pMessage);
+			prAddMessage(pMessage);
 		}
 		setStatus(getMessages().getListMessageBase().get(0).getStatusCode());
 	}
@@ -215,13 +216,13 @@ public class AccessAuthService extends DBSBaseService {
 	 */
 	private boolean prValidateUsername(String pUsername) {
 		if (DBSObject.isEmpty(pUsername)) {
-			getMessages().add(AccessMessages.ParametrosInvalidos);
+			prAddMessage(AccessMessages.ParametrosInvalidos);
 			setStatus(AccessMessages.ParametrosInvalidos.getStatusCode());
 			return false;
 		}
 		//E-mail Valido
 		if (!DBSEmail.isValidEmailAddress(DBSString.toString(pUsername))) {
-			getMessages().add(AccessMessages.EmailInvalido);
+			prAddMessage(AccessMessages.EmailInvalido);
 			setStatus(AccessMessages.EmailInvalido.getStatusCode());
 			return false;
 		}
@@ -235,7 +236,7 @@ public class AccessAuthService extends DBSBaseService {
 	 */
 	private boolean prValidateStringParam(String pStringParam) {
 		if (DBSObject.isEmpty(pStringParam)) {
-			getMessages().add(AccessMessages.ParametrosInvalidos);
+			prAddMessage(AccessMessages.ParametrosInvalidos);
 			return false;
 		}
 		return true;

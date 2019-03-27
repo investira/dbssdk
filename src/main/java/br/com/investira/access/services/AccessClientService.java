@@ -6,7 +6,6 @@ import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.http.DBSHttpMethodDelete;
 import br.com.dbsoft.http.DBSHttpMethodGet;
-import br.com.dbsoft.http.DBSHttpMethodPatch;
 import br.com.dbsoft.http.DBSHttpMethodPost;
 import br.com.dbsoft.message.DBSMessage;
 import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
@@ -16,18 +15,19 @@ import br.com.dbsoft.rest.interfaces.IRecordCount;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSObject;
 import br.com.investira.access.AccessMessages;
-import br.com.investira.access.dados.DadosAuthCode;
-import br.com.investira.access.interfaces.IAuthCode;
+import br.com.investira.access.dados.DadosAuthClient;
+import br.com.investira.access.interfaces.IAuthClient;
+import br.com.investira.access.interfaces.base.IClientName;
 
 @SuppressWarnings("unchecked")
-public class AccessCodeService extends AbstractService {
+public class AccessClientService extends AbstractService {
 	
 	private String wURLPath;
 	
 	//CONSTRUTORES ============================================================================================================
-	public AccessCodeService(String pClientToken, String pURL) {
+	public AccessClientService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(pURL, "/api/code");
+		wURLPath = DBSFile.getPathNormalized(pURL, "/api/client");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================
@@ -37,27 +37,27 @@ public class AccessCodeService extends AbstractService {
 	 * @return
 	 * @throws DBSIOException
 	 */
-	public IAuthCode create(Object pPayload) {
+	public IAuthClient create(IClientName pClientName) {
 		DBSHttpMethodPost 			xMethod;
-		DBSRestReturn<IAuthCode> 	xRetorno = new DBSRestReturn<IAuthCode>();
-		IAuthCode 					xCode = new DadosAuthCode();
+		DBSRestReturn<IAuthClient> 	xRetorno = new DBSRestReturn<IAuthClient>();
+		IAuthClient					xClient = new DadosAuthClient();
 		
 		try {
 			xMethod = new DBSHttpMethodPost(wClientToken);
-			xRetorno = xMethod.doPost(wURLPath, pPayload, DBSRestReturn.class, DadosAuthCode.class);
+			xRetorno = xMethod.doPost(wURLPath, pClientName, DBSRestReturn.class, DadosAuthClient.class);
 			if (!DBSObject.isNull(xRetorno) || !DBSObject.isNull(xRetorno.getData())) {
-				xCode = xRetorno.getData();
-				prAddMessage(AccessMessages.CodigoCriarSucesso);
+				xClient = xRetorno.getData();
+				prAddMessage(AccessMessages.ClientCriarSucesso);
 			} else {
-				prAddMessage(AccessMessages.CodigoCriarErro);
+				prAddMessage(AccessMessages.ClientCriarErro);
 				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
 		} catch (AuthException e) {
 			prAddMessage(e);
 		} catch (IOException e) {
-			prAddMessage(AccessMessages.CodigoCriarErro);
+			prAddMessage(AccessMessages.ClientCriarErro);
 		}
-		return xCode;
+		return xClient;
 	}
 	
 	/**
@@ -65,24 +65,24 @@ public class AccessCodeService extends AbstractService {
 	 * @param pClientToken
 	 * @return
 	 */
-	public IAuthCode read(String pCode) {
+	public IAuthClient read(String pClientName) {
 		DBSHttpMethodGet 			xMethod;
-		DBSRestReturn<IAuthCode> 	xRetorno = new DBSRestReturn<IAuthCode>();
-		IAuthCode					xCode = null;
+		DBSRestReturn<IAuthClient> 	xRetorno = new DBSRestReturn<IAuthClient>();
+		IAuthClient					xClient = null;
 		
 		try {
 			xMethod = new DBSHttpMethodGet(wClientToken);
-			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
-			xCode = xRetorno.getData();
-			if (DBSObject.isNull(xCode) || DBSObject.isEmpty(pCode)) {
-				prAddMessage(AccessMessages.TokenInvalido);
+			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pClientName), DBSRestReturn.class, DadosAuthClient.class);
+			xClient = xRetorno.getData();
+			if (DBSObject.isNull(xClient) || !DBSObject.isIdValid(xClient.getClientId())) {
+				prAddMessage(AccessMessages.ClientNaoEncontrado);
 			}
 		} catch (AuthException e) {
 			prAddMessage(e);
 		} catch (IOException e) {
-			prAddMessage(AccessMessages.TokenInvalido);
+			prAddMessage(AccessMessages.ClientReadErro);
 		}
-		return xCode;
+		return xClient;
 	}
 	
 	/**
@@ -90,50 +90,37 @@ public class AccessCodeService extends AbstractService {
 	 * @param pClientToken
 	 * @return
 	 */
-	public IRecordCount delete(String pCode) {
+	public IRecordCount delete(String pClient) {
 		DBSHttpMethodDelete 		xMethod;
 		DBSRestReturn<IRecordCount> xRetorno = new DBSRestReturn<IRecordCount>();
 		IRecordCount				xRecordCount = null;
 		
 		try {
 			xMethod = new DBSHttpMethodDelete(wClientToken);
-			xRetorno = xMethod.doDelete(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosRecordCount.class);
+			xRetorno = xMethod.doDelete(DBSFile.getPathNormalized(wURLPath, pClient), DBSRestReturn.class, DadosRecordCount.class);
 			if (DBSObject.isNull(xRetorno) || DBSObject.isNull(xRetorno.getData())) {
-				prAddMessage(AccessMessages.CodeInvalido);
+				prAddMessage(AccessMessages.ClientNaoEncontrado);
 			} else {
 				xRecordCount = xRetorno.getData();
 			}
 		} catch (AuthException e) {
 			prAddMessage(e);
 		} catch (IOException e) {
-			prAddMessage(AccessMessages.CodeInvalido);
+			prAddMessage(AccessMessages.ClientDeleteErro);
 		}
 		return xRecordCount;
 	}
 	
-	/**
-	 * Recupera as informações contidas no Token de Usuário
-	 * @param pClientToken
-	 * @return
-	 */
-	public IAuthCode verify(String pCode) {
-		DBSHttpMethodPatch 			xMethod;
-		DBSRestReturn<IAuthCode> 	xRetorno = new DBSRestReturn<IAuthCode>();
-		IAuthCode					xCode = null;
-		
-		try {
-			xMethod = new DBSHttpMethodPatch(wClientToken);
-			xRetorno = xMethod.doPatch(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
-			xCode = xRetorno.getData();
-			if (DBSObject.isNull(xCode) || DBSObject.isEmpty(pCode)) {
-				prAddMessage(AccessMessages.TokenInvalido);
-			}
-		} catch (AuthException e) {
-			prAddMessage(e);
-		} catch (IOException e) {
-			prAddMessage(AccessMessages.TokenInvalido);
-		}
-		return xCode;
-	}
-
+//	/**
+//	 * TODO IMPLEMENTAR 
+//	 * @param pUsername
+//	 * @return
+//	 */
+//	public IAuthClient codeReadFromUsername(String pUsername) {
+//		IAuthClient xClient = new DadosAuthClient();
+//		
+//		xClient.setClient("$2b$04$nyeM6Zwi9hpWmIylLTZnAe0fgihIYJIH2vRaScP5nyW6rX4sWDI4O");
+//		xClient.setExpiration(DBSDate.getNowDate(true));
+//		return xClient;
+//	}
 }

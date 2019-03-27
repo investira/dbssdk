@@ -8,37 +8,47 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import br.com.dbsoft.rest.interfaces.IRestError;
 import br.com.dbsoft.rest.interfaces.IRestErrorCode;
 
 @JsonInclude(value=Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
-public class DadosRestError implements IRestError{
+public class DadosRestErrorCode implements IRestErrorCode{
 
-	private static final long serialVersionUID = 3059562643463340866L;
+	private static final long serialVersionUID = -5901728908626285842L;
 	
-	@JsonProperty("description")
-	private String			wDescription;
-	@JsonProperty("code")
-	private IRestErrorCode	wCode;
+	@JsonProperty("status")
+	private Integer			wStatus;
+	@JsonProperty("source")
+	private String			wSource;
+	@JsonProperty("ref")
+	private String			wRef;
 	
 	@Override
-	public String getDescription() {
-		return wDescription;
+	public Integer getStatus() {
+		return wStatus;
 	}
 	@Override
-	public void setDescription(String pText) {
-		wDescription = pText;
+	public void setStatus(Integer pStatus) {
+		wStatus = pStatus;
 	}
 	@Override
-	public IRestErrorCode getCode() {
-		return wCode;
+	public String getSource() {
+		return wSource;
 	}
 	@Override
-	public void setCode(IRestErrorCode pCode) {
-		wCode = pCode;
+	public void setSource(String pSource) {
+		wSource = pSource;
 	}
+	@Override
+	public String getRef() {
+		return wRef;
+	}
+	@Override
+	public void setRef(String pRef) {
+		wRef = pRef;
+	}
+
 	
 }

@@ -13,7 +13,6 @@ import br.com.dbsoft.message.IDBSMessageBase.MESSAGE_TYPE;
 import br.com.dbsoft.rest.DBSRestReturn;
 import br.com.dbsoft.rest.dados.DadosRecordCount;
 import br.com.dbsoft.rest.interfaces.IRecordCount;
-import br.com.dbsoft.service.DBSBaseService;
 import br.com.dbsoft.util.DBSFile;
 import br.com.dbsoft.util.DBSObject;
 import br.com.investira.access.AccessMessages;
@@ -25,9 +24,8 @@ import br.com.investira.access.interfaces.IAuthToken;
 import br.com.investira.access.interfaces.IAuthUser;
 
 @SuppressWarnings("unchecked")
-public class AccessUserService extends DBSBaseService {
+public class AccessUserService extends AbstractService {
 	
-	private String wClientToken;
 	private String wURLPath;
 
 	//CONSTRUTORES ============================================================================================================
@@ -54,14 +52,16 @@ public class AccessUserService extends DBSBaseService {
 			xRetorno = xMethod.doPost(wURLPath, pUserInfo, DBSRestReturn.class, DadosAuthCode.class);
 			if (!DBSObject.isNull(xRetorno) || !DBSObject.isNull(xRetorno.getData())) {
 				xUserCode = xRetorno.getData();
-				getMessages().add(AccessMessages.CadastroCriarSucesso);
+				prAddMessage(AccessMessages.CadastroCriarSucesso);
 			} else {
-				getMessages().add(AccessMessages.CadastroCriarErro);
-				getMessages().add(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getText()));
+				prAddMessage(AccessMessages.CadastroCriarErro);
+				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
-			getMessages().add(AccessMessages.CadastroCriarErro);
+			prAddMessage(AccessMessages.CadastroCriarErro);
 		}
 		return xUserCode;
 	}
@@ -80,11 +80,13 @@ public class AccessUserService extends DBSBaseService {
 			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosAuthUser.class);
 			xUserInfo = xRetorno.getData();
 			if (DBSObject.isNull(xUserInfo) || DBSObject.isEmpty(xUserInfo.getUsername())) {
-				getMessages().add(AccessMessages.TokenInvalido);
+				prAddMessage(AccessMessages.TokenInvalido);
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
-			getMessages().add(AccessMessages.TokenInvalido);
+			prAddMessage(AccessMessages.TokenInvalido);
 		}
 		return xUserInfo;
 	}
@@ -106,14 +108,16 @@ public class AccessUserService extends DBSBaseService {
 			xRetorno = xMethod.doPut(wURLPath, pUserInfo, DBSRestReturn.class, DadosAuthUser.class);
 			if (!DBSObject.isNull(xRetorno) || !DBSObject.isNull(xRetorno.getData())) {
 				xUser = xRetorno.getData();
-				getMessages().add(AccessMessages.CadastroCriarSucesso);
+				prAddMessage(AccessMessages.CadastroCriarSucesso);
 			} else {
-				getMessages().add(AccessMessages.CadastroCriarErro);
-				getMessages().add(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getText()));
+				prAddMessage(AccessMessages.CadastroCriarErro);
+				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
-			getMessages().add(AccessMessages.CadastroCriarErro);
+			prAddMessage(AccessMessages.CadastroCriarErro);
 		}
 		return xUser;
 	}
@@ -132,12 +136,14 @@ public class AccessUserService extends DBSBaseService {
 			xMethod = new DBSHttpMethodDelete(wClientToken);
 			xRetorno = xMethod.doDelete(DBSFile.getPathNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosRecordCount.class);
 			if (DBSObject.isNull(xRetorno) || DBSObject.isNull(xRetorno.getData())) {
-				getMessages().add(AccessMessages.CodeInvalido);
+				prAddMessage(AccessMessages.CodeInvalido);
 			} else {
 				xRecordCount = xRetorno.getData();
 			}
-		} catch (AuthException | IOException e) {
-			getMessages().add(AccessMessages.CodeInvalido);
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
+			prAddMessage(AccessMessages.CodeInvalido);
 		}
 		return xRecordCount;
 	}
@@ -157,11 +163,13 @@ public class AccessUserService extends DBSBaseService {
 			xRetorno = xMethod.doGet(xURL, DBSRestReturn.class, DadosAuthToken.class);
 			xToken = xRetorno.getData();
 			if (DBSObject.isNull(xToken) || DBSObject.isEmpty(xToken.getAccessToken())) {
-				getMessages().add(AccessMessages.TokenInvalido);
+				prAddMessage(AccessMessages.TokenInvalido);
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
-			getMessages().add(AccessMessages.TokenInvalido);
+			prAddMessage(AccessMessages.TokenInvalido);
 		}
 		return xToken;
 	}
@@ -181,11 +189,13 @@ public class AccessUserService extends DBSBaseService {
 			xRetorno = xMethod.doGet(xURL, DBSRestReturn.class, DadosAuthUser.class);
 			xCode = xRetorno.getData();
 			if (DBSObject.isNull(xCode) || DBSObject.isEmpty(xCode.getCode())) {
-				getMessages().add(AccessMessages.TokenInvalido);
+				prAddMessage(AccessMessages.TokenInvalido);
 			}
-		} catch (AuthException | IOException e) {
+		} catch (AuthException e) {
+			prAddMessage(e);
+		} catch (IOException e) {
 			wLogger.error(e);
-			getMessages().add(AccessMessages.TokenInvalido);
+			prAddMessage(AccessMessages.TokenInvalido);
 		}
 		return xCode;
 	}

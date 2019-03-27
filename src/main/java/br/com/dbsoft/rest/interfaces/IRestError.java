@@ -3,21 +3,19 @@ package br.com.dbsoft.rest.interfaces;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 import br.com.dbsoft.rest.dados.DadosRestError;
 
-@JsonSubTypes({
-    @JsonSubTypes.Type(value=DadosRestError.class)
-})
+@JsonSubTypes({@JsonSubTypes.Type(value=DadosRestError.class)})
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=As.PROPERTY, property="@class", defaultImpl=DadosRestError.class)
 public interface IRestError extends Serializable {
 
-	public String getText();
-	public void setText(String pText);
+	public String getDescription();
+	public void setDescription(String pText);
 	
-	public Integer getCode();
-	public void setCode(Integer pCode);
-	
-	public Integer getStatus();
-	public void setStatus(Integer pStatus);
+	public IRestErrorCode getCode();
+	public void setCode(IRestErrorCode pCode);
 	
 }

@@ -9,8 +9,10 @@ import javax.ws.rs.core.Response;
 
 import br.com.dbsoft.message.IDBSMessages;
 import br.com.dbsoft.rest.dados.DadosRestError;
+import br.com.dbsoft.rest.dados.DadosRestErrorCode;
 import br.com.dbsoft.rest.interfaces.IIncludeAtivo;
 import br.com.dbsoft.rest.interfaces.IRestError;
+import br.com.dbsoft.rest.interfaces.IRestErrorCode;
 import br.com.dbsoft.rest.interfaces.ISearchControl;
 import br.com.dbsoft.service.DBSBaseService;
 import br.com.dbsoft.util.DBSNumber;
@@ -104,9 +106,12 @@ public abstract class DBSAbstractRest {
 		//Se houver erros
 		} else if (!DBSObject.isEmpty(pMessages)) {
 			IRestError xRestError = new DadosRestError();
-			xRestError.setStatus(pStatus);
-			xRestError.setText(pMessages.getCurrentMessage().getMessageText());
-			xRestError.setCode(pMessages.getCurrentMessage().getMessageCode());
+			IRestErrorCode xRestErrorCode = new DadosRestErrorCode();
+			xRestError.setDescription(pMessages.getCurrentMessage().getMessageText());
+			xRestErrorCode.setStatus(pStatus);
+			xRestErrorCode.setSource(DBSString.toString(pMessages.getCurrentMessage().getMessageCode()));
+			xRestErrorCode.setRef(DBSString.toString(pMessages.getCurrentMessage().getMessageCode()));
+			xRestError.setCode(xRestErrorCode);
 			xRetorno.setError(xRestError);
 		}
 		

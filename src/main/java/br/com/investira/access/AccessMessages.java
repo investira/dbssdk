@@ -51,6 +51,9 @@ public class AccessMessages {
 	public static IDBSMessage CodigoCriarSucesso = 
 			new DBSMessage(MESSAGE_TYPE.SUCCESS,	2010102, HttpServletResponse.SC_CREATED, "Código criado com sucesso.");
 	
+	public static IDBSMessage ClientCriarSucesso = 
+			new DBSMessage(MESSAGE_TYPE.SUCCESS,	2010103, HttpServletResponse.SC_CREATED, "Client criado com sucesso.");
+	
 	//400 - Bad Request
 	public static IDBSMessage CodigoCriarErro =
 			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000101, HttpServletResponse.SC_BAD_REQUEST, "Erro criando código.");
@@ -67,6 +70,15 @@ public class AccessMessages {
 	public static IDBSMessage SenhaNaoConfirma =
 			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000105, HttpServletResponse.SC_BAD_REQUEST, "Senha e Confirmação de Senha devem ser iguais.");
 	
+	public static IDBSMessage ClientCriarErro =
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000106, HttpServletResponse.SC_BAD_REQUEST, "Erro criando client.");
+	
+	public static IDBSMessage ClientReadErro =
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000107, HttpServletResponse.SC_BAD_REQUEST, "Erro lendo client.");
+	
+	public static IDBSMessage ClientDeleteErro =
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000108, HttpServletResponse.SC_BAD_REQUEST, "Erro deletando client.");
+	
 	//401 - Unauthorized
 	public static IDBSMessage TokenInvalido = 
 			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010101, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido.");
@@ -80,6 +92,9 @@ public class AccessMessages {
 	//404 - Not Found
 	public static IDBSMessage UsuarioNaoEncontrado =
 			new DBSMessage(MESSAGE_TYPE.ERROR, 		4040201, HttpServletResponse.SC_NOT_FOUND, "Usuário não encontrado.");
+	
+	public static IDBSMessage ClientNaoEncontrado =
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4040202, HttpServletResponse.SC_NOT_FOUND, "Client não encontrado.");
 	
 	//403 - FORBIDDEN
 	public static IDBSMessage UsuarioUsernameOuSenhaInvalida =  

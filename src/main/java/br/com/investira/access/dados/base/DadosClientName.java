@@ -1,4 +1,4 @@
-package br.com.dbsoft.rest.dados;
+package br.com.investira.access.dados.base;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -8,37 +8,27 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import br.com.dbsoft.rest.interfaces.IRestError;
-import br.com.dbsoft.rest.interfaces.IRestErrorCode;
+import br.com.investira.access.interfaces.base.IClientName;
 
 @JsonInclude(value=Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
-public class DadosRestError implements IRestError{
+public class DadosClientName implements IClientName {
 
-	private static final long serialVersionUID = 3059562643463340866L;
+	private static final long serialVersionUID = -4587403905846440996L;
 	
-	@JsonProperty("description")
-	private String			wDescription;
-	@JsonProperty("code")
-	private IRestErrorCode	wCode;
-	
+	@JsonProperty("client_name")
+	private String wClientName;
+
 	@Override
-	public String getDescription() {
-		return wDescription;
+	public String getClientName() {
+		return wClientName;
 	}
+
 	@Override
-	public void setDescription(String pText) {
-		wDescription = pText;
+	public void setClientName(String pClientName) {
+		wClientName = pClientName;
 	}
-	@Override
-	public IRestErrorCode getCode() {
-		return wCode;
-	}
-	@Override
-	public void setCode(IRestErrorCode pCode) {
-		wCode = pCode;
-	}
-	
+
 }
