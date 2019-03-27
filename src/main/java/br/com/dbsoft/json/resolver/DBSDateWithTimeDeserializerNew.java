@@ -31,6 +31,9 @@ public class DBSDateWithTimeDeserializerNew extends StdDeserializer<Date> {
 		Date xData = null;
 		try {
 			xJsonData = pJSONParser.getText();
+			if (xJsonData.length() < 24 || !xJsonData.contains(":")) {
+				xJsonData += "T00:00:00.000Z";
+			}
 			xData = DBSDate.toDate(wFormat.parse(xJsonData));
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
