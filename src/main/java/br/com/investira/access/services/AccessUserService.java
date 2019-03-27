@@ -58,7 +58,7 @@ public class AccessUserService extends AbstractService {
 				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			prAddMessage(AccessMessages.CadastroCriarErro);
@@ -83,7 +83,7 @@ public class AccessUserService extends AbstractService {
 				prAddMessage(AccessMessages.TokenInvalido);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			prAddMessage(AccessMessages.TokenInvalido);
@@ -114,7 +114,7 @@ public class AccessUserService extends AbstractService {
 				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			prAddMessage(AccessMessages.CadastroCriarErro);
@@ -141,7 +141,7 @@ public class AccessUserService extends AbstractService {
 				xRecordCount = xRetorno.getData();
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.CodeInvalido);
 		}
@@ -166,7 +166,7 @@ public class AccessUserService extends AbstractService {
 				prAddMessage(AccessMessages.TokenInvalido);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			prAddMessage(AccessMessages.TokenInvalido);
@@ -192,7 +192,7 @@ public class AccessUserService extends AbstractService {
 				prAddMessage(AccessMessages.TokenInvalido);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			prAddMessage(AccessMessages.TokenInvalido);

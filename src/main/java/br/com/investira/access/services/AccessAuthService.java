@@ -54,7 +54,7 @@ public class AccessAuthService extends AbstractService {
 				prAddMessage(AccessMessages.ErroGerandoTokenClient);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.ErroGerandoTokenClient);
 		}
@@ -142,7 +142,7 @@ public class AccessAuthService extends AbstractService {
 				prAddMessage(AccessMessages.UsuarioUsernameOuSenhaInvalida);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.UsuarioNaoAutorizado);
 		} catch (IOException e) {
 			wLogger.error(e);
 			if (e.getLocalizedMessage().contains("Bloqueado")) {

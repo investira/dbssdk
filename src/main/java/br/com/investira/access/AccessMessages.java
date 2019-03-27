@@ -80,14 +80,17 @@ public class AccessMessages {
 			new DBSMessage(MESSAGE_TYPE.ERROR, 		4000108, HttpServletResponse.SC_BAD_REQUEST, "Erro deletando client.");
 	
 	//401 - Unauthorized
+	public static IDBSMessage NaoAutorizado =
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010201, HttpServletResponse.SC_UNAUTHORIZED, "Não autorizado.");
+	
 	public static IDBSMessage TokenInvalido = 
-			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010101, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido.");
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010102, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido.");
 	
 	public static IDBSMessage UsuarioNaoAutorizado =
-			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010202, HttpServletResponse.SC_UNAUTHORIZED, "Usuário não autorizado.");
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010203, HttpServletResponse.SC_UNAUTHORIZED, "Usuário não autorizado.");
 	
 	public static IDBSMessage CodeInvalido = 
-			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010103, HttpServletResponse.SC_UNAUTHORIZED, "O Código está inválido.");
+			new DBSMessage(MESSAGE_TYPE.ERROR, 		4010104, HttpServletResponse.SC_UNAUTHORIZED, "O Código está inválido.");
 	
 	//404 - Not Found
 	public static IDBSMessage UsuarioNaoEncontrado =

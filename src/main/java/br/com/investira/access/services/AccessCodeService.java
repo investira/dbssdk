@@ -53,7 +53,7 @@ public class AccessCodeService extends AbstractService {
 				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.CodigoCriarErro);
 		}
@@ -78,7 +78,7 @@ public class AccessCodeService extends AbstractService {
 				prAddMessage(AccessMessages.TokenInvalido);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.TokenInvalido);
 		}
@@ -104,7 +104,7 @@ public class AccessCodeService extends AbstractService {
 				xRecordCount = xRetorno.getData();
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.CodeInvalido);
 		}
@@ -129,7 +129,7 @@ public class AccessCodeService extends AbstractService {
 				prAddMessage(AccessMessages.TokenInvalido);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.TokenInvalido);
 		}

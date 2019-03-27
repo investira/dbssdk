@@ -53,7 +53,7 @@ public class AccessClientService extends AbstractService {
 				prAddMessage(new DBSMessage(MESSAGE_TYPE.ERROR, xRetorno.getError().getDescription()));
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.ClientCriarErro);
 		}
@@ -78,7 +78,7 @@ public class AccessClientService extends AbstractService {
 				prAddMessage(AccessMessages.ClientNaoEncontrado);
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.ClientReadErro);
 		}
@@ -104,7 +104,7 @@ public class AccessClientService extends AbstractService {
 				xRecordCount = xRetorno.getData();
 			}
 		} catch (AuthException e) {
-			prAddMessage(e);
+			prAddMessage(AccessMessages.NaoAutorizado);
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.ClientDeleteErro);
 		}
