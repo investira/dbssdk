@@ -29,7 +29,7 @@ public class AccessAuthService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessAuthService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(pURL, "/api/auth");
+		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/auth");
 //		wURLPathGoogle = DBSFile.getPathNormalized(pIfeedURL, "/api/auth/google");
 	}
 

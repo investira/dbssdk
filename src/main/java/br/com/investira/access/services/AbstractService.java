@@ -21,6 +21,7 @@ import br.com.investira.access.AccessMessages;
 public class AbstractService extends DBSBaseService {
 	
 	protected String wClientToken;
+	protected final String PATH_V1 = "/api/v1";
 
 	//METODOS PUBLICOS ===================================================
 	//METODOS PROTEGIDOS ==================================================

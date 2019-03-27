@@ -27,7 +27,7 @@ public class AccessClientService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessClientService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(pURL, "/api/client");
+		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/client");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================

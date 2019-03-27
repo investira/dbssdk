@@ -27,7 +27,7 @@ public class AccessCodeService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessCodeService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(pURL, "/api/code");
+		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/code");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================
