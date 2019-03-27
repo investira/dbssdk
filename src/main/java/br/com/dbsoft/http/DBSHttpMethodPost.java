@@ -44,12 +44,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final String doPost(String pURL, Map<String, String> pData) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+			PostMethod xMethod = pvCreateMethod(pURL, pData);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+				PostMethod xMethod = pvCreateMethod(pURL, pData);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -66,12 +66,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final String doPostXML(String pURL, Map<String, String> pData) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pData, wExtraHeaderInfo);
+			PostMethod xMethod = pvCreateMethod(pURL, pData, wExtraHeaderInfo);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pData, wExtraHeaderInfo);
+				PostMethod xMethod = pvCreateMethod(pURL, pData, wExtraHeaderInfo);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -89,12 +89,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final <T> T doPost(String pURL, Map<String, String> pData, Class<T> pResponseType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+			PostMethod xMethod = pvCreateMethod(pURL, pData);
 			return getResponseAsJson(xMethod, pResponseType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+				PostMethod xMethod = pvCreateMethod(pURL, pData);
 				return getResponseAsJson(xMethod, pResponseType);
 			}
 			throw e;
@@ -113,11 +113,11 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final <T, P> T doPost(String pURL, Map<String, String> pData, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+			PostMethod xMethod = pvCreateMethod(pURL, pData);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pData);
+				PostMethod xMethod = pvCreateMethod(pURL, pData);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -126,11 +126,11 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	
 	public final <T, P> T doPost(String pURL, Map<String, String> pExtraHeaders, Map<String, String> pData, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pData, pExtraHeaders);
+			PostMethod xMethod = pvCreateMethod(pURL, pData, pExtraHeaders);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pData, pExtraHeaders);
+				PostMethod xMethod = pvCreateMethod(pURL, pData, pExtraHeaders);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -147,12 +147,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final String doPostXML(String pURL, Object pObject) throws AuthException, IOException	{
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pObject, wExtraHeaderInfo);
+			PostMethod xMethod = pvCreateMethod(pURL, pObject, wExtraHeaderInfo);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pObject, wExtraHeaderInfo);
+				PostMethod xMethod = pvCreateMethod(pURL, pObject, wExtraHeaderInfo);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -169,12 +169,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final String doPost(String pURL, Object pObject) throws AuthException, IOException	{
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+			PostMethod xMethod = pvCreateMethod(pURL, pObject);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+				PostMethod xMethod = pvCreateMethod(pURL, pObject);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -192,12 +192,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final <T> T doPost(String pURL, Object pObject, Class<T> pResponseType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+			PostMethod xMethod = pvCreateMethod(pURL, pObject);
 			return getResponseAsJson(xMethod, pResponseType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+				PostMethod xMethod = pvCreateMethod(pURL, pObject);
 				return getResponseAsJson(xMethod, pResponseType);
 			}
 			throw e;
@@ -216,12 +216,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	 */
 	public final <T, P> T doPost(String pURL, Object pObject, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+			PostMethod xMethod = pvCreateMethod(pURL, pObject);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pObject);
+				PostMethod xMethod = pvCreateMethod(pURL, pObject);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -230,12 +230,12 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	
 	public final <T, P> T doPost(String pURL, Map<String, String> pExtraHeaders, Object pObject, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			PostMethod xMethod = pvCreatePostMethod(pURL, pObject, pExtraHeaders);
+			PostMethod xMethod = pvCreateMethod(pURL, pObject, pExtraHeaders);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				PostMethod xMethod = pvCreatePostMethod(pURL, pObject, pExtraHeaders);
+				PostMethod xMethod = pvCreateMethod(pURL, pObject, pExtraHeaders);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -243,11 +243,11 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	}
 	
 	//METODOS PRIVADOS =============================================================================	
-	private PostMethod pvCreatePostMethod(String pURL, Map<String, String> pData) throws AuthException, IOException {
-		return pvCreatePostMethod(pURL, pData, Collections.<String,String>emptyMap());
+	private PostMethod pvCreateMethod(String pURL, Map<String, String> pData) throws AuthException, IOException {
+		return pvCreateMethod(pURL, pData, Collections.<String,String>emptyMap());
 	}
 	
-	private PostMethod pvCreatePostMethod(String pURL, Map<String, String> pData, Map<String, String> pExtraHeaders) throws AuthException, IOException {
+	private PostMethod pvCreateMethod(String pURL, Map<String, String> pData, Map<String, String> pExtraHeaders) throws AuthException, IOException {
 		PostMethod xPostMethod = pvCreateBasicPostMethod(pURL, pExtraHeaders);
 		
 		List<NameValuePair> xPostData = new ArrayList<>(pData.size());
@@ -259,11 +259,11 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		return xPostMethod;
 	}
 	
-	private PostMethod pvCreatePostMethod(String pURL, Object pObject) throws AuthException, IOException {
-		return pvCreatePostMethod(pURL, pObject, Collections.<String, String>emptyMap());
+	private PostMethod pvCreateMethod(String pURL, Object pObject) throws AuthException, IOException {
+		return pvCreateMethod(pURL, pObject, Collections.<String, String>emptyMap());
 	}
 	
-	private PostMethod pvCreatePostMethod(String pURL, Object pObject, Map<String, String> pExtraHeaders) throws AuthException, IOException {
+	private PostMethod pvCreateMethod(String pURL, Object pObject, Map<String, String> pExtraHeaders) throws AuthException, IOException {
 		PostMethod xPostMethod = pvCreateBasicPostMethod(pURL, pExtraHeaders);
 		
 		String xJSon = DBSJson.toJson(pObject);

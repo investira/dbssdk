@@ -37,11 +37,11 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	 */
 	public final String doGet(String pURL) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL);
+			GetMethod xMethod = pvCreateMethod(pURL);
 			return getResponseAsString(xMethod);
 		}catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL);
+				GetMethod xMethod = pvCreateMethod(pURL);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -57,12 +57,12 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	 */
 	public final String doGetXML(String pURL) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL, wExtraHeaderInfo);
+			GetMethod xMethod = pvCreateMethod(pURL, wExtraHeaderInfo);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL, wExtraHeaderInfo);
+				GetMethod xMethod = pvCreateMethod(pURL, wExtraHeaderInfo);
 				return getResponseAsString(xMethod);
 			}
 			throw e;
@@ -80,11 +80,11 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	 */
 	public final <T> T doGet(String pURL, Class<T> pResponseType) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL);
+			GetMethod xMethod = pvCreateMethod(pURL);
 			return getResponseAsJson(xMethod, pResponseType);
 		} catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL);
+				GetMethod xMethod = pvCreateMethod(pURL);
 				return getResponseAsJson(xMethod, pResponseType);
 			}
 			throw e;
@@ -102,12 +102,12 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	 */
 	public final <T,P> T doGet(String pURL, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL);
+			GetMethod xMethod = pvCreateMethod(pURL);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL);
+				GetMethod xMethod = pvCreateMethod(pURL);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -116,12 +116,12 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	
 	public final <T,P> T doGet(String pURL, Map<String, String> pExtraHeaders, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL, pExtraHeaders);
+			GetMethod xMethod = pvCreateMethod(pURL, pExtraHeaders);
 			return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL, pExtraHeaders);
+				GetMethod xMethod = pvCreateMethod(pURL, pExtraHeaders);
 				return pvGetResponseAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -130,12 +130,12 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	
 	public final <T,P> T doGetList(String pURL, Class<T> pResponseType, Class<P> pParameterType) throws AuthException, IOException {
 		try {
-			GetMethod xMethod = pvCreateGetMethod(pURL);
+			GetMethod xMethod = pvCreateMethod(pURL);
 			return pvGetResponseListAsJson(xMethod, pResponseType, pParameterType);
 		} 
 		catch(BadCredentialsException e) {
 			if (forceRenewToken()) {
-				GetMethod xMethod = pvCreateGetMethod(pURL);
+				GetMethod xMethod = pvCreateMethod(pURL);
 				return pvGetResponseListAsJson(xMethod, pResponseType, pParameterType);
 			}
 			throw e;
@@ -143,11 +143,11 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	}
 	
 	//METODOS PRIVADOS =============================================================================
-	private GetMethod pvCreateGetMethod(String pURL) throws AuthException, IOException {
-		return pvCreateGetMethod(pURL, Collections.<String,String>emptyMap());
+	private GetMethod pvCreateMethod(String pURL) throws AuthException, IOException {
+		return pvCreateMethod(pURL, Collections.<String,String>emptyMap());
 	}
 	
-	private GetMethod pvCreateGetMethod(String pURL, Map<String, String> pExtraHeaders) throws AuthException, IOException{
+	private GetMethod pvCreateMethod(String pURL, Map<String, String> pExtraHeaders) throws AuthException, IOException{
 		return pvCreateBasicGetMethod(pURL, pExtraHeaders);
 	}
 	
