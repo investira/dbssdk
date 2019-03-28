@@ -28,7 +28,7 @@ public class DBSDateSerializer extends StdSerializer<Date> {
 
 	@Override
 	public void serialize(Date pValue, JsonGenerator pGen, SerializerProvider pArg2) throws IOException, JsonProcessingException {
-		pGen.writeString(DBSFormat.getFormattedDateCustom(pValue, FORMAT, "Brazil/East"));
+		pGen.writeString(DBSFormat.getFormattedDateCustom(pValue, FORMAT));
 	}
 
 }

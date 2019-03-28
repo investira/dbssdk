@@ -9,7 +9,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +71,7 @@ public class DBSFormat implements Serializable {
 		if (DBSObject.isEmpty(pDate)){
 			return "";
 		}else{
-			SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy");
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy");
 			return xFormat.format(DBSDate.toDate(pDate));
 		}
 	}
@@ -101,7 +100,7 @@ public class DBSFormat implements Serializable {
 		if (pDate == null){
 			return "";
 		}else{
-			SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy");
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy");
 			return xFormat.format(pDate);
 		}
 	}
@@ -124,7 +123,7 @@ public class DBSFormat implements Serializable {
 		if (pDate == null){
 			return "";
 		}else{
-			SimpleDateFormat xFormat = getSimpleDateFormater("yyyy");
+			SimpleDateFormat xFormat = new SimpleDateFormat("yyyy");
 			return xFormat.format(DBSDate.toDate(pDate));
 		}
 	}
@@ -139,7 +138,7 @@ public class DBSFormat implements Serializable {
 			return "";
 		}else{
 	
-			SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy HH:mm:ss");
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			return xFormat.format(pLong);
 		}
 	}
@@ -150,7 +149,7 @@ public class DBSFormat implements Serializable {
 	 * @return String com a data já formatada
 	 */
 	public static String getFormattedDateTimes(Date pDate){
-		SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy HH:mm:ss");
+		SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		return xFormat.format(pDate);
 	}
 
@@ -169,7 +168,7 @@ public class DBSFormat implements Serializable {
 	 * @return String com a data já formatada
 	 */
 	public static String getFormattedTimes(Date pDate){
-		SimpleDateFormat xFormat = getSimpleDateFormater("HH:mm:ss");
+		SimpleDateFormat xFormat = new SimpleDateFormat("HH:mm:ss");
 		return xFormat.format(pDate.getTime());
 	}
 	
@@ -183,7 +182,7 @@ public class DBSFormat implements Serializable {
 			return "";
 		}else{
 	
-			SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy HH:mm");
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			return xFormat.format(pDate);
 		}
 	}
@@ -198,7 +197,7 @@ public class DBSFormat implements Serializable {
 			return "";
 		}else{
 	
-			SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy HH:mm");
+			SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			return xFormat.format(pLong);
 		}
 	}
@@ -209,7 +208,7 @@ public class DBSFormat implements Serializable {
 	 * @return String com a data já formatada
 	 */
 	public static String getFormattedDateTime(Date pDate){
-		SimpleDateFormat xFormat = getSimpleDateFormater("dd/MM/yyyy HH:mm");
+		SimpleDateFormat xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		return xFormat.format(pDate);
 	}
 
@@ -228,7 +227,7 @@ public class DBSFormat implements Serializable {
 	 * @return String com a data já formatada
 	 */
 	public static String getFormattedTime(Date pDate){
-		SimpleDateFormat xFormat = getSimpleDateFormater("HH:mm");
+		SimpleDateFormat xFormat = new SimpleDateFormat("HH:mm");
 		return xFormat.format(pDate.getTime());
 	}
 	
@@ -242,25 +241,9 @@ public class DBSFormat implements Serializable {
 		if (DBSObject.isNull(pDate)) {
 			return "";
 		}
-		SimpleDateFormat xFormat = getSimpleDateFormater(pMask);
-		return xFormat.format(DBSDate.toDate(pDate));
-	}
-
-	public static String getFormattedDateCustom(Object pDate, String pMask, String pTimezone){
-		if (DBSObject.isNull(pDate)) {
-			return "";
-		}
-		SimpleDateFormat xFormat = getSimpleDateFormater(pMask);
-		xFormat.setTimeZone(TimeZone.getTimeZone(pTimezone));
-		return xFormat.format(DBSDate.toDate(pDate));
-	}
-	
-	public static SimpleDateFormat getSimpleDateFormater(String pMask) {
 		SimpleDateFormat xFormat = new SimpleDateFormat(pMask);
-		xFormat.setTimeZone(TimeZone.getTimeZone("Brazil/East"));
-		return xFormat;
+		return xFormat.format(DBSDate.toDate(pDate));
 	}
-	
 	/**
 	 * Retorna string contendo a data formatada hora, minutos e segundos
 	 * @param pData Data a ser formatado
