@@ -15,8 +15,6 @@ public class DBSDateWithTimeDeserializerNew extends StdDeserializer<Date> {
 
 	private static final long serialVersionUID = -2302982612223014996L;
 	
-	SimpleDateFormat wFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
 	public DBSDateWithTimeDeserializerNew() {
 		this(null);
 	}
@@ -27,14 +25,17 @@ public class DBSDateWithTimeDeserializerNew extends StdDeserializer<Date> {
 
 	@Override
 	public Date deserialize(JsonParser pJSONParser, DeserializationContext pContext) {
+		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		String xJsonData = "";
 		Date xData = null;
 		try {
 			xJsonData = pJSONParser.getText();
-			if (xJsonData.length() < 24 || !xJsonData.contains(":")) {
+			if (!xJsonData.contains(":")) {
 				xJsonData += "T00:00:00.000Z";
+			} else if (xJsonData.contains("/") && xJsonData.length() < 20 && !xJsonData.contains(".")) {
+				xFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			}
-			xData = DBSDate.toDate(wFormat.parse(xJsonData));
+			xData = DBSDate.toDate(xFormat.parse(xJsonData));
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
