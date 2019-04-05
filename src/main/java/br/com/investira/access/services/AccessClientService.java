@@ -61,7 +61,7 @@ public class AccessClientService extends AbstractService {
 		DBSHttpMethodGet 			xMethod;
 		DBSRestReturn<IAuthClient> 	xRetorno = new DBSRestReturn<IAuthClient>();
 		IAuthClient					xClient = null;
-		
+		wLogger.info("=========================Verificando ClientToken=========================");
 		try {
 			xMethod = new DBSHttpMethodGet(wClientToken);
 			xRetorno = xMethod.doGet(wURLPath, DBSRestReturn.class, DadosAuthClient.class);
