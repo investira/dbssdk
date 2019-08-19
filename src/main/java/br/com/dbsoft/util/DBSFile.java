@@ -270,7 +270,8 @@ public class DBSFile {
 				while (xZipFileElements.hasMoreElements()) {
 					xZipFileObject = (ZipEntry) xZipFileElements.nextElement();
 					
-					if (xZipFileObject.getName().toLowerCase().endsWith(FILE.EXTENSION.ZIP)) {
+					if (xZipFileObject.getName().toLowerCase().endsWith(FILE.EXTENSION.ZIP)
+					 || xZipFileObject.getName().toLowerCase().endsWith(".ex_")) {
 						pvCopyInputStream(xZipFile.getInputStream(xZipFileObject), 
 								new BufferedOutputStream(new FileOutputStream(xFile.getParent() +File.separator+ xZipFileObject.getName())));
 						
