@@ -52,7 +52,7 @@ public class DBSHttp {
 	 * Evia um arquivo local para o browser
 	 */
 	public static Boolean sendFile(ByteArrayOutputStream pByteArrayOutputStream, String pRemoteFileName, String pContentType){
-		FacesContext 	xFC = FacesContext.getCurrentInstance();
+		FacesContext xFC = FacesContext.getCurrentInstance();
 		ExternalContext xEC = xFC.getExternalContext();
 		
 		//Verifica se arquivo existe. Se não existir...

@@ -29,7 +29,7 @@
 		<javax.json.version>1.0</javax.json.version>
 		<jstl.version>1.2</jstl.version>
 		<oracle.version>11.2.0.3</oracle.version>
-		<mysql.version>5.1.30</mysql.version>
+		<mysql.version>8.0.15</mysql.version>
 		<joda-time.version>2.1</joda-time.version>
 		<caelum-stella.version>2.1.0</caelum-stella.version>
 		<jsf.version>2.2.11</jsf.version>
@@ -143,11 +143,6 @@
 			<version>${oracle.version}</version>
 		</dependency>
 		<!-- MYSQL -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>javax.mail-api</artifactId>
@@ -265,6 +260,11 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>${httpclient.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
 		</dependency>
 	</dependencies>
 
