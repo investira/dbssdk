@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 
+import com.fasterxml.jackson.databind.JavaType;
+
 import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.error.exception.BadCredentialsException;
 
@@ -137,6 +139,20 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 			if (forceRenewToken()) {
 				GetMethod xMethod = pvCreateMethod(pURL);
 				return pvGetResponseListAsJson(xMethod, pResponseType, pParameterType);
+			}
+			throw e;
+		}
+	}
+	
+	public final <T,P> T doGetCollection(String pURL, JavaType pType) throws AuthException, IOException {
+		try {
+			GetMethod xMethod = pvCreateMethod(pURL);
+			return pvGetResponseCollection(xMethod, pType);
+		} 
+		catch(BadCredentialsException e) {
+			if (forceRenewToken()) {
+				GetMethod xMethod = pvCreateMethod(pURL);
+				return pvGetResponseCollection(xMethod, pType);
 			}
 			throw e;
 		}

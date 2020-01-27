@@ -71,20 +71,22 @@ public class DBSJson {
 		return xFromJson;
 	}
 	
-	public static <T,P> T fromJsonList(String pJSON, Class<T> pResponseType, Class<P> pParameterType) {
-		if (DBSObject.isEmpty(pJSON)) {return null;}
-		T 				xFromJson = null;
-		ObjectMapper 	xMapper = ParametersSerializer.get();
-		
-		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
-		JavaType xType = xMapper.getTypeFactory().constructParametricType(pResponseType, pParameterType);
-		try {
-			xFromJson = xMapper.readValue(pJSON, xType);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return xFromJson;
-	}
+	//COMENTADO POIS NAO É USADO
+//	public static List<T> fromJsonList(String pJSON, Class<T> pResponseType) {
+//		if (DBSObject.isEmpty(pJSON)) {return null;}
+//		List<T>			xFromJson = null;
+//		ObjectMapper 	xMapper = new ObjectMapper();
+//		xMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//		
+//		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
+//		JavaType xType = xMapper.getTypeFactory().constructCollectionType(List.class, pResponseType);
+//		try {
+//			xFromJson = xMapper.readValue(pJSON, xType);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return xFromJson;
+//	}
 	
 	/**
 	 * Retorna classe do tipo informado a partir de String JSon  

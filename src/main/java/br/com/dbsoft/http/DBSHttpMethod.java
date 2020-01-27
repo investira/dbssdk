@@ -17,6 +17,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonSyntaxException;
@@ -184,5 +185,13 @@ public abstract class DBSHttpMethod {
 		JavaType xListType = xMapper.getTypeFactory().constructParametricType(ArrayList.class, pParameterType);
 		JavaType xType = xMapper.getTypeFactory().constructParametricType(pResponseType, xListType);
 		return xMapper.readValue(xResponse, xType);
+	}
+	
+	protected final <T,P> T pvGetResponseCollection(HttpMethod pMethod, JavaType pType) throws IOException{
+		String xResponse = getResponseAsString(pMethod);
+		ObjectMapper 	xMapper = new ObjectMapper();
+		xMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
+		return xMapper.readValue(xResponse, pType);
 	}
 }
