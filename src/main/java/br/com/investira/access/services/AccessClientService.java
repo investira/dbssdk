@@ -57,14 +57,14 @@ public class AccessClientService extends AbstractService {
 	 * @param pClientToken
 	 * @return
 	 */
-	public IAuthClient read() {
+	public IAuthClient read(String pClientID) {
 		DBSHttpMethodGet 			xMethod;
 		DBSRestReturn<IAuthClient> 	xRetorno = new DBSRestReturn<IAuthClient>();
 		IAuthClient					xClient = null;
 		wLogger.info("=========================Verificando ClientToken=========================");
 		try {
 			xMethod = new DBSHttpMethodGet(wClientToken);
-			xRetorno = xMethod.doGet(wURLPath, DBSRestReturn.class, DadosAuthClient.class);
+			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pClientID), DBSRestReturn.class, DadosAuthClient.class);
 			xClient = xRetorno.getData();
 			if (DBSObject.isNull(xClient) || !DBSObject.isIdValid(xClient.getClientId())) {
 				prAddMessage(AccessMessages.ClientNaoEncontrado);
