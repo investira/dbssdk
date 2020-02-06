@@ -70,7 +70,11 @@ public class AccessClientService extends AbstractService {
 				prAddMessage(AccessMessages.ClientNaoEncontrado);
 			}
 		} catch (AuthException e) {
-			prAddMessage(AccessMessages.NaoAutorizado);
+			if (e.getStatusCode() == 403) {
+				prAddMessage(AccessMessages.UsuarioUsernameOuSenhaInvalida);
+			} else {
+				prAddMessage(AccessMessages.NaoAutorizado);
+			}
 		} catch (IOException e) {
 			prAddMessage(AccessMessages.ClientReadErro);
 		}
