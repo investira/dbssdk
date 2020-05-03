@@ -1534,7 +1534,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			}
 			
 //			//Recuper o conteúdo de todas as colunas do registro corrente
-			for (int x=1; x< getColumns().size(); x++){
+			for (int x = 1; x < getColumns().size(); x++){
 				if (!pReturnListDataModel){
 					xColumns.MergeColumn(getColumn(x).getColumnName(),
 										 getColumn(x).getDataType(),

@@ -31,7 +31,8 @@ public abstract class DBSAppStartup implements ServletContextListener, IDBSSDKIn
 		wLogger.info(">>> STARTING:" + pvGetDescription());
 		if (beforeStart(pSCE)){ 
 			try {
-				DBSApp.AppLocalPath = pSCE.getServletContext().getResource(File.separator);
+//				DBSApp.AppLocalPath = pSCE.getServletContext().getResource(File.separator);
+				DBSApp.AppLocalPath = pSCE.getServletContext().getResource("/");
 			} catch (MalformedURLException e) {
 				wLogger.error(e);
 			}

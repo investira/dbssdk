@@ -27,7 +27,7 @@ public class AccessCodeService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessCodeService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/code");
+		wURLPath = DBSFile.getURLNormalized(DBSFile.getURLNormalized(pURL, PATH_V1), "/code");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================
@@ -72,7 +72,7 @@ public class AccessCodeService extends AbstractService {
 		
 		try {
 			xMethod = new DBSHttpMethodGet(wClientToken);
-			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
+			xRetorno = xMethod.doGet(DBSFile.getURLNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
 			xCode = xRetorno.getData();
 			if (DBSObject.isNull(xCode) || DBSObject.isEmpty(pCode)) {
 				prAddMessage(AccessMessages.TokenInvalido);
@@ -97,7 +97,7 @@ public class AccessCodeService extends AbstractService {
 		
 		try {
 			xMethod = new DBSHttpMethodDelete(wClientToken);
-			xRetorno = xMethod.doDelete(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosRecordCount.class);
+			xRetorno = xMethod.doDelete(DBSFile.getURLNormalized(wURLPath, pCode), DBSRestReturn.class, DadosRecordCount.class);
 			if (DBSObject.isNull(xRetorno) || DBSObject.isNull(xRetorno.getData())) {
 				prAddMessage(AccessMessages.CodeInvalido);
 			} else {
@@ -123,7 +123,7 @@ public class AccessCodeService extends AbstractService {
 		
 		try {
 			xMethod = new DBSHttpMethodPatch(wClientToken);
-			xRetorno = xMethod.doPatch(DBSFile.getPathNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
+			xRetorno = xMethod.doPatch(DBSFile.getURLNormalized(wURLPath, pCode), DBSRestReturn.class, DadosAuthCode.class);
 			xCode = xRetorno.getData();
 			if (DBSObject.isNull(xCode) || DBSObject.isEmpty(pCode)) {
 				prAddMessage(AccessMessages.TokenInvalido);

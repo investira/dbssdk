@@ -31,7 +31,7 @@ public class AccessUserService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessUserService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/user");
+		wURLPath = DBSFile.getURLNormalized(DBSFile.getURLNormalized(pURL, PATH_V1), "/user");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================
@@ -77,7 +77,7 @@ public class AccessUserService extends AbstractService {
 		IAuthUser				xUserInfo = null;
 		
 		try {
-			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosAuthUser.class);
+			xRetorno = xMethod.doGet(DBSFile.getURLNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosAuthUser.class);
 			xUserInfo = xRetorno.getData();
 			if (DBSObject.isNull(xUserInfo) || DBSObject.isEmpty(xUserInfo.getUsername())) {
 				prAddMessage(AccessMessages.TokenInvalido);
@@ -134,7 +134,7 @@ public class AccessUserService extends AbstractService {
 		
 		try {
 			xMethod = new DBSHttpMethodDelete(wClientToken);
-			xRetorno = xMethod.doDelete(DBSFile.getPathNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosRecordCount.class);
+			xRetorno = xMethod.doDelete(DBSFile.getURLNormalized(wURLPath, pUsername), DBSRestReturn.class, DadosRecordCount.class);
 			if (DBSObject.isNull(xRetorno) || DBSObject.isNull(xRetorno.getData())) {
 				prAddMessage(AccessMessages.CodeInvalido);
 			} else {
@@ -157,7 +157,7 @@ public class AccessUserService extends AbstractService {
 		DBSRestReturn<IAuthToken> 	xRetorno = null;
 		DBSHttpMethodGet 			xMethod = new DBSHttpMethodGet(wClientToken);
 		IAuthToken					xToken = null;
-		String 						xURL = DBSFile.getPathNormalized(DBSFile.getPathNormalized(wURLPath, "token"), pToken);
+		String 						xURL = DBSFile.getURLNormalized(DBSFile.getURLNormalized(wURLPath, "token"), pToken);
 		
 		try {
 			xRetorno = xMethod.doGet(xURL, DBSRestReturn.class, DadosAuthToken.class);
@@ -183,7 +183,7 @@ public class AccessUserService extends AbstractService {
 		DBSRestReturn<IAuthCode> 	xRetorno = null;
 		DBSHttpMethodGet 			xMethod = new DBSHttpMethodGet(wClientToken);
 		IAuthCode					xCode = null;
-		String 						xURL = DBSFile.getPathNormalized(DBSFile.getPathNormalized(wURLPath, pUsername), "code");
+		String 						xURL = DBSFile.getURLNormalized(DBSFile.getURLNormalized(wURLPath, pUsername), "code");
 		
 		try {
 			xRetorno = xMethod.doGet(xURL, DBSRestReturn.class, DadosAuthUser.class);

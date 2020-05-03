@@ -19,7 +19,7 @@ public class AccessClientService extends AbstractService {
 	//CONSTRUTORES ============================================================================================================
 	public AccessClientService(String pClientToken, String pURL) {
 		wClientToken = pClientToken;
-		wURLPath = DBSFile.getPathNormalized(DBSFile.getPathNormalized(pURL, PATH_V1), "/client");
+		wURLPath = DBSFile.getURLNormalized(DBSFile.getURLNormalized(pURL, PATH_V1), "/client");
 	}
 	
 	//MÉTODOS PÚBLICOS ========================================================================================================
@@ -64,7 +64,7 @@ public class AccessClientService extends AbstractService {
 		wLogger.info("=========================Verificando ClientToken=========================");
 		try {
 			xMethod = new DBSHttpMethodGet(wClientToken);
-			xRetorno = xMethod.doGet(DBSFile.getPathNormalized(wURLPath, pClientID), DBSRestReturn.class, DadosAuthClient.class);
+			xRetorno = xMethod.doGet(DBSFile.getURLNormalized(wURLPath, pClientID), DBSRestReturn.class, DadosAuthClient.class);
 			xClient = xRetorno.getData();
 			if (DBSObject.isNull(xClient) || !DBSObject.isIdValid(xClient.getClientId())) {
 				prAddMessage(AccessMessages.ClientNaoEncontrado);

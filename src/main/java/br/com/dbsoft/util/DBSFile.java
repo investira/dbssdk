@@ -895,7 +895,25 @@ public class DBSFile {
 		}
 		return pPath + pFile;
 	}
-	
+	/**
+	 * Retorna o caminho completo contendo o nome da URL, corrigindo eventuais problemas de barras "/".
+	 * @param pUrl
+	 * @param pSubUrl
+	 * @return
+	 */
+	public static String getURLNormalized(String pUrl, String pSubUrl){
+		if (pUrl == null){pUrl = "";}
+		if (pSubUrl == null){pSubUrl = "";}
+		pUrl = pUrl.trim();
+		if (!pUrl.endsWith("/")){
+			pUrl += "/";
+		}
+		pSubUrl = pSubUrl.trim();
+		if (pSubUrl.startsWith("/")){
+			pSubUrl = pSubUrl.substring(1, pSubUrl.length());
+		}
+		return pUrl + pSubUrl;
+	}
 	/**
 	 * Retorna quantidade de arquivos dentro da lista de pastas informadas.<br/>
 	 * Utiliza <b>pFileExtension</b> como filtro dos arquivos que serão considerados.

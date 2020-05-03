@@ -44,6 +44,7 @@ import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
+import br.com.dbsoft.util.DBSFormat.MASK;
 
 /**
  * @author ricardo.villar
@@ -154,7 +155,7 @@ public class DBSIO{
 		}
 		if (xDBPN.equals("ORACLE")){
 			return DB_SERVER.ORACLE;
-		}else if (xDBPN.equals("SQLSERVER")){
+		}else if (xDBPN.equals("MICROSOFT SQL SERVER")){
 			return DB_SERVER.SQLSERVER;
 		}else if (xDBPN.equals("MYSQL")){
 			return DB_SERVER.MYSQL;
@@ -441,7 +442,11 @@ public class DBSIO{
 		List<String> xPKs = null;
 		try {
 			xDMD = pCn.getMetaData();
-			xRS = xDMD.getPrimaryKeys(pCn.getCatalog(), pCn.getCatalog(), pTableName);
+			if (getDataBaseProduct(pCn) == DB_SERVER.SQLSERVER) {
+				xRS = xDMD.getPrimaryKeys(pCn.getCatalog(), "DBSFND", pTableName);
+			}else {
+				xRS = xDMD.getPrimaryKeys(pCn.getCatalog(), pCn.getCatalog(), pTableName);
+			}
 			xPKs = new ArrayList<String>();
 			while (xRS.next()) {
 				if (!xPKs.contains(xRS.getString("COLUMN_NAME"))){
@@ -453,10 +458,7 @@ public class DBSIO{
 			xPKs = null;
 			wLogger.error("getPrimaryKeys", e);
 			return xPKs;
-		} finally{
-			DBSIO.closeResultSet(xRS);
-			xDMD = null;
-		}
+		} 
 	}
 	
 
@@ -1661,7 +1663,11 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 		Statement xST = null;
 		try {
 			// + ResultSet.HOLD_CURSORS_OVER_COMMIT
-			xST = pCn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
+			if (DBSIO.getDataBaseProduct(pCn) != DB_SERVER.SQLSERVER) {
+				xST = pCn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
+			}else {
+				xST = pCn.createStatement();
+			}
 			xST.execute(pSQL); 
 			xCount = xST.getUpdateCount();
 			//Se foi um Select, recupera a quantidade de registros lidos
@@ -2497,6 +2503,38 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 				}else if(pDataTypeOriginal == -7){ //BOOLEAN
 					return DATATYPE.BOOLEAN;
 				}
+			}else if(xDBP.equals(DB_SERVER.SQLSERVER)) {
+				if (pDataTypeOriginal == 2 || //NUMBER 
+					pDataTypeOriginal == 3 || //NUMBER
+					pDataTypeOriginal == 4){
+					if (pPrecision == 0 ||
+						pPrecision > 14){
+						return DATATYPE.DECIMAL;
+					}
+					if (pPrecision < 10){
+						return DATATYPE.INT;
+					}else{
+						return DATATYPE.DOUBLE;
+					}
+				}else if (pDataTypeOriginal == 3){		//DECIMAL 
+					return DATATYPE.DECIMAL;
+				}else if (pDataTypeOriginal == 4){	//INT 
+					return DATATYPE.INT;
+				}else if (pDataTypeOriginal == 6){	//FLOAT
+					return DATATYPE.DECIMAL;
+				}else if (pDataTypeOriginal == 8){  //DOUBLE
+					return DATATYPE.DOUBLE;
+				}else if(pDataTypeOriginal == 12){ //VARCHAR2
+					return DATATYPE.STRING;
+				}else if(pDataTypeOriginal == 91){ //DATE
+					return DATATYPE.DATE;
+				}else if(pDataTypeOriginal == 92){ //TIME
+					return DATATYPE.TIME;
+				}else if(pDataTypeOriginal == 93){ //DATETIME
+					return DATATYPE.DATETIME;
+				}else if(pDataTypeOriginal == -7){ //BOOLEAN
+					return DATATYPE.BOOLEAN;
+				}
 			}
 		}
 		return DATATYPE.STRING;
@@ -2588,7 +2626,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "DateValue('" + DBSFormat.getFormattedDate(DBSDate.toDate(pValue)) + "')";
+					return "'" + DBSFormat.getFormattedDateCustom(DBSDate.toDate(pValue), "yyyy-MM-dd") + "'" ;//"DateValue('" + DBSFormat.getFormattedDate(DBSDate.toDate(pValue)) + "')";
 				}else{
 					return "0";
 				}
@@ -2643,7 +2681,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "DateValue('" + DBSFormat.getFormattedDateTimes(DBSDate.toTimestamp(pValue)) + "')";
+					return "'" + DBSFormat.getFormattedDateCustom(DBSDate.toTimestamp(pValue),"yyyy-MM-dd hh:mm:ss") + "'"; //"DateValue('" + DBSFormat.getFormattedDateTimes(DBSDate.toTimestamp(pValue)) + "')";
 				}else{
 					return "0";
 				}
@@ -2698,7 +2736,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "DateValue('" + DBSFormat.getFormattedTimes((Date)pValue) + "')";
+					return "('" + DBSFormat.getFormattedTimes((Date)pValue) + "')";
 				}else{
 					return "0";
 				}
