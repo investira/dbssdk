@@ -893,6 +893,7 @@ public class DBSFile {
 		if (pFile.startsWith(File.separator)){
 			pFile = pFile.substring(1, pFile.length());
 		}
+		wLogger.info("getPathNormalized >> " + pPath + pFile);
 		return pPath + pFile;
 	}
 	/**
@@ -912,6 +913,7 @@ public class DBSFile {
 		if (pSubUrl.startsWith("/")){
 			pSubUrl = pSubUrl.substring(1, pSubUrl.length());
 		}
+		wLogger.info("getURLNormalized >> " + pUrl + pSubUrl);
 		return pUrl + pSubUrl;
 	}
 	/**
