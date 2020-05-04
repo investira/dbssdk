@@ -2791,7 +2791,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 				}
 			}else if(xDBP == DB_SERVER.SQLSERVER){
 				if (DBSNumber.isNumber(pValue.toString())){
-					return "cDbl(" + xValue + ")";
+					return "CAST(" + xValue + " AS DECIMAL(38,23))";
 				}else{
 					return "0";
 				}
@@ -3297,7 +3297,8 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			xSQLColumns = "(";
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
-				if (!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
+				if (!xColumn.getPK() &&
+						!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					 || xColumn.getChanged()){ 
@@ -3310,7 +3311,8 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			xSQLColumns += ") VALUES(";
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
-				if (!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
+				if (!xColumn.getPK() &&
+						!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					  || xColumn.getChanged()){ 
