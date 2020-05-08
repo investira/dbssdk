@@ -18,6 +18,7 @@ import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import br.com.dbsoft.annotation.DBSTableModel;
 import br.com.dbsoft.core.DBSSDK.IO.DATATYPE;
+import br.com.dbsoft.core.DBSSDK.IO.DB_SERVER;
 import br.com.dbsoft.error.DBSIOException;
 import br.com.dbsoft.message.IDBSMessage;
 import br.com.dbsoft.util.DBSIO;
@@ -1375,6 +1376,10 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 	 */
 	private String pvGetUKConcatenaded(){
 		String xS = DBSString.changeStr(wUK, " ", "");
+		if (DBSIO.getDataBaseProduct(wConnection) == DB_SERVER.SQLSERVER 
+				&& DBSString.getInStr(xS, ",") > 0) {
+			return "CONCAT(" + xS + ")";
+		}
 		return DBSString.changeStr(xS, ",", " || ");
 	}
 	

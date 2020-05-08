@@ -541,11 +541,20 @@ public class DBSIO{
 //		int xI = DBSString.getInStr(" " + pSQLStatement, " From ", false);
 //		pSQLStatement = DBSString.getSubString(pSQLStatement, xI, pSQLStatement.length());
 		if (pSQLStatement.toLowerCase().startsWith("from")){
-			pSQLStatement = "Select Count(1) " + pSQLStatement; //Pesquisa com único select
+			if (DBSIO.getDataBaseProduct(pCn) == DB_SERVER.SQLSERVER) {
+				// Count(1) não funciona no sql server
+				pSQLStatement = "Select Count(*) " + pSQLStatement; //Pesquisa com único select
+			}else {
+				pSQLStatement = "Select Count(1) " + pSQLStatement; //Pesquisa com único select
+			}
 		}else{
-			//Retira o '*' da syntaxe para evitar erro de duplicidade de nome de coluna
-			pSQLStatement = DBSString.changeStr(pSQLStatement, " * ", " 1 ");
-			pSQLStatement = "Select Count(1) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
+			if (DBSIO.getDataBaseProduct(pCn) != DB_SERVER.SQLSERVER) {
+				//Retira o '*' da syntaxe para evitar erro de duplicidade de nome de coluna
+				pSQLStatement = DBSString.changeStr(pSQLStatement, " * ", " 1 ");
+				pSQLStatement = "Select Count(1) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
+			} else {
+				pSQLStatement = "Select Count(*) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
+			}
 		}
 		int xCount = 0;
 
@@ -2511,7 +2520,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 						pPrecision > 14){
 						return DATATYPE.DECIMAL;
 					}
-					if (pPrecision < 10){
+					if (pPrecision < 11){
 						return DATATYPE.INT;
 					}else{
 						return DATATYPE.DOUBLE;
@@ -3297,8 +3306,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			xSQLColumns = "(";
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
-				if (!xColumn.getPK() &&
-						!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
+				if (!DBSObject.isNull(xColumn.getValue())){//Se coluna estiver realmente vinculada a uma coluna na tabela
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					 || xColumn.getChanged()){ 
@@ -3311,8 +3319,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			xSQLColumns += ") VALUES(";
 			for (DBSColumn xColumn:pDAO.getCommandColumns()){
 				//Se coluna pertence a pesquisa..
-				if (!xColumn.getPK() &&
-						!xColumn.getColumnName().equals("")){//Se coluna estiver realmente vinculada a uma coluna na tabela
+				if (!DBSObject.isNull(xColumn.getValue())){//Se coluna estiver realmente vinculada a uma coluna na tabela
 					//Se valor foi informado pelo usuário ou não
 					if (!pDAO.getExecuteOnlyChangedValues() 
 					  || xColumn.getChanged()){ 
