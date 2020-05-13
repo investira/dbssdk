@@ -44,7 +44,7 @@ import br.com.dbsoft.core.DBSSDK.SYSTEM_PROPERTY;
 public class DBSFile {
 	
 	private static Logger		wLogger = Logger.getLogger(DBSFile.class);
-
+	
 	public static enum SORT_BY{
 		NAME,
 		SIZE,
@@ -794,8 +794,9 @@ public class DBSFile {
 	public static File[] getFilesFromPath(String pPath, SORT_BY pSortBy, SORT_ORDER pSortOrder){
 		if (pPath == null){return null;}
 		try{
-			pPath = getPathFromFolderName(pPath);
-			File 	xFile = new File(pPath);
+//			pPath = getPathFromFolderName(pPath);
+			Path 	xPath = Paths.get(pPath);
+			File 	xFile = new File(xPath.toUri().getPath());
 			File[] 	xFiles = null;
 			if (!xFile.exists()){
 				System.out.println("Caminho " + pPath + " inexistente.");
@@ -893,9 +894,19 @@ public class DBSFile {
 		if (pFile.startsWith(File.separator)){
 			pFile = pFile.substring(1, pFile.length());
 		}
-		wLogger.info("getPathNormalized >> " + pPath + pFile);
-		return pPath + pFile;
+		Path xPath = Paths.get(pPath + pFile);
+		wLogger.info("getPathNormalized >> " + xPath);
+		return xPath.toString();
 	}
+	/**
+	 * Retorna o caminho completo contendo o nome do arquivo, corrigindo eventuais problemas de barras "/".
+	 * @param pPath
+	 * @return
+	 */
+	public static String getPathNormalized(String pPath){
+		return getPathNormalized(pPath, "");
+	}
+
 	/**
 	 * Retorna o caminho completo contendo o nome da URL, corrigindo eventuais problemas de barras "/".
 	 * @param pUrl
@@ -1008,8 +1019,7 @@ public class DBSFile {
 			}
 		}
 		return "";
-	}
-	
+	}	
 	
 	
 	private static FileSystem pvCreateZipFileSystem(String pZipFilename, boolean pCreate) throws IOException {
