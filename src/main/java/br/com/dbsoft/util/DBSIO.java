@@ -2635,7 +2635,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	//				return "0";
 	//			}else if (DBSDate.isDate(pValue.toString())){
 				if (DBSDate.isDate(pValue.toString())){
-					return "'" + DBSFormat.getFormattedDateCustom(DBSDate.toDate(pValue), "yyyy-MM-dd") + "'" ;//"DateValue('" + DBSFormat.getFormattedDate(DBSDate.toDate(pValue)) + "')";
+					return "'" + DBSFormat.getFormattedDateCustom(DBSDate.toDate(pValue), "yyyy-MM-dd") + "'" ;
 				}else{
 					return "0";
 				}
@@ -2960,7 +2960,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	    } else if (xDBP == DB_SERVER.MYSQL) {
 	        return "if(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    } else {
-	    	return "iff(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
+	    	return "iif(" + pSeCampo + "=" + pIgualA + "," + pUsa + "," + pSenao + ")";
 	    }
 	}
 
