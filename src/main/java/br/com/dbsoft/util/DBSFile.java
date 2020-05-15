@@ -895,7 +895,6 @@ public class DBSFile {
 			pFile = pFile.substring(1, pFile.length());
 		}
 		Path xPath = Paths.get(pPath + pFile);
-		wLogger.info("getPathNormalized >> " + xPath);
 		return xPath.toString();
 	}
 	/**
@@ -924,7 +923,6 @@ public class DBSFile {
 		if (pSubUrl.startsWith("/")){
 			pSubUrl = pSubUrl.substring(1, pSubUrl.length());
 		}
-		wLogger.info("getURLNormalized >> " + pUrl + pSubUrl);
 		return pUrl + pSubUrl;
 	}
 	/**

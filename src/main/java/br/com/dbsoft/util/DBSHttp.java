@@ -1,10 +1,12 @@
 package br.com.dbsoft.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -276,14 +278,13 @@ public class DBSHttp {
 	 * @throws IOException
 	 */
 	public static String getStringFromInputStream(InputStream pInputStream) throws IOException {
-		ByteArrayOutputStream xBufferStream = new ByteArrayOutputStream();
-		byte[] xBuffer = new byte[1024];
-		int xFileLenght;
-		while ((xFileLenght = pInputStream.read(xBuffer)) >= 0) {
-			xBufferStream.write(xBuffer, 0, xFileLenght);
-		}
-		xBufferStream.close();
-		return xBufferStream.toString();  
+		BufferedReader xBufferRead = new BufferedReader(new InputStreamReader(pInputStream, "UTF-8"));
+		String xBuffer="", xLinha;
+		while ((xLinha = xBufferRead.readLine()) != null) {
+			xBuffer += xLinha;
+        }
+		xBufferRead.close();
+		return xBuffer;
 	}
 }
 
