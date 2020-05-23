@@ -1675,7 +1675,7 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			if (DBSIO.getDataBaseProduct(pCn) != DB_SERVER.SQLSERVER) {
 				xST = pCn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); 
 			}else {
-				xST = pCn.createStatement();
+				xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			}
 			xST.execute(pSQL); 
 			xCount = xST.getUpdateCount();
@@ -2425,11 +2425,26 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			}else if (xClass.isAssignableFrom(String.class)){
 				xValue = DBSString.toString(pValue);
 			}else if (xClass.isAssignableFrom(Integer.class)){
-				xValue = DBSNumber.toInteger(pValue);
+				if (pValue.toString().startsWith("((") && pValue.toString().endsWith("))")) {
+					//CAMPOS COM VALORES DEFAULT NO SQLSERVER FICAM ENTRE (())
+					xValue = DBSNumber.toInteger(DBSNumber.getOnlyNumber(pValue.toString()));
+				}else {
+					xValue = DBSNumber.toInteger(pValue);
+				}
 			}else if (xClass.isAssignableFrom(Double.class)){
-				xValue = DBSNumber.toDouble(pValue);
+				if (pValue.toString().startsWith("((") && pValue.toString().endsWith("))")) {
+					//CAMPOS COM VALORES DEFAULT NO SQLSERVER FICAM ENTRE (())
+					xValue = DBSNumber.toDouble(DBSNumber.getOnlyNumber(pValue.toString()));
+				}else {
+					xValue = DBSNumber.toDouble(pValue);
+				}
 			}else if (xClass.isAssignableFrom(BigDecimal.class)){
-				xValue = DBSNumber.toBigDecimal(pValue);
+				if (pValue.toString().startsWith("((") && pValue.toString().endsWith("))")) {
+					//CAMPOS COM VALORES DEFAULT NO SQLSERVER FICAM ENTRE (())
+					xValue = DBSNumber.toBigDecimal(DBSNumber.getOnlyNumber(pValue.toString()));
+				}else {
+					xValue = DBSNumber.toBigDecimal(pValue);
+				}
 			}else if (xClass.isAssignableFrom(Long.class)){
 				xValue = DBSNumber.toLong(pValue);
 			}else if (xClass.isAssignableFrom(Timestamp.class)){

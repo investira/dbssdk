@@ -1283,19 +1283,22 @@ public class DBSDate{
 			wLogger.error("getFeriados: Valores nulos");
 			return 0;
 		}
-		Integer xDias = 0;
-		Date 	xDataInicio;
-		Date	xDataFim;
 		
-		//Recupera feriados nacionais(onde o ano é 1000)
-		xDataInicio =  toDate(getDay(pDataInicio), getMonth(pDataInicio), 1000);
-		xDataFim =  toDate(getDay(pDataFim), getMonth(pDataFim), 1000);
+		//COMENTADO POIS NAO TEM SIDO CADASTRADO FERIADOS FIXOS COM ANO = 1000
+		//UTILIZANDO ANO = 1000 DA PROBLEMA QUANDO UMAS DAS DATAS É IGUAL A 29/02/1000, POIS O ANO 1000 NÃO É BISSEXTO
 		
-		//Recupera feriados nacionais
-		xDias = pvGetHolidays(pConexao, xDataInicio, xDataFim, pCidade, pApplicationColumnName);
-		
-		xDias += pvGetHolidays(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName);
-		return xDias;
+//		Integer xDias = 0;
+//		Date 	xDataInicio;
+//		Date	xDataFim;
+//		
+//		//Recupera feriados nacionais(onde o ano é 1000)
+//		xDataInicio =  toDate(getDay(pDataInicio), getMonth(pDataInicio), 1000);
+//		xDataFim =  toDate(getDay(pDataFim), getMonth(pDataFim), 1000);
+//		
+//		//Recupera feriados nacionais
+//		xDias = pvGetHolidays(pConexao, xDataInicio, xDataFim, pCidade, pApplicationColumnName);
+//		
+		return pvGetHolidays(pConexao, pDataInicio, pDataFim, pCidade, pApplicationColumnName);
 
 	}
 	
