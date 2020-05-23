@@ -2979,6 +2979,16 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	    }
 	}
 
+	public static String toSQLDateDiff(Connection pCn, String pData1, String pData2) {
+//      return "datediff( day,"+ pData2 +"," + pData1 + " )"
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
+		if (xDBP == DB_SERVER.SQLSERVER) {
+			return "datediff( day,"+ pData2 +"," + pData1 + " )" ;
+	    } else {
+	    	return "CAST( " + pData1 + " AS DATE )" + "-" + " CAST(" + pData2 + " AS DATE)";
+	    }
+	}
+
 	/**
 	 * Retorna String com o comando Bitwise AND que executa comparação binária entre o pCampo e o pValor
 	 * @param pCn Conexão com o banco para itentificar qual o fabricante
