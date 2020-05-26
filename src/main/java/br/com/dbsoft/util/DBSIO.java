@@ -2979,8 +2979,31 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 	    }
 	}
 
+	/**
+	 * Retorna String com comando dateDiff ou a subtração de duas datas
+	 * @param pCn Conexão com o banco para itentificar qual o fabricante
+	 * @param pData1 Primeira Data;
+	 * @param pData2 Segunda Data
+	 * @return String com comando formatado.
+	 */
+	public static String toSQLSubstr(Connection pCn, String pCampo, int pStart, int pLength) {
+		DB_SERVER xDBP = getDataBaseProduct(pCn);
+		if (xDBP == DB_SERVER.ORACLE) {
+			return "SUBSTR(" + pCampo + "," + pStart + ","+pLength + ")"  ;
+	    } else {
+			return "SUBSTRING(" + pCampo + "," + pStart + ","+pLength + ")"  ;
+	    }
+	}
+
+	
+	/**
+	 * Retorna String com comando dateDiff ou a subtração de duas datas
+	 * @param pCn Conexão com o banco para itentificar qual o fabricante
+	 * @param pData1 Primeira Data;
+	 * @param pData2 Segunda Data
+	 * @return String com comando formatado.
+	 */
 	public static String toSQLDateDiff(Connection pCn, String pData1, String pData2) {
-//      return "datediff( day,"+ pData2 +"," + pData1 + " )"
 		DB_SERVER xDBP = getDataBaseProduct(pCn);
 		if (xDBP == DB_SERVER.SQLSERVER) {
 			return "datediff( day,"+ pData2 +"," + pData1 + " )" ;
