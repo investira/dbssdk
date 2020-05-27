@@ -2,6 +2,7 @@ package br.com.dbsoft.fileupload;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,13 +78,15 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 	 * @param pLocalPath
 	 */
 	public void setLocalPath(String pLocalPath) {
-		wLocalPath = DBSFile.getPathFromFolderName(pLocalPath);
+//		wLocalPath = DBSFile.getPathFromFolderName(pLocalPath);
+		wLocalPath = DBSFile.getPathNormalized(pLocalPath);
 	}
 	
 	// ========================================================================================================
     @Override
 	protected void onRequest(HttpServletRequest pRequest, HttpServletResponse pResponse) {
  		boolean xOk = true;
+ 		String xPathFile = null;
     	try {
  		   //Dispara evento 
  	       if (!pvFireEventBeforeUpload()
@@ -100,14 +103,15 @@ public abstract class DBSFileUploadServlet extends DBSServlet{
 			    //Dispara evento 
 			    if (pvFireEventBeforeSave()){
 			        if (!DBSObject.isEmpty(wFileName)){
+			        	xPathFile = DBSFile.getPathNormalized(wLocalPath,wFileName);
 			        	//Verifica se a pasta existe
-			        	if (!DBSFile.existsPath(wLocalPath+wFileName)) {
+			        	if (!DBSFile.existsPath(xPathFile)) {
 			        		//Cria a pasta caso ela não exista
-			        		String xAbsolutePath = wLocalPath+wFileName;
+			        		String xAbsolutePath = xPathFile;
 			        		xOk = DBSFile.mkDir(DBSString.getSubString(xAbsolutePath, 1, xAbsolutePath.lastIndexOf(File.separator)));
 			        	}
 			        	if (xOk){
-			        		xPart.write(wLocalPath + wFileName);
+			        		xPart.write(Paths.get(xPathFile).toUri().getPath());
 			        		//Dispara evento 
 			        		pvFireEventAfterSave();
 			        	}else{
