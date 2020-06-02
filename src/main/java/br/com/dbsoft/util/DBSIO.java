@@ -1629,7 +1629,8 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 
 			//ALBERTO: Alterado para atender a nova versão 8.0 do MySQL;
 			DB_SERVER xDataBase = getDataBaseProduct(pCn);
-			if (xDataBase == DB_SERVER.ORACLE) {
+			if (xDataBase == DB_SERVER.ORACLE 
+					|| xDataBase == DB_SERVER.SQLSERVER) {
 				xST = pCn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			} else {
 				xST = pCn.createStatement();
