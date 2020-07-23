@@ -258,6 +258,15 @@ public class DBSNumber {
 	}
 	
 	//------------------------------------------------------------------------------------
+
+	public static BigDecimal distribuicaoNormalInvertida(Double pNivelConfianca) {
+		Double xResultado = 0D;
+
+		NormalDistribution xDistribution = new NormalDistribution();
+		xResultado = xDistribution.inverseCumulativeProbability(pNivelConfianca);
+		
+		return toBigDecimal(xResultado);
+	}
 	
 	public static BigDecimal distribuicaoNormalInvertida(Double pNivelConfianca, Double pMedia, Double pDesvioPadrao) {
 		Double xResultado = 0D;
