@@ -453,8 +453,6 @@ public class DBSIO{
 					xPKs.add(xRS.getString("COLUMN_NAME"));
 				}
 			}
-			xDMD = null;
-			closeResultSet(xRS);
 			return xPKs;
 		} catch (SQLException e) {
 			xPKs = null;
