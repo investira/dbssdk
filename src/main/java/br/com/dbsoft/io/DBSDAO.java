@@ -864,6 +864,7 @@ public class DBSDAO<DataModelClass> extends DBSDAOBase<DataModelClass> {
 			//Limpa lista de colunas do query para forçar a recriação em caso de novo open
 			wQueryColumns.clear();
 			wResultDataModel = null;
+			wQueryResultSetMetaData = null;
 			pvFireEventAfterClose(true);
 		}
 	}
