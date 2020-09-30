@@ -1,5 +1,6 @@
 package br.com.dbsoft.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ import java.util.Map;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
 
 import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.error.exception.BadCredentialsException;
@@ -159,6 +163,15 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		}
 	}
 
+	public final String doPostFile(String pURL, List<File> pFiles) throws AuthException, IOException	{
+		try {
+			PostMethod xMethod = pvCreateMethod(pURL, pFiles, wExtraHeaderInfo);
+			return getResponseAsString(xMethod);
+		} 
+		catch(BadCredentialsException e) {
+			throw e;
+		}
+	}
 	/**
 	 * Executa chamada POST ao metódo definido na URL e retorna o resultado como String
 	 * @param pURL
@@ -258,7 +271,7 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		
 		return xPostMethod;
 	}
-	
+
 	private PostMethod pvCreateMethod(String pURL, Object pObject) throws AuthException, IOException {
 		return pvCreateMethod(pURL, pObject, Collections.<String, String>emptyMap());
 	}
@@ -269,6 +282,19 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		String xJSon = DBSJson.toJson(pObject);
 		StringRequestEntity xJSonPostData = new StringRequestEntity(xJSon, "application/json", StandardCharsets.UTF_8.name());  
 		xPostMethod.setRequestEntity(xJSonPostData);
+		
+		return xPostMethod;
+	}
+
+	private PostMethod pvCreateMethod(String pURL, List<File> pFiles, Map<String, String> pExtraHeaders) throws AuthException, IOException {
+		PostMethod 	xPostMethod = pvCreateBasicPostMethod(pURL, pExtraHeaders);
+		Part[] 		xParts = new Part[pFiles.size()];
+		Integer		xCont = 0;
+		for (File xFile : pFiles) {
+			xParts[xCont] = new FilePart(xFile.getName(), xFile);
+			xCont++;
+		}
+		xPostMethod.setRequestEntity(new MultipartRequestEntity(xParts, xPostMethod.getParams()));
 		
 		return xPostMethod;
 	}
