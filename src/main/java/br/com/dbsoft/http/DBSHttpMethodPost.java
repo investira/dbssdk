@@ -163,9 +163,9 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		}
 	}
 
-	public final String doPostFile(String pURL, List<File> pFiles) throws AuthException, IOException	{
+	public final String doPostFile(String pURL, File xFile) throws AuthException, IOException	{
 		try {
-			PostMethod xMethod = pvCreateMethod(pURL, pFiles, wExtraHeaderInfo);
+			PostMethod xMethod = pvCreateMethod(pURL, xFile, wExtraHeaderInfo);
 			return getResponseAsString(xMethod);
 		} 
 		catch(BadCredentialsException e) {
@@ -286,14 +286,14 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 		return xPostMethod;
 	}
 
-	private PostMethod pvCreateMethod(String pURL, List<File> pFiles, Map<String, String> pExtraHeaders) throws AuthException, IOException {
+	private PostMethod pvCreateMethod(String pURL, File pFile, Map<String, String> pExtraHeaders) throws AuthException, IOException {
 		PostMethod 	xPostMethod = pvCreateBasicPostMethod(pURL, pExtraHeaders);
-		Part[] 		xParts = new Part[pFiles.size()];
-		Integer		xCont = 0;
-		for (File xFile : pFiles) {
-			xParts[xCont] = new FilePart(xFile.getName(), xFile);
-			xCont++;
-		}
+		Part[] 		xParts = {new FilePart(pFile.getName(), pFile)};
+//		Integer		xCont = 0;
+//		for (File xFile : pFiles) {
+//			xParts[xCont] = new FilePart(xFile.getName(), xFile);
+//			xCont++;
+//		}
 		xPostMethod.setRequestEntity(new MultipartRequestEntity(xParts, xPostMethod.getParams()));
 		
 		return xPostMethod;
