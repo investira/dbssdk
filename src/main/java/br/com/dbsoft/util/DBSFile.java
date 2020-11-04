@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +34,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -40,6 +42,7 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.FILE;
 import br.com.dbsoft.core.DBSSDK.SYSTEM_PROPERTY;
+import jcifs.smb.SmbFile;
 
 public class DBSFile {
 	
@@ -783,6 +786,24 @@ public class DBSFile {
 	public static File[] getFilesFromPath(String pPath){
 		return getFilesFromPath(pPath, SORT_BY.NAME, SORT_ORDER.ASCENDING);
 	}
+	
+//	public static SmbFile getSmbFilesFromPath(String pPath){
+//		SmbFile xFile;
+//		try {
+//			xFile = new SmbFile("smb:" + pPath);
+//			if (xFile.exists()) {
+//				return xFile; 
+////				InputStream stream = file.getInputStream();
+////				Scanner sc = new Scanner(stream);
+////				while (sc.hasNextLine()) {
+////					System.out.println(sc.nextLine());
+////				}
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Retorna lista de arquivos/distórios existentes no caminho informado em <b>ppath</b>.<br>
@@ -869,6 +890,47 @@ public class DBSFile {
 			wLogger.error(e);
 			return null;
 		}
+	}
+
+	public static SmbFile[] getSmbFilesFromPath(String pPath){
+		if (pPath == null){return null;}
+		try{
+			Path 		xPath = Paths.get(pPath);
+			SmbFile 	xFile = new SmbFile("smb:" + xPath.toUri().getPath());
+			SmbFile[] 	xFiles = null;
+			if (!xFile.exists()){
+				System.out.println("Caminho " + pPath + " inexistente.");
+				wLogger.error("Caminho " + pPath + " inexistente.");
+				return null;
+			}
+			if (!xFile.isDirectory()){
+				System.out.println("Caminho " + pPath + " não é um pasta.");
+				wLogger.error("Caminho " + pPath + " não é um pasta.");
+				return null;
+			}
+			xFiles = xFile.listFiles();
+			return xFiles;
+		}catch(Exception e){
+			wLogger.error(e);
+			return null;
+		}
+	}
+
+	public static String convertSmbFileToFile(String smbFileCanonicalPath) {
+	    String[] tempVar = smbFileCanonicalPath.substring(6).replace("$", ":").split("/"); 
+	    String bar = "\\";
+	    String finalDirectory = "";
+	    for (int i = 1; i < tempVar.length; i++) {
+	        finalDirectory += tempVar[i] + bar;
+	        if (i == tempVar.length - 1) {
+	            finalDirectory = finalDirectory.substring(0,finalDirectory.length()-1);
+	        }
+	    }
+	    return finalDirectory;
+	}
+	
+	public static String convertFileToSmbFile(String fileCanonicalPath) {
+	    return "smb:" + fileCanonicalPath.toString().replace(":", "$").replace("\\", "/");
 	}
 	
 	public static void displayFiles(File[] files) {
