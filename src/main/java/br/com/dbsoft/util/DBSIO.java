@@ -207,7 +207,11 @@ public class DBSIO{
 				}else{
 					xCn = pDS.getConnection();
 				} 
-				xCn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED); 
+				if (getDataBaseProduct(xCn) == DB_SERVER.SQLSERVER) {
+					xCn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED); 
+				}else {
+					xCn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+				}
 				xCn.setAutoCommit(false);
 				return xCn;
 //			} catch (SQLException e) {
