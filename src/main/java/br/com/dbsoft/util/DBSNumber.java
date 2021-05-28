@@ -1292,7 +1292,7 @@ public class DBSNumber {
 		if (toInteger(pValue) > 0){
 			xValue = toBigDecimal(pValue).setScale(pDecimalPlaces, RoundingMode.FLOOR);
 		}else{
-			xValue = toBigDecimal(pValue).setScale(pDecimalPlaces, RoundingMode.HALF_UP);
+			xValue = toBigDecimal(pValue).setScale(pDecimalPlaces, RoundingMode.DOWN);
 		}
 		
 		xValue = toBigDecimal(xValue);
