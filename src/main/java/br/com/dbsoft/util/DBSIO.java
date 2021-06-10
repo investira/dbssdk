@@ -44,7 +44,6 @@ import br.com.dbsoft.io.DBSColumn;
 import br.com.dbsoft.io.DBSDAO;
 import br.com.dbsoft.io.DBSDAO.COMMAND;
 import br.com.dbsoft.io.DBSResultDataModel;
-import br.com.dbsoft.util.DBSFormat.MASK;
 
 /**
  * @author ricardo.villar
