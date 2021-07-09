@@ -558,6 +558,8 @@ public class DBSIO{
 				pSQLStatement = DBSString.changeStr(pSQLStatement, " * ", " 1 ");
 				pSQLStatement = "Select Count(1) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
 			} else {
+				//'foo' não funciona no sql server
+				pSQLStatement = DBSString.changeStr(pSQLStatement, " 'foo' ", " 1 'foo' ");
 				pSQLStatement = "Select Count(*) From (" + pSQLStatement + ") foo"; //Pesquisa com multiplos selects
 			}
 		}
