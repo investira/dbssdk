@@ -108,6 +108,7 @@ public abstract class DBSHttpMethod {
 		
 		String xResponse = "";
 		try {
+			xClient.getParams().setSoTimeout(0);
 			xClient.executeMethod(pMethod);
 			xResponse = DBSHttp.getStringFromInputStream(pMethod.getResponseBodyAsStream());
 		} catch (IOException e) {
