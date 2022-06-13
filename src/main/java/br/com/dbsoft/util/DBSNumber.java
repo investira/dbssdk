@@ -589,7 +589,7 @@ public class DBSNumber {
 		xSaldo = add(xQuantidadeAtual, xQuantidadeOperada).doubleValue();
 		
 		if (xSaldo.equals(0D)){
-			return xPuAtual;
+			return DBSNumber.trunc(xPuAtual, 10);
 		} else {
 			if (isRealizacao(pQuantidadeAtual, pQuantidadeOperada) == pExclusao){
 				/* 
@@ -600,16 +600,16 @@ public class DBSNumber {
 				xFinOperado = multiply(pQuantidadeOperada, pPuOperado).doubleValue();
 				xFinAtual = multiply(pQuantidadeAtual, pPuAtual).doubleValue();
 				
-				return divide(add(xFinOperado, xFinAtual), xSaldo);
+				return DBSNumber.trunc(divide(add(xFinOperado, xFinAtual), xSaldo), 10);
 			} else {
 				if (isPosicaoVirada(pQuantidadeAtual, pQuantidadeOperada)){
-					return xPuOperado;
+					return DBSNumber.trunc(xPuOperado, 10);
 				} else {
 					/*
 					 * Mantém o preço da posição quando:
 					 *   movimentação for realização sem virar a posição ou for exclusão da mesma
 					 */
-					return xPuAtual;
+					return DBSNumber.trunc(xPuAtual, 10);
 				}
 			}
 		}	
@@ -1301,7 +1301,7 @@ public class DBSNumber {
 	}
 
 	/**
-	 * Rertorna valor truncado
+	 * Rertorna valor arredondado
 	 * @param pValue
 	 * @return
 	 */
