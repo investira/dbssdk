@@ -1691,17 +1691,17 @@ public static ResultSet openResultSet(Connection pCn, String pQuerySQL) throws D
 			if (xCount==-1){
 				xCount = DBSIO.getResultSetRowsCount(xST.getResultSet());
 			}
-			xST.close(); //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
-			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
-			return xCount;
+			DBSIO.endTrans(pCn, true);
 		} catch (SQLException e) {
-			xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
 			DBSIO.endTrans(pCn, false);
-			
 			throwIOException(pSQL, e, pCn);
-
-			return 0;
-		}
+		} finally {
+	        try { 
+				xST.close(); //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
+				xST = null;  //Incluido para evitar o erro: ORA-01000: maximum open cursors exceeded
+	        } catch (Exception ignore) { }
+	    }
+		return xCount;
 	}
 	
 	/**
