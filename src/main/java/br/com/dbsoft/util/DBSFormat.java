@@ -253,6 +253,17 @@ public class DBSFormat implements Serializable {
 		Date xDate = DBSDate.toDate(pDate);
 		return getFormattedTimes(xDate);
 	}
+	
+	/**
+	 * Retorna string contendo a data formatada no padrão GMT UTC (yyyy-MM-dd'T'HH:mm:ss.SSSXXX)
+	 * @param pData Data a ser formatado
+	 * @return String com a data já formatada
+	 */
+	public static String getFormattedDateTimeUTC(Date pDate){
+		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		return xFormat.format(pDate);
+	}
+	
 
 	//NUMBER ============================================================================================================
 	
