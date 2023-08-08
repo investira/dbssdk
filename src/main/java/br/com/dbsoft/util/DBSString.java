@@ -115,6 +115,45 @@ public class DBSString {
 		return pString.substring(pInicio-1, pInicio + pTamanho-1);
 	}
 	
+	/**
+	 * Retorna uma string a partir de uma string original.<br/>
+	 * @param pString String original
+	 * @param pCaractereInicio Caractere inicial.
+	 * @param pCaractereFim Caractere Final.
+	 * @return String entre os caracteres informados nos argumentos.
+	 */
+	public static String getSubString(String pString, String pCaractereInicio, String pCaractereFim) {
+		if (DBSObject.isEmpty(pString) || DBSObject.isEmpty(pCaractereInicio) || DBSObject.isEmpty(pCaractereFim)){
+			return null;
+		}
+		
+		int xInicio = pString.indexOf(pCaractereInicio);
+		int xFim = pString.indexOf(pCaractereFim);
+		
+		if (xInicio != -1 && xFim != -1 && xFim > xInicio) {
+			return pString.substring(xInicio + 1, xFim);
+		}
+		
+		return "";
+	}
+	
+	/**
+	 * Retorna a string sem zeros a esquerda caso a mesma seja composta apenas de números.<br/>
+	 * Caso contrário retorna a string original sem alterações
+	 * @param pString String original
+	 * @return String sem zeros a esquerda.
+	 */
+	public static String removeZerosEsquerda(String pString) {
+		if (DBSObject.isEmpty(pString)) {
+			return null;
+		}
+		
+		if(pString.matches("[0-9]+")) {
+			pString = pString.replaceFirst("^0+", "");
+		}
+		
+		return pString;
+	}
 
 	/**
 	 * Conta o número de ocorrências de uma determinada string dentro de outra
