@@ -5,11 +5,13 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -153,6 +155,22 @@ public class DBSString {
 		}
 		
 		return pString;
+	}
+	
+	/*
+	 * Retorna a string sem acentuação
+	 * @param pString String original
+	 * @return String sem sem acentuação.
+	 **/
+	public static String removeAcentuacao(String pString) {
+		// Normaliza a string para decompor caracteres acentuados
+		String xStrNomalizada = Normalizer.normalize(pString, Normalizer.Form.NFD);
+		
+		// Cria um padrão para identificar diacríticos
+		Pattern xPattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		
+		// Remove diacríticos da string normalizada
+		return xPattern.matcher(xStrNomalizada).replaceAll("");
 	}
 
 	/**
