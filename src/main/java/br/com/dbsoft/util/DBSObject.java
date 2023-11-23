@@ -83,6 +83,20 @@ public  class DBSObject {
 		return null;
 	}
 	
+	/**
+	 * Retorna o mesmo dado informado quando este não for NaN. 
+	 * Se for NaN, retorna o valor default definido pelo usuário ou vazio.
+	 * @param pDado Dado a ser verificado
+	 * @param pDadoDefault Conteúdo a ser considerado caso o dado seja NaN
+	 * @return Dado contendo o valor diferente de NaN
+	 */
+	public static <T> double getNotNaN(T pDado, double pDadoDefault) {
+		Double xDado = DBSNumber.toDouble(pDado);
+        if (Double.isNaN(xDado)) {
+            return pDadoDefault;
+        }
+        return xDado;
+	}
 	
 	/**
 	 * Retorna o mesmo dado informado quando este não for nulo. 
