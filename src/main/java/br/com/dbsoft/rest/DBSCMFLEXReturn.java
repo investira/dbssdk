@@ -1,5 +1,7 @@
 package br.com.dbsoft.rest;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,6 +25,14 @@ public class DBSCMFLEXReturn<C> {
 	@JsonInclude(value=Include.NON_NULL, content=Include.NON_NULL)
 	private String wMensagem;
 	
+	@JsonProperty("Id")
+	@JsonInclude(value=Include.NON_NULL, content=Include.NON_NULL)
+	private Integer wId;
+	
+	@JsonProperty("Resultados")
+	@JsonInclude(value=Include.NON_NULL, content=Include.NON_NULL)
+	private ArrayList<DBSResultadosCMFLEX<C>> wResultados;
+	
 	public Integer getStatusEnum() {
 		return wStatusEnum;
 	}
@@ -43,5 +53,19 @@ public class DBSCMFLEXReturn<C> {
 	public void setMensagem(String pMensagem) {
 		wMensagem = pMensagem;
 	}
-
+	
+	public Integer getId() {
+		return wId;
+	}
+	public void setId(Integer pId) {
+		wId = pId;
+	}
+	
+	public ArrayList<DBSResultadosCMFLEX<C>> getResultados() {
+		return wResultados;
+	}
+	
+	public void setResultados(ArrayList<DBSResultadosCMFLEX<C>> pResultados) {
+		wResultados = pResultados;
+	}
 }
