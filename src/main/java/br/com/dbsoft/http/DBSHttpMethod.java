@@ -30,6 +30,7 @@ import br.com.dbsoft.json.DBSJson;
 import br.com.dbsoft.json.ParametersSerializer;
 import br.com.dbsoft.util.DBSHttp;
 import br.com.dbsoft.util.DBSObject;
+import br.com.dbsoft.util.DBSString;
 
 public abstract class DBSHttpMethod {
 	
@@ -173,6 +174,7 @@ public abstract class DBSHttpMethod {
 	
 	protected final <T,P> T pvGetResponseAsJson(HttpMethod pMethod, Class<T> pResponseType, Class<P> pParameterType) throws IOException{
 		String xResponse = getResponseAsString(pMethod);
+		xResponse = pvFixResponse(xResponse);
 		ObjectMapper xMapper = ParametersSerializer.get();
 		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
 		JavaType xType = xMapper.getTypeFactory().constructParametricType(pResponseType, pParameterType);
@@ -181,6 +183,7 @@ public abstract class DBSHttpMethod {
 	
 	protected final <T,P> T pvGetResponseListAsJson(HttpMethod pMethod, Class<T> pResponseType, Class<P> pParameterType) throws IOException{
 		String xResponse = getResponseAsString(pMethod);
+		xResponse = pvFixResponse(xResponse);
 		ObjectMapper xMapper = ParametersSerializer.get();
 		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
 		JavaType xListType = xMapper.getTypeFactory().constructParametricType(ArrayList.class, pParameterType);
@@ -195,4 +198,8 @@ public abstract class DBSHttpMethod {
 		xMapper.setPropertyNamingStrategy(new ParametersSerializer.DBSPropertyNamingStrategy());
 		return xMapper.readValue(xResponse, pType);
 	}
+	
+	private static String pvFixResponse(String pString) {
+		return pString.replaceAll("\uFEFF", "");
+	} 
 }

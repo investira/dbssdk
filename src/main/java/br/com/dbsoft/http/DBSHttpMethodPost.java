@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -18,6 +19,7 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.error.exception.BadCredentialsException;
 import br.com.dbsoft.json.DBSJson;
+import br.com.dbsoft.util.DBSString;
 
 public class DBSHttpMethodPost extends DBSHttpMethod {
 
@@ -278,10 +280,16 @@ public class DBSHttpMethodPost extends DBSHttpMethod {
 	
 	private PostMethod pvCreateMethod(String pURL, Object pObject, Map<String, String> pExtraHeaders) throws AuthException, IOException {
 		PostMethod xPostMethod = pvCreateBasicPostMethod(pURL, pExtraHeaders);
+		RequestEntity xPostData;
 		
-		String xJSon = DBSJson.toJson(pObject);
-		StringRequestEntity xJSonPostData = new StringRequestEntity(xJSon, "application/json", StandardCharsets.UTF_8.name());  
-		xPostMethod.setRequestEntity(xJSonPostData);
+		if(!pExtraHeaders.containsKey("Content-Type")) {
+			String xJSon = DBSJson.toJson(pObject);
+			xPostData = new StringRequestEntity(xJSon, "application/json", StandardCharsets.UTF_8.name()); 
+		} else {
+			xPostData = new StringRequestEntity(DBSString.toString(pObject), pExtraHeaders.get("Content-Type"), StandardCharsets.UTF_8.name());
+		}
+		 
+		xPostMethod.setRequestEntity(xPostData);
 		
 		return xPostMethod;
 	}
