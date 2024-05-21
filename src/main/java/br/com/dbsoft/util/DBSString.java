@@ -157,6 +157,16 @@ public class DBSString {
 		return pString;
 	}
 	
+	/**
+	 * Retorna a string preenchido com zeros a esquerda.<br/>
+	 * @param pString String original
+	 * @param pTamanho Tamanho desejado para string final
+	 * @return String com n zeros a esquerda.
+	 */
+	public static String preencheZerosEsquerda(String pString, Integer pTamanho) {
+        return String.format("%1$" + pTamanho + "s", pString).replace(' ', '0');
+    }
+	
 	/*
 	 * Retorna a string sem acentuação
 	 * @param pString String original
