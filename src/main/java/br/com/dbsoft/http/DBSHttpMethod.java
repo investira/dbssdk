@@ -130,7 +130,11 @@ public abstract class DBSHttpMethod {
 		}
 		
 		if (xStatusCode == 404) {
-			throw new CommunicationException("Serviço indisponível: " + xResponse);
+			throw new CommunicationException("Recurso não encontrado: " + xResponse);
+		}
+		
+		if (xStatusCode == 503) {
+			throw new CommunicationException("Serviço indisponível " + xResponse);
 		}
 		
 		if (xStatusCode == 505) {
