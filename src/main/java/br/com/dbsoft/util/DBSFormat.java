@@ -8,7 +8,9 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -261,7 +263,18 @@ public class DBSFormat implements Serializable {
 	 */
 	public static String getFormattedDateTimeUTC(Date pDate){
 		SimpleDateFormat xFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		return xFormat.format(pDate);
+		
+		xFormat.setTimeZone(TimeZone.getTimeZone("GMT-3"));
+
+        // Ajusta a data para 12:00:00.000
+        Calendar xDataHora = Calendar.getInstance();
+        xDataHora.setTime(pDate);
+        xDataHora.set(Calendar.HOUR_OF_DAY, 12);
+        xDataHora.set(Calendar.MINUTE, 0);
+        xDataHora.set(Calendar.SECOND, 0);
+        xDataHora.set(Calendar.MILLISECOND, 0);
+		
+		return xFormat.format(xDataHora.getTime());
 	}
 	
 
