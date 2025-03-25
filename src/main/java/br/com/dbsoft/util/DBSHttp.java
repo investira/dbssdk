@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -51,11 +53,16 @@ public class DBSHttp {
 	}
 	
 	/**
-	 * Evia um arquivo local para o browser
+	 * Envia um arquivo local para o browser
 	 */
 	public static Boolean sendFile(ByteArrayOutputStream pByteArrayOutputStream, String pRemoteFileName, String pContentType){
 		FacesContext xFC = FacesContext.getCurrentInstance();
 		ExternalContext xEC = xFC.getExternalContext();
+		
+		if (xFC.getResponseComplete()) {
+			wLogger.error("Resposta já enviada para essa requisição");
+	        return false; // Resposta já foi enviada, evita erro
+	    }
 		
 		//Verifica se arquivo existe. Se não existir...
 		try {
@@ -78,6 +85,67 @@ public class DBSHttp {
 			return false;
 		}			
 	}
+	
+	/**
+	 * 
+	 * 	Envia um arquivo local zipado para o browser
+	 * 
+	 * */
+	public static void sendZipFile(List<ByteArrayOutputStream> pRemoteFiles, List<String> pRemoteFileNames, String pZipName) throws IOException {
+	    FacesContext xFC = FacesContext.getCurrentInstance();
+	    ExternalContext xEC = xFC.getExternalContext();
+
+	    if (xFC.getResponseComplete()) {
+	        return; // Evita múltiplas respostas na mesma requisição
+	    }
+
+	    ByteArrayOutputStream xZipByteArray = new ByteArrayOutputStream();
+	    ZipOutputStream xZipOut = new ZipOutputStream(xZipByteArray);
+
+	    try {
+	        for (int i = 0; i < pRemoteFiles.size(); i++) {
+	            pvAddFileToZip(pRemoteFiles.get(i), pRemoteFileNames.get(i), xZipOut);
+	        }
+	        xZipOut.close();
+
+	        xEC.responseReset();
+	        xEC.setResponseContentType("application/zip");
+	        xEC.setResponseContentLength(xZipByteArray.size());
+	        xEC.setResponseHeader("Content-Disposition", "attachment; filename=\"" + pZipName + ".zip\"");
+
+	        OutputStream xOutputStream = xEC.getResponseOutputStream();
+	        if (xOutputStream != null) {
+	            xZipByteArray.writeTo(xOutputStream);
+	            xOutputStream.flush();
+	        }
+
+	        xFC.responseComplete();
+	    } catch (IOException e) {
+	        wLogger.error(e);
+	    } finally {
+	        xZipOut.close();
+	        xZipByteArray.close();
+	    }
+	}
+
+	/**
+	 * 
+	 * 	Adiciona Arquivo ao Zip
+	 * 
+	 * */
+	private static void pvAddFileToZip(ByteArrayOutputStream pFile, String pFileName, ZipOutputStream pZipOut) throws IOException {
+	    if (pFile == null || pFile.size() == 0) {
+	        return;
+	    }
+
+	    ZipEntry xZipEntry = new ZipEntry(pFileName);
+	    pZipOut.putNextEntry(xZipEntry);
+
+	    pFile.writeTo(pZipOut);
+
+	    pZipOut.closeEntry();
+	}
+
 	
 	/**
 	 * Retorna o caminho local do web-info/classes da aplicação
