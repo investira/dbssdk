@@ -18,6 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.CopyOption;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -42,6 +43,8 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.FILE;
 import br.com.dbsoft.core.DBSSDK.SYSTEM_PROPERTY;
+import br.com.dbsoft.util.DBSFile.SORT_BY;
+import br.com.dbsoft.util.DBSFile.SORT_ORDER;
 import jcifs.smb.SmbFile;
 
 public class DBSFile {
@@ -508,7 +511,7 @@ public class DBSFile {
 	}
 
 	/**
-	 * Método de cópia de arquivos.<br/>
+	 * Método de cópia de arquivos com opções padrão.<br/>
 	 * Sobre-escreve se arquivo com mesmo nome existir.
 	 * 
 	 * @param pFile
@@ -519,6 +522,23 @@ public class DBSFile {
 	 * @throws IOException
 	 */
 	public static boolean copy(String pSourceFile, String pFileCopied) {
+		return copy(pSourceFile, pFileCopied, REPLACE_EXISTING, COPY_ATTRIBUTES);
+	}
+
+	/**
+	 * Método de cópia de arquivos.<br/>
+	 * Permite selecionar as opções de cópia
+	 * 
+	 * @param pFile
+	 *            : path completo do arquivo a ser copiado
+	 * @param pDestFile
+	 *            : Path completo de destino do arquivo
+	 * @param pCopyOptions
+	 * 			  : Opções de cópia: REPLACE_EXISTING, COPY_ATTRIBUTES, NOFOLLOW_LINKS
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean copy(String pSourceFile, String pFileCopied, CopyOption... pCopyOptions) {
 		if (!DBSFile.exists(pSourceFile)) {
 			return false;
 		}
@@ -527,7 +547,7 @@ public class DBSFile {
 		Path xPathFileCopied = Paths.get(pFileCopied);
 
 		try {
-			Files.copy(xPathSourceFile, xPathFileCopied, REPLACE_EXISTING, COPY_ATTRIBUTES);
+			Files.copy(xPathSourceFile, xPathFileCopied, pCopyOptions);
 			return true;
 		} catch (IOException e) {
 			wLogger.error(e);
