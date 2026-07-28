@@ -12,6 +12,7 @@ import br.com.dbsoft.error.exception.AuthException;
 import br.com.dbsoft.error.exception.BadCredentialsException;
 
 public class DBSHttpMethodGet extends DBSHttpMethod {
+	private boolean wRetryWithoutTokenOnBadCredentials = true;
 	
 	//CONSTRUTORES =============================================================================
 	public DBSHttpMethodGet() {
@@ -20,10 +21,17 @@ public class DBSHttpMethodGet extends DBSHttpMethod {
 	public DBSHttpMethodGet(String pToken) {
 		super(pToken);
 	}
+	public DBSHttpMethodGet(String pToken, boolean pRetryWithoutTokenOnBadCredentials) {
+		super(pToken);
+		wRetryWithoutTokenOnBadCredentials = pRetryWithoutTokenOnBadCredentials;
+	}
 	
 	//METODOS OVERRIDE =============================================================================
 	@Override
 	protected boolean forceRenewToken() {
+		if (!wRetryWithoutTokenOnBadCredentials) {
+			return false;
+		}
 		setUsername(null);
 		wToken = null;
 		return true;

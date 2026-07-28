@@ -106,7 +106,8 @@ public class DBSError {
 	 */
 	public static Integer toCodes(SQLException e, Connection pConnection){
 		if (pConnection == null){
-			return pvToCodes(e);
+			Integer xCode = pvToCodes(e);
+			return xCode == null ? CODES.GENERIC : xCode;
 		}else{
 			DB_SERVER xDBP = DBSIO.getDataBaseProduct(pConnection);
 			if (xDBP == DB_SERVER.ORACLE){
@@ -120,7 +121,7 @@ public class DBSError {
 				return pvToCodes_SQLSERVER(e); 
 			}
 		}
-		return null;
+		return CODES.GENERIC;
 	}
 	
 	private static Integer pvToCodes_ORACLE(SQLException e){

@@ -28,7 +28,7 @@
 		<gson.version>2.3.1</gson.version>
 		<javax.json.version>1.0</javax.json.version>
 		<jstl.version>1.2</jstl.version>
-		<oracle.version>11.2.0.3</oracle.version>
+		<oracle.version>11.2.0.4</oracle.version>
 		<mysql.version>8.0.15</mysql.version>
 		<joda-time.version>2.1</joda-time.version>
 		<caelum-stella.version>2.1.0</caelum-stella.version>
@@ -48,7 +48,7 @@
 			<url>file://${internal.repo.path}</url>
 		</repository>
 	</distributionManagement>
-	<repositories>
+	<!-- <repositories>
 		<repository>
 			<id>central</id>
 			<name>Maven Central Repository</name>
@@ -59,6 +59,20 @@
 			<id>codelds</id>
 			<url>https://code.lds.org/nexus/content/groups/main-repo</url>
 		</repository>
+	</repositories>
+	 -->
+	<repositories>
+    <repository>
+        <id>maven-central</id>
+        <name>Maven Central Repository</name>
+        <url>https://repo1.maven.org/maven2/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
 	</repositories>
 	<!-- JUNIT -->
 	<!-- <dependencyManagement> -->
@@ -137,12 +151,18 @@
 		<!-- <version>${json.version}</version> -->
 		<!-- </dependency> -->
 		<!-- DRIVER ORACLE -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 			<version>${oracle.version}</version>
 		</dependency>
-		<!-- MYSQL -->
+ -->
+ 		<dependency>
+        	<groupId>com.oracle</groupId>
+        	<artifactId>ojdbc6</artifactId>
+        	<version>${oracle.version}</version>
+    	</dependency>
+ 		<!-- MYSQL -->
 		<dependency>
     		<groupId>javax.mail</groupId>
     		<artifactId>mail</artifactId>
