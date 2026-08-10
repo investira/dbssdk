@@ -145,7 +145,7 @@ public abstract class DBSHttpMethod {
 			throw new CommunicationException("Serviço funciona apenas em HTTPS");
 		}
 
-		if (xStatusCode != 200 && xStatusCode != 201) {
+		if (xStatusCode < 200 || xStatusCode >= 300) {
 			throw new BadCredentialsException("Erro ao obter dados de autenticação: " + xResponse);
 		}
 		return xResponse;
