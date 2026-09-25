@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,7 +34,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -43,8 +41,6 @@ import org.apache.log4j.Logger;
 
 import br.com.dbsoft.core.DBSSDK.FILE;
 import br.com.dbsoft.core.DBSSDK.SYSTEM_PROPERTY;
-import br.com.dbsoft.util.DBSFile.SORT_BY;
-import br.com.dbsoft.util.DBSFile.SORT_ORDER;
 import jcifs.smb.SmbFile;
 
 public class DBSFile {
@@ -1104,7 +1100,9 @@ public class DBSFile {
 	
 	private static FileSystem pvCreateZipFileSystem(String pZipFilename, boolean pCreate) throws IOException {
 		final Path xPath = Paths.get(pZipFilename);
-		final URI xUri = URI.create("jar:file:" + xPath.toUri().getPath());
+		// Preserva a URI completa para manter o host de caminhos UNC no Windows.
+		// Usar apenas getPath() transforma \\servidor\pasta em um caminho local.s
+		final URI xUri = URI.create("jar:" + xPath.toUri().toString());
 
 		final Map<String, String> xEnv = new HashMap<>();
 		if (pCreate) {
